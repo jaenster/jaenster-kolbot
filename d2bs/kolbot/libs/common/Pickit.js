@@ -5,6 +5,7 @@
 */
 
 var Pickit = {
+	NTIP: require('NTIP'),
 	config: require('Config'),
 	gidList: [],
 	beltSize: 1,
@@ -16,7 +17,7 @@ var Pickit = {
 		for (i = 0; i < Pickit.config.PickitFiles.length; i += 1) {
 			filename = "pickit/" + Pickit.config.PickitFiles[i];
 
-			NTIP.OpenFile(filename, notify);
+			this.NTIP.OpenFile(filename, notify);
 		}
 
 		this.beltSize = Storage.BeltSize();
@@ -30,7 +31,7 @@ var Pickit = {
 	// 3 - Runeword wants
 	// 4 - Pickup to sell (triggered when low on gold)
 	checkItem: function (unit) {
-		var rval = NTIP.CheckItem(unit, false, true);
+		var rval = this.NTIP.CheckItem(unit, false, true);
 
 		if ((unit.classid === 617 || unit.classid === 618) && Town.repairIngredientCheck(unit)) {
 			return {

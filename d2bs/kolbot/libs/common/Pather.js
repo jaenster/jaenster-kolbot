@@ -1341,6 +1341,7 @@ MainLoop:
 		area - the id of area to move to
 	*/
 	journeyTo: function (area) {
+		const Precast = require('Precast');
 		var i, special, unit, tick, target;
 
 		target = this.plotCourse(area, me.area);
@@ -1371,7 +1372,7 @@ MainLoop:
 		}
 
 		while (target.course.length) {
-			!me.inTown && require('Precast')();
+			!me.inTown && Precast();
 
 			if (this.wpAreas.indexOf(me.area) > -1 && !getWaypoint(this.wpAreas.indexOf(me.area))) {
 				this.getWP(me.area);
@@ -1379,7 +1380,7 @@ MainLoop:
 
 			if (me.inTown && this.wpAreas.indexOf(target.course[0]) > -1 && getWaypoint(this.wpAreas.indexOf(target.course[0]))) {
 				this.useWaypoint(target.course[0], !this.plotCourse_openedWpMenu);
-				Precast.doPrecast(false);
+				Precast();
 			} else if (me.area === 109 && target.course[0] === 110) { // Harrogath -> Bloody Foothills
 				this.moveTo(5026, 5095);
 

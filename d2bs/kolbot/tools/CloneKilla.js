@@ -6,7 +6,6 @@
 
 
 include('require.js');
-include("NTItemParser.dbl");
 include("OOG.js");
 include("AutoMule.js");
 include("craftingsystem.js");
