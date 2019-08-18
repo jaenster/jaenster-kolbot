@@ -28,69 +28,13 @@ var Loader = {
 		}
 	},
 
-	// see http://stackoverflow.com/questions/728360/copying-an-object-in-javascript#answer-728694
-	clone: function (obj) {
-		var i, copy, attr;
-
-		// Handle the 3 simple types, and null or undefined
-		if (null === obj || "object" !== typeof obj) {
-			return obj;
-		}
-
-		// Handle Date
-		if (obj instanceof Date) {
-			copy = new Date();
-
-			copy.setTime(obj.getTime());
-
-			return copy;
-		}
-
-		// Handle Array
-		if (obj instanceof Array) {
-			copy = [];
-
-			for (i = 0; i < obj.length; i += 1) {
-				copy[i] = this.clone(obj[i]);
-			}
-
-			return copy;
-		}
-
-		// Handle Object
-		if (obj instanceof Object) {
-			copy = {};
-
-			for (attr in obj) {
-				if (obj.hasOwnProperty(attr)) {
-					copy[attr] = this.clone(obj[attr]);
-				}
-			}
-
-			return copy;
-		}
-
-		throw new Error("Unable to copy obj! Its type isn't supported.");
-	},
-
-	copy: function (from, to) {
-		var i;
-
-		for (i in from) {
-			if (from.hasOwnProperty(i)) {
-				to[i] = this.clone(from[i]);
-			}
-		}
-	},
-
 	loadScripts: function () {
 		const Config = require('Config');
 		const Scripts = Config.Scripts;
 		const Attack = require('Attack');
-		var s, script,
+		let s, script,
 			unmodifiedConfig = {};
 
-		this.copy(Config, unmodifiedConfig);
 
 		if (!this.fileList.length) {
 			showConsole();

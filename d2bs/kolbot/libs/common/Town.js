@@ -71,6 +71,8 @@ var Town = {
 		if (!me.inTown) {
 			this.goToTown();
 		}
+		require('Conveniences'); // First time we are in town,
+		// load the promises that look for stuff in town, or reacts on stuff in town
 
 		var i,
 			cancelFlags = [0x01, 0x02, 0x04, 0x08, 0x14, 0x16, 0x0c, 0x0f, 0x19, 0x1a];
