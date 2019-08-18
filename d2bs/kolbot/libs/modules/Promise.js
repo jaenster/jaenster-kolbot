@@ -21,7 +21,7 @@
 		const self = this;
 
 		const final = function () {
-				typeof self._finally !== 'undefined' && self._catchers.forEach(function (callback) {
+				typeof self._finally !== 'undefined' && self._finally.forEach(function (callback) {
 					return callback(self.value);
 				});
 			}, resolve = function (result) {
