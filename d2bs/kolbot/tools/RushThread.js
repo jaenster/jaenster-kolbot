@@ -7,7 +7,6 @@
 js_strict(true);
 
 include('require.js');
-include("NTItemParser.dbl");
 include("OOG.js");
 include("Gambling.js");
 include("AutoMule.js");

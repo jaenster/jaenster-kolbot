@@ -25,7 +25,6 @@ function Mephisto(Config, Attack) {
 	if (!Pather.journeyTo(102)) {
 		throw new Error("Failed to move to Durance Level 3");
 	}
-	print(JSON.stringify(me.getStat(-1)));
 
 	Pather.moveTo(17566, 8069);
 	this.killMephisto();

@@ -181,7 +181,7 @@
 			return false;
 		}
 		//ToDo; every x seconds
-		getTickCount() - check > 1000 && !print(getTickCount() - check) && (check = getTickCount()) && Precast();
+		getTickCount() - check > 1000 && (check = getTickCount()) && Precast();
 
 		//@ToDo; Here some specific class stuff.
 		switch (true) {
