@@ -72,7 +72,6 @@ function main() {
 	D2Bot.init();
 	Config.init();
 	Pickit.init();
-	Attack.init();
 	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();

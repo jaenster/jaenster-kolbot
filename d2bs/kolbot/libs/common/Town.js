@@ -77,7 +77,7 @@ var Town = {
 		var i,
 			cancelFlags = [0x01, 0x02, 0x04, 0x08, 0x14, 0x16, 0x0c, 0x0f, 0x19, 0x1a];
 
-		Attack.weaponSwitch(Attack.getPrimarySlot());
+		me.switchWeapons(me.primarySlot);
 
 		this.heal();
 		this.identify();
@@ -1289,7 +1289,7 @@ CursorLoop:
 
 				break;
 			case "buyQuiver":
-				bowCheck = Attack.usingBow();
+				bowCheck = me.usingBow;//ToDo; fix
 
 				if (bowCheck) {
 					if (bowCheck === "bow") {
@@ -1332,7 +1332,7 @@ CursorLoop:
 			canAfford = me.gold >= me.getRepairCost();
 
 		// Arrow/Bolt check
-		bowCheck = Attack.usingBow();
+		bowCheck = me.usingBow;
 
 		if (bowCheck) {
 			switch (bowCheck) {
@@ -1471,7 +1471,6 @@ MainLoop:
 			}
 		}
 
-		Attack.checkInfinity();
 
 		if (!!me.getMerc()) {
 			if (Town.config.MercWatch) { // Cast BO on merc so he doesn't just die again

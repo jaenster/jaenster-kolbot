@@ -1,6 +1,7 @@
 (function (require, _delay) {
 	const Skills = require('Skills');
 	const Precast = require('Precast');
+	const GameData = require('GameData');
 	const ignoreMonster = [];
 
 	Unit.prototype.clear = function (range) {

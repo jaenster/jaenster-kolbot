@@ -145,7 +145,6 @@ function main() {
 	// Init config and attacks
 	D2Bot.init();
 	const Config = require('Config')();
-	Attack.init();
 	Storage.Init();
 
 	// Use PVP range for attacks

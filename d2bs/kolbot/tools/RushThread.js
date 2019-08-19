@@ -1330,7 +1330,6 @@ MainLoop:
 	// Start
 	Config.init(false);
 	Pickit.init(false);
-	Attack.init();
 	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();

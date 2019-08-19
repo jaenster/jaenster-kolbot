@@ -33,7 +33,7 @@
 	};
 
 	const AutoConfig = function () {
-		return me.ingame && (isIncluded('GameData.js') || include("GameData.js")) && Object.keys(AutoConfig)  // Run all AutoConfig modules
+		return me.ingame && Object.keys(AutoConfig)  // Run all AutoConfig modules
 			.map(x => AutoConfig[x])
 			.filter(x => typeof x === 'function')
 			.forEach(_ => _());
@@ -84,72 +84,15 @@
 		Config.RepairPercent = 40;
 	};
 
-	AutoConfig.TeleStomp = function () {
-		//ToDo; make it depend on skill, in the end we dont want/need this setting
-		Config.TeleStomp = [1, 6].indexOf(me.classid); // Tele stomp only matters with a sorc or assa
-	};
-
 	AutoConfig.Clearing = function () {
 		Config.BossPriority = true;
 		Config.ClearType = 0xF;
 	};
 
-
-	//ToDo; this should be redundant in the future, as i would like to use directly per monster settings
-	AutoConfig.Skills = function () {
-		const effort = [], uniqueSkills = [];
-		for (let i = 50; i < 120; i++) {
-			try {
-				effort.push(GameData.monsterEffort(i, sdk.areas.ThroneOfDestruction))
-			} catch (e) {/*dontcare*/
-			}
-		}
-
-		effort
-			.filter(e => e !== null && typeof e === 'object' && e.hasOwnProperty('skill'))
-			.filter(x => me.getSkill(x.skill, 0)) // Only skills where we have hard points in
-			.filter(x => Skills.class[x.skill] < 7) // Needs to be a skill of a class, not my class but a class
-			.map(x =>
-				// Search for this unique skill
-				(
-					uniqueSkills.find(u => u.skillId === x.skill)
-					// Or add it and return the value
-					|| (
-						(
-							uniqueSkills.push({skillId: x.skill, used: 0})
-							&& false
-						)
-						|| uniqueSkills[uniqueSkills.length - 1]
-					)
-				).used++ && false
-				// In the end always return x
-				|| x
-			);
-
-		// Unique skills are in uniqueSkills, sort them
-		uniqueSkills.sort((a, b) => b.used - a.used);
-
-		Auto.Config.Skills = uniqueSkills;
-
-		// First init them all on -1
-		Config.AttackSkill.length = 7;
-		for (let i = 0; i < Config.AttackSkill.length; i++) Config.AttackSkill[i] = -1;
-
-
-		switch (true) {
-			case true: // ToDo; rendering the others invalid. For now this is it.
-			case uniqueSkills.length < 5: // ToDo; do something special, determin what is meant for bosses / inume
-			case uniqueSkills.length < 3: // Have a small amount of matches, not much to put
-				uniqueSkills.forEach((x, i) => i < 2 && (Config.AttackSkill[i + 1] = x.skillId) && (Config.AttackSkill[i + 3] = x.skillId));
-				break;
-		}
-
-		Auto.Config.charlvl = me.charlvl;
-		Auto.Config.effort = uniqueSkills;
-
-		Config.AttackSkill.forEach((e, i) => e > -1 && print('AttackSkill[' + i + '] = ' + getSkillById(e)));
+	AutoConfig.Packet = function () {
+		Config.PacketCasting = 1; // use packet casting for teleportation
+		Config.PacketShopping = true;
 	};
-
 
 	//ToDo; Do something with this. For now 4 rows of rv pots to avoid belt clearance
 	AutoConfig.Belt = function () {

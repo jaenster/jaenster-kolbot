@@ -30,7 +30,6 @@ function main() {
 	D2Bot.init();
 	const Config = require('Config')();
 	Pickit.init();
-	Attack.init();
 	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();

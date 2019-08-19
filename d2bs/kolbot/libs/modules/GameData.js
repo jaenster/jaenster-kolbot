@@ -126,7 +126,7 @@ MonsterData.findByName = function (whatToFind) {
 	return matches[0][1];
 };
 
-(MonsterData);
+//(MonsterData);
 
 /**
  *  PresetMonsters[presetID]
@@ -176,7 +176,7 @@ PresetMonsters.findByName = function (whatToFind) {
 	return matches[0][1];
 };
 
-(PresetMonsters);
+//(PresetMonsters);
 
 /**
  *  AreaData[areaID]
@@ -254,7 +254,7 @@ AreaData.findByName = function (whatToFind) {
 	return matches[0][1];
 };
 
-(AreaData);
+//(AreaData);
 
 function isAlive(unit) {
 	return Boolean(unit && unit.hp);
@@ -1239,6 +1239,42 @@ function itemTier(item) {
 
 		return raritypool ? effortpool / raritypool : 0;
 	},
+		mostUsedSkills: function () {
+			const Skills = require('Skills');
+			if (me.hasOwnProperty('__cachedMostUsedSkills') && me.__cachedMostUsedSkills) return me.__cachedMostUsedSkills;
+
+			const effort = [], uniqueSkills = [];
+			for (let i = 50; i < 120; i++) {
+				try {
+					effort.push(GameData.monsterEffort(i, sdk.areas.ThroneOfDestruction))
+				} catch (e) {/*dontcare*/
+				}
+			}
+
+			effort
+				.filter(e => e !== null && typeof e === 'object' && e.hasOwnProperty('skill'))
+				.filter(x => me.getSkill(x.skill, 0)) // Only skills where we have hard points in
+				.filter(x => Skills.class[x.skill] < 7) // Needs to be a skill of a class, not my class but a class
+				.map(x =>
+					// Search for this unique skill
+					(
+						uniqueSkills.find(u => u.skillId === x.skill)
+						// Or add it and return the value
+						|| (
+							(
+								uniqueSkills.push({skillId: x.skill, used: 0})
+								&& false
+							)
+							|| uniqueSkills[uniqueSkills.length - 1]
+						)
+					).used++ && false
+					// In the end always return x
+					|| x
+				);
+
+
+			return (me.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
+		}
 };
 
 // Export data

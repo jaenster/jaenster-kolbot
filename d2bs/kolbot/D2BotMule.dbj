@@ -434,7 +434,6 @@ include("oog.js");
 include("automule.js");
 include("mulelogger.js");
 include("torchsystem.js");
-include("common/attack.js");
 include("common/storage.js");
 include("common/pickit.js");
 include("common/town.js");

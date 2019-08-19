@@ -149,12 +149,11 @@
 	Config.GambleGoldStop = 0;
 	Config.MiniShopBot = false;
 	Config.TeleSwitch = false;
-	Config.MFSwitchPercent = 0;
-	Config.PrimarySlot = -1;
+	Config.PrimarySlot = undefined;
 	Config.LogExperience = false;
 	Config.TownCheck = false;
-	Config.PingQuit = [{Ping: 0, Duration: 0}],
-		Config.PacketShopping = false;
+	Config.PingQuit = [{Ping: 0, Duration: 0}];
+	Config.PacketShopping = false;
 
 	// Fastmod
 	Config.FCR = 0;
