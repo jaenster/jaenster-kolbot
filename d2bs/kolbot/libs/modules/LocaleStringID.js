@@ -3,7 +3,7 @@
 *	@author    Nishimura-Katsuo
 *	@desc      locale string indexes from NameStr ids
 */
-
+(function (module, require) {
 let LocaleStringID = {
 	"WarrivAct1IntroGossip1": 0,
 	"WarrivAct1IntroPalGossip1": 1,
@@ -7798,3 +7798,9 @@ let LocaleStringName = {};
 for (let k in LocaleStringID) {
 	LocaleStringName[LocaleStringID[k]] = k;
 }
+
+	module.exports = {
+		LocaleStringName: LocaleStringName,
+		LocaleStringID: LocaleStringID
+	}
+})(module, require);
