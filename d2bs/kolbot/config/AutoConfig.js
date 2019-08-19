@@ -21,7 +21,6 @@
 	// Example:
 	//Config.PacketCasting = 2; // Rather use full packet casting
 
-
 	// Here go your scripts as your used to. You can paste them from Scripts.txt.
 	Scripts.Mephisto = true;
 	Scripts.AutoMagicFind = true;
