@@ -25,11 +25,8 @@
 	Scripts.Mephisto = true;
 	Scripts.AutoMagicFind = true;
 
-	// Scripts.SpeedDiablo = true;
-
 	// Here go the pickit files
 	Config.PickitFiles.push("pots.nip");
-
 
 // No touchy
 	module.exports = Scripts; // and in the end, give this config back

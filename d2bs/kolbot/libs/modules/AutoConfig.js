@@ -84,6 +84,19 @@
 		Config.RepairPercent = 40;
 	};
 
+	AutoConfig.Merc = function () {
+		Config.UseMerc = !!me.mercrevivecost; // If a merc costs anything, im pretty sure you want one
+		Config.mercWatch = false;
+
+		if (Config.UseMerc) {
+			// Create a promise, once we can read a merc resolve with the merc object
+			// Once we have the merc, determin if it has Infinity, ifso, we definitely want to resurrect the merc during battle
+			new (require('Promise'))((resolve, reject, merc = me && me.getMerc()) => merc && resolve(merc))
+				.then(merc => merc.getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true')));
+		}
+
+	};
+
 	AutoConfig.Clearing = function () {
 		Config.BossPriority = true;
 		Config.ClearType = 0xF;
@@ -107,16 +120,15 @@
 		switch (true) {
 			// Almost all sorcs are the same, just setup a sorc
 			case me.classid === 1: //sorc
-				// A typical sorc
-				Auto.dodgeRules(); // Sorcs are dodging
-
-				//ToDo; figure out with GameData if static is the most damage we can do on a monster
-				Config.CastStatic = 60; // Cast static until the target is at designated life percent. 100 = disabled.
-				Config.StaticList = ["Baal", 'Mephisto', 'Diablo', 571, 572, 573]; // List of monster NAMES or CLASSIDS to static. Example: Config.StaticList = ["Andariel", 243];
+				require('Sorceress'); // Use more telekenis and such
 				break;
 
 			case me.classid === 5: // Druid
 
+			case me.classid === 2: // Pala
+				require('Paladin');
+			case me.classid = 6:
+				require('Assassin');
 
 		}
 	};

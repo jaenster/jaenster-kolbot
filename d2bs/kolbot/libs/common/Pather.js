@@ -817,6 +817,7 @@ var Pather = {
 			if (type === 5) {
 				Misc.click(0, 0, unit);
 			} else {
+				//Note, dont use tk here, as it only works in single player
 				sendPacket(1, 0x13, 4, unit.type, 4, unit.gid);
 			}
 

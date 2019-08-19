@@ -59,7 +59,7 @@
 
 	});
 
-	Unit.prototype.cast = function (skillId, hand, x, y, item) {
+	Unit.prototype.cast = function (skillId, hand, x, y, item, forcePacket) {
 		// In case its called upon an item we own, redirect it to castChargedSkill
 		if (this.type === 4 && Object.keys(sdk.storage).map(x => sdk.storage[x]).indexOf(this.location) !== -1) return this.castChargedSkill(skillId, x, y);
 
@@ -86,18 +86,11 @@
 
 		if (!me.setSkill(skillId, hand, item)) return false;
 
-		if (Config.PacketCasting > 1) {
-			switch (typeof x) {
-				case "number":
-					Packet.castSkill(hand, x, y);
-					delay(250);
-
-					break;
-				case "object":
-					Packet.unitCast(hand, x);
-					delay(250);
-
-					break;
+		if (Config.PacketCasting > 1 || forcePacket) {
+			if (this === me) {
+				Packet.castSkill(hand, x, y);
+			} else {
+				Packet.unitCast(hand, this);
 			}
 		} else {
 			switch (hand) {
