@@ -21,7 +21,7 @@ function BattleOrders(Config) {
 						quit();
 					}
 
-					Precast.doPrecast(true);
+					require('Precast')()
 					delay(1000);
 				}
 			}

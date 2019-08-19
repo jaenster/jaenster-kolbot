@@ -18,7 +18,7 @@ function Tombs(Config, Attack, Pickit) {
 		Attack.clearLevel(Config.ClearType);
 
 		if (i === 69) {
-			Precast.doPrecast(true);
+			require('Precast')()
 		}
 
 		if (!Pather.moveToExit(46, true)) {

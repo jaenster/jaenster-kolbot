@@ -425,7 +425,7 @@ function Diablo(Config, Attack) {
 	// start
 	Town.doChores();
 	Pather.useWaypoint(Config.RandomPrecast ? "random" : 107);
-	Precast.doPrecast(true);
+	require('Precast')()
 
 	if (me.area !== 107) {
 		Pather.useWaypoint(107);
@@ -448,7 +448,7 @@ function Diablo(Config, Attack) {
 		}
 
 		Pather.moveTo(7790, 5544);
-		Precast.doPrecast(true);
+		require('Precast')()
 		Attack.clear(30, 0, false, this.sort);
 		this.followPath(this.entranceToStar);
 	} else {
@@ -467,7 +467,7 @@ function Diablo(Config, Attack) {
 	Attack.clear(30, 0, false, this.sort);
 	this.vizierSeal();
 	this.seisSeal();
-	Precast.doPrecast(true);
+	require('Precast')()
 	this.infectorSeal();
 
 	switch (me.classid) {

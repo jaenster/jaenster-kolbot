@@ -13,14 +13,14 @@ include("Gambling.js");
 include("CraftingSystem.js");
 include("TorchSystem.js");
 include("MuleLogger.js");
-include("common/Attack.js");
+
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
-include("common/Precast.js");
+
 include("common/Prototypes.js");
 include("common/Runewords.js");
 include("common/Storage.js");
@@ -409,7 +409,7 @@ function main() {
 
 			break;
 		case 106: // numpad * - precast
-			Precast.doPrecast(true);
+			require('Precast')();
 
 			break;
 		}

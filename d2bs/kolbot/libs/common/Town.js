@@ -1477,7 +1477,7 @@ MainLoop:
 			if (Town.config.MercWatch) { // Cast BO on merc so he doesn't just die again
 				print("MercWatch precast");
 				Pather.useWaypoint("random");
-				Precast.doPrecast(true);
+				require('Precast')();
 				Pather.useWaypoint(preArea);
 			}
 
