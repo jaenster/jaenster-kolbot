@@ -14,6 +14,7 @@ include("CraftingSystem.js");
 include("TorchSystem.js");
 include("MuleLogger.js");
 
+include('unit/Item.js');
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Loader.js");

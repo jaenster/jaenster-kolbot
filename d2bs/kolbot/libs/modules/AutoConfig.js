@@ -133,5 +133,34 @@
 		}
 	};
 
+	AutoConfig.Inventory = function () {
+		const picked = require('CharacterCache')('picked');
+		// Create a inverse of an inventory
+		const grid = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map(() => [1, 1, 1, 1]); // Everything starts with unlocked <-- WARNING
+
+		me.getItems()
+			.filter(item => item.location === 3).forEach(
+			function (item) {
+				//print(item.uniqueId+' -- '+item.name);
+				if (picked.indexOf(item.uniqueId) !== -1) {
+					print('Item picked by bot -> ' + item.name);
+					return;
+				}
+				for (let extraX = 0; extraX < item.sizex; extraX++) {
+					for (let extraY = 0; extraY < item.sizey; extraY++) {
+						// Note that the y is what we call x, and y is in opposite order in the game
+						grid[item.x + extraX][item.y + extraY] = 0; // This slot is locked
+					}
+				}
+			});
+
+		let flipped = grid.map((col, i) => grid.map(row => row.hasOwnProperty(i) && row[i]));
+		flipped.length = 4; // fix the length
+		for (let i = 0; i < 4; i++) {
+			print('Config.Inventory[' + i + '] = [' + flipped[i].toString() + ']');
+		}
+		flipped.forEach((e, i) => Config.Inventory[i] = e);
+	};
+
 	module.exports = AutoConfig;
 })(module, require);

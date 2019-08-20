@@ -27,6 +27,7 @@
 
 	// Here go the pickit files
 	Config.PickitFiles.push("pots.nip");
+	Config.PickitFiles.push("kolton.nip");
 
 // No touchy
 	module.exports = Scripts; // and in the end, give this config back

@@ -22,6 +22,7 @@ include("common/Prototypes.js");
 include("unit/Attack.js");
 include("unit/Movement.js");
 include("unit/Me.js");
+include("unit/Item.js");
 include('unit/Object.js');
 include("common/Runewords.js");
 include("common/Storage.js");
