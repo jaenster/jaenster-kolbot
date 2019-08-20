@@ -218,149 +218,93 @@ var Pickit = {
 			this.name = unit.name;
 			this.color = Pickit.itemColor(unit);
 			this.gold = unit.getStat(14);
-			this.useTk = Pickit.config.UseTelekinesis && me.classid === 1 && me.getSkill(43, 1) && (this.type === 4 || this.type === 22 || (this.type > 75 && this.type < 82)) &&
-						getDistance(me, unit) > 5 && getDistance(me, unit) < 20 && !checkCollision(me, unit, 0x4);
-			this.picked = false;
+			this.useTk = me.classid === 1 && me.getSkill(43, 1) && (this.type === 4 || this.type === 22 || (this.type > 75 && this.type < 82)) &&
+				getDistance(me, unit) > 5 && getDistance(me, unit) < 20 && !checkCollision(me, unit, 0x4);
 		}
 
-		var i, item, tick, gid, stats,
-			cancelFlags = [0x01, 0x08, 0x14, 0x0c, 0x19, 0x1a],
+		let i, item, gid, stats,
+			cancelFlags = [sdk.uiflags.Inventory, sdk.uiflags.NPCMenu, sdk.uiflags.Waypoint, sdk.uiflags.Shop, sdk.uiflags.Stash, sdk.uiflags.Cube],
 			itemCount = me.itemcount;
 
-		if (unit.gid) {
+		if (unit.gid) { //ToDo Figure out why its researching the item, maybe to see if the item is snatched up by someone else
 			gid = unit.gid;
 			item = getUnit(4, -1, -1, gid);
 		}
 
-		if (!item) {
-			return false;
-		}
+		if (!item) return false;
 
-		for (i = 0; i < cancelFlags.length; i += 1) {
-			if (getUIFlag(cancelFlags[i])) {
-				delay(500);
-				me.cancel(0);
-
-				break;
-			}
-		}
+		while (cancelFlags.some(getUIFlag)) me.cancel();
 
 		stats = new ItemStats(item);
 
-MainLoop:
-		for (i = 0; i < 3; i += 1) {
-			if (!getUnit(4, -1, -1, gid)) {
-				break MainLoop;
-			}
+		(new Array(3)) // retry x times
+			.every(function (_, retry) {
+				if (!getUnit(4, -1, -1, gid)) return false; // cant find the item anywhere, suppose its pick by someone else
 
-			if (me.dead) {
-				return false;
-			}
+				if (me.dead) return false; // if your dead, you cant pick items
 
-			while (!me.idle) {
-				delay(40);
-			}
+				while (!me.idle) {
+					delay(40); //ToDo; make a promise out of this
+				}
 
-			if (item.mode !== 3 && item.mode !== 5) {
-				break MainLoop;
-			}
+				if (item.mode !== 3 && item.mode !== 5) return false; // Only if its dropping or on the floor
 
-			if (stats.useTk) {
-				Skill.cast(43, 0, item);
-			} else {
-				if (getDistance(me, item) > (Pickit.config.FastPick === 2 && i < 1 ? 6 : 4) || checkCollision(me, item, 0x1)) {
-					if (Pather.useTeleport()) {
-						Pather.moveToUnit(item);
-					} else if (!Pather.moveTo(item.x, item.y, 0)) {
-						continue MainLoop;
+				if (stats.useTk) return !item.cast(sdk.skills.Telekinesis); // Continue if failed, stop if it doesnt. ToDo Check collisions (cant pick an item on the other side of a wall)
+
+				if (item.distance > 4 || checkCollision(me, item, 0x01)) item.moveTo();
+
+				(!retry // If we are in the first attempt, just send the packet, otherwise click on it neatly
+					&& new PacketBuilder().byte(0x16).dword(0x04).dword(item.gid).dword(0).send()
+					|| Misc.click(0, 0, item)); //ToDo; refactor to item.click();
+			});
+
+
+		const start = getTickCount();
+		return new Promise(function (resolve, reject) {
+			if (stats.classid === 543) return resolve(item); // Dont do anything special with gold. Its just gold
+			let pickedItem = getUnit(4, -1, -1, gid);
+			if (me.itemcount !== itemCount || pickedItem && pickedItem.mode !== 3 && pickedItem.mode !== 5) return resolve(pickedItem); // returning to avoid also refusing it
+			if (getTickCount() - start > 1000) return reject(pickedItem); //Todo, maybe give more info?
+		}).then(function (item) {
+			switch (true) {
+				case stats.classid === 543: // key
+					return print("ÿc7Picked up " + stats.color + stats.name + " ÿc7(" + Town.checkKeys() + "/12)");
+				case stats.classid === 529 || stats.classid === 530:
+					return print("ÿc7Picked up " + stats.color + stats.name + " ÿc7(" + Town.checkScrolls(stats.classid === 529 ? "tbk" : "ibk") + "/20)");
+
+				case status === 1:
+					print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
+					if (Pickit.ignoreLog.indexOf(stats.type) === -1) {
+						Misc.itemLogger("Kept", item);
+						Misc.logItem("Kept", item, keptLine);
 					}
-				}
+					break;
 
-				if (Pickit.config.FastPick < 2) {
-					Misc.click(0, 0, item);
-				} else {
-					sendPacket(1, 0x16, 4, 0x4, 4, item.gid, 4, 0);
-				}
+				//ToDo; need to refactor rest of these pickits
+				case 2:
+					print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Cubing)");
+					Misc.itemLogger("Kept", item, "Cubing " + me.findItems(item.classid).length);
+					Cubing.update();
+
+					break;
+				case 3:
+					print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Runewords)");
+					Misc.itemLogger("Kept", item, "Runewords");
+					Runewords.update(stats.classid, gid);
+
+					break;
+				case 5: // Crafting System
+					print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Crafting System)");
+					CraftingSystem.update(item);
+
+					break;
+				default:
+					print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
 			}
 
-			tick = getTickCount();
-
-			while (getTickCount() - tick < 1000) {
-				item = copyUnit(item);
-
-				if (stats.classid === 523) {
-					if (!item.getStat(14) || item.getStat(14) < stats.gold) {
-						print("ÿc7Picked up " + stats.color + (item.getStat(14) ? (item.getStat(14) - stats.gold) : stats.gold) + " " + stats.name);
-
-						return true;
-					}
-				}
-
-				if (item.mode !== 3 && item.mode !== 5) {
-					switch (stats.classid) {
-					case 543: // Key
-						print("ÿc7Picked up " + stats.color + stats.name + " ÿc7(" + Town.checkKeys() + "/12)");
-
-						return true;
-					case 529: // Scroll of Town Portal
-					case 530: // Scroll of Identify
-						print("ÿc7Picked up " + stats.color + stats.name + " ÿc7(" + Town.checkScrolls(stats.classid === 529 ? "tbk" : "ibk") + "/20)");
-
-						return true;
-					}
-
-					break MainLoop;
-				}
-
-				delay(20);
-			}
-
-			// TK failed, disable it
-			stats.useTk = false;
-
-			//print("pick retry");
-		}
-
-		stats.picked = me.itemcount > itemCount || !!me.getItem(-1, -1, gid);
-
-		if (stats.picked) {
-			DataFile.updateStats("lastArea");
-
-			switch (status) {
-			case 1:
-				print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
-
-				if (this.ignoreLog.indexOf(stats.type) === -1) {
-					Misc.itemLogger("Kept", item);
-					Misc.logItem("Kept", item, keptLine);
-				}
-
-				break;
-			case 2:
-				print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Cubing)");
-				Misc.itemLogger("Kept", item, "Cubing " + me.findItems(item.classid).length);
-				Cubing.update();
-
-				break;
-			case 3:
-				print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Runewords)");
-				Misc.itemLogger("Kept", item, "Runewords");
-				Runewords.update(stats.classid, gid);
-
-				break;
-			case 5: // Crafting System
-				print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Crafting System)");
-				CraftingSystem.update(item);
-
-				break;
-			default:
-				print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
-
-				break;
-			}
-		}
-
-		return true;
+			//ToDo; Store the given data
+			return undefined; //<-- undefined keeps d2bs warnings away
+		});
 	},
 
 	itemQualityToName: function (quality) {
