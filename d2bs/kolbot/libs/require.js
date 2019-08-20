@@ -17,13 +17,13 @@ const require = (function (include, isIncluded, print) {
         let packageName = (path + field).replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
         if (packages.hasOwnProperty(packageName)) {
-            depth && print('ÿc2Jaensterÿc0 ::    - retrieving cached module: ' + field);
+            depth && print('ÿc2Jaensterÿc0 ::    - retrieving cached module: ' + path + field);
             return packages[packageName].exports;
         }
 
         if (!isIncluded(path + field + '.js')) {
-            depth && print('ÿc2Jaensterÿc0 ::    - loading dependency: ' + field);
-            !depth && print('ÿc2Jaensterÿc0 :: Loading module: ' + field);
+            depth && print('ÿc2Jaensterÿc0 ::    - loading dependency: ' + path + field);
+            !depth && print('ÿc2Jaensterÿc0 :: Loading module: ' + path + field);
             depth++;
 
             let old = Object.create(global['module']);

@@ -7,7 +7,7 @@
 function Summoner(Config) {
 	Town.doChores();
 	Pather.useWaypoint(74);
-	Precast.doPrecast(true);
+	require('Precast')()
 
 	if (Config.Summoner.FireEye) {
 		if (!Pather.usePortal(null)) {

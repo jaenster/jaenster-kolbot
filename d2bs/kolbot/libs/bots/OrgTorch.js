@@ -233,7 +233,6 @@ function OrgTorch(Config, Attack) {
 				skillBackup = Config.AttackSkill[2];
 				Config.AttackSkill[2] = 125;
 
-				Attack.init();
 			}
 
 			Attack.kill(704);

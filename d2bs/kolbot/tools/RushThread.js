@@ -12,20 +12,20 @@ include("Gambling.js");
 include("AutoMule.js");
 include("CraftingSystem.js");
 include("TorchSystem.js");
-include("common/Attack.js");
+
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
-include("common/Precast.js");
+
 include("common/Prototypes.js");
 include("common/Runewords.js");
 include("common/Storage.js");
 include("common/Town.js");
 
-
+//ToDo; replace this with a good rusher script
 var gidList = [];
 
 function main() {
@@ -101,7 +101,6 @@ function main() {
 		say("starting andariel");
 		Town.doChores();
 		Pather.useWaypoint(35, true);
-		Precast.doPrecast(true);
 
 		if (!Pather.moveToExit([36, 37], true) || !Pather.moveTo(22582, 9612)) {
 			throw new Error("andy failed");
@@ -139,7 +138,6 @@ function main() {
 		if (me.diff === 0) {
 			say("starting cube");
 			Pather.useWaypoint(57, true);
-			Precast.doPrecast(true);
 
 			if (!Pather.moveToExit(60, true) || !Pather.moveToPreset(me.area, 2, 354)) {
 				throw new Error("cube failed");
@@ -167,7 +165,6 @@ function main() {
 		say("starting amulet");
 		Town.doChores();
 		Pather.useWaypoint(44, true);
-		Precast.doPrecast(true);
 
 		if (!Pather.moveToExit([45, 58, 61], true) || !Pather.moveTo(15044, 14045)) {
 			throw new Error("amulet failed");
@@ -200,7 +197,6 @@ function main() {
 		say("starting staff");
 		Town.doChores();
 		Pather.useWaypoint(43, true);
-		Precast.doPrecast(true);
 
 		if (!Pather.moveToExit([62, 63, 64], true) || !Pather.moveToPreset(me.area, 2, 356)) {
 			throw new Error("staff failed");
@@ -233,7 +229,6 @@ function main() {
 		say("starting summoner");
 		Town.doChores();
 		Pather.useWaypoint(74, true);
-		Precast.doPrecast(true);
 
 		var i, journal,
 			preset = getPresetUnit(me.area, 2, 357),
@@ -313,7 +308,6 @@ function main() {
 			Pather.useWaypoint(46, true);
 		}
 
-		Precast.doPrecast(true);
 
 		if (!Pather.moveToExit(getRoom().correcttomb, true) || !Pather.moveToPreset(me.area, 2, 152)) {
 			throw new Error("duriel failed");
@@ -377,7 +371,6 @@ function main() {
 		say("starting travincal");
 		Town.doChores();
 		Pather.useWaypoint(83, true);
-		Precast.doPrecast(true);
 
 		var coords = [me.x, me.y];
 
@@ -413,7 +406,6 @@ function main() {
 
 		Town.doChores();
 		Pather.useWaypoint(101, true);
-		Precast.doPrecast(true);
 		Pather.moveToExit(102, true);
 		Pather.moveTo(17692, 8023);
 		Pather.makePortal();
@@ -590,7 +582,6 @@ function main() {
 
 		Town.doChores();
 		Pather.useWaypoint(107, true);
-		Precast.doPrecast(true);
 		Pather.moveTo(7790, 5544);
 		this.initLayout();
 
@@ -694,7 +685,6 @@ function main() {
 
 		Town.doChores();
 		Pather.useWaypoint(118, true);
-		Precast.doPrecast(true);
 
 		if (!Pather.moveToExit(120, true)) {
 			throw new Error("Failed to go to Ancients way.");
@@ -887,7 +877,6 @@ function main() {
 		if (me.inTown) {
 			Town.doChores();
 			Pather.useWaypoint(129, true);
-			Precast.doPrecast(true);
 
 			if (!Pather.moveToExit([130, 131], true)) {
 				throw new Error("Failed to move to Throne of Destruction.");
@@ -917,7 +906,6 @@ MainLoop:
 
 				tick = getTickCount();
 
-				Precast.doPrecast(true);
 
 				break;
 			case 2:
@@ -959,13 +947,12 @@ MainLoop:
 				break;
 			}
 
-			Precast.doPrecast(false);
+
 			delay(10);
 		}
 
 		this.clearThrone();
 		Pather.moveTo(15092, 5011);
-		Precast.doPrecast(true);
 
 		while (getUnit(1, 543)) {
 			delay(500);
@@ -1045,7 +1032,6 @@ MainLoop:
 			};
 
 		Pather.useWaypoint(48, true);
-		Precast.doPrecast(false);
 		Pather.moveToExit(49, true);
 
 		radaPreset = getPresetUnit(49, 2, 355);
@@ -1128,7 +1114,6 @@ MainLoop:
 			throw new Error("Lam Essen quest failed");
 		}
 
-		Precast.doPrecast(false);
 
 		if (!Pather.moveToExit(94, true) || !Pather.moveToPreset(me.area, 2, 193)) {
 			throw new Error("Lam Essen quest failed");
@@ -1191,7 +1176,6 @@ MainLoop:
 			};
 
 		Pather.useWaypoint(106, true);
-		Precast.doPrecast(false);
 		Pather.moveToExit(105, true);
 
 		izualPreset = getPresetUnit(105, 1, 256);
@@ -1254,7 +1238,6 @@ MainLoop:
 		say("starting shenk");
 
 		Pather.useWaypoint(111, true);
-		Precast.doPrecast(false);
 		Pather.moveTo(3846, 5120);
 		Attack.securePosition(me.x, me.y, 30, 3000);
 		Pather.makePortal();
@@ -1291,7 +1274,6 @@ MainLoop:
 			throw new Error("Anya quest failed");
 		}
 
-		Precast.doPrecast(false);
 
 		if (!Pather.moveToExit(114, true) || !Pather.moveToPreset(me.area, 2, 460)) {
 			throw new Error("Anya quest failed");
@@ -1348,7 +1330,6 @@ MainLoop:
 	// Start
 	Config.init(false);
 	Pickit.init(false);
-	Attack.init();
 	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();

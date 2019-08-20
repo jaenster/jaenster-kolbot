@@ -225,7 +225,7 @@ function Cows(Config, Attack) {
 
 	this.openPortal(leg, tome);
 	Pather.usePortal(39);
-	Precast.doPrecast(false);
+	require('Precast')()
 	this.clearCowLevel();
 
 	return true;

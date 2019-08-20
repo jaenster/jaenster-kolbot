@@ -329,51 +329,63 @@ let sdk = {
 
         // Druid
         Raven: 221,
-        PlaguePoppy: 222,
-        Wearwolf: 223,
-        ShapeShifting: 224,
+		PoisonCreeper: 222, // External
+		PlaguePoppy: 222, // Internal
+		Werewolf: 223, // External
+		Wearwolf: 223, // Internal
+		Lycanthropy: 224, // External
+		ShapeShifting: 224, // Internal
         Firestorm: 225,
         OakSage: 226,
-        SummonSpiritWolf: 227,
-        Wearbear: 228,
+		SpiritWolf: 227, // External
+		SummonSpiritWolf: 227, // Internal
+		Werebear: 228, // External
+		Wearbear: 228, // Internal
         MoltenBoulder: 229,
         ArcticBlast: 230,
-        CycleofLife: 231,
+		CarrionVine: 231, // External
+		CycleofLife: 231, // Internal
         FeralRage: 232,
         Maul: 233,
-        Eruption: 234,
+		Fissure: 234, // Internal
+		Eruption: 234, // Internal
         CycloneArmor: 235,
         HeartofWolverine: 236,
-        SummonFenris: 237,
-        DireWolf: 237,
+		DireWolf: 237, // External
+		SummonFenris: 237, // Internal
         Rabies: 238,
         FireClaws: 239,
         Twister: 240,
-        Vines: 241,
+		SolarCreeper: 241, // External
+		Vines: 241, // Internal
         Hunger: 242,
         ShockWave: 243,
         Volcano: 244,
         Tornado: 245,
         SpiritofBarbs: 246,
-        SummonGrizzly: 247,
+		Grizzly: 247, // External
+		SummonGrizzly: 247, // Internal
         Fury: 248,
         Armageddon: 249,
         Hurricane: 250,
 
         // Assa
-        FireTrauma: 251,
+		FireBlast: 251, // External
+		FireTrauma: 251, // Internal
         ClawMastery: 252,
         PsychicHammer: 253,
         TigerStrike: 254,
         DragonTalon: 255,
-        ShockField: 256,
+		ShockWeb: 256, // External
+		ShockField: 256, // Internal
         BladeSentinel: 257,
         Quickness: 258, // Internal name
         BurstOfSpeed: 258, // Shown name
         FistsofFire: 259,
         DragonClaw: 260,
         ChargedBoltSentry: 261,
-        WakeofFireSentry: 262,
+		WakeofFire: 262, // External
+		WakeofFireSentry: 262, // Internal
         WeaponBlock: 263,
         CloakofShadows: 264,
         CobraStrike: 265,
@@ -383,7 +395,8 @@ let sdk = {
         ClawsofThunder: 269,
         DragonTail: 270,
         LightningSentry: 271,
-        InfernoSentry: 272,
+		WakeofInferno: 272, // External
+		InfernoSentry: 272, // Internal
         MindBlast: 273,
         BladesofIce: 274,
         DragonFlight: 275,
@@ -391,8 +404,9 @@ let sdk = {
         BladeShield: 277,
         Venom: 278,
         ShadowMaster: 279,
-        RoyalStrike: 280,
-        WakeOfDestructionSentry: 281,
+		PhoenixStrike: 280, // External
+		RoyalStrike: 280, // Internal
+		WakeOfDestructionSentry: 281, // Not used?
         tabs: {
             // Ama
             BowCrossbow: 0,
@@ -2391,64 +2405,104 @@ let sdk = {
 };
 
 // Need to be set after its loaded
-sdk.skillTabs =  {
-    //    NTIPAliasStat["itemaddbowandcrossbowskilltab"] = [188, 0];
-    //     NTIPAliasStat["bowandcrossbowskilltab"] = [188, 0];
-    //     NTIPAliasStat["itemaddpassiveandmagicskilltab"] = [188, 1];
-    //     NTIPAliasStat["passiveandmagicskilltab"] = [188, 1];
-    //     NTIPAliasStat["itemaddjavelinandspearskilltab"] = [188, 2];
-    //     NTIPAliasStat["javelinandspearskilltab"] = [188, 2];
-    //     NTIPAliasStat["itemaddfireskilltab"] = [188, 8];
-    //     NTIPAliasStat["fireskilltab"] = [188, 8];
-    //     NTIPAliasStat["itemaddlightningskilltab"] = [188, 9];
-    //     NTIPAliasStat["lightningskilltab"] = [188, 9];
-    //     NTIPAliasStat["itemaddcoldskilltab"] = [188, 10];
-    //     NTIPAliasStat["coldskilltab"] = [188, 10];
-    //     NTIPAliasStat["itemaddcursesskilltab"] = [188, 16];
-    //     NTIPAliasStat["cursesskilltab"] = [188, 16];
-    //     NTIPAliasStat["itemaddpoisonandboneskilltab"] = [188, 17];
-    //     NTIPAliasStat["poisonandboneskilltab"] = [188, 17];
-    //     NTIPAliasStat["itemaddnecromancersummoningskilltab"] = [188, 18];
-    //     NTIPAliasStat["necromancersummoningskilltab"] = [188, 18];
-    //     NTIPAliasStat["itemaddpalicombatskilltab"] = [188, 24];
-    //     NTIPAliasStat["palicombatskilltab"] = [188, 24];
-    //     NTIPAliasStat["itemaddoffensiveaurasskilltab"] = [188, 25];
-    //     NTIPAliasStat["offensiveaurasskilltab"] = [188, 25];
-    //     NTIPAliasStat["itemadddefensiveaurasskilltab"] = [188, 26];
-    //     NTIPAliasStat["defensiveaurasskilltab"] = [188, 26];
-    //     NTIPAliasStat["itemaddbarbcombatskilltab"] = [188, 32];
-    //     NTIPAliasStat["barbcombatskilltab"] = [188, 32];
-    //     NTIPAliasStat["itemaddmasteriesskilltab"] = [188, 33];
-    //     NTIPAliasStat["masteriesskilltab"] = [188, 33];
-    //     NTIPAliasStat["itemaddwarcriesskilltab"] = [188, 34];
-    //     NTIPAliasStat["warcriesskilltab"] = [188, 34];
-    //     NTIPAliasStat["itemadddruidsummoningskilltab"] = [188, 40];
-    //     NTIPAliasStat["druidsummoningskilltab"] = [188, 40];
-    //     NTIPAliasStat["itemaddshapeshiftingskilltab"] = [188, 41];
-    //     NTIPAliasStat["shapeshiftingskilltab"] = [188, 41];
-    //     NTIPAliasStat["itemaddelementalskilltab"] = [188, 42];
-    //     NTIPAliasStat["elementalskilltab"] = [188, 42];
-    //     NTIPAliasStat["itemaddtrapsskilltab"] = [188, 48];
-    //     NTIPAliasStat["trapsskilltab"] = [188, 48];
-    //     NTIPAliasStat["itemaddshadowdisciplinesskilltab"] = [188, 49];
-    //     NTIPAliasStat["shadowdisciplinesskilltab"] = [188, 49];
-    //     NTIPAliasStat["itemaddmartialartsskilltab"] = [188, 50];
-    //     NTIPAliasStat["martialartsskilltab"] = [188, 50];
+sdk.skillTabs = {
     amazon: {
         bowAndCrossBow: {
             id: 0,
-            skills: [sdk.skills.MagicArrow,sdk.skills.FireArrow,sdk.skills.MultipleShot,sdk.skills.ExplodingArrow,sdk.skills.IceArrow,sdk.skills.GuidedArrow,sdk.skills.ImmolationArrow,sdk.skills.Strafe],
+			skills: [sdk.skills.MagicArrow, sdk.skills.FireArrow, sdk.skills.MultipleShot, sdk.skills.ExplodingArrow, sdk.skills.IceArrow, sdk.skills.GuidedArrow, sdk.skills.ImmolationArrow, sdk.skills.Strafe],
         },
         passiveAndMagic: {
             id: 1,
-            skills: [sdk.skills.InnerSight,sdk.skills.CriticalStrike,sdk.skills.Dodge,sdk.skills.SlowMissiles,sdk.skills.Avoid,sdk.skills.Penetrate,sdk.skills.Dopplezon,sdk.skills.Evade,sdk.skills.Valkyrie,sdk.skills.Pierce],
+			skills: [sdk.skills.InnerSight, sdk.skills.CriticalStrike, sdk.skills.Dodge, sdk.skills.SlowMissiles, sdk.skills.Avoid, sdk.skills.Penetrate, sdk.skills.Dopplezon, sdk.skills.Evade, sdk.skills.Valkyrie, sdk.skills.Pierce],
         },
-    },
+		javelinAndSpear: {
+			id: 2,
+			skills: [sdk.skills.Jab, sdk.skills.PowerStrike, sdk.skills.PoisonJavelin, sdk.skills.Impale, sdk.skills.LightningBolt, sdk.skills.ChargedStrike, sdk.skills.PlagueJavelin, sdk.skills.Fend, sdk.skills.LightningStrike, sdk.skills.LightningFury],
+		},
+	},
+	sorc: {
+		fire: {
+			id: 8,
+			skills: [sdk.skills.FireBolt, sdk.skills.Warmth, sdk.skills.Inferno, sdk.skills.Blaze, sdk.skills.FireBall, sdk.skills.FireWall, sdk.skills.Enchant, sdk.skills.Meteor, sdk.skills.FireMastery, sdk.skills.Hydra],
+		},
+		lightning: {
+			id: 9,
+			skills: [sdk.skills.ChargedBolt, sdk.skills.StaticField, sdk.skills.Telekinesis, sdk.skills.Nova, sdk.skills.Lightning, sdk.skills.ChainLightning, sdk.skills.Teleport, sdk.skills.ThunderStorm, sdk.skills.EnergyShield, sdk.skills.LightningMastery],
+		},
+		cold: {
+			id: 10,
+			skills: [sdk.skills.IceBolt, sdk.skills.FrozenArmor, sdk.skills.FrostNova, sdk.skills.IceBlast, sdk.skills.ShiverArmor, sdk.skills.GlacialSpike, sdk.skills.Blizzard, sdk.skills.ChillingArmor, sdk.skills.FrozenOrb, sdk.skills.ColdMastery,]
+		}
+	},
+	necro: {
+		curse: {
+			id: 16,
+			skills: [sdk.skills.AmplifyDamage, sdk.skills.DimVision, sdk.skills.Weaken, sdk.skills.IronMaiden, sdk.skills.Terror, sdk.skills.Confuse, sdk.skills.LifeTap, sdk.skills.Attract, sdk.skills.Decrepify, sdk.skills.LowerResist],
+		},
+		psnBone: {
+			id: 17,
+			skills: [sdk.skills.Teeth, sdk.skills.BoneArmor, sdk.skills.PoisonDagger, sdk.skills.CorpseExplosion, sdk.skills.BoneWall, sdk.skills.PoisonExplosion, sdk.skills.BoneSpear, sdk.skills.BonePrison, sdk.skills.PoisonNova, sdk.skills.BoneSpirit],
+		},
+		summon: {
+			id: 18,
+			skills: [sdk.skills.SkeletonMastery, sdk.skills.RaiseSkeleton, sdk.skills.ClayGolem, sdk.skills.GolemMastery, sdk.skills.RaiseSkeletalMage, sdk.skills.BloodGolem, sdk.skills.SummonResist, sdk.skills.IronGolem, sdk.skills.FireGolem, sdk.skills.Revive,]
+		}
+	},
+	paladin: {
+		combat: {
+			id: 24,
+			skills: [sdk.skills.Sacrifice, sdk.skills.Smite, sdk.skills.HolyBolt, sdk.skills.Zeal, sdk.skills.Charge, sdk.skills.Vengeance, sdk.skills.BlessedHammer, sdk.skills.Conversion, sdk.skills.HolyShield, sdk.skills.FistoftheHeavens,],
+		},
+		offensiveaura: {
+			id: 25,
+			skills: [sdk.skills.Might, sdk.skills.HolyFire, sdk.skills.Thorns, sdk.skills.BlessedAim, sdk.skills.Concentration, sdk.skills.HolyFreeze, sdk.skills.HolyShock, sdk.skills.Sanctuary, sdk.skills.Fanaticism, sdk.skills.Conviction,],
+		},
+		defensiveaura: {
+			id: 26,
+			skills: [sdk.skills.Prayer, sdk.skills.ResistFire, sdk.skills.Defiance, sdk.skills.ResistCold, sdk.skills.Cleansing, sdk.skills.ResistLightning, sdk.skills.Vigor, sdk.skills.Meditation, sdk.skills.Redemption, sdk.skills.Salvation,],
+		}
+	},
     barb: {
+		combat: {
+			id: 32,
+			skills: [sdk.skills.Bash, sdk.skills.Leap, sdk.skills.DoubleSwing, sdk.skills.Stun, sdk.skills.DoubleThrow, sdk.skills.LeapAttack, sdk.skills.Concentrate, sdk.skills.Frenzy, sdk.skills.Whirlwind, sdk.skills.Berserk,],
+		},
+		masteries: {
+			id: 33,
+			skills: [sdk.skills.SwordMastery, sdk.skills.AxeMastery, sdk.skills.MaceMastery, sdk.skills.PoleArmMastery, sdk.skills.ThrowingMastery, sdk.skills.SpearMastery, sdk.skills.IncreasedStamina, sdk.skills.IronSkin, sdk.skills.IncreasedSpeed, sdk.skills.NaturalResistance,],
+		},
         warcries: {
             id: 34,
-            skills: [sdk.skills.BattleOrders,sdk.skills.BattleCommand,sdk.skills.BattleCry,sdk.skills.GrimWard,sdk.skills.FindItem,sdk.skills.Shout,sdk.skills.Taunt,sdk.skills.Howl,sdk.skills.FindPotion],
+			skills: [sdk.skills.BattleOrders, sdk.skills.BattleCommand, sdk.skills.BattleCry, sdk.skills.GrimWard, sdk.skills.FindItem, sdk.skills.Shout, sdk.skills.Taunt, sdk.skills.Howl, sdk.skills.FindPotion],
         }
     },
+	druid: {
+		summon: {
+			id: 40,
+			skills: [sdk.skills.Raven, sdk.skills.PoisonCreeper, sdk.skills.OakSage, sdk.skills.SummonSpiritWolf, sdk.skills.CarrionVine, sdk.skills.HeartofWolverine, sdk.skills.DireWolf, sdk.skills.SolarCreeper, sdk.skills.SpiritofBarbs, sdk.skills.SummonGrizzly,],
+		},
+		shapeshifting: {
+			id: 41,
+			skills: [sdk.skills.Werewolf, sdk.skills.Lycanthropy, sdk.skills.Werebear, sdk.skills.FeralRage, sdk.skills.Maul, sdk.skills.Rabies, sdk.skills.FireClaws, sdk.skills.Hunger, sdk.skills.ShockWave, sdk.skills.Fury,],
+		},
+		elemental: {
+			id: 42,
+			skills: [sdk.skills.Firestorm, sdk.skills.MoltenBoulder, sdk.skills.ArcticBlast, sdk.skills.Fissure, sdk.skills.CycloneArmor, sdk.skills.Twister, sdk.skills.Volcano, sdk.skills.Tornado, sdk.skills.Armageddon, sdk.skills.Hurricane,]
+		}
+	},
+	assassin: {
+		traps: {
+			id: 48,
+			skills: [sdk.skills.FireBlast, sdk.skills.ShockWeb, sdk.skills.BladeSentinel, sdk.skills.ChargedBoltSentry, sdk.skills.WakeofFire, sdk.skills.BladeFury, sdk.skills.LightningSentry, sdk.skills.WakeofInferno, sdk.skills.DeathSentry, sdk.skills.BladeShield],
+		},
+		shadowDisciplines: {
+			id: 49,
+			skills: [sdk.skills.ClawMastery, sdk.skills.PsychicHammer, sdk.skills.BurstOfSpeed, sdk.skills.WeaponBlock, sdk.skills.CloakofShadows, sdk.skills.Fade, sdk.skills.ShadowWarrior, sdk.skills.MindBlast, sdk.skills.Venom, sdk.skills.ShadowMaster],
+		},
+		martialArts: {
+			id: 50,
+			skills: [sdk.skills.TigerStrike, sdk.skills.DragonTalon, sdk.skills.FistsofFire, sdk.skills.DragonClaw, sdk.skills.CobraStrike, sdk.skills.ClawsofThunder, sdk.skills.DragonTail, sdk.skills.BladesofIce, sdk.skills.DragonFlight, sdk.skills.PhoenixStrike],
+		}
+	}
 };
 

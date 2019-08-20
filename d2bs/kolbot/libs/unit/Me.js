@@ -64,24 +64,23 @@
 		primarySlot: {
 			get: function () {
 				const Config = require('Config');
-				if (Config.PrimarySlot === -1) { // determine primary slot if not set
-					if ((Precast.haveCTA > -1) || Precast.checkCTA()) { // have cta
-						if (this.checkSlot(Precast.haveCTA ^ 1)) { // have item on non-cta slot
-							Config.PrimarySlot = Precast.haveCTA ^ 1; // set non-cta slot as primary
-						} else { // other slot is empty
-							Config.PrimarySlot = Precast.haveCTA; // set cta as primary slot
-						}
-					} else if (!this.checkSlot(0) && this.checkSlot(1)) { // only slot II has items
-						Config.PrimarySlot = 1;
-					} else { // both slots have items, both are empty, or only slot I has items
-						Config.PrimarySlot = 0;
-					}
-				}
-
-				return Config.PrimarySlot;
+				// const GameData = require('GameData');
+				// const Skills = require('Skills');
+				//
+				// const myBestSkill = GameData.mostUsedSkills().first();
+				// print(JSON.stringify(myBestSkill));
+				// const SkillLevel = myBestSkill && Skills.getSkillLevel(myBestSkill.skillId) || [0,0];
+				//
+				// print(JSON.stringify(myBestSkill)+ (Skills.getSkillLevel(myBestSkill.skillId).join(','))+ ' -- '+((Config.PrimarySlot !== undefined && Config.PrimarySlot) || (SkillLevel[1] < SkillLevel[0] && 1 || 0)));
+				return Config.PrimarySlot !== undefined ? Config.PrimarySlot : 0;
 			},
 			enumerable: false,
 		},
+		usingBow: {
+			get: function () {
+				return '';//ToDo; implement
+			}
+		}
 	});
 
 	me.journeyToPreset = function (area, unitType, unitId, offX, offY, clearPath, pop) {

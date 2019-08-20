@@ -213,7 +213,7 @@ function FastDiablo(Config, Attack) {
 
 	Town.doChores();
 	Pather.useWaypoint(107);
-	Precast.doPrecast(true);
+	require('Precast')()
 	this.initLayout();
 	this.openSeal(395);
 	this.openSeal(396);

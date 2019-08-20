@@ -9,7 +9,7 @@ function Eldritch(Config, Attack) {
 
 	Town.doChores();
 	Pather.useWaypoint(111);
-	Precast.doPrecast(true);
+	require('Precast')()
 	Pather.moveTo(3745, 5084);
 	Attack.clear(15, 0, getLocaleString(22500)); // Eldritch the Rectifier
 

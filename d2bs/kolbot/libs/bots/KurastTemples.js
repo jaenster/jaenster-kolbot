@@ -7,7 +7,7 @@
 function KurastTemples(Config, Attack) {
 	Town.doChores();
 	Pather.useWaypoint(80);
-	Precast.doPrecast(true);
+	require('Precast')()
 
 	var i,
 		areas = [94, 95, 96, 97, 98, 99];
@@ -24,7 +24,7 @@ function KurastTemples(Config, Attack) {
 		}
 
 		if (i === 3) {
-			Precast.doPrecast(true);
+			require('Precast')()
 		}
 
 		Attack.clearLevel(Config.ClearType);

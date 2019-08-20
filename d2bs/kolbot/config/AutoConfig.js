@@ -21,16 +21,12 @@
 	// Example:
 	//Config.PacketCasting = 2; // Rather use full packet casting
 
-
 	// Here go your scripts as your used to. You can paste them from Scripts.txt.
 	Scripts.Mephisto = true;
 	Scripts.AutoMagicFind = true;
 
-	// Scripts.SpeedDiablo = true;
-
 	// Here go the pickit files
 	Config.PickitFiles.push("pots.nip");
-
 
 // No touchy
 	module.exports = Scripts; // and in the end, give this config back

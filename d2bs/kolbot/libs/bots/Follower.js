@@ -847,7 +847,7 @@ WPLoop:
 			break;
 		case "bo":
 			if (me.classid === 4) {
-				Precast.doPrecast(true);
+				require('Precast')()
 			}
 
 			break;

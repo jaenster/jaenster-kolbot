@@ -53,7 +53,7 @@ function GhostBusters(Config, Attack) {
 		var i;
 
 		Pather.useWaypoint(6);
-		Precast.doPrecast(true);
+		require('Precast')()
 
 		for (i = 20; i <= 25; i += 1) {
 			Pather.moveToExit(i, true);
@@ -67,7 +67,7 @@ function GhostBusters(Config, Attack) {
 		var i;
 
 		Pather.useWaypoint(32);
-		Precast.doPrecast(true);
+		require('Precast')()
 
 		for (i = 31; i >= 29; i -= 1) {
 			Pather.moveToExit(i, true);
@@ -79,7 +79,7 @@ function GhostBusters(Config, Attack) {
 
 	this.cathedral = function () { // inner cloister wp
 		Pather.useWaypoint(32);
-		Precast.doPrecast(true);
+		require('Precast')()
 		Pather.moveToExit(33, true);
 		this.clearGhosts();
 
@@ -90,7 +90,7 @@ function GhostBusters(Config, Attack) {
 		var i;
 
 		Pather.useWaypoint(46);
-		Precast.doPrecast(true);
+		require('Precast')()
 
 		for (i = 66; i <= 72; i += 1) {
 			Pather.moveToExit(i, true);
@@ -105,7 +105,7 @@ function GhostBusters(Config, Attack) {
 		var areas = [88, 89, 91];
 
 		Pather.useWaypoint(78);
-		Precast.doPrecast(true);
+		require('Precast')()
 
 		while (areas.length) {
 			Pather.moveToExit(areas.shift(), true);
@@ -117,7 +117,7 @@ function GhostBusters(Config, Attack) {
 
 	this.crystalinePassage = function () { // crystaline passage wp
 		Pather.useWaypoint(113);
-		Precast.doPrecast(true);
+		require('Precast')()
 		this.clearGhosts();
 		Pather.moveToExit(114, true); // frozen river
 		this.clearGhosts();
@@ -127,7 +127,7 @@ function GhostBusters(Config, Attack) {
 
 	this.glacialTrail = function () { // glacial trail wp
 		Pather.useWaypoint(115);
-		Precast.doPrecast(true);
+		require('Precast')()
 		this.clearGhosts();
 		Pather.moveToExit(116, true); // drifter
 		this.clearGhosts();
@@ -137,7 +137,7 @@ function GhostBusters(Config, Attack) {
 
 	this.icyCellar = function () { // glacial trail wp
 		Pather.useWaypoint(118);
-		Precast.doPrecast(true);
+		require('Precast')()
 		Pather.moveToExit(119, true); // drifter
 		this.clearGhosts();
 

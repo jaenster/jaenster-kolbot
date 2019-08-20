@@ -1,6 +1,6 @@
 (function (module, require) {
     const Events = module.exports = function () {
-        Worker = require('Worker');
+        const Worker = require('Worker');
         let self = this;
         this.hooks = [];
 
