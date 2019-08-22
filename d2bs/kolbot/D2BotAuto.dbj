@@ -56,10 +56,9 @@ include("sdk.js");
 include("OOG.js");
 include("common/misc.js");
 include("common/prototypes.js");
-
+let handle, gameInfo;
 function main() {
-
-	let handle, gameInfo, gameCount, nextGame, lastGameTick = 0;
+	let gameCount, nextGame, lastGameTick = 0;
 
 	function getCurrentChannel() {
 		const currChan = (ControlAction.getText(4, 28, 138, 354, 60) || []).first() || '';
@@ -77,10 +76,6 @@ function main() {
 	const Worker = require('Worker');
 	const Config = require('Config').call();
 	const Control = require('Control');
-
-	waitFor(4).then(function () { // In case we restarted, just get the handle
-		!handle && (handle = DataFile.getStats().handle)
-	});
 
 	addEventListener('copydata', function (mode, msg) {
 		print(JSON.stringify({mode: mode, msg: msg}));
@@ -111,6 +106,19 @@ function main() {
 				break;
 		}
 		return;
+	});
+
+	addEventListener('scriptmsg', function (data) {
+		if (typeof data == 'object' && data && data.hasOwnProperty('pass')) {
+			if (data.pass.hasOwnProperty('handle')) {
+				handle = data.pass.handle;
+			}
+			print('HERE -- ' + data.pass.hasOwnProperty('gameInfo'));
+			if (data.pass.hasOwnProperty('gameInfo')) {
+
+				gameInfo = data.pass.gameInfo;
+			}
+		}
 	});
 	// create datafile (needs some refactoring trough)
 	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
@@ -164,7 +172,7 @@ function main() {
 				try {
 					print('Logging in');
 					//ToDo; figure out of player wants to play via TCP/IP
-					//login(me.profile);
+					login(me.profile);
 					// If succesful
 					LocationEvents.off(sdk.locations.CharSelect, MoreChars);
 				} catch (e) {
@@ -176,22 +184,29 @@ function main() {
 	// Upon lobby, click on enter chat.
 	LocationEvents.on(sdk.locations.Lobby, () => Control.EnterChat.click());
 
+	const setNextgame = () => {
+		print('Setting next game to ' + nextGame);
+		nextGame = gameInfo.gameName + (++gameCount % StarterConfig.ResetCount);
+		DataFile.updateStats("nextGame", nextGame);
+		DataFile.updateStats("runs", gameCount);
+	};
 	LocationEvents.on(sdk.locations.LobbyChat, function () {
 
 		const currentChannel = getCurrentChannel();
-		print(currentChannel + ',' + JSON.stringify(StarterConfig) + StarterConfig.JoinChannel);
 		// If we are not in the channel we want to be, join it
-		if (typeof StarterConfig.JoinChannel === 'string' && StarterConfig.JoinChannel && currentChannel.toLowerCase() === StarterConfig.JoinChannel) {
+		if (typeof StarterConfig.JoinChannel === 'string' && StarterConfig.JoinChannel && currentChannel.toLowerCase() !== StarterConfig.JoinChannel) {
 			say('/join ' + StarterConfig.JoinChannel);
 		}
 
+		print(JSON.stringify(Config.Follow));
+		setNextgame();
 		// If we dont follow, wait to create game.
 		!Config.Follow && waitFor(StarterConfig.CreateGameDelay, 'create game')
 		// Press create game
 			.then(() => Control.CreateGameWindow.click()) // Create Game
 			// If after 5 seconds, we are still at LobbyChat, the create button is bugged. Retry
-			.then(() => waitFor(5000)
-				.then(getLocation() === sdk.locations.LobbyChat // If still in lobby, the create button is bugged
+			.then(() => waitFor(5, null, getTickCount())
+				.then(() => getLocation() === sdk.locations.LobbyChat // If still in lobby, the create button is bugged
 					&& Control.JoinGameWindow.click() // Press join game
 					&& Control.CreateGameWindow.click() // Press create Game
 				)
@@ -224,10 +239,28 @@ function main() {
 		}
 
 		Control.CreateGame.click();
-
 	});
 
+	LocationEvents.on('locations', locations => {
+		if (locations[1] === null) { // Just came out of a game
+			print('HERE');
+			D2bot.updateRuns();
+		}
+	});
+
+	let lastTimer = getTickCount();
+	D2Bot.requestGameInfo();
+	while (!gameInfo) {
+		if (getTickCount() - lastTimer > 500) {
+			lastTimer = getTickCount();
+			print('send request');
+			D2Bot.requestGameInfo();
+		}
+		delay(500);
+	}
+
 	getLocation() === sdk.locations.None && sendKey(32);
+	nextGame = gameInfo.gameName + (++gameCount % StarterConfig.ResetCount);
 	while (true) {
 		delay(10);
 	}

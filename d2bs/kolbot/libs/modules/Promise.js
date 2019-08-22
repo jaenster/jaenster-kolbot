@@ -27,7 +27,6 @@
 			}, resolve = function (result) {
 				self.value = result;
 				self.stopped = true;
-
 				typeof self._after !== 'undefined' && self._after.forEach(function (callback) {
 					return callback(result);
 				});

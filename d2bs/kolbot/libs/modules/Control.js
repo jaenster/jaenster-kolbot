@@ -70,8 +70,8 @@
 	Control.IPAdress = new Control(-1, 300, 268, -1, -1);
 	Control.IPAdressOk = new Control(-1, 421, 337, 96, 32);
 
-	Control.CreateGameWindow = new Control(6, 652, 469, 120, 20);
-	Control.JoinGameWindow = new Control(6, 533, 469, 120, 20);
+	Control.JoinGameWindow = new Control(6, 652, 469, 120, 20);
+	Control.CreateGameWindow = new Control(6, 533, 469, 120, 20);
 	Control.CharacterDifferenceButton = new Control(6, 431, 341, 15, 16);
 	Control.CharacterDifference = new Control(1, 657, 342, 27, 20);
 	Control.GameName = new Control(1, 432, 162, 158, 20);

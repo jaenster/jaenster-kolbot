@@ -18,6 +18,9 @@
 			// If a follower is given, put it in D2BotFollower.js
 			Config.Follow && typeof JoinSettings === 'object' && JoinSettings && (JoinSettings[Config.Follow] = [me.windowtitle]);
 
+			Object.keys(Config.StarterConfig).forEach(function (key) {
+				return StarterConfig[key] = Config.StarterConfig[key];
+			})
 
 		}
 		return Config;
@@ -327,7 +330,7 @@
 	Config.Party = false;
 
 	// Make the StarterConfig and AdvancedConfig visible in the config file
-	Config.StarterConfig = typeof StarterConfig === 'object' && StarterConfig || {};
+	Config.StarterConfig = {};
 
 	module.exports = Config;
 
