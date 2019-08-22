@@ -10,10 +10,15 @@
 			.forEach(x => Config.Scripts[x] = scripts[x]);
 
 		if (me.ingame) {
-			Config.Silence && (global.say = print);
+			Config.Silence && (global.say = print); // Remove the say function, to instantly make the bot silenced
 
+			// Setup the pickit stuff
 			Pickit.init(getScript(true).name.toLowerCase() === 'default.dbj'); // only notify if we are the default thread
-			print(JSON.stringify(Config.Scripts));
+		} else {
+			// If a follower is given, put it in D2BotFollower.js
+			Config.Follow && typeof JoinSettings === 'object' && JoinSettings && (JoinSettings[Config.Follow] = [me.windowtitle]);
+
+
 		}
 		return Config;
 	}
@@ -90,22 +95,14 @@
 		Toggle: false,
 		Mode: 0
 	};
-	Config.PublicMode = false;
-	Config.PartyAfterScript = false;
-	Config.Greetings = [];
-	Config.DeathMessages = [];
-	Config.Congratulations = [];
-	Config.ShitList = false;
-	Config.UnpartyShitlisted = false;
-	Config.Leader = "";
 	Config.QuitList = [];
 	Config.QuitListMode = 0;
+
 	Config.HPBuffer = 0;
 	Config.MPBuffer = 0;
 	Config.RejuvBuffer = 0;
 	Config.PickRange = 40;
 	Config.MakeRoom = true;
-	Config.FastPick = false;
 	Config.OpenChests = false;
 	Config.PickitFiles = [];
 	Config.BeltColumn = [];
@@ -148,12 +145,11 @@
 	Config.GambleGoldStart = 0;
 	Config.GambleGoldStop = 0;
 	Config.MiniShopBot = false;
-	Config.TeleSwitch = false;
 	Config.PrimarySlot = undefined;
 	Config.LogExperience = false;
 	Config.TownCheck = false;
 	Config.PingQuit = [{Ping: 0, Duration: 0}];
-	Config.PacketShopping = false;
+	Config.PacketShopping = true;
 
 	// Fastmod
 	Config.FCR = 0;
@@ -177,7 +173,6 @@
 	Config.DCloneQuit = false;
 
 	// Experimental
-	Config.FastParty = false;
 	Config.AutoEquip = false;
 
 	// GameData
@@ -195,41 +190,6 @@
 	Config.ClearPath = false;
 	Config.BossPriority = false;
 
-	// Amazon specific
-	Config.SummonValkyrie = false;
-
-	// Sorceress specific
-	Config.UseTelekinesis = false;
-	Config.CastStatic = false;
-	Config.StaticList = [];
-
-	// Necromancer specific
-	Config.Golem = 0;
-	Config.ActiveSummon = false;
-	Config.Skeletons = 0;
-	Config.SkeletonMages = 0;
-	Config.Revives = 0;
-	Config.ReviveUnstackable = false;
-	Config.PoisonNovaDelay = 2000;
-	Config.Curse = [];
-	Config.ExplodeCorpses = 0;
-
-	// Paladin speficic
-	Config.Redemption = [0, 0];
-	Config.Charge = false;
-	Config.Vigor = false;
-	Config.AvoidDolls = false;
-
-	// Barbarian specific
-	Config.FindItem = false;
-	Config.FindItemSwitch = false;
-
-	// Druid specific
-	Config.Wereform = 0;
-	Config.SummonRaven = 0;
-	Config.SummonAnimal = 0;
-	Config.SummonVine = 0;
-	Config.SummonSpirit = 0;
 
 	// Assassin specific
 	Config.UseTraps = false;
@@ -243,7 +203,6 @@
 	Config.SummonShadow = false;
 
 	// Script specific
-	Config.MFLeader = false;
 	Config.Mausoleum = {
 		KillBloodRaven: false,
 		ClearCrypt: false
@@ -275,18 +234,6 @@
 	Config.Rakanishu = {
 		KillGriswold: false
 	};
-	Config.AutoBaal = {
-		Leader: "",
-		FindShrine: false,
-		LeechSpot: [15115, 5050],
-		LongRangeSupport: false
-	};
-	Config.KurastChests = {
-		LowerKurast: false,
-		Bazaar: false,
-		Sewers1: false,
-		Sewers2: false
-	};
 	Config.Countess = {
 		KillGhosts: false
 	};
@@ -298,31 +245,6 @@
 		SafeTPMessage: "Safe TP!",
 		BaalMessage: "Baal!"
 	};
-	Config.BaalAssistant = {
-		KillNihlathak: false,
-		FastChaos: false,
-		Wait: 120,
-		Helper: false,
-		GetShrine: false,
-		GetShrineWaitForHotTP: false,
-		DollQuit: false,
-		SoulQuit: false,
-		SkipTP: false,
-		WaitForSafeTP: false,
-		KillBaal: false,
-		HotTPMessage: [],
-		SafeTPMessage: [],
-		BaalMessage: [],
-		NextGameMessage: []
-	};
-	Config.BaalHelper = {
-		Wait: 120,
-		KillNihlathak: false,
-		FastChaos: false,
-		DollQuit: false,
-		KillBaal: false,
-		SkipTP: false
-	};
 	Config.Corpsefire = {
 		ClearDen: false
 	};
@@ -333,12 +255,6 @@
 		StarTP: "Star TP up",
 		DiabloMsg: "Diablo",
 		WalkClear: false
-	};
-	Config.DiabloHelper = {
-		Wait: 120,
-		Entrance: false,
-		SkipIfBaal: false,
-		SkipTP: false
 	};
 	Config.BattleOrders = {
 		Mode: 0,
@@ -355,9 +271,6 @@
 		IPList: [],
 		GameLength: 3
 	};
-	Config.Follower = {
-		Leader: ""
-	};
 	Config.Mephisto = {
 		MoatTrick: false,
 		KillCouncil: false,
@@ -368,13 +281,6 @@
 		ShopNPC: "anya",
 		CycleDelay: 0,
 		QuitOnMatch: false
-	};
-	Config.Coldworm = {
-		KillBeetleburst: false,
-		ClearMaggotLair: false
-	};
-	Config.Summoner = {
-		FireEye: false
 	};
 	Config.AncientTunnels = {
 		OpenChest: false,
@@ -387,27 +293,12 @@
 		GetFade: false,
 		MakeTorch: true
 	};
-	Config.Synch = {
-		WaitFor: []
-	};
-	Config.TristramLeech = {
-		Leader: "",
-		Wait: 120
-	};
-	Config.TravincalLeech = {
-		Leader: "",
-		Helper: false,
-		Wait: 120
-	};
 	Config.Tristram = {
 		PortalLeech: false,
 		WalkClear: false
 	};
 	Config.Travincal = {
 		PortalLeech: false
-	};
-	Config.SkillStat = {
-		Skills: []
 	};
 	Config.Bonesaw = {
 		ClearDrifterCavern: false
@@ -422,42 +313,14 @@
 	Config.ClearAnyArea = {
 		AreaList: []
 	};
-	Config.Rusher = {
-		WaitPlayerCount: 0,
-		Radament: false,
-		LamEsen: false,
-		Izual: false,
-		Shenk: false,
-		Anya: false,
-		LastRun: ""
-	};
-	Config.Rushee = {
-		Quester: false,
-		Bumper: false
-	};
-	Config.AutoSkill = {
-		Enabled: false,
-		Build: [],
-		Save: 0
-	};
-	Config.AutoStat = {
-		Enabled: false,
-		Build: [],
-		Save: 0,
-		BlockChance: 0,
-		UseBulk: true
-	};
-	Config.AutoBuild = {
-		Enabled: false,
-		Template: "",
-		Verbose: false,
-		DebugMode: false
-	};
 	Config.SpeedDiablo = {
 		Fast: false,
 		Follower: false,
 		Entrance: true,
 	};
+
+	// some new configurations
+	Config.Follow = undefined; // Still i like to define it
 
 	Config.Silence = true;
 
@@ -465,7 +328,8 @@
 
 	Config.Scripts = {};
 
-	Config.StarterConfig = typeof StarterConfig === 'object' && StarterConfig && StarterConfig || {};
+	// Make the StarterConfig and AdvancedConfig visible in the config file
+	Config.StarterConfig = typeof StarterConfig === 'object' && StarterConfig || {};
 
 	module.exports = Config;
 

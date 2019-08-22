@@ -63,10 +63,6 @@ let JoinSettings = {
 
 };
 
-let AdvancedConfig = {
-
-};
-
 
 
 // No touchy!
@@ -465,8 +461,8 @@ function locationAction() {
 
 								print("joining game " + joinInfo.gameName);
 
-								if (typeof AdvancedConfig[me.profile] === "object" && typeof AdvancedConfig[me.profile].JoinDelay === "number") {
-									ControlAction.timeoutDelay("Custom Join Delay", AdvancedConfig[me.profile].JoinDelay * 1e3);
+								if (typeof StarterConfig.JoinDelay == "number") {
+									ControlAction.timeoutDelay("Custom Join Delay", StarterConfig.JoinDelay * 1e3);
 								}
 
 								me.blockMouse = true;
