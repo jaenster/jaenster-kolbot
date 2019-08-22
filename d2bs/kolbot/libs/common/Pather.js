@@ -829,7 +829,7 @@ var Pather = {
 				delay(10);
 			}
 
-			coord = CollMap.getRandCoordinate(me.x, -1, 1, me.y, -1, 1, 3);
+			coord = requre('CollMap').getRandCoordinate(me.x, -1, 1, me.y, -1, 1, 3);
 			this.moveTo(coord.x, coord.y);
 		}
 

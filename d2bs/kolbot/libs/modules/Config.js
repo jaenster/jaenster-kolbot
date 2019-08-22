@@ -321,12 +321,10 @@
 
 	// some new configurations
 	Config.Follow = undefined; // Still i like to define it
-
 	Config.Silence = true;
-
 	Config.Development = '';
-
 	Config.Scripts = {};
+	Config.Party = false;
 
 	// Make the StarterConfig and AdvancedConfig visible in the config file
 	Config.StarterConfig = typeof StarterConfig === 'object' && StarterConfig || {};

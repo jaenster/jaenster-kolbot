@@ -35,9 +35,9 @@
 			},
 			reject = function (e) {
 				self.stopped = true;
-				typeof self._catchers !== 'undefined' && self._catchers.forEach(function (callback) {
+				typeof self._catchers !== 'undefined' && (self._catchers.forEach(function (callback) {
 					return callback(e);
-				});
+				}) || Misc.errorReport(e));
 				final();
 			};
 
@@ -78,7 +78,6 @@
 			} catch (e) {
 				reject(e);
 			}
-
 			return !self.stopped;
 		};
 	};
