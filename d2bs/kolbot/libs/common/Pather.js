@@ -177,9 +177,7 @@ var Pather = {
 
 		PathDebug.drawPath(path);
 
-		if (useTeleport && Pather.config.TeleSwitch && path.length > 5) {
-			me.switchWeapons(me.primarySlot);
-		}
+		//ToDo; deal with dynamic tele switch
 
 		while (path.length > 0) {
 			if (me.dead) { // Abort if dead
@@ -268,9 +266,7 @@ var Pather = {
 			delay(5);
 		}
 
-		if (useTeleport && Pather.config.TeleSwitch) {
-			me.switchWeapons(me.primarySlot);
-		}
+		// ToDo; deal with dynamic teleswitch
 
 		PathDebug.removeHooks();
 
@@ -833,7 +829,7 @@ var Pather = {
 				delay(10);
 			}
 
-			coord = CollMap.getRandCoordinate(me.x, -1, 1, me.y, -1, 1, 3);
+			coord = requre('CollMap').getRandCoordinate(me.x, -1, 1, me.y, -1, 1, 3);
 			this.moveTo(coord.x, coord.y);
 		}
 

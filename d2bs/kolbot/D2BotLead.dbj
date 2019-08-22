@@ -957,9 +957,43 @@ function locationAction(location) {
 				lastGameStatus = "ready";
 
 				break;
+			case 30: // Can't connect to tcp/ip game
+				print('click on ok, try again soon');
+				ControlAction.click(6, 351, 337, 96, 32);
+				break;
+
 			case 38: // Game is full
 				// doesn't happen when making
 				break;
+
+			case 41: // ip window
+			case 40: // Host / join game.
+				// Back at host/join.
+				ControlAction.click(6, 265, 264, 272, 35); // Join tcp controller
+				delay(1000); // wait for the thing to get there
+				ControlAction.setText(1, 300, 268, -1, -1, 'localhost');
+				ControlAction.click(6, 421, 337, 96, 32); // click ok button
+				break;
+			case 12:
+				control = getControl(4, 37, 178, 200, 92);
+
+				if (control) {
+					do {
+						text = control.getText();
+
+						if (text instanceof Array && typeof text[1] === "string") {
+							count++;
+
+							if (text[1].toLowerCase() === info.charName.toLowerCase()) {
+								control.click();
+								Control.click(6, 627, 572, 128, 35);
+								me.blockMouse = false;
+
+								return true;
+							}
+						}
+					} while (control.getNext());
+				}
 			default:
 				if (location !== undefined) {
 					D2Bot.printToConsole("Unhandled location " + location);

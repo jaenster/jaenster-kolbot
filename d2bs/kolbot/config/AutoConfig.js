@@ -1,33 +1,34 @@
 /**
  * @description This is the new, simplified, unified, config file
  */
-(function (module, require, Config, AutoConfig, StarterConfig, Scripts = {}) {
-	// You can override here the settings of the entry script.
-	Config.Follow = ''; // which profile you want to follow? join games and such. Leave blank for non
+(function (module, require, Config, AutoConfig, StarterConfig, Scripts) {
 
-	// here you setup everything of the StarterConfig (what you did before in D2BotWhatever.dbj)
-	StarterConfig.JoinChannel = '';
 
-	// Run all auto configurations.
-	// This sets everything to chosen defaults,
+// Edit from here;
+
+	// Figure out all settings on its own
+	// Including skills, inventory, belt, merc usage, chicken, everything
 	AutoConfig();
 
-
-	// In case you dont agree with some of the stuff the auto configuration came with,
-	// feel free to override it here
-	//
-	// Note that most of original kolton's settings just work here
-
-	// Example:
-	//Config.PacketCasting = 2; // Rather use full packet casting
-
 	// Here go your scripts as your used to. You can paste them from Scripts.txt.
-	Scripts.Mephisto = true;
 	Scripts.AutoMagicFind = true;
 
 	// Here go the pickit files
 	Config.PickitFiles.push("pots.nip");
 
+
+	/** In case you want to override some specific setting, Examples (including D2BotWhatever files): */
+
+	/** Here some D2BotWhatever setting examples*/
+	//StarterConfig.MinGameTime = 60*3; // Alteast 3 minutes
+	//Config.Follow = 'profileOfLeader';
+
+	/** Some classic configuration examples */
+	//Config.PacketCasting = 2; // Use packet casting for everything
+	//Config.QuitList = ['myLeader']; // Exit the game if my leader does so too
+
+
+// Dont edit after this,
 // No touchy
 	module.exports = Scripts; // and in the end, give this config back
-})(module, require, require('Config'), require('AutoConfig'), require('Config').StarterConfig, undefined);
+})(module, require, require('Config'), require('AutoConfig'), require('Config').StarterConfig, {} /*Scripts*/);

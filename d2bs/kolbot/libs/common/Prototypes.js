@@ -1380,3 +1380,22 @@ String.prototype.diffCount = function (stringB) {
 
 	return Infinity;
 };
+
+if (!String.prototype.includes) {
+	String.prototype.includes = function (search, start) {
+		'use strict';
+		if (typeof start !== 'number') {
+			start = 0;
+		}
+
+		if (start + search.length > this.length) {
+			return false;
+		} else {
+			return this.indexOf(search, start) !== -1;
+		}
+	};
+}
+
+String.prototype.capitalize = function () {
+	return this.charAt(0).toUpperCase() + this.slice(1)
+};

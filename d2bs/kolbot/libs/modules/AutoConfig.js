@@ -86,11 +86,12 @@
 
 	AutoConfig.Merc = function () {
 		Config.UseMerc = !!me.mercrevivecost; // If a merc costs anything, im pretty sure you want one
-		Config.mercWatch = false;
+		Config.MercWatch = false;
 
 		if (Config.UseMerc) {
 			// Create a promise, once we can read a merc resolve with the merc object
 			// Once we have the merc, determin if it has Infinity, ifso, we definitely want to resurrect the merc during battle
+			print('need to watch merc?');
 			new (require('Promise'))((resolve, reject, merc = me && me.getMerc()) => merc && resolve(merc))
 				.then(merc => merc.getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true')));
 		}
