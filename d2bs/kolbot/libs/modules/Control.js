@@ -85,6 +85,7 @@
 	Control.Char4 = new Control(4, 237, 457, 72, 93);
 	Control.CharSelectBack = new Control(6, 33, 572, 128, 35);
 
+	Control.LoginErrorText = new Control(4, 199, 377, 402, 140);
 
 	module.exports = Control;
 

@@ -76,6 +76,7 @@ function main() {
 	const Worker = require('Worker');
 	const Config = require('Config').call();
 	const Control = require('Control');
+	const Login = require('Login');
 
 	addEventListener('copydata', function (mode, msg) {
 		print(JSON.stringify({mode: mode, msg: msg}));
@@ -172,14 +173,26 @@ function main() {
 				try {
 					print('Logging in');
 					//ToDo; figure out of player wants to play via TCP/IP
-					login(me.profile);
+					Login(me.profile);
 					// If succesful
 					LocationEvents.off(sdk.locations.CharSelect, MoreChars);
 				} catch (e) {
-					print(e + " " + getLocation());
+					print(e + " " + (getLocation() || 'null'));
 				}
 			}));
 
+	LocationEvents.on(sdk.locations.LoginError, function () {
+		let text = Control.LoginErrorText.getText();
+		if (text) {
+			let string = text.join(' ');
+			switch (string) {
+				case getLocaleString(5207): // Invalid password
+				case getLocalString(5208): // Invalid account
+				case getLocaleString(5202): // cd key intended for another product
+				case getLocaleString(10915): // lod key intended for another product
+			}
+		}
+	});
 
 	// Upon lobby, click on enter chat.
 	LocationEvents.on(sdk.locations.Lobby, () => Control.EnterChat.click());
@@ -191,7 +204,6 @@ function main() {
 		DataFile.updateStats("runs", gameCount);
 	};
 	LocationEvents.on(sdk.locations.LobbyChat, function () {
-
 		const currentChannel = getCurrentChannel();
 		// If we are not in the channel we want to be, join it
 		if (typeof StarterConfig.JoinChannel === 'string' && StarterConfig.JoinChannel && currentChannel.toLowerCase() !== StarterConfig.JoinChannel) {
@@ -211,6 +223,16 @@ function main() {
 					&& Control.CreateGameWindow.click() // Press create Game
 				)
 			)
+	});
+
+	LocationEvents.on(sdk.locations.MainMenuConnecting, function () {
+		waitFor(20).then(function () {
+			// If after 20 seconds we are still in connecting screen
+			if (sdk.locations.MainMenuConnecting === getLocation()) {
+				// Still in connection.
+				//ToDo; do something with
+			}
+		});
 	});
 
 	// Upon joining
