@@ -13,14 +13,12 @@ include("CraftingSystem.js");
 
 include("common/Cubing.js");
 include("common/Config.js");
-include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Storage.js");
 include("common/Town.js");
 
 function main() {
@@ -72,7 +70,6 @@ function main() {
 	D2Bot.init();
 	Config.init();
 	Pickit.init();
-	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();
 	Cubing.init();

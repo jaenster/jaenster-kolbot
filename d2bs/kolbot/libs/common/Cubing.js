@@ -151,7 +151,7 @@ var Cubing = {
 		if (getScript(true).name === "tools\\townchicken.js") {
 			return false;
 		}
-
+		const Storage = require('Storage');
 		var i, cube, chest;
 
 		Pather.useWaypoint(57, true);
@@ -965,6 +965,7 @@ IngredientLoop:
 	},
 
 	validItem: function (unit, recipe) {
+		const Storage = require('Storage');
 		// Don't use items in locked inventory space
 		if (unit.mode === 0 && unit.location === 3 && Storage.Inventory.IsLocked(unit, Recipe.config.Inventory)) {
 			return false;
@@ -1102,7 +1103,7 @@ IngredientLoop:
 		if (!me.getItem(549) && !this.getCube()) {
 			return false;
 		}
-
+		const Storage = require('Storage');
 		var i, j, items, string, result, tempArray;
 
 		this.update();

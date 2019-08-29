@@ -36,6 +36,7 @@
 		);
 	};
 	Precast.skillIdToStateId = function (skillId) {
+
 		let name = Object.keys(sdk.skills).find(sk => sdk.skills[sk] === skillId);
 		return typeof sdk.states[name] !== 'undefined' && sdk.states[name] || undefined;
 	};
@@ -49,11 +50,17 @@
 				// In case no function is given, see if we have the state
 				return undefined;
 
-			case typeof what.skillId === 'number':
-				let state = Precast.skillIdToStateId(what.skillId);
-				if (state && me.getState(state)) {
-					return undefined;
-				}
+			case typeof what.skillId === 'number' || Array.isArray(what.skillId):
+				// If skillId is an array, it can, for example the frozen armor / chilling armor combo,
+				// we dont need to re-pre-cast it if either state is set. So cast it to an array and loop over it,
+				// until any is found.
+				if ((!Array.isArray(what.skillId) && [what.skillId] || what.skillId).some(function (skillId) {
+					let state = Precast.skillIdToStateId(skillId);
+					if (state && me.getState(state)) {
+						return true;
+					}
+					return false;
+				})) return undefined;
 
 				break;
 			// in case a handler is defined

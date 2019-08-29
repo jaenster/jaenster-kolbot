@@ -89,9 +89,6 @@ const Development = (function (global) {
 		// init d2bot (get handle)
 		typeof D2Bot === 'object' && D2Bot.hasOwnProperty('init') && typeof D2Bot.init === 'function' && D2Bot.init();
 
-		// init storage
-		typeof Storage === 'object' && Storage.hasOwnProperty('Init') && typeof Storage.Init === 'function' && Storage.Init();
-
 		restart && _print('ÿc2Restarting script: ÿc9' + Config.Development + ' (in development)');
 		try {
 			include('bots/' + Config.Development + '.js') && global[Config.Development]() || print('failed to load ' + Config.Development);

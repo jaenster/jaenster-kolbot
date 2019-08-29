@@ -252,7 +252,7 @@ var Town = {
 				hp: 0,
 				mp: 0
 			};
-
+		const Storage = require('Storage');
 		beltSize = Storage.BeltSize();
 		col = this.checkColumns(beltSize);
 
@@ -459,7 +459,7 @@ var Town = {
 		}
 
 		delay(500);
-
+		const Storage = require('Storage');
 		if (code === 518 && !me.findItem(518, 0, 3)) {
 			tome = npc.getItem(518);
 
@@ -516,7 +516,7 @@ var Town = {
 			tpTomePos = {};
 
 		this.cainID();
-
+		const Storage = require('Storage');
 		list = Storage.Inventory.Compare(Town.config.Inventory);
 
 		if (!list) {
@@ -546,7 +546,6 @@ var Town = {
 		if (tome && tome.getStat(70) < list.length) {
 			this.fillTome(519);
 		}
-
 MainLoop:
 		while (list.length > 0) {
 			item = list.shift();
@@ -892,7 +891,7 @@ CursorLoop:
 		if (!item) {
 			return false;
 		}
-
+		const Storage = require('Storage');
 		print("ÿc4MiniShopBotÿc0: Scanning " + npc.itemcount + " items.");
 
 		do {
@@ -967,7 +966,7 @@ CursorLoop:
 		while (items && items.length > 0) {
 			list.push(items.shift().gid);
 		}
-
+		const Storage = require('Storage');
 		while (me.gold >= Town.config.GambleGoldStop) {
 			if (!getInteractedNPC()) {
 				npc.startTrade("Gamble");
@@ -1097,6 +1096,7 @@ CursorLoop:
 	},
 
 	checkKeys: function () {
+		const Storage = require('Storage');
 		if (!Town.config.OpenChests || me.classid === 6 || me.gold < 540 || (!me.getItem("key") && !Storage.Inventory.CanFit({
 			sizex: 1,
 			sizey: 1
@@ -1197,7 +1197,7 @@ CursorLoop:
 	cubeRepairItem: function (item) {
 		var i, rune, cubeItems,
 			bodyLoc = item.bodylocation;
-
+		const Storage = require('Storage');
 		if (item.mode !== 1) {
 			return false;
 		}
@@ -1513,7 +1513,7 @@ MainLoop:
 
 	canStash: function (item) {
 		var ignoredClassids = [91, 174]; // Some quest items that have to be in inventory or equipped
-
+		const Storage = require('Storage');
 		if (this.ignoredItemTypes.indexOf(item.itemType) > -1 || ignoredClassids.indexOf(item.classid) > -1 || !Storage.Stash.CanFit(item)) {
 			return false;
 		}
@@ -1529,9 +1529,8 @@ MainLoop:
 		if (!this.needStash()) {
 			return true;
 		}
-
 		me.cancel();
-
+		const Storage = require('Storage');
 		var i, result, tier,
 			items = Storage.Inventory.Compare(Town.config.Inventory);
 
@@ -1573,7 +1572,7 @@ MainLoop:
 		if (Town.config.StashGold && me.getStat(14) >= Town.config.StashGold && me.getStat(15) < 25e5) {
 			return true;
 		}
-
+		const Storage = require('Storage');
 		var i,
 			items = Storage.Inventory.Compare(Town.config.Inventory);
 
@@ -1807,7 +1806,7 @@ MainLoop:
 	clearInventory: function () {
 		var i, col, result, item, beltSize,
 			items = [];
-
+		const Storage = require('Storage');
 		this.checkQuestItems(); // only golden bird quest for now
 
 		// Return potions to belt

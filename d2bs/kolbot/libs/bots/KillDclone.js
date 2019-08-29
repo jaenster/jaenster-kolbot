@@ -7,7 +7,7 @@
 function KillDclone(Config, Attack) {
 	//Town.doChores();
 	Pather.useWaypoint(74);
-	require('Precast')()
+	require('Precast')();
 
 	if (!Pather.usePortal(null)) {
 		throw new Error("Failed to move to Palace Cellar");

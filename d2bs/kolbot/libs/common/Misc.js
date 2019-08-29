@@ -497,6 +497,7 @@ var Item = {
 			}
 		}
 
+		const Storage = require('Storage');
 		for (i = 0; i < 3; i += 1) {
 			if (item.toCursor()) {
 				clickItem(0, bodyLoc);

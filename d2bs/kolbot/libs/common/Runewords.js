@@ -405,6 +405,7 @@ RuneLoop:
 	},
 
 	rerollRunewords: function () {
+		const Storage = require('Storage');
 		var i, base, scroll, hel;
 
 		for (i = 0; i < Runewords.config.Runewords.length; i += 1) {

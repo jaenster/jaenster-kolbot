@@ -13,14 +13,12 @@ include("CraftingSystem.js");
 
 include("common/Cubing.js");
 include("common/Config.js");
-include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Storage.js");
 include("common/Town.js");
 
 function main() {
@@ -145,7 +143,6 @@ function main() {
 	// Init config and attacks
 	D2Bot.init();
 	const Config = require('Config')();
-	Storage.Init();
 
 	// Use PVP range for attacks
 	Skill.usePvpRange = true;

@@ -1,34 +1,33 @@
 /**
  *    @filename    Loader.js
- *    @author        kolton
- *    @desc        script loader, based on mBot's Sequencer.js
+ *    @author        kolton, jaenster
+ *    @desc        script loader
  */
 
-var global = this;
+(function (module, require) {
 
-var Loader = {
-	fileList: [],
-	scriptList: [],
-	scriptIndex: -1,
-	skipTown: ["Test", "Follower"],
+	let Loader = function () {
+		Loader.getScripts();
+		Loader.loadScripts();
+	};
 
-	init: function () {
-		this.getScripts();
-		this.loadScripts();
-	},
+	Loader.fileList = [];
+	Loader.scriptList = [];
+	Loader.scriptIndex = -1;
+	Loader.skipTown = ["Test", "Follower"];
 
-	getScripts: function () {
+	Loader.getScripts = function () {
 		var i,
 			fileList = dopen("libs/bots/").getFiles();
 
 		for (i = 0; i < fileList.length; i += 1) {
 			if (fileList[i].indexOf(".js") > -1) {
-				this.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
+				Loader.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
 			}
 		}
-	},
+	};
 
-	loadScripts: function () {
+	Loader.loadScripts = function () {
 		const Config = require('Config');
 		const Scripts = Config.Scripts;
 		const Attack = require('Attack');
@@ -36,7 +35,7 @@ var Loader = {
 			unmodifiedConfig = {};
 
 
-		if (!this.fileList.length) {
+		if (!Loader.fileList.length) {
 			showConsole();
 
 			throw new Error("You don't have any valid scripts in bots folder.");
@@ -44,14 +43,14 @@ var Loader = {
 
 		for (s in Scripts) {
 			if (Scripts.hasOwnProperty(s) && Scripts[s]) {
-				this.scriptList.push(s);
+				Loader.scriptList.push(s);
 			}
 		}
 
-		for (this.scriptIndex = 0; this.scriptIndex < this.scriptList.length; this.scriptIndex++) {
-			script = this.scriptList[this.scriptIndex];
+		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
+			script = Loader.scriptList[Loader.scriptIndex];
 
-			if (this.fileList.indexOf(script) < 0) {
+			if (Loader.fileList.indexOf(script) < 0) {
 				Misc.errorReport("ÿc1Script " + script + " doesn't exist.");
 				continue;
 			}
@@ -65,7 +64,7 @@ var Loader = {
 				try {
 					if (typeof (global[script]) !== "function") throw new Error("Invalid script function name");
 
-					if (this.skipTown.indexOf(script) > -1 || Town.goToTown()) {
+					if (Loader.skipTown.indexOf(script) > -1 || Town.goToTown()) {
 						print("ÿc2Starting script: ÿc9" + script);
 						//scriptBroadcast(JSON.stringify({currScript: script}));
 						Messaging.sendToScript("tools/toolsthread.js", JSON.stringify({currScript: script}));
@@ -78,15 +77,18 @@ var Loader = {
 				}
 			}
 		}
-	},
+	};
 
-	scriptName: function (offset = 0) {
-		let index = this.scriptIndex + offset;
+	Loader.scriptName = function (offset = 0) {
+		let index = Loader.scriptIndex + offset;
 
-		if (index >= 0 && index < this.scriptList.length) {
-			return this.scriptList[index];
+		if (index >= 0 && index < Loader.scriptList.length) {
+			return Loader.scriptList[index];
 		}
 
 		return null;
-	}
-};
+	};
+
+	module.exports = Loader;
+
+})(module, require);

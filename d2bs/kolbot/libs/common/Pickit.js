@@ -5,7 +5,6 @@
 */
 
 var Pickit = {
-	NTIP: require('NTIP'),
 	config: require('Config'),
 	gidList: [],
 	beltSize: 1,
@@ -17,9 +16,9 @@ var Pickit = {
 		for (i = 0; i < Pickit.config.PickitFiles.length; i += 1) {
 			filename = "pickit/" + Pickit.config.PickitFiles[i];
 
-			this.NTIP.OpenFile(filename, notify);
+			require('NTIP').OpenFile(filename, notify);
 		}
-
+		const Storage = require('Storage');
 		this.beltSize = Storage.BeltSize();
 	},
 
@@ -31,7 +30,8 @@ var Pickit = {
 	// 3 - Runeword wants
 	// 4 - Pickup to sell (triggered when low on gold)
 	checkItem: function (unit) {
-		var rval = this.NTIP.CheckItem(unit, false, true);
+		const NTIP = require('NTIP');
+		var rval = NTIP.CheckItem(unit, false, true);
 
 		if ((unit.classid === 617 || unit.classid === 618) && Town.repairIngredientCheck(unit)) {
 			return {
@@ -107,7 +107,7 @@ var Pickit = {
 				}
 			} while (item.getNext());
 		}
-
+		const Storage = require('Storage');
 		while (pickList.length > 0) {
 			if (me.dead) {
 				return false;
@@ -181,7 +181,7 @@ var Pickit = {
 		if (!Pickit.config.MakeRoom) {
 			return false;
 		}
-
+		const Storage = require('Storage');
 		var i,
 			items = Storage.Inventory.Compare(Pickit.config.Inventory);
 
@@ -407,7 +407,7 @@ MainLoop:
 
 	canPick: function (unit) {
 		var tome, charm, i, potion, needPots, buffers, pottype, myKey, key;
-
+		const Storage = require('Storage');
 		switch (unit.classid) {
 		case 92: // Staff of Kings
 		case 173: // Khalim's Flail
@@ -617,7 +617,7 @@ MainLoop:
 				itemList.push(copyUnit(item));
 			}
 		}
-
+		const Storage = require('Storage');
 		while (itemList.length > 0) {
 			itemList.sort(this.sortFastPickItems);
 

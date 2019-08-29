@@ -13,7 +13,6 @@ include("GameAction.js");
 
 include("common/Cubing.js");
 include("common/Config.js");
-include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
@@ -106,7 +105,6 @@ function main() {
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
 	const Config = require('Config')();
 	Pickit.init(true);
-	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();
 	Cubing.init();
@@ -185,7 +183,7 @@ function main() {
 	}
 
 	// Go
-	Loader.init();
+	const Loader = require('Loader').call();
 
 	if (Config.MinGameTime && getTickCount() - startTime < Config.MinGameTime * 1000) {
 		try {
@@ -239,6 +237,7 @@ function main() {
 		scriptBroadcast("mule");
 	}
 
+	Storage = require('Storage');
 	// Anni handler. Mule Anni if it's in unlocked space and profile is set to mule torch/anni.
 	anni = me.findItem(603, 0, -1, 7);
 
