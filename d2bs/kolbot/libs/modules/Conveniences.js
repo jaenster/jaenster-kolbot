@@ -7,6 +7,9 @@
 	const Promise = require('Promise');
 	let healers = [sdk.monsters.Akara, sdk.monsters.Atma, sdk.monsters.Fara, sdk.monsters.Ormus, sdk.monsters.Jamella, sdk.monsters.Malah];
 
+
+	//ToDo: fix code so it doesnt re create too much promises. And make it more readable
+
 	// (_ => _(_))(
 	// 	self => new Promise(resolve => me.inTown && resolve())
 	// 		.then(() =>

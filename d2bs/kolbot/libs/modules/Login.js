@@ -2,6 +2,9 @@
  *
  * @description A little script that starts in its own thread so i can preform actions while logging in
  * @author Jaenster
+ *
+ *
+ * @deprecated should not be needed in the future.
  */
 
 (function (module) {
@@ -11,7 +14,6 @@
 
 	if (getScript(currentFile) && getScript(currentFile).name === getScript(true).name) {
 		require('Debug'); // new print statements
-		print('HERE');
 
 		Messaging.on('login', function (profile) {
 			print('PROFILE: ' + profile);
