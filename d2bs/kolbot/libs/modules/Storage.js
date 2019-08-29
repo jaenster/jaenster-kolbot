@@ -119,7 +119,7 @@
 					//Check if there is something in this spot.
 					if (this.buffer[x][y] > 0) continue;
 
-					if ((function () {
+					if ((() => {
 						//Loop the item size to make sure we can fit it.
 						for (nx = 0; nx < item.sizey; nx += 1) {
 							for (ny = 0; ny < item.sizex; ny += 1) {

@@ -7,8 +7,8 @@
 (function (module, require) {
 
 	let Loader = function () {
-		this.getScripts();
-		this.loadScripts();
+		Loader.getScripts();
+		Loader.loadScripts();
 	};
 
 	Loader.fileList = [];
@@ -22,7 +22,7 @@
 
 		for (i = 0; i < fileList.length; i += 1) {
 			if (fileList[i].indexOf(".js") > -1) {
-				this.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
+				Loader.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
 			}
 		}
 	};
@@ -35,7 +35,7 @@
 			unmodifiedConfig = {};
 
 
-		if (!this.fileList.length) {
+		if (!Loader.fileList.length) {
 			showConsole();
 
 			throw new Error("You don't have any valid scripts in bots folder.");
@@ -43,14 +43,14 @@
 
 		for (s in Scripts) {
 			if (Scripts.hasOwnProperty(s) && Scripts[s]) {
-				this.scriptList.push(s);
+				Loader.scriptList.push(s);
 			}
 		}
 
-		for (this.scriptIndex = 0; this.scriptIndex < this.scriptList.length; this.scriptIndex++) {
-			script = this.scriptList[this.scriptIndex];
+		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
+			script = Loader.scriptList[Loader.scriptIndex];
 
-			if (this.fileList.indexOf(script) < 0) {
+			if (Loader.fileList.indexOf(script) < 0) {
 				Misc.errorReport("ÿc1Script " + script + " doesn't exist.");
 				continue;
 			}
@@ -64,7 +64,7 @@
 				try {
 					if (typeof (global[script]) !== "function") throw new Error("Invalid script function name");
 
-					if (this.skipTown.indexOf(script) > -1 || Town.goToTown()) {
+					if (Loader.skipTown.indexOf(script) > -1 || Town.goToTown()) {
 						print("ÿc2Starting script: ÿc9" + script);
 						//scriptBroadcast(JSON.stringify({currScript: script}));
 						Messaging.sendToScript("tools/toolsthread.js", JSON.stringify({currScript: script}));
@@ -80,10 +80,10 @@
 	};
 
 	Loader.scriptName = function (offset = 0) {
-		let index = this.scriptIndex + offset;
+		let index = Loader.scriptIndex + offset;
 
-		if (index >= 0 && index < this.scriptList.length) {
-			return this.scriptList[index];
+		if (index >= 0 && index < Loader.scriptList.length) {
+			return Loader.scriptList[index];
 		}
 
 		return null;
