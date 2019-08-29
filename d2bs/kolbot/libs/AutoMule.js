@@ -104,6 +104,7 @@ var AutoMule = {
 	muleCheck: function () {
 		var i, items,
 			info = this.getInfo(), Config = require('Config');
+		const Storage = require('Storage');
 
 		if (info && info.hasOwnProperty("muleInfo")) {
 			items = this.getMuleItems();
@@ -454,7 +455,8 @@ MainLoop:
 
 	// get a list of items to mule
 	getMuleItems: function () {
-		var item, items, Config = require('config')
+		var item, items, Config = require('config'),
+			Storage = require('Storage'),
 			info = this.getInfo();
 
 		if (!info || !info.hasOwnProperty("muleInfo")) {
@@ -531,6 +533,7 @@ MainLoop:
 
 	dropCharm: function (dropAnni) {
 		const Config = require('config');
+		const Storage = require('Storage');
 		if (!Town.openStash()) {
 			return false;
 		}

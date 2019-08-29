@@ -273,6 +273,7 @@ function runewordIngredient(item) {
 }
 
 function pickItems() {
+	const Storage = require('Storage');
 	var items = [],
 		item = getUnit(4, -1, 3);
 
@@ -399,7 +400,7 @@ function shopStuff(npcId, classids, amount) {
 		var i, items,
 			num = 0,
 			npc = getInteractedNPC();
-
+		const Storage = require('Storage');
 		if (npc) {
 			items = npc.getItems();
 

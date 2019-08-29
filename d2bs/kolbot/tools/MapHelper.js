@@ -13,7 +13,6 @@ include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Storage.js");
 include("common/Town.js");
 
 
@@ -24,7 +23,6 @@ function main() {
 
 	const Config = require('Config')();
 	Pickit.init();
-	Storage.Init();
 	addEventListener("scriptmsg", function (msg) {
 		action = msg;
 	});

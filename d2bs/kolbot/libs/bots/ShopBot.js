@@ -7,7 +7,7 @@ function ShopBot(Config) {
 		totalCyclesText = new Text("Total cycles:", 50, 290, 2, 1),
 		validItems = 0,
 		totalCycles = 0;
-
+	const Storage = require('Storage');
 	Pather.teleport = false;
 	this.pickEntries = [];
 	this.npcs = {};
@@ -97,7 +97,6 @@ function ShopBot(Config) {
 
 	this.shopItems = function (npc, menuId) {
 		var i, item, items, bought;
-
 		if (!Storage.Inventory.CanFit({sizex: 2, sizey: 4}) && AutoMule.getMuleItems().length > 0) {
 			D2Bot.printToConsole("Mule triggered");
 			scriptBroadcast("mule");

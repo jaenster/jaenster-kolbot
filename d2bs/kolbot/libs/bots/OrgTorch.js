@@ -7,6 +7,7 @@
 
 function OrgTorch(Config, Attack) {
 	const Precast = require('Precast');
+	const Storage = require('Storage');
 	this.doneAreas = [];
 
 	// Identify & mule
