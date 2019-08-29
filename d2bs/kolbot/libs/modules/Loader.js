@@ -1,23 +1,22 @@
 /**
  *    @filename    Loader.js
- *    @author        kolton
- *    @desc        script loader, based on mBot's Sequencer.js
+ *    @author        kolton, jaenster
+ *    @desc        script loader
  */
 
-var global = this;
+(function (module, require) {
 
-var Loader = {
-	fileList: [],
-	scriptList: [],
-	scriptIndex: -1,
-	skipTown: ["Test", "Follower"],
-
-	init: function () {
+	let Loader = function () {
 		this.getScripts();
 		this.loadScripts();
-	},
+	};
 
-	getScripts: function () {
+	Loader.fileList = [];
+	Loader.scriptList = [];
+	Loader.scriptIndex = -1;
+	Loader.skipTown = ["Test", "Follower"];
+
+	Loader.getScripts = function () {
 		var i,
 			fileList = dopen("libs/bots/").getFiles();
 
@@ -26,9 +25,9 @@ var Loader = {
 				this.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
 			}
 		}
-	},
+	};
 
-	loadScripts: function () {
+	Loader.loadScripts = function () {
 		const Config = require('Config');
 		const Scripts = Config.Scripts;
 		const Attack = require('Attack');
@@ -78,9 +77,9 @@ var Loader = {
 				}
 			}
 		}
-	},
+	};
 
-	scriptName: function (offset = 0) {
+	Loader.scriptName = function (offset = 0) {
 		let index = this.scriptIndex + offset;
 
 		if (index >= 0 && index < this.scriptList.length) {
@@ -88,5 +87,8 @@ var Loader = {
 		}
 
 		return null;
-	}
-};
+	};
+
+	module.exports = Loader;
+
+})(module, require);

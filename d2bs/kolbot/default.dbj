@@ -13,7 +13,6 @@ include("GameAction.js");
 
 include("common/Cubing.js");
 include("common/Config.js");
-include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
@@ -185,7 +184,7 @@ function main() {
 	}
 
 	// Go
-	Loader.init();
+	const Loader = require('Loader').call();
 
 	if (Config.MinGameTime && getTickCount() - startTime < Config.MinGameTime * 1000) {
 		try {
