@@ -57,7 +57,7 @@
 				let myPartyId = ((() => (getParty() || {partyid: 0}).partyid))();
 				if (myPartyId) for (let party = getParty(), acceptFirst; party && party.getNext();) party && typeof party === 'object' && (function () {
 					if (!(party.hasOwnProperty('life'))) return true; // Somehow not a party member
-					if (this.partyflag === PARTY_MEMBER) return true;
+
 					// Deal with inviting
 					( // If no party is formed, or im member of the biggest party
 						this.partyflag !== INVITED && // Already invited
@@ -80,7 +80,7 @@
 						)
 					) {
 						// Try to make all bots accept the same char first, to avoid confusion with multiple parties
-						if (biggestPartyId !== NO_PARTY) {
+						if (biggestPartyId === NO_PARTY) {
 							// if acceptFirst isnt set, create it (to cache it, yet generate on demand)
 							!acceptFirst && (acceptFirst = Party.acceptFirst());
 
