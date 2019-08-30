@@ -622,11 +622,14 @@ function itemTier(item) {
 	},
 	nonDamage: {
 		// Some fakes to avoid these
+
+		54: true, // teleport
 		217: true, // scroll identify
 		218: true, // portal scroll
 		219: true, // I assume this is the book of scroll
 		220: true, // book portal. Not really a skill you want to use, do you
 		117: true, // Holy shield. Holy shield it self doesnt give damage
+		278: true, // venom adds damage, but doesnt do damage on its own
 	},
 	shiftState: function () {
 		if (me.getState(139)) {
@@ -1076,6 +1079,29 @@ function itemTier(item) {
 		268: 9,
 		279: 9,
 	},
+		preAttackable: [
+			sdk.skills.MagicArrow, sdk.skills.FireArrow, sdk.skills.MultipleShot, sdk.skills.ExplodingArrow, sdk.skills.IceArrow, sdk.skills.GuidedArrow, sdk.skills.ImmolationArrow, sdk.skills.Strafe,
+			sdk.skills.PlagueJavelin, sdk.skills.LightningFury,
+
+			sdk.skills.FireBolt, sdk.skills.Inferno, sdk.skills.Blaze, sdk.skills.FireBall, sdk.skills.FireWall, sdk.skills.Meteor, sdk.skills.Hydra,
+
+			sdk.skills.ChargedBolt, sdk.skills.Nova, sdk.skills.Lightning, sdk.skills.ChainLightning,
+
+			sdk.skills.IceBolt, sdk.skills.FrostNova, sdk.skills.IceBlast, sdk.skills.Blizzard, sdk.skills.FrozenOrb,
+
+			sdk.skills.AmplifyDamage, sdk.skills.DimVision, sdk.skills.Weaken, sdk.skills.IronMaiden, sdk.skills.Terror, sdk.skills.Confuse, sdk.skills.LifeTap, sdk.skills.Attract, sdk.skills.Decrepify, sdk.skills.LowerResist,
+
+			sdk.skills.Teeth, sdk.skills.BoneSpear, sdk.skills.PoisonNova,
+
+			sdk.skills.BlessedHammer,
+
+			sdk.skills.WarCry,
+
+			sdk.skills.Twister, sdk.skills.Tornado,
+
+			sdk.skills.FireBlast, sdk.skills.ShockWeb,
+
+		],
 	monsterResist: function (unit, type) {
 		let stat = this.resistMap[type];
 
@@ -1093,7 +1119,7 @@ function itemTier(item) {
 	getAmp: function () {
 		return this.skillLevel(66) ? 100 : (this.skillLevel(87) ? 50 : 0);
 	},
-	monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined) {
+		monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false) {
 		let eret = {effort: Infinity, skill: -1, type: "Physical"};
 		let useCooldown = (typeof unit === 'number' ? false : Boolean(me.getState(121))),
 			hp = this.monsterMaxHP(typeof unit.classid === 'number' ? unit.classid : unit, areaID);
@@ -1159,6 +1185,7 @@ function itemTier(item) {
 		buffDmg = buffDmg.reduce((t, v) => t + v, 0);
 
 		for (let sk in skillDamageInfo) {
+			if (preattack && this.preAttackable.indexOf(parseInt(sk)) === -1) continue; // cant preattack this skill
 			if (!this.ignoreSkill[sk] && (!useCooldown || !this.skillCooldown(sk | 0))) {
 				let avgPDmg = (skillDamageInfo[sk].pmin + skillDamageInfo[sk].pmax) / 2, totalDmg = buffDmg;
 				let avgDmg = (skillDamageInfo[sk].min + skillDamageInfo[sk].max) / 2;

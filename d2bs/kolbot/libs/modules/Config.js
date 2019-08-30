@@ -324,6 +324,10 @@
 		Entrance: true,
 	};
 
+	Config.SpeedBaal = {
+		Follower: false,
+	};
+
 	// some new configurations
 	Config.Follow = undefined; // Still i like to define it
 	Config.Silence = true;
