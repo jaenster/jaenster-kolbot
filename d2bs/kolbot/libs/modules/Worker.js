@@ -94,5 +94,7 @@
 
             return true; // always return true
         };
+
+        this.recursiveCheck = recursiveCheck;
     })();
 })(module,require);

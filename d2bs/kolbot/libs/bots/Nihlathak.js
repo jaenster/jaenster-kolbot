@@ -15,6 +15,7 @@ function Nihlathak(Config, Attack) {
 		print("Tomb Vipers found.");
 	}
 
+	delay(250); // takes a sec to load lol
 	Attack.kill(526); // Nihlathak
 	Pickit.pickItems();
 }

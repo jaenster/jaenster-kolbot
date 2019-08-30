@@ -42,7 +42,7 @@
 				y: positions[i][1]
 			};
 
-			if (Attack.validSpot(check.x, check.y) && !CollMap.checkColl(unit, check, 0x4, 0)) {
+			if ([check.x, check.y].validSpot && !CollMap.checkColl(unit, check, 0x4, 0)) {
 				if (this.reposition(positions[i][0], positions[i][1])) {
 					return true;
 				}

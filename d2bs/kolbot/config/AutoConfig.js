@@ -20,7 +20,7 @@
 	/** In case you want to override some specific setting, Examples (including D2BotWhatever files): */
 
 	/** Here some D2BotWhatever setting examples*/
-	//StarterConfig.MinGameTime = 60*3; // Alteast 3 minutes
+	//StarterConfig.MinGameTime = 60*3; // At least 3 minutes
 	//Config.Follow = 'profileOfLeader';
 
 	/** Some classic configuration examples */

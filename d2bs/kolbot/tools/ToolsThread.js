@@ -260,7 +260,7 @@ function main() {
 		var gid, distance,
 			monster = getUnit(1),
 			range = 30;
-
+		const Attack = require('Attack');
 		if (monster) {
 			do {
 				if (monster.hp > 0 && Attack.checkMonster(monster) && !monster.getParent()) {

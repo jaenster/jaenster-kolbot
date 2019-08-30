@@ -2,6 +2,7 @@
 	const Skills = require('Skills');
 	const Precast = require('Precast');
 	const GameData = require('GameData');
+	const Config = require('Config');
 	const ignoreMonster = [];
 
 	Unit.prototype.clear = function (range) {
@@ -64,8 +65,6 @@
 		if (this.type === 4 && Object.keys(sdk.storage).map(x => sdk.storage[x]).indexOf(this.location) !== -1) return this.castChargedSkill(skillId, x, y);
 
 		//return Skill.cast(skillId, hand || Skills.hand[skillId], this);
-
-		const Config = require('Config');
 		// Some invalid crap
 
 		switch (true) {
@@ -236,6 +235,10 @@
 
 		}
 
+		if (Config.MercWatch && Town.needMerc()) {
+			print("mercwatch");
+			Town.visitTown();
+		}
 
 		me.overhead(getSkillById(monsterEffort.skill) + ' @ ' + monsterEffort.effort.toFixed(2));
 
