@@ -1131,9 +1131,10 @@ Unit.prototype.getItems = function (...args) {
 		do {
 			items.push(copyUnit(item));
 		} while (item.getNext());
+		return items;
 	}
 
-	return items;
+	return [];
 };
 
 /**

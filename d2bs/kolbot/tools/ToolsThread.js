@@ -257,17 +257,14 @@ function main() {
 	};
 
 	this.getNearestMonster = function () {
-		var gid, distance,
+		let gid,
 			monster = getUnit(1),
 			range = 30;
-		const Attack = require('Attack');
 		if (monster) {
 			do {
-				if (monster.hp > 0 && Attack.checkMonster(monster) && !monster.getParent()) {
-					distance = getDistance(me, monster);
-
-					if (distance < range) {
-						range = distance;
+				if (monster.hp > 0 && monster.attackable && !monster.getParent()) {
+					if (monster.distance < range) {
+						range = monster.distance;
 						gid = monster.gid;
 					}
 				}
