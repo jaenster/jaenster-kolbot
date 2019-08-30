@@ -92,8 +92,15 @@
 			// Create a promise, once we can read a merc resolve with the merc object
 			// Once we have the merc, determin if it has Infinity, ifso, we definitely want to resurrect the merc during battle
 			print('need to watch merc?');
-			new (require('Promise'))((resolve, reject, merc = me && me.getMerc()) => merc && resolve(merc))
-				.then(merc => merc.getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true')));
+			getScript(true).name.toLowerCase() === 'default.dbj' && new (require('Promise'))(function (resolve, reject) {
+				const merc = me.getMerc();
+				if (merc instanceof Unit) {
+					typeof merc === 'object' && merc.hasOwnProperty('getItems') && resolve();
+				}
+			})
+				.then(function () {
+					return me.getMerc().getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true'));
+				});
 		}
 
 	};
