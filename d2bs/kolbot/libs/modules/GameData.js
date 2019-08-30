@@ -707,6 +707,9 @@ function itemTier(item) {
 			case 53: // chain lightning
 				hitcap = 5 + ((this.skillLevel(53) / 5) | 0);
 				break;
+			case 24:
+				hitcap = 3 + ((this.skillLevel(24) / 5) | 0);
+				break;
 			case 49: // lightning
 			case 84: // bone spear
 			case 271: // lightning sentry
@@ -834,6 +837,8 @@ function itemTier(item) {
 			case 249: // armageddon
 				dmg.pmin = dmg.pmax = 0;
 				break;
+			case 24: // charged strike
+				dmg.max *= 3 + ((this.skillLevel(24) / 5) | 0);
 		}
 
 		dmg.pmin >>= 8;
