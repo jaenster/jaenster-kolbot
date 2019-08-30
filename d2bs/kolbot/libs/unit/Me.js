@@ -87,7 +87,7 @@
 		if (me.area !== area) Pather.journeyTo(area);
 
 		let presetUnit = getPresetUnit(area, unitType, unitId);
-		presetUnit && presetUnit.moveTo(offX, offY);
+		return presetUnit && presetUnit.moveTo(offX, offY, clearPath, pop);
 	};
 
 	me.on = Events.on;
