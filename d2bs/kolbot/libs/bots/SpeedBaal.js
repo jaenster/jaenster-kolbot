@@ -137,7 +137,6 @@ function SpeedBaal(Config, Attack, Pickit) {
 			} else {
 
 				print('wave:' + this.wave);
-				this.onWaveAttack();
 				// In a wave
 				this.clear(); // First clear the throne
 				this.afterWave();
@@ -168,78 +167,6 @@ function SpeedBaal(Config, Attack, Pickit) {
 			!hydra && print('No hydra! <3');
 
 		}
-	};
-
-	this.moveToSpot = function (skill) {
-		switch (build.me) {
-			case build.warcry:
-				Pather.moveTo(15088, 5025);
-				break;
-			case build.hammerdin:
-				Pather.moveTo(15092, 5030);
-				break;
-
-			case build.blizzard:
-				if (this.wave === 2) { // just come out of wave 2
-					spots.throne.center.moveTo();
-				} else {
-					Pather.moveTo(15101, 5021);
-				}
-				break;
-			case build.firesorc:
-			case build.lightsorc:
-			case build.curser:
-				Pather.moveTo(15075, 5028);
-				break;
-			case build.convict:
-				Pather.moveTo(15084, 5017);
-				break;
-			case build.javazon:
-				Pather.moveTo(15105, 5033);
-				break;
-		}
-
-		return true;
-	};
-
-
-	this.onWaveAttack = function () {
-		let skills = this.getOnWaveAttackSkill();
-		!Array.isArray(skills) && (skills = [skills]);
-		let monster = getUnits(1)
-			.filter(unit => unit.attackable)
-			.sort((a, b) => a.distance - b.distance)
-			.first();
-
-		switch (build.me) {
-			case build.curser:
-				me.cast(91, 0, spots.throne.center.x, spots.throne.center.y);
-				break;
-		}
-
-		skills.forEach(skill => {
-			if (skill && !!this.checkThrone() && this.moveToSpot(skill)) {
-				switch (skill) { // take care of aura's. Not finished yet
-					case 123: // sant
-						me.setSkill(skill);
-						break;
-					case 271: // sentry
-						me.setSkill(skill);
-						break;
-
-					default:
-						me.cast(skill, Skills.getHand(skill), monster.x, monster.y);
-				}
-			}
-		});
-	};
-
-	this.getOnWaveAttackSkill = function () {
-		if (typeof config.OnWaveAttack === "undefined") {
-			return undefined; // Just your default skill
-		}
-		return Array.isArray(config.OnWaveAttack) ? config.OnWaveAttack[this.wave - 1] : config.OnWaveAttack;
-
 	};
 
 	const ignoreMonster = [];
@@ -275,7 +202,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 
 			while (getUnit(1, 543) && delay(3)) ;
 
-			baalSitting && delay(200);
+			baalSitting && delay(1000);
 			me.area !== sdk.areas.WorldstoneChamber && Pather.usePortal(null, null, getUnit(2, 563));
 		}
 
