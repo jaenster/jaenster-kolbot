@@ -8,6 +8,7 @@ d2bs/d2bs.log
 d2bs/kolton/data
 /d2bs/d2bs.ini
 /d2bs/kolbot/config/
+!/d2bs/kolbot/config/Example.js
 !/d2bs/kolbot/config/_CustomConfig.js
 !/d2bs/kolbot/config/Scripts.txt
-!/d2bs/kolbot/config/AutoConfig.js
+

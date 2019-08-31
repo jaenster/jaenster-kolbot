@@ -4,9 +4,23 @@
  */
 (function (module, require) {
 	function Config() {
-		let scripts = require(Config.file, '../config/');
+		if (!FileTools.exists("config/" + Config.file + ".js")) {
+			for (let i = 0; i < 8; i++) print(' ');
+			print('[ÿc1Errorÿc0] Config file doesnt exists.');
+			print('-----------------------------------------');
+			print('Please create a config file called d2bs\\kolton\\config\\' + Config.file + '.js');
+			print('You can copy Example.js');
+			print('Set it up and restart the bot');
+			print('-----------------------------------------');
+			D2Bot.printToConsole('Please setup a config file. d2bs\\kolton\\config\\' + Config.file + '.js', 9);
+			D2Bot.printToConsole('You can set this up from Example.js', 4);
+			delay(10000);
+			D2Bot.stop();
+		}
 
-		Object.keys(scripts)
+		const scripts = require(Config.file, '../config/');
+
+		Object.keys(scripts || {})
 			.forEach(x => Config.Scripts[x] = scripts[x]);
 
 		if (me.ingame) {
@@ -15,14 +29,12 @@
 			// Setup the pickit stuff
 			Pickit.init(getScript(true).name.toLowerCase() === 'default.dbj'); // only notify if we are the default thread
 
-			require('Party');
+			Config.Party && require('Party');
 		} else {
 			// If a follower is given, put it in D2BotFollower.js
 			Config.Follow && typeof JoinSettings === 'object' && JoinSettings && (JoinSettings[Config.Follow] = [me.windowtitle]);
 
-			Object.keys(Config.StarterConfig).forEach(function (key) {
-				return StarterConfig[key] = Config.StarterConfig[key];
-			})
+			Object.keys(Config.StarterConfig).forEach(key => StarterConfig[key] = Config.StarterConfig[key])
 
 		}
 		return Config;
@@ -322,6 +334,10 @@
 		Fast: false,
 		Follower: false,
 		Entrance: true,
+	};
+
+	Config.SpeedBaal = {
+		Follower: false,
 	};
 
 	// some new configurations

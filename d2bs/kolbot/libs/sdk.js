@@ -2519,7 +2519,7 @@ sdk.skillTabs = {
 		},
         warcries: {
             id: 34,
-			skills: [sdk.skills.BattleOrders, sdk.skills.BattleCommand, sdk.skills.BattleCry, sdk.skills.GrimWard, sdk.skills.FindItem, sdk.skills.Shout, sdk.skills.Taunt, sdk.skills.Howl, sdk.skills.FindPotion],
+            skills: [sdk.skills.BattleOrders, sdk.skills.BattleCommand, sdk.skills.WarCry, sdk.skills.BattleCry, sdk.skills.GrimWard, sdk.skills.FindItem, sdk.skills.Shout, sdk.skills.Taunt, sdk.skills.Howl, sdk.skills.FindPotion],
         }
     },
 	druid: {

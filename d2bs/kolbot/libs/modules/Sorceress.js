@@ -22,6 +22,7 @@
 				case typeof unit !== 'object':
 				case unit.type !== sdk.unittype.Objects:
 				case unit.name === 'portal' && !me.inTown: // cant use telekenis on portals
+				case[sdk.units.RedPortalToChamber, sdk.units.RedPortal, sdk.units.RedPortalToAct5].indexOf(unit.classid):
 					return click.apply(Misc, args)
 			}
 			return unit.cast(sdk.skills.Telekinesis, undefined, undefined, undefined, undefined, true);

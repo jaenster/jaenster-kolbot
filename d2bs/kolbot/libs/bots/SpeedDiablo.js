@@ -89,6 +89,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 		//print(getTickCount() - diaTick - 15500);
 
 		Attack.kill(sdk.monsters.Diablo1);
+		throw Error(md5('diadone'));
 	});
 
 
@@ -136,6 +137,13 @@ function SpeedDiablo(Config, Attack, Pickit) {
 
 		parts.forEach(_ => _());
 		star.moveTo();
+	} catch (e) {
+		print(e.message);
+		// Dia is done, we dont care
+		if (e.message !== md5('diadone')) {
+			throw e; // keep on throwing
+		}
+
 	} finally { // Dont care for errors, just want to make sure the packet handler is removed after it
 		removeEventListener('gamepacket', gamepacketHandler);
 	}

@@ -1,105 +1,136 @@
 # D2BS IS NOT SAFE FROM DETECTION!
 
-# Improved version of kolton
-Hi, first of all, welcome to this improved version of kolton. What exactly is the difference compared to original kolton?
-- Node like require. You can write your own modules in lib/module
-- ES6 Promises, full support
-- SpeedDiablo. A faster version diablo run
-- Quite some custom libs
-- Development script, easily reload your current script.
-- Assasin casts BoS in town, and Fade once it leaves again.
+# So what is this?
+This is an attempt to create a new version of kolton, that is more clean, clear and more easy to setup and use.
+
+# What is different?
+This version of kolton has the following features:
+- Fully automatic skills
+- Fully automatic configuration
+- Fully automatic Inventory setup *in development*
+- A single configuration file
+- Mana use *in development*
+- New scripts
+- New Party
+- New precasting
+- Faster weapon switching
+- Automatic teleswitch *in development*
+- More effiecient towning. *in development*
+- Technical stuff
 
 
-## to do list
-- Scripts:
-    - SpeedBaal. A high performance baalrun. Some versions are already leaked
+## Fully automatic skills
+This bot determine's in every situation on every monster, on every cast what skill to use. To get technical what it does
+is simply lists all the skills you have, calculates the damage on that monster (and surrounding monsters), and picks the best.
 
-- Config:
-    - Autoconfig, taking allot out of hand to setup yourself. 
+This way you never ever have to worry about setting up skills for when it encounter immune's, and those hybrid sorcs are suddenly allot more viable
 
-## Documentation
-- Development script:
-    - currently it bugs with D2BotMap. Causes unknown.
-    - fill in `Config.Development = 'Script';` and put `Script.Development = true;`.
-    - reload current script with ctrl + r. (make sure you press ctrl for a sec)
+Note: This doesnt work properly yet with melee skills (barb basically, or a paladin that doesnt smite or throws hammers).
 
-- SpeedDiablo
-    - Both a leader as a follower script, which you toggle with the follower config. Example configuration in config file.
-# Promises?
-As we mostly write in ancient javascript, this may needs some [explanation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The idea is that you can give a promise, that something will happen in the future. This is a javascript ES6 standard, and not implemented in the old firefox version we are using in d2bs. This implements it (polyfill) it for the old engine we run on
-# Simple example
+## Fully automatic configuration.
+You do not need to setup if the bot needs to watch the merc, or what class specifics you need to setup. It simply does this for you.
+One of the few things that you still need to do is setup which pickit you need to use.
 
-```javascript
-let promises = [
-		new Promise(resolve => me.area === 109 && resolve()),
-		new Promise(resolve => me.area === 103 && resolve()),
-		new Promise(resolve => me.area === 75 && resolve()),
-		new Promise(resolve => me.area === 40 && resolve()),
-		new Promise(resolve => me.area === 1 && resolve()),
-	];
+Note: All settings are still overridable. (just put the old Config.Whatever = "what i actually wanted"; in the config file)
 
-	Promise.allSettled(promises).then(_ => me.overhead('been in all acts'));
+## Fully automatic Inventory setup
+This is a peace of code that is not finished, and not in the main code base. As it isn't properly tested yet. More info on this later.
+
+## A single configuration file
+Are you tired too of setting up D2BotFollow, and a config file? No more. Everything is handled from a single configuration file
+
+## Mana use
+This is not fully functional yet, but if the script determines the monster your trying to kill is a 1 hit with a fire bolt, and a 1 hit with a fire ball. 
+It will prefer to cast a fire bolt, as it costs less mana. However, the fireball also blasts its surroundings, so at the moment it still often prefers the
+skill that uses more mana. This still needs some tweaking =)
+
+## New Scripts
+AutoMagicFind.
+    
+      This is a weird script, not anything like your used to.
+      It calculates which 85+ areas are the easiest for this character to pwn, to the hardest to do so.
+      This reduces the chickens, well atleast it puts chickens more later in game.
+      And if you used all your Rev pots in your last chickend game, you build them up in the easy areas
+      
+SpeedDiablo
+
+    This is a script that are both for the leader, as the follower. (no seperated diablo/diahelper scripts).
+    You can do a teamed fast diablo, or a solo full diablo run with it. It seems to knock of 20% of the time of a 
+    regular diablo run in my test.
+
+SpeedBaal
+    
+    This is quite simular to the SpeedDiablo, it is a script that is designed for multibotting and just simply does baal
+    faster as the original Baal scripts. Again, this is both a leader as a follower script.
+ 
+ ## New party
+ There is a new party script. No more hassle with setting up an inviter, and an accepter. 
+ The party script is simply always enabled (in multiplayer) and works fully automatic. If you specificly do _not_ want the bot to party,
+ put in your config file: `Config.Party = false;`
+ 
+ ## New precasting
+ Precasting is always something that annoyed me personally allot with the original kolton. This will re-pre-casts whenever something is needed 
+ or expires. Due to the fast switching of weapons now, you will barely notice it re-casted battle orders. It also keeps an eye on your merc, 
+ or your summoned goods that not have an bo yet.
+ 
+ ## Faster weapon switching
+ As mentioned above, switching weapons is about 5 times (no kidding) faster as regular kolton. Not much more to tell about that ;) 
+ This benefits stuff like teleswitching _allot_, as in the original, just switching weapons is so extremely slow, its pointless to do so.
+ 
+ ## Automatic Teleswitching
+ This is very much in development, so i cant say much about it. But the idea is that it does this automatically, 
+ and if you go trough multiple areas, it doesnt switch back to the original weapon.
+ 
+ ## More efficient towning
+ This is also very much in development, but the idea is that if your close to an healer (like when you pass Atma in act 2), 
+ just grab a heal anyway (unless you fully full), but not low enough to trigger the regular "heal" event.
+ More stuff like this is due to come, but its tricky to setup without bugging the rest out of the game.
+  
+ # Great, how to set it up? 
+ The entire goal is that you only need to setup 1 single file. So you never ever have to edit the D2BotWhatever config files. Keep this in mind
+
+So how?
+- Open the manager setup as your used to
+- Go to folder d2bs\kolton\config\
+- Copy and paste the Example.js file
+- Rename your new copy to "ProfileName.js", profilename as given in the manager, **not charname**
+- Open the file named after your profile. And set it up
+
+```javascript 1.6
+	// Figure out all settings on its own
+	// Including skills, inventory, belt, merc usage, chicken, everything
+	AutoConfig();
+
+	// In the future you dont need to do this, but for now you still need to setup your inventory configuration.
+	// like in original kolton, Config.Inventory[x] = [0,0,0,0,0,0....] you get the idea ;)
+	// If you dont, every thing is locked
+
+
+	// Here go your scripts as your used to.
+	// You can paste them from Scripts.txt.
+	Scripts.AutoMagicFind = true;
+
+	// Here go the pickit files
+	Config.PickitFiles.push("pots.nip");
+
+	// In case you want to override some specific setting,
+
+	// Examples: (including D2BotWhatever files)
+
+	/** Here some D2BotWhatever setting examples*/
+	//StarterConfig.MinGameTime = 60*3; // At least 3 minutes
+	//Config.Follow = 'profileOfLeader'; // (like your used to in D2BotFollow with the JoinSettings)
+
+	/** Some classic configuration examples */
+	//Config.PacketCasting = 2; // Use packet casting for everything
+	//Config.QuitList = ['myLeader']; // Exit the game if my leader does so too
 ```
-[Simple example in action](https://user-images.githubusercontent.com/31186222/60744835-f90fd600-9f77-11e9-998f-f680ddd5dfb8.gif)
-
-# Why is this handy?
-The ability to do stuff on the background can be very useful. As it can be defined anywhere, and it just jumps to this code once it is called. Where, you can make another promise.
-
-
-# Other stuff
-To make this ability, i also wrote a background worker.
-You can simply write a function that runs on the background, by doing this;
-```javascript
-let lastArea = me.area;
-Worker.runInBackground.name = function() {
-    // Gets executed all the time, aslong you return true;
-    if (me.area !== lastArea) {
-        print('now in area: '+me.area);
-    }
-    return true;
-}
-```
-# Original readme:
-
-[**Join the Forums!**](https://d2bot.discourse.group/)
-
-[**Join the Discord Channel!**](https://discord.gg/FuBG8N2)
-
-[**Documentation Repo**](https://github.com/blizzhackers/documentation)
-
-## Install Dependencies - DO THIS FIRST!
-- [Microsoft Visual C++ 2010 Redistributable Package (x86)](https://www.microsoft.com/en-us/download/details.aspx?id=5555)
-- [Microsoft .NET Framework 4.0 (or higher)](https://dotnet.microsoft.com/download/dotnet-framework)
-
-## MASTER Branch (also known as TRUNK)
-
-The package contains 3 distinct components:
-- D2BS - core
-- D2Bot# - manager
-- kolbot - script library
-
-If you want to contribute to kolbot code, make sure you use JSLint or ESLint for final polish.
-If you want to contribute to d2bs/d2bot#, come to irc.synirc.net/d2bs and ask around.
-
-- [JSLint options for kolbot code](https://gist.githubusercontent.com/noah-/d917342e52281d54c404e0b2c18b0c6e/raw/fbade95e38b103d2654b90d85ef62a51c4295153/jslint.config)
-- [ESLint options for kolbot code](https://gist.githubusercontent.com/Nishimura-Katsuo/2d6866666c7acf10047c486a15a7fe60/raw/99ef9c2995929c492ef856772ff346e0f19709cd/.eslintrc.js)
-
-## Getting Started
-- [D2Bot # Manager Setup](https://github.com/kolton/d2bot-with-kolbot/wiki/D2Bot-%23-Manager-Setup)
-- [Installing D2Bot # with Kolbot](https://github.com/kolton/d2bot-with-kolbot/wiki/Installing-d2bot%23-with-kolbot)
-- [.dbj .dbl syntax highlighting](https://github.com/kolton/d2bot-with-kolbot/wiki/.dbj-.dbl-syntax-highlighting)
-- [FAQ](https://github.com/kolton/d2bot-with-kolbot/wiki/FAQ)
-
-## Guides
-**Starter Config**
-- [Kolbot Leader config](https://github.com/kolton/d2bot-with-kolbot/wiki/Kolbot-Leader-config)
-- [Kolbot Leecher config](https://github.com/kolton/d2bot-with-kolbot/wiki/Kolbot-Leecher-Starter)
-- [Kolbot Character config](https://github.com/kolton/d2bot-with-kolbot/wiki/Kolbot-Character-config)
-
-# LimeDrop Web Based Item Manager and Dropper
-## Setup
-**Limedrop is available by default on the master and unicode branches.**
-- [Limedrop Install and Usage](https://github.com/blizzhackers/documentation/blob/master/limedrop/README.md)
-
-
-![](https://i.imgur.com/bsmEv3j.png)
+ 
+ # Any questions, or want to be involved?
+ Check out the our [discord](http://baa.al/discord), see ya there ;)
+ 
+ ## Technical stuff.
+ Allot of internal stuff of kolton is rewritten, as a faster pickit parser, a better party script, a better precasting script, 
+ a better preattacking script, better class specifics as static use when needed, and allot of cleaning up / clearing.
+ 
+ On top of that it is module based now, (nodeJS style require(...) and has full (but polyfilled) support for Promises.

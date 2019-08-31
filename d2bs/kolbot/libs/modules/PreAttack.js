@@ -1,8 +1,8 @@
 (function (module, require) {
 
     module.exports = new function () {
-        const Collision = require('Collisions');
-        const Attack = require('Attack');
+        const GameData = require('GameData');
+        const Skills = require('Skills');
         /**
          * @description
          * @param monster
@@ -11,25 +11,28 @@
          */
         let self = this;
         this.do = function (monster, estimated, spot) {
-            let result = GameData.monsterEffort(monster, me.area), skillName = '';
+            let result = GameData.monsterEffort(monster, me.area, undefined, undefined, true), skillName = '';
+            if (!result) return; // Nothing to preattack with O_o
             for (let i in sdk.skills) {
                 sdk.skills[i] === result.skill && (skillName = i);
             }
 
-            let mySpot = self.calculateBestSpot(spot, Attack.skill.range[result.skill]);
-            mySpot && me.moveTo(mySpot.x, mySpot.y);
+            let mySpot = self.calculateBestSpot(spot, Skills.range[result.skill]);
+            mySpot && mySpot.moveTo();
             !mySpot && me.moveTo(spot.x, spot.y);
 
             let doAttack = false;
-            estimated = estimated - getTickCount();
-
+            if (estimated < 0) return; // do anything if we are below zero
             //ToDo; get best hand
             switch (true) {
                 case result.skill === sdk.skills.BlessedHammer:
                     doAttack = (estimated < 5e3);
+                    doAttack && me.setSkill(sdk.skills.Concentration, 1);
                     break;
                 case result.skill === sdk.skills.Blizzard:
-
+                    break;
+                case result.skill === sdk.skills.LightningFury:
+                    doAttack = (estimated < 1000);
                     break;
                 case result.skill === sdk.skills.Nova:
                     doAttack = (estimated < 1300);
@@ -39,11 +42,13 @@
                     doAttack = (estimated > crucial + 2500 && estimated < crucial * 4) || !(crucial > 2600);
                     // Comes quite specific
                     break;
+
+
                 default:
                     doAttack = (estimated < 4e3);
                     break;
             }
-            if (doAttack && estimated > 0) {
+            if (doAttack) {
                 me.overhead('PreAttacking with ' + skillName + ' -- ' + result.skill);
                 me.cast(result.skill, undefined, spot.x, spot.y);
             } else {
@@ -75,7 +80,7 @@
 
             return coords // Filter out invalid spots
                 .filter(function (coord) {
-                    return Collision.validSpot(coord);
+                    return coord.validSpot;
                 } /*&& Collision.lineOfSight(coord.x,coord.y,15092,5029)*/)
                 // sort on the relative distance
                 .sort(function (a, b) {

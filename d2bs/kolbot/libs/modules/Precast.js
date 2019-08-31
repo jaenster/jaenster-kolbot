@@ -31,7 +31,7 @@
 		&& Pather.useWaypoint('random')
 		&& Precast(skills)
 		&& (
-			(typeof callback === 'function' && callback())
+			(typeof callback === 'function' && (callback() || true))
 			|| Pather.useWaypoint(area)
 		);
 	};
