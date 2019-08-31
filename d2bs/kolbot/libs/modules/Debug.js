@@ -9,8 +9,7 @@
 			stack = new Error().stack.match(/[^\r\n]+/g),
 			line = stack[stackNumber].substr(stack[stackNumber].lastIndexOf(':') + 1),
 			functionName = stack[stackNumber].substr(0, stack[stackNumber].indexOf('@')),
-			filename = stack[stackNumber].substr(stack[stackNumber].lastIndexOf('\\') + 1),
-			self = getScript(true).name.toLowerCase();
+			filename = stack[stackNumber].substr(stack[stackNumber].lastIndexOf('\\') + 1);
 
 		filename = filename.substr(0, filename.indexOf('.'));
 
