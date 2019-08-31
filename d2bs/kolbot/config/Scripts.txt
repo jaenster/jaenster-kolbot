@@ -1,3 +1,42 @@
+/*
+
+    Some stuff you might dont know
+
+    All the settings you see here (the Config.Whatever) lines are defaults, if you dont need/want to change the defaults
+    you do not need to copypaste these into your config file.
+    For example, if you just want to do a plain SpeedDiablo, all you need to copy in to your config file is the follow:
+
+    Scripts.SpeedDiablo = true;
+
+    If you want to change a single thing from the default setting, all you need is:
+
+    Scripts.SpeedDiablo = true;
+        Config.SpeedDiablo.Follower = true; // Take a portal, dont teleport to chaos
+
+*/
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Some new scripts that are not in original kolton
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
+        Config.SpeedDiablo.Fast: false; // Do a fast diarun (only monsters
+        Config.SpeedDiablo.Follower: false; // Follow, dont teleport to it but take the portal
+        Config.SpeedDiablo.Entrance: true; // Clear the entrance
+
+
+    Scripts.SpeedBaal = true; // A better/smarter/high power baal run (in development, but already faster as regular ones)
+        Config.SpeedBaal.Follower = false; // Follow, dont teleport to it but take the portal
+
+
+    // Auto magic find.      This is a weird script, not anything like your used to.
+    //      It calculates which 85+ areas are the easiest for this character to pwn, to the hardest to do so.
+    //      This reduces the chickens, well atleast it puts chickens more later in game.
+    //      And if you used all your Rev pots in your last chickend game, you build them up in the easy areas
+    //      It will be more configurable in the future.
+    Scripts.AutoMagicFind = true;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////// Typical multi bot related scripts
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8,10 +47,6 @@
 		Config.BattleOrders.Wait = false; // Idle until the player that received BO leaves.
 		Config.BattleOrders.Getters = []; // List of players to wait for before casting Battle Orders (mode 0). All players must be in the same area as the BOer.
 
-	// Team MF system
-	Config.MFLeader = false; // Set to true if you have one or more MFHelpers. Opens TP and gives commands when doing normal MF runs.
-
-	// Boss/area scripts
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////// Act 1
@@ -85,11 +120,10 @@
 		Config.Diablo.EntranceTP = "Entrance TP up";
 		Config.Diablo.StarTP = "Star TP up";
 		Config.Diablo.DiabloMsg = "Diablo";
-	Scripts.SpeedDiablo = false;
-		Config.SpeedDiablo.Follower = false; // Take portal and do dia run, or teleport
-		Config.SpeedDiablo.Entrance = true; // Do the entrance
-		Config.SpeedDiablo.Fast = false; // Do a fast dia run
-	Scripts.SealLeader = false; // Clear a safe spot around seals and invite leechers in. Leechers should run SealLeecher script. Don't run with Diablo or FastDiablo.
+    Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
+        Config.SpeedDiablo.Fast: false; // Do a fast diarun (only monsters
+        Config.SpeedDiablo.Follower: false; // Follow, dont teleport to it but take the portal
+        Config.SpeedDiablo.Entrance: true; // Clear the entrance
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////// Act 5
@@ -122,3 +156,13 @@
 		Config.Baal.SoulQuit = false; // End script if Souls (Burning Souls) are found.
 		Config.Baal.DollQuit = false; // End script if Dolls (Undead Soul Killers) are found.
 		Config.Baal.KillBaal = true; // Kill Baal. Leaves game after wave 5 if false.
+    Scripts.SpeedBaal = true; // A better/smarter/high power baal run (in development, but already faster as regular ones)
+            Config.SpeedBaal.Follower = false; // Follow, dont teleport to it but take the portal
+
+
+
+// Please note that most of "multi bot" scripts of original kolton are gone
+// Like AutoBaal, BaalAssistant, BaalHelper, DiaHelper, please use the SpeedBaal / SpeedDiablo alternatives
+//
+// Some stuff like the MFHelper and Questing scripts are here, but there are plans to redo these. So i advise you to dont use them
+// They are possible to setup with the original kolton settings
