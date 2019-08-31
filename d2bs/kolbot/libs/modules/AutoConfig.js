@@ -141,5 +141,13 @@
 		}
 	};
 
+	// Determin if we should use an party or not
+	AutoConfig.Party = function () {
+		Config.Party = (
+			me.gamename  // It needs a game name, as it doesnt matter in single player
+			|| me.gameserverip // but we do care if its a tcp/ip game
+		)
+	};
+
 	module.exports = AutoConfig;
 })(module, require);
