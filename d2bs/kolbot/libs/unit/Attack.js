@@ -6,6 +6,7 @@
 	const ignoreMonster = [];
 
 	Unit.prototype.clear = function (range, spectype) {
+		let start = [];
 		//ToDo; keep track of the place we are at
 		const getUnits_filted = () => getUnits(1, -1)
 			.filter(unit =>
@@ -25,7 +26,7 @@
 			})
 			.sort((a, b) => GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5))
 
-		let units = getUnits_filted(), unit, start = [];
+		let units = getUnits_filted(), unit;
 		// If we clear around _me_ we move around, but just clear around where we started
 		if (me === this) start = [me.x, me.y];
 

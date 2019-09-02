@@ -20,11 +20,16 @@
 			quitWhen = () => {
 			};
 
+		const Config = require('Config');
+
 		if (!room) return false;
 
 		if (typeof obj === 'object' && obj /*not null*/) {
 			spectype = obj.hasOwnProperty('spectype') && obj.spectype || 0;
 			quitWhen = obj.hasOwnProperty('quitWhen') && typeof obj.quitWhen === 'function' && obj.quitWhen || quitWhen;
+		}
+		if (obj !== 'object') {
+			spectype = Config.ClearType;
 		}
 
 

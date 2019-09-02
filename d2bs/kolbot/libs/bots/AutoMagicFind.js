@@ -48,6 +48,6 @@ function AutoMagicFind(Config, Attack) {
 		}
 
 		//Pather.journeyTo(area[0].Index);
-		Attack.clearLevel(0);
+		Attack.clearLevel(Config.ClearType);
 	})
 }
