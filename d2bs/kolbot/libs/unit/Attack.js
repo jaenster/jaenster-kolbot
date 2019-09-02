@@ -5,13 +5,30 @@
 	const Config = require('Config');
 	const ignoreMonster = [];
 
-	Unit.prototype.clear = function (range) {
+	Unit.prototype.clear = function (range, spectype) {
 		//ToDo; keep track of the place we are at
 		const getUnits_filted = () => getUnits(1, -1)
-			.filter(unit => ignoreMonster.indexOf(unit.gid) === -1 && unit.hp > 0 && unit.attackable && getDistance(this, unit) < range && !checkCollision(me, unit, 0x0))
-			.sort((a, b) => GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5));
+			.filter(unit =>
+				ignoreMonster.indexOf(unit.gid) === -1 // Dont attack those we ignore
+				&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
+				&& unit.attackable // Dont attack those we cant attack
+				&& (
+					start.length // If start has a length
+						? start.distance < range // If it has a range smaller as from the start point (when using me.clear)
+						: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
+				)
+				&& !checkCollision(me, unit, 0x0)
+			)
+			.filter(unit => {
+				if (!spectype || typeof spectype !== 'number') return true; // No spectype =  all monsters
+				return unit.spectype & spectype;
+			})
+			.sort((a, b) => GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5))
 
-		let units = getUnits_filted(), unit;
+		let units = getUnits_filted(), unit, start = [];
+		// If we clear around _me_ we move around, but just clear around where we started
+		if (me === this) start = [me.x, me.y];
+
 		if (units) for (; (units = getUnits_filted()) && units.length;) {
 			delay(20);
 			if (!(unit = units.first())) break; // shouldn't happen but to be sure

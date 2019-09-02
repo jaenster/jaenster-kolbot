@@ -18,7 +18,7 @@
 			me.gametype !== 0 && me.weaponswitch !== result.slot && me.switchWeapons(result.slot);
 
 			print('Precasting ' + getSkillById(result.skillId) + ' on slot ' + result.slot);
-			Skill.cast(result.skillId, Skill.getHand(result.skillId));
+			me.cast(result.skillId);
 		});
 
 		me.switchWeapons(beforeSlot);

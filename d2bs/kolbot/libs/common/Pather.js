@@ -286,10 +286,10 @@ var Pather = {
 		}
 		for (i = 0; i < 3; i += 1) {
 			if (Pather.config.PacketCasting) {
-				Skill.setSkill(54, 0);
+				me.setSkill(54, 0);
 				Packet.castSkill(0, x, y);
 			} else {
-				Skill.cast(54, 0, x, y);
+				me.cast(54, 0, x, y);
 			}
 
 			tick = getTickCount();
@@ -335,9 +335,9 @@ var Pather = {
 				me.runwalk = 1;
 			}
 
-			if (Pather.config.Charge && me.classid === 3 && me.mp >= 9 && getDistance(me.x, me.y, x, y) > 8 && Skill.setSkill(107, 1)) {
+			if (Pather.config.Charge && me.classid === 3 && me.mp >= 9 && getDistance(me.x, me.y, x, y) > 8 && me.setSkill(107, 1)) {
 				if (Pather.config.Vigor) {
-					Skill.setSkill(115, 0);
+					me.setSkill(115, 0);
 				}
 
 				Misc.click(0, 1, x, y);
@@ -354,7 +354,7 @@ var Pather = {
 
 		while (getDistance(me.x, me.y, x, y) > minDist && !me.dead) {
 			if (me.classid === 3 && Pather.config.Vigor) {
-				Skill.setSkill(115, 0);
+				me.setSkill(115, 0);
 			}
 
 			if (this.openDoors(x, y) && getDistance(me.x, me.y, x, y) <= minDist) {

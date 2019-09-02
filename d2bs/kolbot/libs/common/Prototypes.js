@@ -132,7 +132,6 @@ Unit.prototype.openMenu = function (addDelay) {
 		delay(me.ping * 2);
 		sendPacket(1, 0x30, 4, 1, 4, this.gid);
 		delay(me.ping * 2);
-		Packet.flash(me.gid);
 	}
 
 	return false;
@@ -1399,4 +1398,8 @@ if (!String.prototype.includes) {
 
 String.prototype.capitalize = function () {
 	return this.charAt(0).toUpperCase() + this.slice(1)
+};
+
+Array.prototype.isEqual = function (t) {
+	return this.map((x, i) => t.hasOwnProperty(i) && x === t[i]).reduce((a, c) => c & a, true);
 };
