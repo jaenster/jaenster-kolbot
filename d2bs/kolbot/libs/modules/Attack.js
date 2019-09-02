@@ -13,12 +13,25 @@
 		return me.clear.apply(me, [range]);
 	};
 
-	Attack.clearLevel = function (spectype) {
-		let room = getRoom(), rooms = [], result, myRoom, currentArea = getArea().id, previousArea;
+	Attack.clearLevel = function (obj) {
+		let room = getRoom(), rooms = [], result, myRoom, currentArea = getArea().id,
+			previousArea,
+			spectype,
+			quitWhen = () => {
+			};
+
+		const Config = require('Config');
 
 		if (!room) return false;
 
-		spectype === undefined && (spectype = 0);
+		if (typeof obj === 'object' && obj /*not null*/) {
+			spectype = obj.hasOwnProperty('spectype') && obj.spectype || 0;
+			quitWhen = obj.hasOwnProperty('quitWhen') && typeof obj.quitWhen === 'function' && obj.quitWhen || quitWhen;
+		}
+		if (obj !== 'object') {
+			spectype = Config.ClearType;
+		}
+
 
 		for (; room.getNext();) rooms.push([room.x * 5 + room.xsize / 2, room.y * 5 + room.ysize / 2]);
 
@@ -42,7 +55,7 @@
 			if (result) {
 				Pather.moveTo(result[0], result[1], 3, spectype);
 				previousArea = result;
-
+				if (typeof quitWhen === 'function' && quitWhen()) return true;
 				if (!me.clear(40, spectype)) break;
 
 			} else if (currentArea !== getArea().id) { // Make sure bot does not get stuck in different area.

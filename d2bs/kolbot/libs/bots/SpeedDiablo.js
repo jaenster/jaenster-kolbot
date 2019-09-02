@@ -36,7 +36,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 				if (diaTick) return; // Dont do anything if dia is done
 
 				return getPresets().some(function (seal) {
-					if (diaTick) return;
+					if (diaTick) return diaTick;
 					// Clear to seal
 					!diaTick && !Config.SpeedDiablo.Fast && seal.path.forEach(node => !diaTick && node.moveTo() && Attack.clear(40));
 
@@ -78,6 +78,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 		};
 
 	new Promise(resolve => diaTick && resolve()).then(function () { // All seals done; Time to go do dia
+		const PreAttack = require('PreAttack');
 		//Do dia
 		star.moveTo(); // go to star
 		let diablo;
@@ -85,8 +86,8 @@ function SpeedDiablo(Config, Attack, Pickit) {
 		do {
 			//ToDo; Writer some decent preattack for here
 			delay(10);
+			PreAttack.do(sdk.monsters.Diablo1, 15e3 - (getTickCount() - diaTick), star);
 		} while (!(diablo = getUnit(1, sdk.monsters.Diablo1)));
-		//print(getTickCount() - diaTick - 15500);
 
 		Attack.kill(sdk.monsters.Diablo1);
 		throw Error(md5('diadone'));
@@ -137,6 +138,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 
 		parts.forEach(_ => _());
 		star.moveTo();
+		delay(1000); // seems a bit stupid, but this catches the throw "error" of pwning diablo
 	} catch (e) {
 		print(e.message);
 		// Dia is done, we dont care
