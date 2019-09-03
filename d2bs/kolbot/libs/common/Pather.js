@@ -104,7 +104,7 @@ var Pather = {
 		clearPath - kill monsters while moving
 		pop - remove last node
 	*/
-	moveTo: function (x, y, retry, clearPath, pop) {
+	moveTo: function (x, y, retry = 3, clearPath = false, pop = false) {
 		if (me.dead) { // Abort if dead
 			return false;
 		}
@@ -127,12 +127,6 @@ var Pather = {
 
 
 		if (typeof x !== "number" || typeof y !== "number") throw new Error("moveTo: Coords must be numbers");
-
-		retry === undefined && (retry = 3);
-
-		clearPath === undefined && (clearPath = false);
-
-		!pop === undefined && (pop = false);
 
 		useTeleport = this.useTeleport();
 
@@ -235,8 +229,7 @@ var Pather = {
 		x - the x coord to teleport to
 		y - the y coord to teleport to
 	*/
-	teleportTo: function (x, y, maxRange) {
-		maxRange === undefined && (maxRange = 5);
+	teleportTo: function (x, y, maxRange = 5) {
 		for (let i = 0; i < 3; i += 1) {
 			if (Pather.config.PacketCasting) {
 				me.setSkill(54, 0);
@@ -264,11 +257,8 @@ var Pather = {
 		y - the y coord to walk to
 		minDist - minimal distance from x/y before returning true
 	*/
-	walkTo: function (x, y, minDist) {
+	walkTo: function (x, y, minDist = me.inTown && 2 || 4) {
 		while (!me.gameReady) delay(3);
-
-		(minDist === undefined) && (minDist = me.inTown && 2 || 4);
-
 
 		// Stamina handler and Charge
 		if (!me.inTown && !me.dead) {
