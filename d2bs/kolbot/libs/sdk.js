@@ -1633,6 +1633,7 @@ let sdk = {
         CainsJail: 26,
         InifussTree: 30,
 
+        TrapDoorA2: 74, // ancienttunnel/sewers act 2
         DoorbyDockAct2: 75,
         ForestAltar: 81,
         BubblingPoolOfBlood: 82,
@@ -1646,6 +1647,9 @@ let sdk = {
         HoradricCubeChest: 354,
         HoradricScrollChest: 355,
         Journal: 357,
+
+        SewerStairsA3: 366,
+        DuranceEntryStairs: 386,
 
         /*DiabloSealInfectorActive: 392,
         DiabloSealInfectorInActive: 393,
@@ -1661,8 +1665,8 @@ let sdk = {
         DiabloSealVizierActive: 396,
 
         Smoke: 401,
-        Ancientsaltar: 546,
-        Ancientsdoor: 547,
+        AncientsAltar: 546,
+        AncientsDoor: 547,
         FrozenAnya: 558,
 
         BluePortal: 59,
