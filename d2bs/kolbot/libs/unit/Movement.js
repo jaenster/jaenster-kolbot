@@ -11,12 +11,12 @@
 		return Pather.moveTo(this.roomx * 5 + this.x + offX, this.roomy * 5 + this.y + offY, undefined, clearPath, pop);
 	};
 
-	Unit.prototype.bestSpot = (unit, distance) => {
+	Unit.prototype.bestSpot = function (distance) {
 		const CollMap = require('CollMap');
 		let n, i, coll = 0x04,
 			coords = [],
 			fullDistance = distance,
-			angle = Math.round(Math.atan2(me.y - unit.y, me.x - unit.x) * 180 / Math.PI),
+			angle = Math.round(Math.atan2(me.y - this.y, me.x - this.x) * 180 / Math.PI),
 			angles = [0, 15, -15, 30, -30, 45, -45, 60, -60, 75, -75, 90, -90, 135, -135, 180];
 
 		for (n = 0; n < 3; n += 1) {
@@ -28,8 +28,8 @@
 					y: cy
 				}))
 				(
-					Math.round((Math.cos((angle + c) * Math.PI / 180)) * distance + unit.x),
-					Math.round((Math.sin((angle + c) * Math.PI / 180)) * distance + unit.y)
+					Math.round((Math.cos((angle + c) * Math.PI / 180)) * distance + this.x),
+					Math.round((Math.sin((angle + c) * Math.PI / 180)) * distance + this.y)
 				)
 			);
 		}

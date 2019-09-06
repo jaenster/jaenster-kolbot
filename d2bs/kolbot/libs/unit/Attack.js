@@ -84,7 +84,6 @@
 
 		//return Skill.cast(skillId, hand || Skills.hand[skillId], this);
 		// Some invalid crap
-
 		switch (true) {
 			case me.inTown && !Skills.town[skillId]: // cant cast this in town
 			case !item && Skills.manaCost[skillId] > me.mp: // dont have enough mana for this
@@ -100,7 +99,6 @@
 
 		x === undefined && (x = me.x);
 		y === undefined && (y = me.y);
-
 		if (!me.setSkill(skillId, hand, item)) return false;
 
 		if (Config.PacketCasting > 1 || forcePacket) {
@@ -193,9 +191,17 @@
 		}
 		//ToDo; every x seconds
 		getTickCount() - check > 1000 && (check = getTickCount()) && Precast();
-
+		new Line(me.x, me.y, this.x, this.y, 0x84, true);
 		//@ToDo; Here some specific class stuff.
 		switch (true) {
+			case me.classid === 1: // sorc
+				getUnits(2, 'shrine')
+					.filter(shrine => shrine.distance <= 25)
+					.some(function (shrine) {
+						print('getting shrine with telekenis');
+						return shrine.cast(sdk.skills.Telekinesis, undefined, undefined, undefined, undefined, true);
+					});
+				break;
 			case me.classid === 2: // necro
 				// recast bonearmor
 				!me.getState(sdk.states.BoneArmor) && me.cast(sdk.skills.BoneArmor) && me.cast(sdk.skills.BoneArmor);
@@ -283,7 +289,7 @@
 				aura && me.getSkill(aura, 1) && me.setSkill(aura, 0)
 			}
 		}
-		let val = this.attackable && this.cast(monsterEffort.skill);
+		let val = this.attackable && !this.dead && this.cast(monsterEffort.skill);
 		_delay(3); // legit delay
 		Pickit.pickItems();
 		return val;

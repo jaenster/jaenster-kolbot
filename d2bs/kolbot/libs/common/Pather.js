@@ -687,7 +687,7 @@ var Pather = {
 				delay(3);
 			}
 
-			let coord = requre('CollMap').getRandCoordinate(me.x, -1, 1, me.y, -1, 1, 3);
+			let coord = require('CollMap').getRandCoordinate(me.x, -1, 1, me.y, -1, 1, 3);
 			this.moveTo(coord.x, coord.y);
 		}
 
