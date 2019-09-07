@@ -66,14 +66,14 @@
 				} catch (e) {
 					/* Dont care if we cant*/
 				}
-
 				return {mode: obj.mode, data: data};
 			})
 				.filter(obj => typeof obj === 'object' && obj)
+				.filter(obj => typeof obj.data === 'object' && obj.data)
 				.forEach(function (obj) {
-					obj.reply = (what, mode) => Team.send(obj.profile, what, mode);
 					myEvents.trigger(obj.mode, obj.data); // Registered events on the mode
-					Object.keys(obj).forEach(function (item) {
+					typeof obj.data === 'object' && obj.data && Object.keys(obj.data).forEach(function (item) {
+						obj.data[item].reply = (what, mode) => Team.send(obj.data.profile, what, mode);
 						myEvents.trigger(item, obj.data[item]); // Registered events on a data item
 					})
 				});
@@ -87,9 +87,13 @@
 		on: myEvents.on,
 		off: myEvents.off,
 		once: myEvents.once,
-		send: (who, what, mode) => sendCopyData(null, who, mode || defaultCopyDataMode, typeof what === 'object' && JSON.stringify(what => (what.profile === me.windowtitle || what))),
+		send: function (who, what, mode) {
+			what.profile = me.windowtitle;
+			return sendCopyData(null, who, mode || defaultCopyDataMode, JSON.stringify(what));
+		},
 		broadcast: (what, mode) => others.forEach(function (other) {
-			return sendCopyData(null, other.profile, mode || defaultCopyDataMode, typeof what === 'object' && JSON.stringify(what => (what.profile === me.windowtitle || what)));
+			what.profile = me.windowtitle;
+			return sendCopyData(null, other.profile, mode || defaultCopyDataMode, JSON.stringify(what));
 		})
 	};
 

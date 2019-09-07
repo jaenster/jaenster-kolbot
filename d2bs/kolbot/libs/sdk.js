@@ -2451,6 +2451,7 @@ let sdk = {
 		EnterIP: 41,
 		CharacterSelectNoChars: 42,
 		CharacterSelectChangeRealm: 43,
+        CantConnectTCP: 44,
 	},
 };
 
