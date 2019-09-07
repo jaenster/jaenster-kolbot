@@ -1,4 +1,5 @@
-/**
+/** @description Development script. Easy to test multiple bots in TCP IP.
+ * @Author Jaenster
  *
  *
  *
@@ -11,12 +12,16 @@
  *
  *
  *
- *
- *
- *
- *
- *
- *
+ * How to set up?
+ * Go to your profile config and setup the following 2 config settings:
+ * You do not need to set anything in D2Bot#, just select this entry file
+
+ StarterConfig.LoginChar = 'EpicSorc'; // Char you login with
+ StarterConfig.Follower = true; // Follow, or false if you want to host a tcp/ip game
+
+
+
+
  *
  *
  *
