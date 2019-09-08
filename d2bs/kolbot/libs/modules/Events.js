@@ -16,8 +16,11 @@
 		};
 
 		this.trigger = function (name, ...args) {
+			//print('DEBUG; TRIGGERING FOR '+name);
 			return self.hooks.forEach(hook => !hook.name || hook.name === name && Worker.push(() => hook.callback.apply(hook, args)));
 		};
+
+		this.emit = this.trigger; // Alias for trigger
 
 		this.once = function (name, callback) {
 			const Hook = new Hook(name, function (...args) {
@@ -31,6 +34,8 @@
 			self.hooks.filter(hook => hook.__callback === callback).forEach(hook => {
 				delete self.hooks[hook.id];
 			})
-		}
+		};
+
+		this.removeListener = this.off; // Alias for remove
 	};
 })(module, require);

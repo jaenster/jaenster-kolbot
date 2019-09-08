@@ -94,6 +94,11 @@
 		broadcast: (what, mode) => others.forEach(function (other) {
 			what.profile = me.windowtitle;
 			return sendCopyData(null, other.profile, mode || defaultCopyDataMode, JSON.stringify(what));
+		}),
+		broadcastInGame: (what, mode) => others.forEach(function (other) {
+			for (const party = getParty(); party && party.getNext();) {
+				typeof party === 'object' && party && party.hasOwnProperty('name') && party.name === other.name && Team.send(other.profile, what, mode);
+			}
 		})
 	};
 
