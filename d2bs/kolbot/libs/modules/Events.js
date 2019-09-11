@@ -1,7 +1,7 @@
 (function (module, require) {
 	const Events = module.exports = function () {
-		const Worker = require('Worker');
-		let self = this;
+		const Worker = require('Worker'), self = this;
+
 		this.hooks = [];
 
 		function Hook(name, callback) {
@@ -16,8 +16,9 @@
 		};
 
 		this.trigger = function (name, ...args) {
-			//print('DEBUG; TRIGGERING FOR '+name);
-			return self.hooks.forEach(hook => !hook.name || hook.name === name && Worker.push(() => hook.callback.apply(hook, args)));
+			return self.hooks.forEach(hook => !hook.name || hook.name === name && Worker.push(function () {
+				hook.callback.apply(hook, args);
+			}));
 		};
 
 		this.emit = this.trigger; // Alias for trigger

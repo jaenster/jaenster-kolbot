@@ -20,7 +20,7 @@
 			work.filter(data => typeof data === 'object' && data)
 				.forEach(function (data) {
 					Object.keys(data).forEach(function (item) {
-						myEvents.trigger(item, data[item]); // Trigger those events
+						myEvents.emit(item, data[item]); // Trigger those events
 					})
 				});
 
