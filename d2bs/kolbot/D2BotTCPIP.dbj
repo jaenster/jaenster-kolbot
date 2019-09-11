@@ -64,11 +64,13 @@ function main() {
 	addEventListener('copydata', function (mode, msg) {
 		//print(JSON.stringify({mode: mode, msg: msg}));
 		if (msg === "Handle") {
-			handle = mode;
-			Worker.push(() => DataFile.updateStats("handle", handle));
-			Worker.push(() => D2Bot.init());
+			if (!handle) {
+				handle = mode;
+				Worker.push(() => DataFile.updateStats("handle", handle));
+				Worker.push(() => D2Bot.init());
 
-			!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
+				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
+			}
 			return;
 		}
 		if (mode === 2) {
@@ -109,6 +111,8 @@ function main() {
 
 	// error handling
 	LocationEvents.on(sdk.locations.CantConnectTCP, () => Control.OkCentered.click()); // takes us back to TCP window
+
+	while (!handle) delay(10);
 
 	let lastTimer = getTickCount();
 	D2Bot.requestGameInfo();

@@ -18,10 +18,9 @@
 		this.ysize = ysize;
 
 		return new Proxy(this, {
-			get: function (target, p, receiver) {
+			get: function (target, p) {
 				const passtroughFunc = ['click', 'setText', 'getText'];
 
-				print('HERE');
 				if (p === 'valueOf') {
 					return target;
 				}
@@ -45,6 +44,8 @@
 				if (target.hasOwnProperty(p)) {
 					return target[p];
 				}
+
+				return null;
 			}
 		})
 

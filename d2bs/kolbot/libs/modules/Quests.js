@@ -9,7 +9,7 @@
 	require('Debug');
 
 	const getQuests = (q, newQuest = []) => {
-		for (let y = 0; y < 100; y++) newQuest.push(me.getQuest(q, y));
+		for (let y = 0; y < 12; y++) newQuest.push(me.getQuest(q, y));
 		return newQuest;
 	};
 

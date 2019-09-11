@@ -40,7 +40,7 @@
 				)
 			);
 			addEventListener('scriptmsg', function (data) {
-				print(JSON.stringify(data));
+				//print(JSON.stringify(data));
 				if (typeof data === 'object' && data && data.pass) {
 					passTrough = data;
 				}
