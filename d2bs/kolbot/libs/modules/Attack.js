@@ -73,6 +73,55 @@
 		return unit.kill();
 	};
 
+	Attack.securePosition = function (x, y, range, timer, skipBlocked, special) {
+		let monster, monList, tick;
 
-	module.exports = Attack;
+		if (skipBlocked === true) {
+			skipBlocked = 0x4;
+		}
+
+		while (true) {
+			if ([x, y].distance > 5) {
+				Pather.moveTo(x, y);
+			}
+
+			monster = getUnit(1);
+			monList = [];
+
+			if (monster) {
+				do {
+					if (getDistance(monster, x, y) <= range && monster.attackable && !monster.dead &&
+						(!skipBlocked || !checkCollision(me, monster, skipBlocked)) &&
+						((me.classid === 1 && me.getSkill(54, 1)) || me.getStat(97, 54) || !checkCollision(me, monster, 0x1))) {
+						monList.push(copyUnit(monster));
+					}
+				} while (monster.getNext());
+			}
+
+			if (!monList.length) {
+				if (!tick) {
+					tick = getTickCount();
+				}
+
+				// only return if it's been safe long enough
+				if (getTickCount() - tick >= timer) {
+					return true;
+				}
+			} else {
+				monList.forEach(monster => monster.kill());
+
+				// reset the timer when there's monsters in range
+				if (tick) {
+					tick = false;
+				}
+			}
+
+			delay(100);
+		}
+
+		return true;
+	},
+
+
+		module.exports = Attack;
 })(module, require);

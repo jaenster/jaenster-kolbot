@@ -18,10 +18,9 @@
 		this.ysize = ysize;
 
 		return new Proxy(this, {
-			get: function (target, p, receiver) {
+			get: function (target, p) {
 				const passtroughFunc = ['click', 'setText', 'getText'];
 
-				print('HERE');
 				if (p === 'valueOf') {
 					return target;
 				}
@@ -45,6 +44,8 @@
 				if (target.hasOwnProperty(p)) {
 					return target[p];
 				}
+
+				return null;
 			}
 		})
 
@@ -86,6 +87,10 @@
 	Control.CharSelectBack = new Control(6, 33, 572, 128, 35);
 
 	Control.LoginErrorText = new Control(4, 199, 377, 402, 140);
+	Control.OkCentered = new Control(6, 351, 337, 96, 32);
+	Control.HellSP = new Control(-1, 264, 383, 272, 35);
+	Control.NightmareSP = new Control(-1, 264, 340, 272, 35);
+	Control.NormalSP = new Control(-1, 264, 297, 272, 35);
 
 	module.exports = Control;
 

@@ -345,6 +345,9 @@
 	Config.SpeedBaal = {
 		Follower: false,
 	};
+	Config.Rush = {
+		Give: false,
+	};
 
 	// some new configurations
 	Config.Follow = undefined; // Still i like to define it
@@ -356,6 +359,7 @@
 	// Make the StarterConfig and AdvancedConfig visible in the config file
 	Config.StarterConfig = {};
 	Config.AdvancedConfig = {};
+
 
 	module.exports = Config;
 

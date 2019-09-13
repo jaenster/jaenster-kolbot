@@ -1,0 +1,165 @@
+/** @description Development script. Easy to test multiple bots in TCP IP.
+ * @Author Jaenster
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * How to set up?
+ * Go to your profile config and setup the following 2 config settings:
+ * You do not need to set anything in D2Bot#, just select this entry file
+
+ StarterConfig.LoginChar = 'EpicSorc'; // Char you login with
+ StarterConfig.Follower = true; // Follow, or false if you want to host a tcp/ip game
+
+
+
+
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+StarterConfig = {
+	LoginChar: '', // setup in your config file which char you gonna play with (StarterConfig.LoginChar = 'yourChar';
+	Follower: false, // Create tcp/ip game, or join one
+};
+
+
+// I wrote to bot correctly with TCP/Ip, as the regular scripts try to connect with a server that isnt up.
+// i cant see if someone wants to play via TCP/Ip, as login(); already tries to join the game, even if itnt up.
+// wrote this from scratch, it isn't perfect
+print('ÿc2Jaensterÿc0 :: Started D2BotTcpJoin.dbj');
+include('require.js');
+include("sdk.js");
+include("OOG.js");
+include("common/misc.js");
+include("common/prototypes.js");
+let handle, gameInfo;
+
+function main() {
+	const LocationEvents = require('LocationEvents');
+	const Promise = require('Promise');
+	const Worker = require('Worker');
+	const Config = require('Config').call();
+	const Control = require('Control');
+	const Team = require('Team');
+	require('debug');
+	addEventListener('copydata', function (mode, msg) {
+		//print(JSON.stringify({mode: mode, msg: msg}));
+		if (msg === "Handle") {
+			if (!handle) {
+				handle = mode;
+				Worker.push(() => DataFile.updateStats("handle", handle));
+				Worker.push(() => D2Bot.init());
+
+				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
+			}
+			return;
+		}
+		if (mode === 2) {
+			gameInfo = JSON.parse(msg);
+			gameInfo.charName = StarterConfig.LoginChar;
+		}
+		if (mode === 4) {
+			msg === "pingreq" && sendCopyData(null, me.windowtitle, 4, "pingrep");
+		}
+		return;
+	});
+
+	// create datafile (needs some refactoring trough)
+	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
+
+	// Normal flow
+	LocationEvents.on(sdk.locations.MainMenu, () => Control.OtherMultiplayer.click());
+	LocationEvents.on(sdk.locations.OtherMultiplayer, () => Control.TcpIp.click());
+	LocationEvents.on(sdk.locations.TCPIP, function () {
+		if (StarterConfig.Follower) {
+			return Control.TcpIpJoin.click();
+		}
+		return Control.TcpIpHost.click();
+	});
+	LocationEvents.on(sdk.locations.CharSelect, () => ControlAction.loginCharacter(gameInfo));
+	LocationEvents.on(sdk.locations.Difficulty, function () {
+		switch (gameInfo.difficulty) {
+			case 'normal':
+				return Control.NormalSP.click();
+			case 'nightmare':
+				return Control.NightmareSP.click();
+			case 'hell':
+				return Control.HellSP.click();
+			default: // highest
+				return [Control.HellSP, Control.NightmareSP, Control.NormalSP].filter(x => x.control)[0].click();
+		}
+	});
+
+	// error handling
+	LocationEvents.on(sdk.locations.CantConnectTCP, () => Control.OkCentered.click()); // takes us back to TCP window
+
+	while (!handle) delay(10);
+
+	let lastTimer = getTickCount();
+	D2Bot.requestGameInfo();
+	while (!gameInfo) {
+		if (getTickCount() - lastTimer > 500) {
+			lastTimer = getTickCount();
+			D2Bot.requestGameInfo();
+		}
+		delay(500);
+	}
+
+	let PromiseToConnectRunning;
+	Team.on('tcp', function (msg) {
+		if (msg.hasOwnProperty('gameup') && msg.hasOwnProperty('gameserver')) {
+			if (msg.gameserver && msg.gameup) {
+				if (!PromiseToConnectRunning) {
+					PromiseToConnectRunning = new Promise(resolve => getLocation() === sdk.locations.EnterIP && resolve())
+						.then(function () {
+							Control.IPAdress.setText(msg.gameserver);
+							Control.IPAdressOk.click();
+							PromiseToConnectRunning = undefined; // unset the variable
+						})
+				}
+			}
+		}
+		if (msg.hasOwnProperty('requestGame')) {
+			return msg.reply({tcp: {gameup: me.ingame, gameserver: me.gameserverip}});
+		}
+	});
+
+	let timer = getTickCount() - 3000;
+	StarterConfig.Follower && (Worker.runInBackground.TCP = function () {
+		if (me.ingame) return true; // in game, dont need game info
+
+		// Only ask every 3 seconds
+		if ((getTickCount() - timer) < 3000 || (timer = getTickCount()) && false) return true;
+
+		Team.broadcast({
+			tcp: {
+				requestGame: true,
+			}
+		});
+		return true;
+	});
+
+	getLocation() === sdk.locations.None && sendKey(32);
+	while (true) {
+		delay(10);
+	}
+}
