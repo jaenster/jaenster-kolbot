@@ -1274,7 +1274,8 @@ IngredientLoop:
 	},
 
 	emptyCube: function () {
-		var cube = me.getItem(549),
+		const Storage = require('Storage');
+		const cube = me.getItem(549),
 			items = me.findItems(-1, -1, 6);
 
 		if (!cube) {
