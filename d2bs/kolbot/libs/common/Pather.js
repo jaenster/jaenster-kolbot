@@ -394,7 +394,7 @@ var Pather = {
 		clearPath - kill monsters while moving
 		pop - remove last node
 	*/
-	moveToUnit: function (unit, offX = 0, offY = 0, clearPath = 0, pop = false) {
+	moveToUnit: function (unit, offX = 0, offY = 0, clearPath = false, pop = false) {
 		var useTeleport = this.useTeleport();
 
 		if (!unit || !unit.hasOwnProperty("x") || !unit.hasOwnProperty("y")) throw new Error("moveToUnit: Invalid unit.");
@@ -421,7 +421,7 @@ var Pather = {
 		clearPath - kill monsters while moving
 		pop - remove last node
 	*/
-	moveToPreset: function (area, unitType, unitId, offX = 0, offY = 0, clearPath = 0, pop = false) {
+	moveToPreset: function (area, unitType, unitId, offX = 0, offY = 0, clearPath = false, pop = false) {
 		if (area === undefined || unitType === undefined || unitId === undefined) throw new Error("moveToPreset: Invalid parameters.");
 
 		let presetUnit = getPresetUnit(area, unitType, unitId);
