@@ -74,7 +74,7 @@
 				if (Loader.skipTown.indexOf(script) > -1 || Town.goToTown()) {
 					print("ÿc2Starting script: ÿc9" + script);
 					//scriptBroadcast(JSON.stringify({currScript: script}));
-					Messaging.sendToScript("tools/toolsthread.js", JSON.stringify({currScript: script}));
+					Messaging.send(JSON.stringify({currScript: script}));
 
 					// Assign a new object to the config object
 					global[script](Object.assign(typeof Scripts[script] === 'object' && Scripts[script] || {}, Config), Attack, Pickit);
