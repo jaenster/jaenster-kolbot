@@ -286,7 +286,7 @@ function Cows(Config, Attack) {
 	print('open cube');
 	Cubing.openCube();
 	delay(500);
-	me.getItems()
+	me.getItems();
 	transmute();
 	Object.keys(sdk.uiflags).forEach(x => me.cancel());
 

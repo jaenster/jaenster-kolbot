@@ -121,7 +121,7 @@ function main() {
 			lastTimer = getTickCount();
 			D2Bot.requestGameInfo();
 		}
-		delay(500);
+		delay(10);
 	}
 
 	let PromiseToConnectRunning;
