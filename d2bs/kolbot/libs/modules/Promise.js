@@ -36,7 +36,7 @@
 				self.stopped = true;
 				typeof self._catchers !== 'undefined' && (self._catchers.forEach(function (callback) {
 					return callback(e);
-				}) || Misc.errorReport(e));
+				}) || true) || Misc.errorReport(e || (new Error));
 				final();
 			};
 
