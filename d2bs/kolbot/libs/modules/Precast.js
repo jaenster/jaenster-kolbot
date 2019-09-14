@@ -36,7 +36,6 @@
 		);
 	};
 	Precast.skillIdToStateId = function (skillId) {
-
 		let name = Object.keys(sdk.skills).find(sk => sdk.skills[sk] === skillId);
 		return typeof sdk.states[name] !== 'undefined' && sdk.states[name] || undefined;
 	};
@@ -55,11 +54,13 @@
 				// we dont need to re-pre-cast it if either state is set. So cast it to an array and loop over it,
 				// until any is found.
 				if ((!Array.isArray(what.skillId) && [what.skillId] || what.skillId).some(function (skillId) {
-					let state = Precast.skillIdToStateId(skillId);
-					if (state && me.getState(state)) {
-						return true;
+					if (what.hasOwnProperty('minion')) {
+						let count = me.getMinionCount(what.minion);
+						return !!count || what.hasOwnProperty('max') && count < what.max
+					} else {
+						let state = Precast.skillIdToStateId(skillId);
+						return !!(state && me.getState(state));
 					}
-					return false;
 				})) return undefined;
 
 				break;
@@ -90,11 +91,8 @@
 		.sort((a, b) => b.slot - a.slot);
 
 	Object.defineProperty(Precast, 'skills', {
-		get: function () { // Calculate skills for precasting
-			let skills = getSkills(Precast.precastable);
-			skills = Precast.petBo(skills);
-			return skills;
-		}
+		// Calculate skills for precasting
+		get: () => Precast.petBo(getSkills(Precast.precastable)),
 	});
 
 	// Determin if we have pets, and ifso, detect if they need a bo
