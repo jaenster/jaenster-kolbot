@@ -9,6 +9,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 	const GameData = require('GameData');
 	const Skills = require('Skills');
 	const PreAttack = require('PreAttack');
+	const Vault = new (require('Vault'))('SpeedBaal');
 
 	const getUnits = (...args) => {
 			let units = [], unit = getUnit.apply(undefined, args);
@@ -99,10 +100,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 		// Wait for the portal
 		for (let i = 0, delayI = 10; i < 30 * (1000 / delayI); i += 1) {
 			if (config.Leecher) {
-				if (Pather.getPortal(sdk.areas.ThroneOfDestruction, null)) {
-					delay(10000);
-					Pather.usePortal(sdk.areas.ThroneOfDestruction, null);
-				}
+
 			} else if (Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) {
 				break;
 			}
@@ -133,6 +131,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 
 			if (!this.wave) {
 				this.clear(); // First clear the throne
+				this.nextWave = 1 && this.wave === 0 && !Vault.safeTP && (Vault.safeTP = true);
 				PreAttack.do([0, 23, 105, 557, 558, 571][this.nextWave], 12e3 - (getTickCount() - this.baaltick), spots.throne.center);
 			} else {
 

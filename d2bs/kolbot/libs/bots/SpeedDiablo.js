@@ -5,7 +5,8 @@
 function SpeedDiablo(Config, Attack, Pickit) {
 	const Promise = require('Promise'),
 		TownPrecast = require('TownPrecast'),
-		Precast = require('Precast');
+		Precast = require('Precast'),
+		Vault = new (require('Vault'))('SpeedDiablo');
 
 	let diaSort = function (a, b) {
 			// Entrance to Star / De Seis
@@ -34,7 +35,9 @@ function SpeedDiablo(Config, Attack, Pickit) {
 			parts.push(function () {
 				// Do a seal
 				if (diaTick) return; // Dont do anything if dia is done
-
+				if (Vault[name]) {// already done
+					print(name + ' is already done');
+				}
 				return getPresets().some(function (seal) {
 					if (diaTick) return diaTick;
 					// Clear to seal
@@ -72,6 +75,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 
 						return diaTick || !(Config.SpeedDiablo.Fast && Attack.kill(boss) || Attack.clear(40, 0, getLocaleString(locale), diaSort));
 					}
+					Vault[name] |= true; //
 					return diaTick;
 				});
 			});
