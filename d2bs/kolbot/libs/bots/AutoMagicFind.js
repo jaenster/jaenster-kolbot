@@ -36,9 +36,8 @@ function AutoMagicFind(Config, Attack) {
 					[sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive,
 						sdk.units.DiabloSealSeizActive, sdk.units.DiabloSealInfectorInActive,
 						sdk.units.DiabloSealInfectorActive].forEach(seal => {
-						let ps = getPresetUnits(108, 2, seal).first();
-						print(JSON.stringify(ps));
-						ps && ps.moveTo() && ps.unit && SpeedDiablo.openSeal(ps.unit);
+						Pather.moveToPreset(me.area, 2, seal);
+						SpeedDiablo.openSeal(getUnit(2, seal));
 					});
 
 					star.moveTo(); // move to the center again
