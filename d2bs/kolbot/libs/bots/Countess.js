@@ -9,7 +9,7 @@ function Countess(Config, Attack) {
 
 	Town.doChores();
 
-	if (!Pather.journeyTo(sdk.area.TowerCellarLvl5)) {
+	if (!Pather.journeyTo(sdk.areas.TowerCellarLvl5)) {
 		throw new Error("Failed to move to Countess");
 	}
 
@@ -28,7 +28,7 @@ function Countess(Config, Attack) {
 		break;
 	}
 
-	Attack.clear(20, 0, getLocaleString(2875)); // The Countess
+	getUnits(1).filter(x => x.name === getLocaleString(2875)).kill();
 
 	if (Config.OpenChests) {
 		Misc.openChestsInArea();

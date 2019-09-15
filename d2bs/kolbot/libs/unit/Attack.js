@@ -180,6 +180,14 @@
 	let check = getTickCount();
 	Unit.prototype.attack = function () {
 		let monsterEffort = GameData.monsterEffort(this, this.area);
+		const move = (sk = monsterEffort.skill) => {
+			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4)) {
+				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
+					ignoreMonster.push(this.gid);
+					return false;
+				}
+			}
+		};
 
 		if (!monsterEffort) return false; // dont know how to attack this
 		let hand = 0;
@@ -189,6 +197,8 @@
 			ignoreMonster.push(this.gid);
 			return false;
 		}
+		let corpse, range;
+
 		//ToDo; every x seconds
 		getTickCount() - check > 1000 && (check = getTickCount()) && Precast();
 		new Line(me.x, me.y, this.x, this.y, 0x84, true);
@@ -227,8 +237,8 @@
 						me.cast(91, 0, x, y); //ToDo; fix here something less specific as lower res curse
 					});
 
-				let corpse = getUnit(1, -1, 12),
-					range = Math.floor((me.getSkill(74, 1) + 7) / 3);
+				corpse = getUnit(1, -1, 12);
+				range = Math.floor((me.getSkill(74, 1) + 7) / 3);
 
 				if (corpse) for (; corpse.getNext();) {
 					if (getDistance(this, corpse) <= range && this.checkCorpse(corpse)) {
@@ -256,7 +266,56 @@
 					if (!require('Paladin').getHammerPosition(this)) return false;
 				}
 				break;
+			case me.classid === 6: // ToDO; make more viable on lower levels / fire assasin
+				let baseTrap = me.getSkill(sdk.skills.LightningSentry, 1) && sdk.skills.LightningSentry || me.getSkill(sdk.skills.LightningBolt, 1) && sdk.skills.LightningBolt;
+				let traps = [baseTrap, baseTrap, baseTrap, baseTrap, baseTrap]; // We can have 5 traps
+				if (me.getSkill(sdk.skills.DeathSentry, 1)) {
+					corpse = getUnit(1, -1, 12);
+					range = Math.floor(([(9 + me.getSkill(sdk.skills.DeathSentry, 1)) / 2] * 2 / 3 + 7) / 3);
 
+					// Todo; check if its useful to cast a death sentry (no corpses = barely damage)
+					if (corpse) for (; corpse.getNext();) {
+						if (corpse.distance <= range && corpse.checkCorpse()) {
+							traps[0] = sdk.skills.DeathSentry; // Cast a death sentry
+							break;
+						}
+					}
+				}
+
+				const map = {
+					416: sdk.skills.DeathSentry,
+					415: sdk.skills.WakeofInferno,
+					412: sdk.skills.LightningSentry,
+					411: sdk.skills.ChargedBoltSentry,
+					410: sdk.skills.WakeofFire,
+				};
+
+				// get a list of _my_ placed traps
+				const getPlacedTraps = () => getUnits(sdk.unittype.Monsters) // All monsters (yeah traps are monsters)
+					.filter(x => [410, 411, 412, 415, 416].indexOf(x.classid) > -1) // Only those that are traps
+					.filter(x => x.mode !== 12); // only alive ones
+				//.filter(x=>x.getParent() === me) // only my traps =)
+				//.filter(x => checkCollision(x, this, 0x4)); // Only those that dont collide with the current attacking monster
+
+				traps.forEach(trap => {
+					const currentTraps = getPlacedTraps(),
+						trapid = parseInt(Object.keys(map).find(classid => map[classid] === trap));
+
+					// See if we have the currently amount of traps, we want
+					const have = currentTraps.filter(x => x.classid === trapid).length;
+					const want = traps.filter(x => x === trap).length;
+					if (have < want) {
+						move(trap);
+						// We dont have enough of this trap
+						me.overhead(getSkillById(trap) + ' -- (' + (have + 1) + '/' + want + ')');
+
+						const location = this.bestSpot(5);
+						me.cast(trap, undefined, location.x, location.y);
+					}
+				});
+
+				// check regular traps (LigthingSentry
+				break;
 		}
 
 		if (Config.MercWatch && Town.needMerc()) {
@@ -270,12 +329,7 @@
 		// 	this.moveTo(); // Move to monster if its on a too high distance
 		// }
 		//ToDo; remove deprecated tag Attack
-		if (this.distance > Skills.range[monsterEffort.skill] || checkCollision(me, this, 0x4)) {
-			if (!this.getIntoPosition(Skills.range[monsterEffort.skill] / 3 * 2, 0x4)) {
-				ignoreMonster.push(this.gid);
-				return false;
-			}
-		}
+		move();
 		// Paladins have aura's
 		if (Skills.hand[monsterEffort.skill] && me.classid === 3) { // Only for skills set on first hand, we can have an aura with it
 			// First ask nishi's frame if it is Eligible for conviction, if so, we put conviction on, if we got it obv
@@ -301,5 +355,30 @@
 		while (counter < 3000 && counter++ && this.attackable) if (!this.attack()) break;
 		this.attackable && ignoreMonster.push(this.gid);
 	};
+
+	Unit.prototype.checkCorpse = function (revive) {
+		if (this.mode !== 12) return false;
+
+		var baseId = getBaseStat("monstats", this.classid, "baseid"),
+			badList = [312, 571];
+
+		if (
+			(
+				(this.spectype & 0x7)
+				|| badList.indexOf(baseId) > -1
+				|| (Config.ReviveUnstackable && getBaseStat("monstats2", baseId, "sizex") === 3)
+			) || !getBaseStat("monstats2", baseId, revive ? "revive" : "corpseSel")
+		) {
+			return false;
+		}
+
+		return getDistance(me, this) <= 40 && !checkCollision(me, this, 0x4) &&
+			!this.getState(1) && // freeze
+			!this.getState(96) && // revive
+			!this.getState(99) && // redeemed
+			!this.getState(104) && // nodraw
+			!this.getState(107) && // shatter
+			!this.getState(118);
+	}
 
 })(require, delay);
