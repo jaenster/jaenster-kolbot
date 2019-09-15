@@ -53,14 +53,11 @@
 
 					if (profile === me.windowtitle || !filename.endsWith('.json')) return;
 
-					let content = File.open('data/' + filename, 0);// open data file
-					if (!content) return; // no content
-
-					content = content.readAllLines();
-					if (!content) return; // no content
+					let newcontent = FileTools.readText(filename);
+					if (!newcontent) return; // no content
 
 					try { // try to convert to an object
-						obj = JSON.parse(content);
+						obj = JSON.parse(newcontent);
 					} catch (e) {
 						return;
 					}

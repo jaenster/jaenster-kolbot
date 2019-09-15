@@ -6,24 +6,22 @@
 if (typeof global === 'undefined') var global = this; // need a var here as a let would block the scope
 
 global['module'] = {exports: undefined};
-const require = (function (include, isIncluded, print) {
-    !getScript(true).name.toString().endsWith('.dbj') && (print = () => {
-    }); // Only be verbose on main scripts
+const require = (function (include, isIncluded, print, notify) {
     let depth = 0;
-    let packages = {};
+	const packages = {};
     return (field, path) => {
 
         path = path || 'modules/';
-        let packageName = (path + field).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+		const packageName = (path + field).replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
         if (packages.hasOwnProperty(packageName)) {
-            depth && print('ÿc2Jaensterÿc0 ::    - retrieving cached module: ' + path + field);
+			//depth && notify && print('ÿc2Jaensterÿc0 ::    - retrieving cached module: ' + path + field);
             return packages[packageName].exports;
         }
 
         if (!isIncluded(path + field + '.js')) {
-            depth && print('ÿc2Jaensterÿc0 ::    - loading dependency: ' + path + field);
-            !depth && print('ÿc2Jaensterÿc0 :: Loading module: ' + path + field);
+			depth && notify && print('ÿc2Jaensterÿc0 ::    - loading dependency: ' + path + field);
+			!depth && notify && print('ÿc2Jaensterÿc0 :: Loading module: ' + path + field);
             depth++;
 
             let old = Object.create(global['module']);
@@ -44,7 +42,8 @@ const require = (function (include, isIncluded, print) {
 
             global['module'] = old;
             return packages[packageName].exports;
+
         }
         throw Error('unexpected module error -- ' + field);
     }
-})(include, isIncluded, print);
+})(include, isIncluded, print, getScript(true).name.toLowerCase().split('').reverse().splice(0, '.dbj'.length).reverse().join('') === '.dbj');

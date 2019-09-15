@@ -1820,6 +1820,32 @@ MainLoop:
 		return mode === 0 ? contents : true;
 	},
 
+	fileActionAsync: function (path, mode, msg) {
+		const Worker = require('Worker');
+		const Promise = require('Promise');
+		if (mode === 0) { // just read
+			return FileTools.readText(path);
+		}
+
+		let done, tick = getTickCount();
+		const retry = function (amount = 0) {
+			// try again!
+			try {
+				FileTools[(mode === 1 ? 'write' : 'append') + 'Text'].apply(FileTools, [path, msg]);
+			} catch (e) {
+				done = false;
+			}
+
+			if (getTickCount() - tick < 5000) { // only try for 5000 seconds times
+				Worker.push(() => retry(amount++))
+			}
+		};
+		retry(0);
+
+		return new Promise((resolve, reject) => (done && resolve(done)) || (getTickCount() - tick > 5000 && reject(done))).catch(() => {
+		});
+	},
+
 	errorConsolePrint: true,
 	screenshotErrors: false,
 

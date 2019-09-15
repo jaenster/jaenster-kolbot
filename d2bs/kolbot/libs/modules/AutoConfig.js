@@ -132,11 +132,13 @@
 				break;
 
 			case me.classid === 5: // Druid
-
+				break;
 			case me.classid === 2: // Pala
 				require('Paladin');
+				break;
 			case me.classid = 6:
 				require('Assassin');
+				break;
 
 		}
 	};

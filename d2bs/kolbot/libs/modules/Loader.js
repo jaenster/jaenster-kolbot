@@ -6,7 +6,7 @@
 
 (function (module, require) {
 
-	let Loader = function () {
+	const Loader = function () {
 		Loader.getScripts();
 		Loader.loadScripts();
 	};
@@ -30,7 +30,6 @@
 	Loader.loadScripts = function () {
 		const Config = require('Config');
 		const Scripts = Config.Scripts;
-		const Attack = require('Attack');
 		let s, script,
 			unmodifiedConfig = {};
 
@@ -49,32 +48,39 @@
 
 		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
 			script = Loader.scriptList[Loader.scriptIndex];
+			Loader.runScript(script);
+		}
+	};
+	Loader.runScript = function (script) {
+		const Config = require('Config');
+		const Attack = require('Attack');
+		const Scripts = Config.Scripts;
+		const Messaging = require('Messaging');
 
-			if (Loader.fileList.indexOf(script) < 0) {
-				Misc.errorReport("ÿc1Script " + script + " doesn't exist.");
-				continue;
-			}
+		if (Loader.fileList.indexOf(script) < 0) {
+			Misc.errorReport("ÿc1Script " + script + " doesn't exist.");
+			return;
+		}
 
-			if (!include("bots/" + script + ".js")) {
-				Misc.errorReport("Failed to include script: " + script);
-				continue;
-			}
+		if (!include("bots/" + script + ".js")) {
+			Misc.errorReport("Failed to include script: " + script);
+			return;
+		}
 
-			if (isIncluded("bots/" + script + ".js")) {
-				try {
-					if (typeof (global[script]) !== "function") throw new Error("Invalid script function name");
+		if (isIncluded("bots/" + script + ".js")) {
+			try {
+				if (typeof (global[script]) !== "function") throw new Error("Invalid script function name");
 
-					if (Loader.skipTown.indexOf(script) > -1 || Town.goToTown()) {
-						print("ÿc2Starting script: ÿc9" + script);
-						//scriptBroadcast(JSON.stringify({currScript: script}));
-						Messaging.sendToScript("tools/toolsthread.js", JSON.stringify({currScript: script}));
+				if (Loader.skipTown.indexOf(script) > -1 || Town.goToTown()) {
+					print("ÿc2Starting script: ÿc9" + script);
+					//scriptBroadcast(JSON.stringify({currScript: script}));
+					Messaging.send(JSON.stringify({currScript: script}));
 
-						// Assign a new object to the config object
-						global[script](Object.assign(typeof Scripts[script] === 'object' && Scripts[script] || {}, Config), Attack, Pickit);
-					}
-				} catch (error) {
-					Misc.errorReport(error, script);
+					// Assign a new object to the config object
+					global[script](Object.assign(typeof Scripts[script] === 'object' && Scripts[script] || {}, Config), Attack, Pickit);
 				}
+			} catch (error) {
+				Misc.errorReport(error, script);
 			}
 		}
 	};

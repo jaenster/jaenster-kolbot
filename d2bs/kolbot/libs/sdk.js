@@ -535,7 +535,7 @@ let sdk = {
         Conviction: 28,
         Convicted: 29,
         EnergyShield: 30,
-        VenomClaws: 31,
+		Venom: 31,
         BattleOrders: 32,
         Might: 33,
         Prayer: 34,

@@ -32,9 +32,7 @@
 		on: myEvents.on,
 		off: myEvents.off,
 		once: myEvents.once,
-		send: function (what) {
-			scriptBroadcast(what);
-		}
+		send: what => scriptBroadcast(what)
 	}
 
 })(module, require);

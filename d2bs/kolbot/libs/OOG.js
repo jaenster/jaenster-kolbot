@@ -495,7 +495,7 @@ var DataFile = {
 		string = JSON.stringify(obj);
 
 		//FileTools.writeText("data/" + me.profile + ".json", string);
-		Misc.fileAction("data/" + me.profile + ".json", 1, string);
+		Misc.fileActionAsync("data/" + me.profile + ".json", 1, string);
 	}
 };
 

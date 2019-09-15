@@ -64,14 +64,6 @@
 		primarySlot: {
 			get: function () {
 				const Config = require('Config');
-				// const GameData = require('GameData');
-				// const Skills = require('Skills');
-				//
-				// const myBestSkill = GameData.mostUsedSkills().first();
-				// print(JSON.stringify(myBestSkill));
-				// const SkillLevel = myBestSkill && Skills.getSkillLevel(myBestSkill.skillId) || [0,0];
-				//
-				// print(JSON.stringify(myBestSkill)+ (Skills.getSkillLevel(myBestSkill.skillId).join(','))+ ' -- '+((Config.PrimarySlot !== undefined && Config.PrimarySlot) || (SkillLevel[1] < SkillLevel[0] && 1 || 0)));
 				return Config.PrimarySlot !== undefined ? Config.PrimarySlot : 0;
 			},
 			enumerable: false,

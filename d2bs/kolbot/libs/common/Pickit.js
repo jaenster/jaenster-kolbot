@@ -218,8 +218,8 @@ var Pickit = {
 			this.name = unit.name;
 			this.color = Pickit.itemColor(unit);
 			this.gold = unit.getStat(14);
-			this.useTk = Pickit.config.UseTelekinesis && me.classid === 1 && me.getSkill(43, 1) && (this.type === 4 || this.type === 22 || (this.type > 75 && this.type < 82)) &&
-						getDistance(me, unit) > 5 && getDistance(me, unit) < 20 && !checkCollision(me, unit, 0x4);
+			this.useTk = me.classid === 1 && me.getSkill(43, 1) && (this.type === 4 || this.type === 22 || (this.type > 75 && this.type < 82)) &&
+				unit.distance > 5 && unit.distance < 20 && !checkCollision(me, unit, 0x4);
 			this.picked = false;
 		}
 
@@ -588,9 +588,7 @@ MainLoop:
 	},
 
 	// Just sort by distance for general item pickup
-	sortItems: function (unitA, unitB) {
-		return getDistance(me, unitA) - getDistance(me, unitB);
-	},
+	sortItems: (a, b) => a.distance - b.distance,
 
 	// Prioritize runes and unique items for fast pick
 	sortFastPickItems: function (unitA, unitB) {
@@ -602,7 +600,7 @@ MainLoop:
 			return 1;
 		}
 
-		return getDistance(me, unitA) - getDistance(me, unitB);
+		return unitA.distance - unitB.distance;
 	},
 
 	fastPick: function () {
