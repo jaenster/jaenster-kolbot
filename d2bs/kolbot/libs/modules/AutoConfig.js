@@ -44,7 +44,6 @@
 		Config.HealMP = 50;
 		Config.HealStatus = false;
 		Config.UseMerc = true;
-		Config.MercWatch = ([0, 1, 6].indexOf(me.classid));
 		Config.AvoidDolls = ([0, 1, 2, 6].indexOf(me.classid)); // Avoid dolls in case your a Ama / Sorc / Necro or Assa
 
 		// Chicken settings
@@ -86,7 +85,7 @@
 
 	AutoConfig.Merc = function () {
 		Config.UseMerc = !!me.mercrevivecost; // If a merc costs anything, im pretty sure you want one
-		Config.MercWatch = false;
+		Config.MercWatch = ([0, 1, 6].indexOf(me.classid));
 
 		if (Config.UseMerc) {
 			// Create a promise, once we can read a merc resolve with the merc object
@@ -94,12 +93,10 @@
 			print('need to watch merc?');
 			getScript(true).name.toLowerCase() === 'default.dbj' && new (require('Promise'))(function (resolve, reject) {
 				const merc = me.getMerc();
-				if (merc instanceof Unit) {
-					typeof merc === 'object' && merc.hasOwnProperty('getItems') && resolve();
-				}
+				merc && typeof merc === 'object' && merc.hasOwnProperty('getItems') && resolve();
 			})
 				.then(function () {
-					return me.getMerc().getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true'));
+					return me.getMerc() && me.getMerc().getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true'));
 				});
 		}
 
@@ -136,7 +133,7 @@
 			case me.classid === 2: // Pala
 				require('Paladin');
 				break;
-			case me.classid = 6:
+			case me.classid === 6:
 				require('Assassin');
 				break;
 
