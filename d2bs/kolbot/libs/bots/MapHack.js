@@ -370,8 +370,9 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		return true; // always keep running;
 	});
 
+	let area = me.area;
 	Worker.runInBackground.AutoBo = (function () {
-		Worker.push(() => {
+		if (area === me.area) {
 			let hands = [2, 3].map(x => me.getSkill(x)), success;
 			if (!me.inTown) {
 				success |= require('Precast').call();
@@ -379,11 +380,14 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 				success |= require('TownPrecast').prepare();
 			}
 			success && hands.forEach((sk, hand) => me.setSkill(sk, hand)); // put hand back
-		});
+			area = me.area;
+		}
 		return true;
 	});
 
+	let timer = getTickCount();
 	Worker.runInBackground.pickit = (function () {
+		if ((getTickCount() - timer) < 3000 || (timer = getTickCount()) && false) return true;
 		Pickit.pickItems();
 		return true;
 	});
