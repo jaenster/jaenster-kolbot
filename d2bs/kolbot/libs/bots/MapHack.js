@@ -371,11 +371,20 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 	});
 
 	Worker.runInBackground.AutoBo = (function () {
-		if (!me.inTown) {
-			require('Precast').call();
-		} else {
-			require('TownPrecast').prepare();
-		}
+		Worker.push(() => {
+			let hands = [2, 3].map(x => me.getSkill(x)), success;
+			if (!me.inTown) {
+				success |= require('Precast').call();
+			} else {
+				success |= require('TownPrecast').prepare();
+			}
+			success && hands.forEach((sk, hand) => me.setSkill(sk, hand)); // put hand back
+		});
+		return true;
+	});
+
+	Worker.runInBackground.pickit = (function () {
+		Pickit.pickItems();
 		return true;
 	});
 
@@ -464,12 +473,34 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 			}
 		}
 
+		const toWaypoint = () => [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539].some(id => (preset => preset && Pather.moveToUnit(preset))(getPresetUnit(me.area, 2, id)));
 		// Waypoint!
 		if (Pather.wpAreas.indexOf(me.area) > -1) {
 			POI.unshift({
-				handler: () => [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539].some(id => (preset => preset && Pather.moveToUnit(preset))(getPresetUnit(me.area, 2, id))),
+				handler: () => toWaypoint,
 				name: 'goto waypoint',
 			})
+		}
+		let target;
+		switch (me.area) {
+			case sdk.areas.WorldstoneLvl1:
+				!getWaypoint(sdk.areas.WorldstoneLvl2) && POI.unshift({ // Get wp of WorldStoneLvl2, if we dont have it yet
+					handler: () => Pather.moveToExit([sdk.areas.WorldstoneLvl2], true) && toWaypoint(),
+					name: () => 'Waypoint Worldstone lvl 2',
+				});
+				break;
+			case sdk.areas.CatacombsLvl2:
+				POI.unshift({
+					handler: () => Pather.moveToExit([sdk.areas.CatacombsLvl3, sdk.areas.CatacombsLvl4], true),
+					name: () => 'Catacombs 4',
+				});
+				break;
+			case sdk.areas.FarOasis:
+				POI.unshift({
+					handler: () => Pather.journeyTo(sdk.areas.MaggotLairLvl3) && Pather.moveToPreset(me.area, 2, 356),
+					name: () => 'Maggot Lair level 3',
+				});
+
 		}
 
 

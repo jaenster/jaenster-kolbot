@@ -22,7 +22,7 @@
 		});
 
 		me.switchWeapons(beforeSlot);
-		return true;
+		return !!Precast.skills.length;
 	}
 
 	Precast.outTown = function (callback = undefined) {
