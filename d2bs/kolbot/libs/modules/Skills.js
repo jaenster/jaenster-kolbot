@@ -125,6 +125,7 @@
 							case 238: // Rabies
 							case 239: // Fire Claws
 							case 242: // Hunger
+							case 269: // Claws of thunder
 							case 248: // Fury
 							case 255: // Dragon Talon
 							case 260: // Dragon Claw
