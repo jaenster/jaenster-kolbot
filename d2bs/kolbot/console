@@ -1,6 +1,9 @@
 function main () {
 	print('ÿc2D2BSÿc0 :: Started Console Script');
     include('require.js');
+    require('Debug');
+    include('sdk.js');
+    include('common/prototypes.js')
 	while (true) {
 		delay(10000);
 	}
