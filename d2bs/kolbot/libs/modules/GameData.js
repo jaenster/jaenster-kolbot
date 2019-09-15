@@ -1318,5 +1318,11 @@ function itemTier(item) {
 
 // Export data
 	GameData.AreaData = AreaData;
+	GameData.isEnemy = isEnemy;
+	GameData.isAlive = isAlive;
+	GameData.onGround = onGround;
+	GameData.itemTier = itemTier;
+	GameData.PresetMonsters = PresetMonsters;
+
 	module.exports = GameData;
 })(module, require);
