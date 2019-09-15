@@ -35,7 +35,7 @@
 		}
 		coords.sort((a, b) => a.distance - b.distance);
 
-		return coords.find(c => !CollMap.checkColl({x: c.x, y: c.y}, unit, coll, 1));
+		return coords.find(c => !CollMap.checkColl({x: c.x, y: c.y}, this, coll, 1));
 	};
 
 	Unit.prototype.getIntoPosition = function (distance, coll, walk) { //ToDo; refactor
