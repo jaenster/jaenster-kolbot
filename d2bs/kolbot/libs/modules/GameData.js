@@ -630,6 +630,13 @@ function itemTier(item) {
 		220: true, // book portal. Not really a skill you want to use, do you
 		117: true, // Holy shield. Holy shield it self doesnt give damage
 		278: true, // venom adds damage, but doesnt do damage on its own
+
+		// Remove all the trap skills, as we prefer to calculate this upon demand
+		261: true, // lighting bolt
+		271: true, // lighting sentry
+		276: true, // Death sentry only works on corpses, we calculate this within attack
+		262: true, // wake of fire
+		272: true, // inferno
 	},
 	shiftState: function () {
 		if (me.getState(139)) {
