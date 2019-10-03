@@ -192,15 +192,15 @@ function SpeedBaal(Config, Attack, Pickit) {
 		if ([sdk.areas.WorldstoneChamber, sdk.areas.ThroneOfDestruction].indexOf(me.area) === -1) {
 			// ToDo; magic to go to throne/WorldstoneChamber
 		}
-		Config.FieldID && Town.fieldID();
+		Config.FieldID && Town.fieldID(); // perfect moment to have an empty inventory
 		if (me.area === sdk.areas.ThroneOfDestruction) {
 			// Go to WorldstoneChamber
 			Pather.moveTo(15089, 5006);
-			let baalSitting = !!getUnit(1, 543);
+			const baalSitting = !!getUnit(1, 543);
 
 			while (getUnit(1, 543) && delay(3)) ;
 
-			baalSitting && delay(1000);
+			baalSitting && delay(1000); // Only a bit if baal wasnt there in the first place
 			me.area !== sdk.areas.WorldstoneChamber && Pather.usePortal(null, null, getUnit(2, 563));
 		}
 
