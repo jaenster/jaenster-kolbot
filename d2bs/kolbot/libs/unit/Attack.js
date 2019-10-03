@@ -310,7 +310,7 @@
 						me.overhead(getSkillById(trap) + ' -- (' + (have + 1) + '/' + want + ')');
 
 						const location = this.bestSpot(5);
-						me.cast(trap, undefined, location.x, location.y);
+						location && me.cast(trap, undefined, location.x, location.y);
 					}
 				});
 
