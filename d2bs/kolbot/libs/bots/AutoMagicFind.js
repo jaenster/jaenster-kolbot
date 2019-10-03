@@ -12,22 +12,29 @@ function AutoMagicFind(Config, Attack) {
 	// const level85 = [sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary, sdk.areas.RiverOfFlame, sdk.areas.ChaosSanctuary, sdk.areas.WorldstoneLvl1, sdk.areas.WorldstoneLvl2, sdk.areas.WorldstoneLvl3, sdk.areas.ThroneOfDestruction];
 
 
-	let areas = GameData.AreaData.map(area => {
-		let exp = me.diff < 2 ? GameData.areaSoloExp(area.Index) : GameData.areaEffort(area.Index);
+	let areas = GameData.AreaData.map(area => ({
+		area: area,
+		exp: me.diff < 2 ? GameData.areaSoloExp(area.Index) : GameData.areaEffort(area.Index)
+	})).sort(me.diff < 2 ? ((a, b) => b.exp - a.exp) : ((a, b) => a.exp - b.exp)).filter(obj => level85.indexOf(obj.area.Index) !== -1);
 
-		return [area, exp];
-	}).sort(me.diff < 2 ? ((a, b) => b[1] - a[1]) : ((a, b) => a[1] - b[1])).filter(area => level85.indexOf(area[0].Index) !== -1);
-
+	// Calculate which areas are calculates as extremely hard
+	const notHardAreas = areas.map(x => x.exp).filterHighDistance();
+	// Remove areas that are extremely hard
+	areas = areas.filter(obj => {
+		const stay = notHardAreas.indexOf(obj.exp) !== -1;
+		!stay && print('ÿc1 Remove ' + obj.area.LocaleString + ' as it is too hard to beat, avg skill casts to preform a kill: ' + Math.round(obj.exp * 100) / 100);
+		return stay;
+	});
 
 	Town.doChores();
-	areas.forEach((area, i) => i < 10 && print(area[0].LocaleString + ' -- ' + area[1]));
+	areas.forEach((obj, i) => i < 10 && print(obj.area.LocaleString + ' -- ' + obj.exp));
 
-	areas.forEach(area => {
-		let Area = area[0];
-		print('Going to clear ' + area[0].LocaleString);
-		print(Area.Index);
-		Pather.journeyTo(Area.Index);
-		switch (Area.Index) {
+
+	areas.forEach(obj => {
+		print('Going to clear ' + obj.area.LocaleString);
+		print(obj.area.Index);
+		Pather.journeyTo(obj.area.Index);
+		switch (obj.area.Index) {
 			case sdk.areas.ChaosSanctuary: //If we are in chaos, simply open all seals
 				const star = {x: 7792, y: 5292};
 				new Promise(resolve => star.distance < 40 && resolve()).then(function () {
