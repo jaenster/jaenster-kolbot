@@ -9,7 +9,6 @@ function SpeedBaal(Config, Attack, Pickit) {
 	const GameData = require('GameData');
 	const Skills = require('Skills');
 	const PreAttack = require('PreAttack');
-	const Vault = new (require('Vault'))('SpeedBaal');
 
 	const getUnits = (...args) => {
 			let units = [], unit = getUnit.apply(undefined, args);
@@ -131,7 +130,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 
 			if (!this.wave) {
 				this.clear(); // First clear the throne
-				this.nextWave = 1 && this.wave === 0 && !Vault.safeTP && (Vault.safeTP = true);
+				this.nextWave = 1
 				PreAttack.do([0, 23, 105, 557, 558, 571][this.nextWave], 12e3 - (getTickCount() - this.baaltick), spots.throne.center);
 			} else {
 
