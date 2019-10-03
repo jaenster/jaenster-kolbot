@@ -27,8 +27,20 @@ function Countess(Config, Attack) {
 		Pather.moveTo(12548, 11083);
 		break;
 	}
+	delay(50);
+	for (let i = 0; i < 5; i++) {
+		try {
+			getUnits(sdk.unittype.Monsters)
+				.filter(x => x.name === getLocaleString(sdk.locale.monsters.TheCountess))
+				.first()
+				.kill();
 
-	getUnits(1).filter(x => x.name === getLocaleString(2875)).kill();
+			break;
+		} catch (e) {
+			delay(Math.max(100 * i, 100));
+			// re-try 5 times
+		}
+	}
 
 	if (Config.OpenChests) {
 		Misc.openChestsInArea();

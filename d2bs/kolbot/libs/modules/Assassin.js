@@ -6,11 +6,12 @@
 (function (module, require) {
 	const Promise = require('Promise');
 	const Config = require('Config');
+	const Worker = require('Worker');
 
 	// Cast burst of speed in town, fade before we leave town
 	const usePortal = Pather.usePortal, useWaypoint = Pather.useWaypoint;
-	const recastFade = () => Config.UseFade && !me.getState(sdk.states.Fade) && Skill.cast(sdk.skills.Fade);
-	const castBoS = () => Config.UseFade && !me.getState(sdk.states.BurstOfSpeed) && Skill.cast(sdk.skills.BurstOfSpeed) || true;
+	const recastFade = () => Config.UseFade && !me.getState(sdk.states.Fade) && me.cast(sdk.skills.Fade);
+	const castBoS = () => Config.UseFade && !me.getState(sdk.states.BurstOfSpeed) && me.cast(sdk.skills.BurstOfSpeed) || true;
 
 	Pather.usePortal = function (...args) { // If you use a portal in town, we can only leave town
 		if (me.inTown) {
@@ -32,14 +33,15 @@
 	};
 
 
-	// A promise that once started waits to be in town, once it is cast Burst of Speed.
-	(_ => _(_))(
-		self => new Promise(
-			resolve => me.inTown && resolve()
-		).then(
-			() => castBoS() && new Promise(
-				resolve => !me.inTown && resolve()
-			).then(() => self(self))));
+	let inTown = false;
+	Worker.runInBackground.AssaBoS = function () {
+		if (me.inTown && !inTown && me.hasOwnProperty('cast') /*gets called already very early*/) {
+			inTown = true;
+			// We are in town now
+			me.cast(sdk.skills.BurstOfSpeed);
+		}
 
+		return true;
+	};
 	module.exports ={};
 })(module, require);

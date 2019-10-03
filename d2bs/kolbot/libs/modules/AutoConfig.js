@@ -121,6 +121,7 @@
 
 
 	AutoConfig.ClassSpecifics = function () {
+		if (!me.ingame) return; // only if we are in game;
 		//ToDo; take in acocunt the oskills of the game. A sorc can use zeal and you might want pala specifics on a sorc.
 		switch (true) {
 			// Almost all sorcs are the same, just setup a sorc

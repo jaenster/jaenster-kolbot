@@ -1184,16 +1184,17 @@ var Pather = {
 	*/
 	journeyTo: function (area) {
 		const Precast = require('Precast');
+		const TownPrecast = require('TownPrecast');
 		var i, special, unit, tick, target;
 
 		target = this.plotCourse(area, me.area);
 
-		print(target.course);
-
+		//print(target.course);
 		if (target.useWP) {
 			Town.goToTown();
 		}
 
+		me.inTown && TownPrecast.prepare();
 		// handle variable flayer jungle entrances
 		if (target.course.indexOf(78) > -1) {
 			Town.goToTown(3); // without initiated act, getArea().exits will crash
