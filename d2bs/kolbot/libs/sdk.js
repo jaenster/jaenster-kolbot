@@ -1054,6 +1054,7 @@ let sdk = {
             TheCowKing: 2850,
             GrandVizierOfChaos: 2851,
             LordDeSeis: 2852,
+            ShenkTheOverseer: 22435,
             InfectorOfSouls: 2853,
             RiftwraithTheCannibal: 2854,
             Taintbreeder: 2855,
