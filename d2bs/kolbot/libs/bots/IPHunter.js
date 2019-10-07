@@ -2,7 +2,7 @@
 *	@filename	IPHunter.js
 *	@author		kolton, Mercoory
 *	@desc		search for a "hot" IP and stop if the correct server is found
-*	@changes	(2019.10.06) More beeps when IP found; More often movement when IP found (Anti drop mesure); Overhead messages with countdown; Logs to D2BS console
+*	@changes	(2019.10.06) More beeps when IP found; More often movement when IP found (Anti drop measure); Overhead messages with countdown; Logs to D2BS console
 */
 
 function IPHunter() {
