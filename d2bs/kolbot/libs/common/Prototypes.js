@@ -87,6 +87,7 @@ Unit.prototype.__defineGetter__("attacking",
 
 // Open NPC menu
 Unit.prototype.openMenu = function (addDelay) {
+	const Config = require('Config');
 	if (Config.PacketShopping) {
 		return Packet.openMenu(this);
 	}
@@ -131,7 +132,6 @@ Unit.prototype.openMenu = function (addDelay) {
 		delay(me.ping * 2);
 		sendPacket(1, 0x30, 4, 1, 4, this.gid);
 		delay(me.ping * 2);
-		Packet.flash(me.gid);
 	}
 
 	return false;
@@ -139,6 +139,7 @@ Unit.prototype.openMenu = function (addDelay) {
 
 // mode = "Gamble", "Repair" or "Shop"
 Unit.prototype.startTrade = function (mode) {
+	const Config = require('Config');
 	if (Config.PacketShopping) {
 		return Packet.startTrade(this, mode);
 	}
@@ -178,6 +179,7 @@ Unit.prototype.startTrade = function (mode) {
 };
 
 Unit.prototype.buy = function (shiftBuy, gamble) {
+	const Config = require('Config');
 	if (Config.PacketShopping) {
 		return Packet.buyItem(this, shiftBuy, gamble);
 	}
@@ -243,6 +245,7 @@ Unit.prototype.__defineGetter__("parentName",
 
 // You MUST use a delay after Unit.sell() if using custom scripts. delay(500) works best, dynamic delay is used when identifying/selling (500 - item id time)
 Unit.prototype.sell = function () {
+	const Config = require('Config');
 	if (Config.PacketShopping) {
 		return Packet.sellItem(this);
 	}
@@ -1127,9 +1130,10 @@ Unit.prototype.getItems = function (...args) {
 		do {
 			items.push(copyUnit(item));
 		} while (item.getNext());
+		return items;
 	}
 
-	return items;
+	return [];
 };
 
 /**
@@ -1200,7 +1204,7 @@ Unit.prototype.castChargedSkill = function (...args) {
 			.forEach(function (item) {
 				let stats = item.getStat(-2);
 
-				if (!stats.hasOwnProperty(204)) {
+				if (stats && typeof stats === 'object' && stats.hasOwnProperty(204)) {
 					stats = stats[204].filter(validCharge);
 					stats.length && chargedItems.push({
 						charge: stats.first(),
@@ -1233,6 +1237,7 @@ Unit.prototype.castChargedSkill = function (...args) {
 
 		if (charge) {
 			// Setting skill on hand
+			const Config = require('Config');
 			if (!Config.PacketCasting || Config.PacketCasting === 1 && skillId !== 54) {
 				return Skill.cast(skillId, 0, x || me.x, y || me.y, this); // Non packet casting
 			}
@@ -1249,4 +1254,169 @@ Unit.prototype.castChargedSkill = function (...args) {
 	}
 
 	return false;
+};
+
+PresetUnit.prototype.__defineGetter__('unit', function () {
+	return getUnits(this.type, this.id).first();
+});
+
+/**
+ * @param args
+ * @returns {Unit[]}
+ */
+function getUnits(...args) {
+	let units = [], unit = getUnit.apply(null, args);
+
+	if (!unit) {
+		return [];
+	}
+	do {
+		units.push(copyUnit(unit));
+	} while (unit.getNext());
+	return units;
+}
+/**
+ * Simple functionality to read the distance between you and an unit.
+ * Example: getUnit(...).distance <-- gives the distance between you and the unit.
+ */
+Object.defineProperty(Unit.prototype, 'distance', {
+	get: function() {
+		return getDistance(me,this);
+	}
+});
+
+
+// https://tc39.github.io/ecma262/#sec-array.prototype.findindex
+if (!Array.prototype.findIndex) {
+	Object.defineProperty(Array.prototype, 'findIndex', {
+		value: function (predicate) {
+			// 1. Let O be ? ToObject(this value).
+			if (this == null) {
+				throw new TypeError('"this" is null or not defined');
+			}
+
+			var o = Object(this);
+
+			// 2. Let len be ? ToLength(? Get(O, "length")).
+			var len = o.length >>> 0;
+
+			// 3. If IsCallable(predicate) is false, throw a TypeError exception.
+			if (typeof predicate !== 'function') {
+				throw new TypeError('predicate must be a function');
+			}
+
+			// 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+			var thisArg = arguments[1];
+
+			// 5. Let k be 0.
+			var k = 0;
+
+			// 6. Repeat, while k < len
+			while (k < len) {
+				// a. Let Pk be ! ToString(k).
+				// b. Let kValue be ? Get(O, Pk).
+				// c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+				// d. If testResult is true, return k.
+				var kValue = o[k];
+				if (predicate.call(thisArg, kValue, k, o)) {
+					return k;
+				}
+				// e. Increase k by 1.
+				k++;
+			}
+
+			// 7. Return -1.
+			return -1;
+		},
+		configurable: true,
+		writable: true
+	});
+}
+
+PresetUnit.prototype.__defineGetter__('unit', function () {
+	return getUnits(this.type, this.id).first();
+});
+
+String.prototype.lcsGraph = function (compareToThis) {
+	if (!this.length || !compareToThis || !compareToThis.length) {
+		return null;
+	}
+
+	let stringA = this.toString().toLowerCase(), stringB = compareToThis.toLowerCase(), graph = Array(this.length), x,
+		y;
+	let check = (i, j) => (i < 0 || j < 0 || i >= stringA.length || j >= stringB.length) ? 0 : graph[i][j];
+
+	for (x = 0; x < stringA.length; x++) {
+		graph[x] = new Uint16Array(stringB.length);
+
+		for (y = 0; y < stringB.length; y++) {
+			if (stringA[x] === stringB[y]) {
+				graph[x][y] = check(x - 1, y - 1) + 1;
+			} else {
+				graph[x][y] = Math.max(check(x - 1, y), check(x, y - 1));
+			}
+		}
+	}
+
+	return {a: this.toString(), b: compareToThis, graph: graph};
+};
+
+String.prototype.diffCount = function (stringB) {
+	try {
+		if (typeof stringB !== 'string' || !stringB) {
+			return this.length;
+		}
+
+		if (!this.length) {
+			return stringB.length;
+		}
+
+		let graph = this.lcsGraph(stringB);
+
+		return (Math.max(graph.a.length, graph.b.length) - graph.graph[graph.a.length - 1][graph.b.length - 1]);
+	} catch (err) {
+		print(err.stack);
+	}
+
+	return Infinity;
+};
+
+if (!String.prototype.includes) {
+	String.prototype.includes = function (search, start) {
+		'use strict';
+		if (typeof start !== 'number') {
+			start = 0;
+		}
+
+		if (start + search.length > this.length) {
+			return false;
+		} else {
+			return this.indexOf(search, start) !== -1;
+		}
+	};
+}
+
+String.prototype.capitalize = function () {
+	return this.charAt(0).toUpperCase() + this.slice(1)
+};
+
+Array.prototype.isEqual = function (t) {
+	return this.map((x, i) => t.hasOwnProperty(i) && x === t[i]).reduce((a, c) => c & a, true);
+};
+
+
+getScript.startAsThread = function () {
+	let stack = new Error().stack.match(/[^\r\n]+/g),
+		filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
+
+	if (getScript(true).name.toLowerCase() === filename.toLowerCase()) {
+		return 'thread';
+	}
+
+	if (!getScript(filename)) {
+		load(filename);
+		return 'started';
+	}
+
+	return 'loaded';
 };

@@ -269,7 +269,7 @@ var D2Bot = {
 			args: []
 		};
 
-		//print("ÿc1Heart beat " + this.handle);
+		// print("ÿc1Heart beat " + this.handle);
 		sendCopyData(null, this.handle, 0xbbbb, JSON.stringify(obj));
 	},
 
@@ -495,7 +495,7 @@ var DataFile = {
 		string = JSON.stringify(obj);
 
 		//FileTools.writeText("data/" + me.profile + ".json", string);
-		Misc.fileAction("data/" + me.profile + ".json", 1, string);
+		Misc.fileActionAsync("data/" + me.profile + ".json", 1, string);
 	}
 };
 
@@ -1027,7 +1027,7 @@ MainLoop:
 		}
 
 MainLoop:
-		while (getLocation() !== 1) { // cycle until in lobby
+	while (getLocation() !== 1 || me.ingame === null /*in game*/) { // cycle until in lobby
 			switch (getLocation()) {
 			case 12: // character select
 				control = getControl(4, 37, 178, 200, 92);

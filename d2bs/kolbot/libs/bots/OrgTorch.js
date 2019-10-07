@@ -5,7 +5,9 @@
 *	@notes		Search for the word "Start" and follow the comments if you want to know what this script does and when.
 */
 
-function OrgTorch() {
+function OrgTorch(Config, Attack) {
+	const Precast = require('Precast');
+	const Storage = require('Storage');
 	this.doneAreas = [];
 
 	// Identify & mule
@@ -100,7 +102,7 @@ function OrgTorch() {
 			if (!me.getState(159)) {
 				print("Getting Fade");
 				Pather.useWaypoint(107);
-				Precast.doPrecast(true);
+				Precast();
 				Pather.moveTo(7811, 5872);
 
 				if (me.classid === 3 && me.getSkill(125, 1)) {
@@ -173,7 +175,7 @@ function OrgTorch() {
 
 		switch (me.area) {
 		case 133: // Matron's Den
-			Precast.doPrecast(true);
+			Precast();
 			Pather.moveToPreset(133, 2, 397, 2, 2);
 			Attack.kill(707);
 			//Attack.clear(5);
@@ -182,7 +184,7 @@ function OrgTorch() {
 
 			break;
 		case 134: // Forgotten Sands
-			Precast.doPrecast(true);
+			Precast();
 
 			findLoc = [20196, 8694, 20308, 8588, 20187, 8639, 20100, 8550, 20103, 8688, 20144, 8709, 20263, 8811, 20247, 8665];
 
@@ -201,7 +203,7 @@ function OrgTorch() {
 
 			break;
 		case 135: // Furnace of Pain
-			Precast.doPrecast(true);
+			Precast();
 			Pather.moveToPreset(135, 2, 397, 2, 2);
 			Attack.kill(706);
 			Pickit.pickItems();
@@ -210,7 +212,7 @@ function OrgTorch() {
 			break;
 		case 136: // Tristram
 			Pather.moveTo(25068, 5078);
-			Precast.doPrecast(true);
+			Precast();
 
 			findLoc = [25040, 5101, 25040, 5166, 25122, 5170];
 
@@ -232,7 +234,6 @@ function OrgTorch() {
 				skillBackup = Config.AttackSkill[2];
 				Config.AttackSkill[2] = 125;
 
-				Attack.init();
 			}
 
 			Attack.kill(704);

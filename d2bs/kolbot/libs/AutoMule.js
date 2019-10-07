@@ -103,7 +103,8 @@ var AutoMule = {
 
 	muleCheck: function () {
 		var i, items,
-			info = this.getInfo();
+			info = this.getInfo(), Config = require('Config');
+		const Storage = require('Storage');
 
 		if (info && info.hasOwnProperty("muleInfo")) {
 			items = this.getMuleItems();
@@ -454,7 +455,8 @@ MainLoop:
 
 	// get a list of items to mule
 	getMuleItems: function () {
-		var item, items,
+		var item, items, Config = require('config'),
+			Storage = require('Storage'),
 			info = this.getInfo();
 
 		if (!info || !info.hasOwnProperty("muleInfo")) {
@@ -503,6 +505,7 @@ MainLoop:
 
 	// check if an item is a runeword ingrediend - rune, empty base or bad rolled base
 	runewordIngredient: function (item) {
+		const Config = require('config');
 		if (Runewords.validGids.indexOf(item.gid) > -1) {
 			return true;
 		}
@@ -529,6 +532,8 @@ MainLoop:
 	},
 
 	dropCharm: function (dropAnni) {
+		const Config = require('config');
+		const Storage = require('Storage');
 		if (!Town.openStash()) {
 			return false;
 		}

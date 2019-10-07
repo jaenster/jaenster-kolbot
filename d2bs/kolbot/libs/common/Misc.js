@@ -5,6 +5,7 @@
 */
 
 var Skill = {
+	config: require('Config'),
 	usePvpRange: false,
 
 	getRange: function (skillId) {
@@ -260,7 +261,7 @@ var Skill = {
 		// Check mana cost, charged skills don't use mana
 		if (!item && this.getManaCost(skillId) > me.mp) {
 			// Maybe delay on ALL skills that we don't have enough mana for?
-			if (Config.AttackSkill.concat([42, 54]).concat(Config.LowManaSkill).indexOf(skillId) > -1) {
+			if (Skill.config.AttackSkill.concat([42, 54]).concat(Skill.config.LowManaSkill).indexOf(skillId) > -1) {
 				delay(300);
 			}
 
@@ -289,7 +290,7 @@ var Skill = {
 			return false;
 		}
 
-		if (Config.PacketCasting > 1) {
+		if (Skill.config.PacketCasting > 1) {
 			switch (typeof x) {
 			case "number":
 				Packet.castSkill(hand, x, y);
@@ -458,7 +459,7 @@ MainLoop:
 
 var Item = {
 	hasTier: function (item) {
-		return Config.AutoEquip && NTIP.GetTier(item) > 0;
+		return Misc.config.AutoEquip && NTIP.GetTier(item) > 0;
 	},
 
 	canEquip: function (item) {
@@ -496,6 +497,7 @@ var Item = {
 			}
 		}
 
+		const Storage = require('Storage');
 		for (i = 0; i < 3; i += 1) {
 			if (item.toCursor()) {
 				clickItem(0, bodyLoc);
@@ -626,7 +628,7 @@ var Item = {
 	},
 
 	autoEquipCheck: function (item) {
-		if (!Config.AutoEquip) {
+		if (!Misc.config.AutoEquip) {
 			return true;
 		}
 
@@ -653,7 +655,7 @@ var Item = {
 
 	// returns true if the item should be kept+logged, false if not
 	autoEquip: function () {
-		if (!Config.AutoEquip) {
+		if (!Misc.config.AutoEquip) {
 			return true;
 		}
 
@@ -729,6 +731,7 @@ var Item = {
 };
 
 var Misc = {
+	config: require('Config'),
 	// Click something
 	click: function (button, shift, x, y) {
 		if (arguments.length < 2) {
@@ -928,7 +931,7 @@ var Misc = {
 		}
 
 		while (coords.length) {
-			coords.sort(Sort.units);
+			coords.sort((a, b) => a.distance - b.distance);
 			Pather.moveToUnit(coords[0], 1, 2);
 			this.openChests(20);
 
@@ -952,7 +955,7 @@ var Misc = {
 		}
 
 		// Testing all container code
-		if (Config.OpenChests === 2) {
+		if (Misc.config.OpenChests === 2) {
 			containers = [
 				"chest", "loose rock", "hidden stash", "loose boulder", "corpseonstick", "casket", "armorstand", "weaponrack", "barrel", "holeanim", "tomb2",
 				"tomb3", "roguecorpse", "ratnest", "corpse", "goo pile", "largeurn", "urn", "chest3", "jug", "skeleton", "guardcorpse", "sarcophagus", "object2",
@@ -973,7 +976,7 @@ var Misc = {
 		}
 
 		while (unitList.length > 0) {
-			unitList.sort(Sort.units);
+			unitList.sort((a, b) => a.distance - b.distance);
 
 			unit = unitList.shift();
 
@@ -988,7 +991,7 @@ var Misc = {
 	shrineStates: false,
 
 	scanShrines: function (range) {
-		if (!Config.ScanShrines.length) {
+		if (!Misc.config.ScanShrines.length) {
 			return false;
 		}
 
@@ -1004,8 +1007,8 @@ var Misc = {
 		if (!this.shrineStates) {
 			this.shrineStates = [];
 
-			for (i = 0; i < Config.ScanShrines.length; i += 1) {
-				switch (Config.ScanShrines[i]) {
+			for (i = 0; i < Misc.config.ScanShrines.length; i += 1) {
+				switch (Misc.config.ScanShrines[i]) {
 				case 0: // None
 				case 1: // Refilling
 				case 2: // Health
@@ -1033,7 +1036,7 @@ var Misc = {
 				case 14: // Stamina
 				case 15: // Experience
 					// Both states and shrines are arranged in same order with armor shrine starting at 128
-					this.shrineStates[i] = Config.ScanShrines[i] + 122;
+					this.shrineStates[i] = Misc.config.ScanShrines[i] + 122;
 
 					break;
 				}
@@ -1059,16 +1062,16 @@ var Misc = {
 				}
 			}
 
-			for (i = 0; i < Config.ScanShrines.length; i += 1) {
+			for (i = 0; i < Misc.config.ScanShrines.length; i += 1) {
 				for (j = 0; j < shrineList.length; j += 1) {
 					// Get the shrine if we have no active state or to refresh current state or if the shrine has no state
 					// Don't override shrine state with a lesser priority shrine
 					if (index === -1 || i <= index || this.shrineStates[i] === 0) {
-						if (shrineList[j].objtype === Config.ScanShrines[i] && (Pather.useTeleport() || !checkCollision(me, shrineList[j], 0x4))) {
+						if (shrineList[j].objtype === Misc.config.ScanShrines[i] && (Pather.useTeleport() || !checkCollision(me, shrineList[j], 0x4))) {
 							this.getShrine(shrineList[j]);
 
 							// Gem shrine - pick gem
-							if (Config.ScanShrines[i] === 18) {
+							if (Misc.config.ScanShrines[i] === 18) {
 								Pickit.pickItems();
 							}
 						}
@@ -1124,7 +1127,7 @@ var Misc = {
 		}
 
 		while (shrineLocs.length > 0) {
-			shrineLocs.sort(Sort.points);
+			shrineLocs.sort((a, b) => a.distance - b.distance);
 
 			coords = shrineLocs.shift();
 
@@ -1262,7 +1265,7 @@ var Misc = {
 	useItemLog: true, // Might be a bit dirty
 
 	itemLogger: function (action, unit, text) {
-		if (!Config.ItemInfo || !this.useItemLog) {
+		if (!Misc.config.ItemInfo || !this.useItemLog) {
 			return false;
 		}
 
@@ -1272,7 +1275,7 @@ var Misc = {
 
 		switch (action) {
 		case "Sold":
-			if (Config.ItemInfoQuality.indexOf(unit.quality) === -1) {
+			if (Misc.config.ItemInfoQuality.indexOf(unit.quality) === -1) {
 				return false;
 			}
 
@@ -1310,36 +1313,36 @@ var Misc = {
 
 		var i;
 
-		if (!Config.LogKeys && ["pk1", "pk2", "pk3"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogKeys && ["pk1", "pk2", "pk3"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		if (!Config.LogOrgans && ["dhn", "bey", "mbr"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogOrgans && ["dhn", "bey", "mbr"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		if (!Config.LogLowRunes && ["r01", "r02", "r03", "r04", "r05", "r06", "r07", "r08", "r09", "r10", "r11", "r12", "r13", "r14"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogLowRunes && ["r01", "r02", "r03", "r04", "r05", "r06", "r07", "r08", "r09", "r10", "r11", "r12", "r13", "r14"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		if (!Config.LogMiddleRunes && ["r15", "r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogMiddleRunes && ["r15", "r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		if (!Config.LogHighRunes && ["r24", "r25", "r26", "r27", "r28", "r29", "r30", "r31", "r32", "r33"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogHighRunes && ["r24", "r25", "r26", "r27", "r28", "r29", "r30", "r31", "r32", "r33"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		if (!Config.LogLowGems && ["gcv", "gcy", "gcb", "gcg", "gcr", "gcw", "skc", "gfv", "gfy", "gfb", "gfg", "gfr", "gfw", "skf", "gsv", "gsy", "gsb", "gsg", "gsr", "gsw", "sku"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogLowGems && ["gcv", "gcy", "gcb", "gcg", "gcr", "gcw", "skc", "gfv", "gfy", "gfb", "gfg", "gfr", "gfw", "skf", "gsv", "gsy", "gsb", "gsg", "gsr", "gsw", "sku"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		if (!Config.LogHighGems && ["gzv", "gly", "glb", "glg", "glr", "glw", "skl", "gpv", "gpy", "gpb", "gpg", "gpr", "gpw", "skz"].indexOf(unit.code) > -1) {
+		if (!Misc.config.LogHighGems && ["gzv", "gly", "glb", "glg", "glr", "glw", "skl", "gpv", "gpy", "gpb", "gpg", "gpr", "gpw", "skz"].indexOf(unit.code) > -1) {
 			return false;
 		}
 
-		for (i = 0; i < Config.SkipLogging.length; i++) {
-			if (Config.SkipLogging[i] === unit.classid || Config.SkipLogging[i] === unit.code) {
+		for (i = 0; i < Misc.config.SkipLogging.length; i++) {
+			if (Misc.config.SkipLogging[i] === unit.classid || Misc.config.SkipLogging[i] === unit.code) {
 				return false;
 			}
 		}
@@ -1601,7 +1604,7 @@ var Misc = {
 		}
 
 		for (i = 0; i < 3; i += 1) {
-			Skill.cast(skill, 0);
+			me.cast(skill, 0);
 
 			tick = getTickCount();
 
@@ -1625,7 +1628,7 @@ var Misc = {
 
 		if (me.getState(139) || me.getState(140)) {
 			for (i = 0; i < 3; i += 1) {
-				Skill.cast(me.getState(139) ? 223 : 228);
+				me.cast(me.getState(139) ? 223 : 228);
 
 				tick = getTickCount();
 
@@ -1657,11 +1660,11 @@ var Misc = {
 			return false;
 		}
 
-		if (Config.TownCheck && !me.inTown) {
+		if (Misc.config.TownCheck && !me.inTown) {
 			try {
 				if (me.gold > 1000) {
 					for (i = 0; i < 4; i += 1) {
-						if (Config.BeltColumn[i] === "hp" && Config.MinColumn[i] > 0) {
+						if (Misc.config.BeltColumn[i] === "hp" && Misc.config.MinColumn[i] > 0) {
 							potion = me.getItem(-1, 2); // belt item
 
 							if (potion) {
@@ -1681,7 +1684,7 @@ var Misc = {
 							}
 						}
 
-						if (Config.BeltColumn[i] === "mp" && Config.MinColumn[i] > 0) {
+						if (Misc.config.BeltColumn[i] === "mp" && Misc.config.MinColumn[i] > 0) {
 							potion = me.getItem(-1, 2); // belt item
 
 							if (potion) {
@@ -1703,7 +1706,7 @@ var Misc = {
 					}
 				}
 
-				if (Config.OpenChests && Town.needKeys()) {
+				if (Misc.config.OpenChests && Town.needKeys()) {
 					check = true;
 				}
 			} catch (e) {
@@ -1817,6 +1820,32 @@ MainLoop:
 		return mode === 0 ? contents : true;
 	},
 
+	fileActionAsync: function (path, mode, msg) {
+		const Worker = require('Worker');
+		const Promise = require('Promise');
+		if (mode === 0) { // just read
+			return FileTools.readText(path);
+		}
+
+		let done, tick = getTickCount();
+		const retry = function (amount = 0) {
+			// try again!
+			try {
+				FileTools[(mode === 1 ? 'write' : 'append') + 'Text'].apply(FileTools, [path, msg]);
+			} catch (e) {
+				done = false;
+			}
+
+			if (getTickCount() - tick < 5000) { // only try for 5000 seconds times
+				Worker.push(() => retry(amount++))
+			}
+		};
+		retry(0);
+
+		return new Promise((resolve, reject) => (done && resolve(done)) || (getTickCount() - tick > 5000 && reject(done))).catch(() => {
+		});
+	},
+
 	errorConsolePrint: true,
 	screenshotErrors: false,
 
@@ -1880,7 +1909,7 @@ MainLoop:
 	},
 
 	debugLog: function (msg) {
-		if (!Config.Debug) {
+		if (!Misc.config.Debug) {
 			return;
 		}
 
@@ -2016,127 +2045,6 @@ MainLoop:
 		}
 
 		return flags.length ? flags : null;
-	}
-};
-
-var Sort = {
-	// Sort units by comparing distance between the player
-	units: function (a, b) {
-		return Math.round(getDistance(me.x, me.y, a.x, a.y)) - Math.round(getDistance(me.x, me.y, b.x, b.y));
-	},
-
-	// Sort preset units by comparing distance between the player (using preset x/y calculations)
-	presetUnits: function (a, b) {
-		return getDistance(me, a.roomx * 5 + a.x, a.roomy * 5 + a.y) - getDistance(me, b.roomx * 5 + b.x, b.roomy * 5 + b.y);
-	},
-
-	// Sort arrays of x,y coords by comparing distance between the player
-	points: function (a, b) {
-		return getDistance(me, a[0], a[1]) - getDistance(me, b[0], b[1]);
-	},
-
-	numbers: function (a, b) {
-		return a - b;
-	}
-};
-
-var Experience = {
-	totalExp: [0, 0, 500, 1500, 3750, 7875, 14175, 22680, 32886, 44396, 57715, 72144, 90180, 112725, 140906, 176132, 220165, 275207, 344008, 430010, 537513, 671891, 839864, 1049830, 1312287, 1640359, 2050449, 2563061, 3203826, 3902260, 4663553, 5493363, 6397855, 7383752, 8458379, 9629723, 10906488, 12298162, 13815086, 15468534, 17270791, 19235252, 21376515, 23710491, 26254525, 29027522, 32050088, 35344686, 38935798, 42850109, 47116709, 51767302, 56836449, 62361819, 68384473, 74949165, 82104680, 89904191, 98405658, 107672256, 117772849, 128782495, 140783010, 153863570, 168121381, 183662396, 200602101, 219066380, 239192444, 261129853, 285041630, 311105466, 339515048, 370481492, 404234916, 441026148, 481128591, 524840254, 572485967, 624419793, 681027665, 742730244, 809986056, 883294891, 963201521, 1050299747, 1145236814, 1248718217, 1361512946, 1484459201, 1618470619, 1764543065, 1923762030, 2097310703, 2286478756, 2492671933, 2717422497, 2962400612, 3229426756, 3520485254, 0, 0],
-	nextExp: [0, 500, 1000, 2250, 4125, 6300, 8505, 10206, 11510, 13319, 14429, 18036, 22545, 28181, 35226, 44033, 55042, 68801, 86002, 107503, 134378, 167973, 209966, 262457, 328072, 410090, 512612, 640765, 698434, 761293, 829810, 904492, 985897, 1074627, 1171344, 1276765, 1391674, 1516924, 1653448, 1802257, 1964461, 2141263, 2333976, 2544034, 2772997, 3022566, 3294598, 3591112, 3914311, 4266600, 4650593, 5069147, 5525370, 6022654, 6564692, 7155515, 7799511, 8501467, 9266598, 10100593, 11009646, 12000515, 13080560, 14257811, 15541015, 16939705, 18464279, 20126064, 21937409, 23911777, 26063836, 28409582, 30966444, 33753424, 36791232, 40102443, 43711663, 47645713, 51933826, 56607872, 61702579, 67255812, 73308835, 79906630, 87098226, 94937067, 103481403, 112794729, 122946255, 134011418, 146072446, 159218965, 173548673, 189168053, 206193177, 224750564, 244978115, 267026144, 291058498, 0, 0],
-	expCurve: [13, 16, 110, 159, 207, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 225, 174, 92, 38, 5],
-	expPenalty: [1024, 976, 928, 880, 832, 784, 736, 688, 640, 592, 544, 496, 448, 400, 352, 304, 256, 192, 144, 108, 81, 61, 46, 35, 26, 20, 15, 11, 8, 6, 5],
-	monsterExp: [
-		[1, 1, 1], [30, 78, 117], [40, 104, 156], [50, 131, 197], [60, 156, 234], [70, 182, 273], [80, 207, 311], [90, 234, 351], [100, 260, 390], [110, 285, 428], [120, 312, 468],
-		[130, 338, 507], [140, 363, 545], [154, 401, 602], [169, 440, 660], [186, 482, 723], [205, 533, 800], [225, 584, 876], [248, 644, 966], [273, 708, 1062], [300, 779, 1169],
-		[330, 857, 1286], [363, 942, 1413], [399, 1035, 1553], [439, 1139, 1709], [470, 1220, 1830], [503, 1305, 1958], [538, 1397, 2096], [576, 1494, 2241], [616, 1598, 2397],
-		[659, 1709, 2564], [706, 1832, 2748], [755, 1958, 2937], [808, 2097, 3146], [864, 2241, 3362], [925, 2399, 3599], [990, 2568, 3852], [1059, 2745, 4118], [1133, 2939, 4409],
-		[1212, 3144, 4716], [1297, 3365, 5048], [1388, 3600, 5400], [1485, 3852, 5778], [1589, 4121, 6182], [1693, 4409, 6614], [1797, 4718, 7077], [1901, 5051, 7577],
-		[2005, 5402, 8103], [2109, 5783, 8675], [2213, 6186, 9279], [2317, 6618, 9927], [2421, 7080, 10620], [2525, 7506, 11259], [2629, 7956, 11934], [2733, 8435, 12653],
-		[2837, 8942, 13413], [2941, 9477, 14216], [3045, 10044, 15066], [3149, 10647, 15971], [3253, 11286, 16929], [3357, 11964, 17946], [3461, 12680, 19020],
-		[3565, 13442, 20163], [3669, 14249, 21374], [3773, 15104, 22656], [3877, 16010, 24015], [3981, 16916, 25374], [4085, 17822, 26733], [4189, 18728, 28092],
-		[4293, 19634, 29451], [4397, 20540, 30810], [4501, 21446, 32169], [4605, 22352, 33528], [4709, 23258, 34887], [4813, 24164, 36246], [4917, 25070, 37605],
-		[5021, 25976, 38964], [5125, 26882, 40323], [5229, 27788, 41682], [5333, 28694, 43041], [5437, 29600, 44400], [5541, 30506, 45759], [5645, 31412, 47118],
-		[5749, 32318, 48477], [5853, 33224, 49836], [5957, 34130, 51195], [6061, 35036, 52554], [6165, 35942, 53913], [6269, 36848, 55272], [6373, 37754, 56631],
-		[6477, 38660, 57990], [6581, 39566, 59349], [6685, 40472, 60708], [6789, 41378, 62067], [6893, 42284, 63426], [6997, 43190, 64785], [7101, 44096, 66144],
-		[7205, 45002, 67503], [7309, 45908, 68862], [7413, 46814, 70221], [7517, 47720, 71580], [7621, 48626, 72939], [7725, 49532, 74298], [7829, 50438, 75657],
-		[7933, 51344, 77016], [8037, 52250, 78375], [8141, 53156, 79734], [8245, 54062, 81093], [8349, 54968, 82452], [8453, 55874, 83811], [160000, 160000, 160000]
-	],
-	// Percent progress into the current level. Format: xx.xx%
-	progress: function () {
-		return me.getStat(12) === 99 ? 0 : (((me.getStat(13) - this.totalExp[me.getStat(12)]) / this.nextExp[me.getStat(12)]) * 100).toFixed(2);
-	},
-
-	// Total experience gained in current run
-	gain: function () {
-		return (me.getStat(13) - DataFile.getStats().experience);
-	},
-
-	// Percent experience gained in current run
-	gainPercent: function () {
-		return me.getStat(12) === 99 ? 0 : (this.gain() * 100 / this.nextExp[me.getStat(12)]).toFixed(6);
-	},
-
-	// Runs until next level
-	runsToLevel: function () {
-		return Math.round(((100 - this.progress()) / 100) * this.nextExp[me.getStat(12)] / this.gain());
-	},
-
-	// Total runs needed for next level (not counting current progress)
-	totalRunsToLevel: function () {
-		return Math.round(this.nextExp[me.getStat(12)] / this.gain());
-	},
-
-	// Total time till next level
-	timeToLevel: function () {
-		var tTLrawSeconds = (Math.floor((getTickCount() - me.gamestarttime) / 1000)).toString(),
-			tTLrawtimeToLevel = this.runsToLevel() * tTLrawSeconds,
-			tTLDays = Math.floor(tTLrawtimeToLevel / 86400),
-			tTLHours = Math.floor((tTLrawtimeToLevel % 86400) / 3600),
-			tTLMinutes = Math.floor(((tTLrawtimeToLevel % 86400) % 3600) / 60),
-			tTLSeconds = ((tTLrawtimeToLevel % 86400) % 3600) % 60;
-
-		//return tDays + "d " + tTLHours + "h " + tTLMinutes + "m " + tTLSeconds + "s";
-		//return tTLDays + "d " + tTLHours + "h " + tTLMinutes + "m";
-		return (tTLDays ? tTLDays + " d " : "") + (tTLHours ? tTLHours + " h " : "") + (tTLMinutes ? tTLMinutes + " m" : "");
-	},
-
-	// Get Game Time
-	getGameTime: function () {
-		var rawMinutes = Math.floor((getTickCount() - me.gamestarttime) / 60000).toString(),
-			rawSeconds = (Math.floor((getTickCount() - me.gamestarttime) / 1000) % 60).toString();
-
-		if (rawMinutes <= 9) {
-			rawMinutes = "0" + rawMinutes;
-		}
-
-		if (rawSeconds <= 9) {
-			rawSeconds = "0" + rawSeconds;
-		}
-
-		//return rawMinutes + "m " + rawSeconds + "s";
-		return " (" + rawMinutes + ":" + rawSeconds + ")";
-	},
-
-	// Log to manager
-	log: function () {
-		var string,
-			gain = this.gain(),
-			progress = this.progress(),
-			runsToLevel = this.runsToLevel(),
-			totalRunsToLevel = this.totalRunsToLevel(),
-			getGameTime = this.getGameTime(),
-			timeToLevel = this.timeToLevel();
-
-		//string = "[Game: " + me.gamename + (me.gamepassword ? "//" + me.gamepassword : "") + getGameTime + "] [Level: " + me.getStat(12) + " (" + progress + "%)] [XP: " + gain + "] [Games ETA: " + runsToLevel + "] [Time ETA: " + timeToLevel + "]";
-		string = "[Game: " + me.gamename + (me.gamepassword ? "//" + me.gamepassword : "") + getGameTime + "] [Level: " + me.getStat(12) + " (" + progress + "%)] [XP: " + gain + "] [Games ETA: " + runsToLevel + "]";
-
-		if (gain) {
-			D2Bot.printToConsole(string, 4);
-
-			if (me.getStat(12) > DataFile.getStats().level) {
-				D2Bot.printToConsole("Congrats! You gained a level. Current level:" + me.getStat(12), 5);
-			}
-		}
 	}
 };
 
@@ -2551,14 +2459,14 @@ var LocalChat = new function () {
 	};
 
 	this.init = (cycle = false) => {
-		if (!Config.LocalChat.Enabled) {
+		if (!Misc.config.LocalChat.Enabled) {
 			return;
 		}
 
-		Config.LocalChat.Mode = (Config.LocalChat.Mode + cycle) % 3;
-		print("ÿc2LocalChat enabled. Mode: " + Config.LocalChat.Mode);
+		Misc.config.LocalChat.Mode = (Misc.config.LocalChat.Mode + cycle) % 3;
+		print("ÿc2LocalChat enabled. Mode: " + Misc.config.LocalChat.Mode);
 
-		switch (Config.LocalChat.Mode) {
+		switch (Misc.config.LocalChat.Mode) {
 		case 2:
 			removeEventListener("chatinputblocker", onChatInput);
 			addEventListener("chatinputblocker", onChatInput);
@@ -2574,9 +2482,9 @@ var LocalChat = new function () {
 			break;
 		}
 
-		if (Config.LocalChat.Toggle) {
-			toggle = typeof Config.LocalChat.Toggle === 'string' ? Config.LocalChat.Toggle.charCodeAt(0) : Config.LocalChat.Toggle;
-			Config.LocalChat.Toggle = false;
+		if (Misc.config.LocalChat.Toggle) {
+			toggle = typeof Misc.config.LocalChat.Toggle === 'string' ? Misc.config.LocalChat.Toggle.charCodeAt(0) : Misc.config.LocalChat.Toggle;
+			Misc.config.LocalChat.Toggle = false;
 			addEventListener("keyup", onKeyEvent);
 		}
 	};
@@ -2656,7 +2564,7 @@ var Events = {
 		// Block movement after using TP/WP/Exit
 		case 0x0D: // Player Stop
 			// This can mess up death screen so disable for characters that are allowed to die
-			if (Config.LifeChicken > 0) {
+			if (Misc.config.LifeChicken > 0) {
 				return true;
 			}
 

@@ -4,16 +4,12 @@
 *	@desc		Move and clear Underground passage level 2
 */
 
-function UndergroundPassage() {
+function UndergroundPassage(Config) {
 	Town.doChores();
-	Pather.useWaypoint(4);
-	Precast.doPrecast(true);
 
-	if (!Pather.moveToExit([10, 14], true)) {
+	if (!Pather.journeyTo(14)) {
 		throw new Error("Failed to move to Underground passage level 2");
 	}
 
 	Attack.clearLevel();
-
-	return true;
 }

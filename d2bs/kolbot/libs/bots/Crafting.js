@@ -7,7 +7,7 @@
 var info,
 	gameRequest = false;
 
-function Crafting() {
+function Crafting(Config) {
 	var i, npcName, num;
 
 	info = CraftingSystem.getInfo();
@@ -248,6 +248,7 @@ MainSwitch:
 }
 
 function runewordIngredient(item) {
+	const Config = require('Config');
 	if (Runewords.validGids.indexOf(item.gid) > -1) {
 		return true;
 	}
@@ -272,6 +273,7 @@ function runewordIngredient(item) {
 }
 
 function pickItems() {
+	const Storage = require('Storage');
 	var items = [],
 		item = getUnit(4, -1, 3);
 
@@ -398,7 +400,7 @@ function shopStuff(npcId, classids, amount) {
 		var i, items,
 			num = 0,
 			npc = getInteractedNPC();
-
+		const Storage = require('Storage');
 		if (npc) {
 			items = npc.getItems();
 

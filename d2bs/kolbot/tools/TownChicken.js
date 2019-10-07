@@ -6,26 +6,23 @@
 
 js_strict(true);
 
-include("json2.js");
-include("NTItemParser.dbl");
+include('require.js');
 include("OOG.js");
 include("Gambling.js");
 include("CraftingSystem.js");
-include("common/Attack.js");
+
 include("common/Cubing.js");
 include("common/Config.js");
-include("common/CollMap.js");
-include("common/Loader.js");
 include("common/Misc.js");
 include("common/Pickit.js");
 include("common/Pather.js");
-include("common/Precast.js");
+
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Storage.js");
 include("common/Town.js");
 
 function main() {
+	const Config = require('Config');
 	var townCheck = false;
 
 	this.togglePause = function () {
@@ -73,8 +70,6 @@ function main() {
 	D2Bot.init();
 	Config.init();
 	Pickit.init();
-	Attack.init();
-	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();
 	Cubing.init();

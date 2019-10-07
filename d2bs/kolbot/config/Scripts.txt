@@ -1,0 +1,168 @@
+/*
+
+    Some stuff you might dont know
+
+    All the settings you see here (the Config.Whatever) lines are defaults, if you dont need/want to change the defaults
+    you do not need to copypaste these into your config file.
+    For example, if you just want to do a plain SpeedDiablo, all you need to copy in to your config file is the follow:
+
+    Scripts.SpeedDiablo = true;
+
+    If you want to change a single thing from the default setting, all you need is:
+
+    Scripts.SpeedDiablo = true;
+        Config.SpeedDiablo.Follower = true; // Take a portal, dont teleport to chaos
+
+*/
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Some new scripts that are not in original kolton
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
+        Config.SpeedDiablo.Fast: false; // Do a fast diarun (only monsters
+        Config.SpeedDiablo.Follower: false; // Follow, dont teleport to it but take the portal
+        Config.SpeedDiablo.Entrance: true; // Clear the entrance
+
+
+    Scripts.SpeedBaal = true; // A better/smarter/high power baal run (in development, but already faster as regular ones)
+        Config.SpeedBaal.Follower = false; // Follow, dont teleport to it but take the portal
+
+
+    // Auto magic find.      This is a weird script, not anything like your used to.
+    //      It calculates which 85+ areas are the easiest for this character to pwn, to the hardest to do so.
+    //      This reduces the chickens, well atleast it puts chickens more later in game.
+    //      And if you used all your Rev pots in your last chickend game, you build them up in the easy areas
+    //      It will be more configurable in the future.
+    Scripts.AutoMagicFind = true;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Typical multi bot related scripts
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Battle orders script - Use this for 2+ characters (for example BO barb + sorc)
+	Scripts.BattleOrders = false;
+		Config.BattleOrders.Mode = 0; // 0 = give BO, 1 = get BO
+		Config.BattleOrders.Wait = false; // Idle until the player that received BO leaves.
+		Config.BattleOrders.Getters = []; // List of players to wait for before casting Battle Orders (mode 0). All players must be in the same area as the BOer.
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Act 1
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	Scripts.Corpsefire = false;
+		Config.Corpsefire.ClearDen = false;
+	Scripts.Mausoleum = false;
+		Config.Mausoleum.KillBloodRaven = false;
+		Config.Mausoleum.ClearCrypt = false;
+	Scripts.Rakanishu = false;
+		Config.Rakanishu.KillGriswold = true;
+	Scripts.UndergroundPassage = false;
+	Scripts.Coldcrow = false;
+	Scripts.Tristram = false;
+		Config.Tristram.WalkClear = false; // Disable teleport while clearing to protect leechers
+		Config.Tristram.PortalLeech = false; // Set to true to open a portal for leechers.
+	Scripts.Pit = false;
+		Config.Pit.ClearPit1 = true;
+	Scripts.Treehead = false;
+	Scripts.Smith = false;
+	Scripts.BoneAsh = false;
+	Scripts.Countess = false;
+		Config.Countess.KillGhosts = false;
+	Scripts.Andariel = false;
+	Scripts.Cows = false;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Act 2
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	Scripts.Radament = false;
+	Scripts.Coldworm = false;
+		Config.Coldworm.KillBeetleburst = false;
+		Config.Coldworm.ClearMaggotLair = false; // Clear all 3 levels
+	Scripts.AncientTunnels = false;
+		Config.AncientTunnels.OpenChest = false; // Open special chest in Lost City
+		Config.AncientTunnels.KillDarkElder = false;
+	Scripts.Summoner = false;
+		Config.Summoner.FireEye = false;
+	Scripts.Tombs = false;
+	Scripts.Duriel = false;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Act 3
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	Scripts.Stormtree = false;
+	Scripts.KurastTemples = false;
+	Scripts.Icehawk = false;
+	Scripts.Endugu = false;
+	Scripts.Travincal = false;
+		Config.Travincal.PortalLeech = false; // Set to true to open a portal for leechers.
+	Scripts.Mephisto = false;
+		Config.Mephisto.MoatTrick = false;
+		Config.Mephisto.KillCouncil = false;
+		Config.Mephisto.TakeRedPortal = true;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Act 4
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Scripts.OuterSteppes = false;
+	Scripts.Izual = false;
+	Scripts.Hephasto = false;
+	Scripts.Vizier = false; // Intended for classic sorc, kills Vizier only.
+	Scripts.FastDiablo = false;
+	Scripts.Diablo = false;
+		Config.Diablo.WalkClear = false; // Disable teleport while clearing to protect leechers
+		Config.Diablo.Entrance = true; // Start from entrance
+		Config.Diablo.SealWarning = "Leave the seals alone!";
+		Config.Diablo.EntranceTP = "Entrance TP up";
+		Config.Diablo.StarTP = "Star TP up";
+		Config.Diablo.DiabloMsg = "Diablo";
+    Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
+        Config.SpeedDiablo.Fast: false; // Do a fast diarun (only monsters
+        Config.SpeedDiablo.Follower: false; // Follow, dont teleport to it but take the portal
+        Config.SpeedDiablo.Entrance: true; // Clear the entrance
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// Act 5
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Scripts.Pindleskin = false;
+		Config.Pindleskin.UseWaypoint = false;
+		Config.Pindleskin.KillNihlathak = true;
+		Config.Pindleskin.ViperQuit = false; // End script if Tomb Vipers are found.
+	Scripts.Nihlathak = false;
+		Config.Nihlathak.ViperQuit = false; // End script if Tomb Vipers are found.
+	Scripts.Eldritch = false;
+		Config.Eldritch.OpenChest = true;
+		Config.Eldritch.KillShenk = true;
+		Config.Eldritch.KillDacFarren = true;
+	Scripts.Eyeback = false;
+	Scripts.SharpTooth = false;
+	Scripts.ThreshSocket = false;
+	Scripts.Abaddon = false;
+	Scripts.Frozenstein = false;
+		Config.Frozenstein.ClearFrozenRiver = true;
+	Scripts.Bonesaw = false;
+		Config.Bonesaw.ClearDrifterCavern = false;
+	Scripts.Snapchip = false;
+		Config.Snapchip.ClearIcyCellar = true;
+	Scripts.Worldstone = false;
+	Scripts.Baal = false;
+		Config.Baal.HotTPMessage = "Hot TP!";
+		Config.Baal.SafeTPMessage = "Safe TP!";
+		Config.Baal.BaalMessage = "Baal!";
+		Config.Baal.SoulQuit = false; // End script if Souls (Burning Souls) are found.
+		Config.Baal.DollQuit = false; // End script if Dolls (Undead Soul Killers) are found.
+		Config.Baal.KillBaal = true; // Kill Baal. Leaves game after wave 5 if false.
+    Scripts.SpeedBaal = true; // A better/smarter/high power baal run (in development, but already faster as regular ones)
+            Config.SpeedBaal.Follower = false; // Follow, dont teleport to it but take the portal
+
+
+
+// Please note that most of "multi bot" scripts of original kolton are gone
+// Like AutoBaal, BaalAssistant, BaalHelper, DiaHelper, please use the SpeedBaal / SpeedDiablo alternatives
+//
+// Some stuff like the MFHelper and Questing scripts are here, but there are plans to redo these. So i advise you to dont use them
+// They are possible to setup with the original kolton settings

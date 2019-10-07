@@ -4,25 +4,19 @@
 *	@desc		kill Nihlathak
 */
 
-function Nihlathak() {
-	Town.doChores();
-	Pather.useWaypoint(123);
-	Precast.doPrecast(false);
+function Nihlathak(Config, Attack) {
 
-	if (!Pather.moveToExit(124, true)) {
+	if (!me.journeyToPreset(124, 2, 462, 0, 0, false, true)) {
 		throw new Error("Failed to go to Nihlathak");
 	}
 
-	Pather.moveToPreset(me.area, 2, 462, 0, 0, false, true);
-
 	if (Config.Nihlathak.ViperQuit && getUnit(1, 597)) {
 		print("Tomb Vipers found.");
-
-		return true;
+		Town.goToTown();
+		return;
 	}
 
+	delay(250); // takes a sec to load lol
 	Attack.kill(526); // Nihlathak
 	Pickit.pickItems();
-
-	return true;
 }

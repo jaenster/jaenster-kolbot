@@ -4,7 +4,7 @@
 *	@desc		Enchant other players, open cow portal and give waypoints on command
 */
 
-function Enchant() {
+function Enchant(Config) {
 	var command, hostile, nick, spot, tick, s, m,
 		startTime = getTickCount(),
 		shitList = [],
@@ -140,7 +140,7 @@ function Enchant() {
 		}
 
 		Pather.useWaypoint(4);
-		Precast.doPrecast(true);
+		require('Precast')()
 		Pather.moveToPreset(me.area, 1, 737, 8, 8);
 
 		for (i = 0; i < 6; i += 1) {

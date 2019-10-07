@@ -4,7 +4,7 @@
 *	@desc		give or receive Battle Orders buff
 */
 
-function BattleOrders() {
+function BattleOrders(Config) {
 	this.giveBO = function (list) {
 		var i, unit,
 			failTimer = 60,
@@ -21,7 +21,7 @@ function BattleOrders() {
 						quit();
 					}
 
-					Precast.doPrecast(true);
+					require('Precast')()
 					delay(1000);
 				}
 			}

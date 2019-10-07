@@ -4,7 +4,7 @@
 *	@desc		help another player kill bosses or clear areas
 */
 
-function MFHelper() {
+function MFHelper(Config, Attack) {
 	var i, player, playerAct, split,
 		oldCommand = "",
 		command = "";
@@ -193,7 +193,7 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						Precast.doPrecast(false);
+						require('Precast')()
 
 						try {
 							if (!!parseInt(split, 10)) {
@@ -226,9 +226,9 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						Precast.doPrecast(false);
+						require('Precast')()
 						Attack.clearLevel(Config.ClearType);
-						Precast.doPrecast(true);
+						require('Precast')()
 
 						if (!Pather.usePortal(null, player.name)) {
 							Town.goToTown();
@@ -250,7 +250,7 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						Precast.doPrecast(false);
+						require('Precast')()
 
 						try {
 							if (!!parseInt(split, 10)) {
@@ -284,7 +284,7 @@ MainLoop:
 					}
 
 					if (me.area === 39) {
-						Precast.doPrecast(false);
+						require('Precast')()
 						this.clearCowLevel();
 						delay(1000);
 
@@ -306,7 +306,7 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						Precast.doPrecast(false);
+						require('Precast')()
 						Attack.clearList(Attack.getMob([345, 346, 347], 0, 40));
 
 						if (!Pather.usePortal(null, player.name)) {

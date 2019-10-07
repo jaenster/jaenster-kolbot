@@ -46,13 +46,15 @@
 *	quit - exit game
 */
 
-function Follower() {
+function Follower(Config) {
 	var i, j, stop, leader, leaderUnit, charClass, piece, skill, result, unit, player, coord,
 		commanders = [Config.Leader],
 		attack = true,
 		openContainers = true,
 		classes = ["amazon", "sorceress", "necromancer", "paladin", "barbarian", "druid", "assassin"],
 		action = "";
+
+	const CollMap = require('CollMap');
 
 	// Get leader's Party Unit
 	this.getLeader = function (name) {
@@ -845,7 +847,7 @@ WPLoop:
 			break;
 		case "bo":
 			if (me.classid === 4) {
-				Precast.doPrecast(true);
+				require('Precast')()
 			}
 
 			break;

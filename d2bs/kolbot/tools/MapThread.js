@@ -693,8 +693,7 @@ var Hooks = {
 };
 
 function main() {
-	include("json2.js");
-	include("common/attack.js");
+	include('require.js');
 	include("common/pather.js");
 	load("tools/maphelper.js");
 	print("ÿc9Map Thread Loaded");

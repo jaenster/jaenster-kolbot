@@ -4,7 +4,7 @@
 *	@desc		kill Counncil members in Travincal
 */
 
-function Travincal() {
+function Travincal(Config, _, Pickit) {
 	var i, orgX, orgY, coords;
 
 	this.buildList = function (checkColl) {
@@ -13,7 +13,7 @@ function Travincal() {
 
 		if (monster) {
 			do {
-				if ([345, 346, 347].indexOf(monster.classid) > -1 && Attack.checkMonster(monster) && (!checkColl || !checkCollision(me, monster, 0x1))) {
+				if ([345, 346, 347].indexOf(monster.classid) > -1 && monster.attackable && (!checkColl || !checkCollision(me, monster, 0x1))) {
 					monsterList.push(copyUnit(monster));
 				}
 			} while (monster.getNext());
@@ -23,8 +23,7 @@ function Travincal() {
 	};
 
 	Town.doChores();
-	Pather.useWaypoint(83);
-	Precast.doPrecast(true);
+	Pather.journeyTo(83);
 
 	orgX = me.x;
 	orgY = me.y;
@@ -37,7 +36,7 @@ function Travincal() {
 		Pather.moveTo(orgX + 85, orgY - 139);
 		Pather.makePortal();
 		delay(1000);
-		Precast.doPrecast(true);
+		require('Precast')();
 	}
 
 	if (me.getSkill(143, 0) && !me.getSkill(54, 0) && !me.getStat(97, 54)) {

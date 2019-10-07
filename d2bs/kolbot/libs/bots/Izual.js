@@ -4,12 +4,10 @@
 *	@desc		kill Izual
 */
 
-function Izual() {
+function Izual(Config) {
 	Town.doChores();
-	Pather.useWaypoint(106);
-	Precast.doPrecast(true);
 
-	if (!Pather.moveToPreset(105, 1, 256)) {
+	if (!me.journeyToPreset(105, 1, 256)) {
 		throw new Error("Failed to move to Izual.");
 	}
 
