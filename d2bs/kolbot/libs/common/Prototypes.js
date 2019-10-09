@@ -1420,3 +1420,16 @@ getScript.startAsThread = function () {
 
 	return 'loaded';
 };
+
+Array.prototype.filterHighDistance = function () {
+	const distances = this.map(
+		(x, i) => this
+			.filter((_, index) => index !== i) // Not this element
+			.map(y => Math.abs(y - this[i])).reduce((a, c) => c + a || 0, 0) / (this.length - 1) // Avg of distance to others
+	);
+	const distancesAvg = distances.reduce((a, c) => c + a || 0, 0) / this.length;
+	if (distancesAvg > 30) {
+		return this.filter((x, i) => distances[i] < distancesAvg * 0.75);
+	}
+	return this; // Everything is relatively the same
+};

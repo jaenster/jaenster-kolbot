@@ -124,9 +124,14 @@ function SpeedDiablo(Config, Attack, Pickit) {
 		star.path.forEach(node => node.moveTo() && Attack.clear(30));
 	}
 
-	const gamepacketHandler = bytes => bytes && bytes.hasOwnProperty(0) && bytes[0] === 0x89 && (diaTick = getTickCount() - (me.ping / 2));
+	const Messaging = require('Messaging');
 
-	addEventListener('gamepacket', gamepacketHandler);
+	Messaging.on('SpeedDiablo', function (data) {
+		if (data.hasOwnProperty('diaTick')) {
+			diaTick = data.diaTick;
+		}
+	});
+
 	try {
 		star.moveTo();
 
@@ -146,7 +151,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 		}
 
 	} finally { // Dont care for errors, just want to make sure the packet handler is removed after it
-		removeEventListener('gamepacket', gamepacketHandler);
+		Messaging.send({SpeedDiablo: {done: true}});
 	}
 }
 
@@ -162,7 +167,7 @@ SpeedDiablo.openSeal = function (seal) {
 
 		delay(seal.classid === 394 ? 1000 : 500);
 
-		if (seal.mode || i === 5) return i !== 5;
+		if (seal.mode || i === 5) return !!seal.mode;
 
 		if (seal.classid === 394 && Attack.validSpot(seal.x + 15, seal.y)) { // de seis optimization
 			Pather.moveTo(seal.x + 15, seal.y);
@@ -172,5 +177,39 @@ SpeedDiablo.openSeal = function (seal) {
 
 		delay(500);
 	}
-	return false; // cant come here, but still
-}
+	return seal.mode; // cant come here, but still
+};
+
+// Thread wrapper
+(function () {
+	let currentFile = 'libs/bots/SpeedDiablo.js';
+
+	if (getScript(currentFile) && getScript(currentFile).name === getScript(true).name) {
+		// Running as thread
+		include('require.js'); // start the framework
+		const Messaging = require('Messaging');
+		let diaTick = 0, done = false;
+		const gamepacketHandler = bytes =>
+			bytes // If bytes is set
+			&& bytes.hasOwnProperty(0) // if it has the property 0 (it isnt an array)
+			&& bytes[0] === 0x89 // If the firste is "special game event"
+			&& Messaging.send({SpeedDiablo: {diaTick: diaTick = getTickCount() - (me.ping / 2)}})
+			&& false; // dont block the packet by always returning false
+
+		Messaging.on('SpeedDiablo', function (data) {
+			if (data.hasOwnProperty('done')) {
+				done = data.done;
+			}
+		});
+		addEventListener('gamepacket', gamepacketHandler);
+		while (!diaTick) {
+			delay(3);
+			if (done) break; // if message recved we are done, quit
+		}
+		removeEventListener('gamepacket', gamepacketHandler);
+		getScript(true).stop(); // kill ourselfs
+
+	} else if (!getScript(currentFile)) {
+		load(currentFile); // boot the thread
+	}
+})();

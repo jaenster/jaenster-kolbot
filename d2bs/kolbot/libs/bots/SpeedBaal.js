@@ -9,7 +9,6 @@ function SpeedBaal(Config, Attack, Pickit) {
 	const GameData = require('GameData');
 	const Skills = require('Skills');
 	const PreAttack = require('PreAttack');
-	const Vault = new (require('Vault'))('SpeedBaal');
 
 	const getUnits = (...args) => {
 			let units = [], unit = getUnit.apply(undefined, args);
@@ -131,7 +130,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 
 			if (!this.wave) {
 				this.clear(); // First clear the throne
-				this.nextWave = 1 && this.wave === 0 && !Vault.safeTP && (Vault.safeTP = true);
+				this.nextWave = 1
 				PreAttack.do([0, 23, 105, 557, 558, 571][this.nextWave], 12e3 - (getTickCount() - this.baaltick), spots.throne.center);
 			} else {
 
@@ -193,15 +192,15 @@ function SpeedBaal(Config, Attack, Pickit) {
 		if ([sdk.areas.WorldstoneChamber, sdk.areas.ThroneOfDestruction].indexOf(me.area) === -1) {
 			// ToDo; magic to go to throne/WorldstoneChamber
 		}
-		Config.FieldID && Town.fieldID();
+		Config.FieldID && Town.fieldID(); // perfect moment to have an empty inventory
 		if (me.area === sdk.areas.ThroneOfDestruction) {
 			// Go to WorldstoneChamber
 			Pather.moveTo(15089, 5006);
-			let baalSitting = !!getUnit(1, 543);
+			const baalSitting = !!getUnit(1, 543);
 
 			while (getUnit(1, 543) && delay(3)) ;
 
-			baalSitting && delay(1000);
+			baalSitting && delay(1000); // Only a bit if baal wasnt there in the first place
 			me.area !== sdk.areas.WorldstoneChamber && Pather.usePortal(null, null, getUnit(2, 563));
 		}
 
