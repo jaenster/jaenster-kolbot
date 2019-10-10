@@ -1426,7 +1426,7 @@ CursorLoop:
 		return itemList;
 	},
 
-	reviveMerc: function () {
+	reviveMerc: function (noBo = false) {
 		if (!this.needMerc()) {
 			return true;
 		}
@@ -1449,6 +1449,7 @@ MainLoop:
 			dialog = getDialogLines();
 
 			for (lines = 0; lines < dialog.length; lines += 1) {
+				// No matter what language, the resurrect item is the only entry with a ":" in it
 				if (dialog[lines].text.match(":", "gi")) {
 					dialog[lines].handler();
 					delay(Math.max(750, me.ping * 2));
@@ -1472,7 +1473,7 @@ MainLoop:
 		}
 
 
-		if (!!me.getMerc()) {
+		if (!!me.getMerc() && !noBo) {
 			if (Town.config.MercWatch) { // Cast BO on merc so he doesn't just die again
 				print("MercWatch precast");
 				Pather.useWaypoint("random");

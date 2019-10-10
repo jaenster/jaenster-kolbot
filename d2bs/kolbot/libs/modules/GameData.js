@@ -6,7 +6,7 @@
 (function (module, require) {
 	const LocaleStringName = require('LocaleStringID').LocaleStringName;
 
-const MONSTER_INDEX_COUNT = 734;
+	const MONSTER_INDEX_COUNT = 770;
 const PRESET_MON_COUNT = 734;
 const PRESET_SUPER_COUNT = 66;
 const PRESET_PLACE_COUNT = 37;

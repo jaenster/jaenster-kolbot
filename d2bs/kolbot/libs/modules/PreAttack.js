@@ -60,8 +60,8 @@
             let coords = [];
             for (let i = 0; i < 360; i++) {
                 coords.push({
-                    x: Math.floor(center.x + (skillRange / 3) * Math.cos(i)),
-                    y: Math.floor(center.y + (skillRange / 3) * Math.sin(i)),
+					x: Math.floor(center.x + (skillRange / 2) * Math.cos(i)),
+					y: Math.floor(center.y + (skillRange / 2) * Math.sin(i)),
                 });
 
                 // For debugging, show the circle on the map
