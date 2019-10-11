@@ -179,8 +179,10 @@
 	};
 	let check = getTickCount();
 	Unit.prototype.attack = function () {
-		let monsterEffort = GameData.monsterEffort(this, this.area);
-		const move = (sk = monsterEffort.skill) => {
+		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);
+		print(monsterEffort);
+		let populatedAttack = monsterEffort.first();
+		const move = (sk = populatedAttack.skill) => {
 			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4)) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
 					ignoreMonster.push(this.gid);
@@ -188,8 +190,10 @@
 				}
 			}
 		};
-
-		if (!monsterEffort) return false; // dont know how to attack this
+		while (monsterEffort && Skills.manaCost[monsterEffort.skill] < me.mp) {
+			populatedAttack = monsterEffort.shift();
+		}
+		if (!populatedAttack) return false; // dont know how to attack this
 		let hand = 0;
 
 		if (!this.validSpot) {
@@ -251,7 +255,7 @@
 				!me.getState(sdk.states.HolyShield) && me.getSkill(sdk.skills.HolyShield, 1) && me.cast(sdk.skills.HolyShield);
 
 				// If the skill we gonna use is a left skill, we can use an aura with it
-				if (getBaseStat('skills', monsterEffort.skill, 'leftskill')) {
+				if (getBaseStat('skills', populatedAttack.skill, 'leftskill')) {
 
 
 				}
@@ -262,7 +266,7 @@
 					party.hp < 60 && party.area === me.area && (unit = getUnits(1, party.name).filter(x => !x.dead).first()) && unit && unit.cast(sdk.skills.HolyBolt);
 				}
 
-				if (monsterEffort.skill === sdk.skills.BlessedHammer) {
+				if (populatedAttack.skill === sdk.skills.BlessedHammer) {
 					if (!require('Paladin').getHammerPosition(this)) return false;
 				}
 				break;
@@ -323,27 +327,24 @@
 			Town.visitTown();
 		}
 
-		me.overhead(getSkillById(monsterEffort.skill) + ' @ ' + monsterEffort.effort.toFixed(2));
+		me.overhead(getSkillById(populatedAttack.skill) + ' @ ' + populatedAttack.effort.toFixed(2));
 
-		// if (Skills.range[monsterEf	fort.skill] < this.distance) {
-		// 	this.moveTo(); // Move to monster if its on a too high distance
-		// }
 		//ToDo; remove deprecated tag Attack
 		move();
 		// Paladins have aura's
-		if (Skills.hand[monsterEffort.skill] && me.classid === 3) { // Only for skills set on first hand, we can have an aura with it
+		if (Skills.hand[populatedAttack.skill] && me.classid === 3) { // Only for skills set on first hand, we can have an aura with it
 			// First ask nishi's frame if it is Eligible for conviction, if so, we put conviction on, if we got it obv
-			if (GameData.convictionEligible[monsterEffort.type] && GameData.skillLevel(123)) {
+			if (GameData.convictionEligible[populatedAttack.type] && GameData.skillLevel(123)) {
 				me.getSkill(0) !== 123 && me.setSkill(123, 0);
 				hand = 1;
 			} else {
-				let aura = Skills.aura[monsterEffort.skill];
+				let aura = Skills.aura[populatedAttack.skill];
 
 				// Figure out aura on skill, and set it if we got it
 				aura && me.getSkill(aura, 1) && me.setSkill(aura, 0)
 			}
 		}
-		let val = this.attackable && !this.dead && this.cast(monsterEffort.skill);
+		let val = this.attackable && !this.dead && this.cast(populatedAttack.skill);
 		_delay(3); // legit delay
 		Pickit.pickItems();
 		return val;
