@@ -25,7 +25,6 @@ function AutoMagicFind(Config, Attack) {
 		}
 
 	};
-	require('Debug');
 	Object.keys(bosses).forEach(function (x) {
 		bosses[x].isBoss = true;
 		// Added an empty done flag
@@ -60,7 +59,21 @@ function AutoMagicFind(Config, Attack) {
 		return stay;
 	});
 
+	// Start of game is a good moment to do all chores
 	Town.doChores();
+
+	const inTownPromise = () => (new Promise(resolve => me.inTown && resolve()).then(function () {
+		// When we happen to be in town, do some basic choring
+		new Promise(resolve => !me.inTown && resolve()).then(x => inTownPromise());
+		Town.heal();
+		Town.buyPotions(); // Buy pots, as some chars run out of mana easiely
+		Town.repair(); //ToDo; make a specific amazon check here, due to heavy flow of javelins?
+		Town.reviveMerc(true); // get a merc, dont go bo him specificly
+	}));
+
+	// Start the promise
+	inTownPromise();
+
 	areas.forEach((obj, i) => i < 10 && print((obj.hasOwnProperty('isBoss') && obj.isBoss ? obj.name : obj.area.LocaleString) + ' -- ' + obj.effort));
 
 
