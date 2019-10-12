@@ -626,12 +626,6 @@ function main() {
 	addEventListener("scriptmsg", this.scriptEvent);
 	//addEventListener("gamepacket", Events.gamePacket);
 
-	// Load Fastmod
-	Packet.changeStat(105, Config.FCR);
-	Packet.changeStat(99, Config.FHR);
-	Packet.changeStat(102, Config.FBR);
-	Packet.changeStat(93, Config.IAS);
-
 	if (Config.QuitListMode > 0) {
 		this.initQuitList();
 	}
