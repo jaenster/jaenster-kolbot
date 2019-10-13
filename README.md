@@ -28,21 +28,18 @@ This way you never ever have to worry about setting up skills for when it encoun
 Note: This doesnt work properly yet with melee skills (barb basically, or a paladin that doesnt smite or throws hammers).
 
 ## Fully automatic configuration.
-You do not need to setup if the bot needs to watch the merc, or what class specifics you need to setup. It simply does this for you.
-One of the few things that you still need to do is setup which pickit you need to use.
+You do not need to setup if the bot needs to watch the merc, or what class specifics you need to setup, and countless things more. It simply does this for you. One of the few things that you still need to do is setup which pickit you need to use.
 
 Note: All settings are still overridable. (just put the old Config.Whatever = "what i actually wanted"; in the config file)
 
 ## Fully automatic Inventory setup
-This is a peace of code that is not finished, and not in the main code base. As it isn't properly tested yet. More info on this later.
+This is a piece of code is not finished, and not in the main code base. As it isn't properly tested yet. More info on this later.
 
 ## A single configuration file
-Are you tired too of setting up D2BotFollow, and a config file? No more. Everything is handled from a single configuration file
+Are you tired too of setting up D2BotFollow, and a seperated config file? No more. Everything is handled from a single configuration file
 
 ## Mana use
-This is not fully functional yet, but if the script determines the monster your trying to kill is a 1 hit with a fire bolt, and a 1 hit with a fire ball. 
-It will prefer to cast a fire bolt, as it costs less mana. However, the fireball also blasts its surroundings, so at the moment it still often prefers the
-skill that uses more mana. This still needs some tweaking =)
+This is not fully functional yet, but if the bot determines the monster your trying to kill is a 1 hit kill with a fire bolt, and a 1 hit with a fire ball. It will prefer to cast a fire bolt, as it costs less mana. However, the fireball also blasts its surroundings, so at the moment it still often prefers the skill that uses more mana. This still needs some tweaking =)
 
 ## New Scripts
 AutoMagicFind.
@@ -56,7 +53,7 @@ SpeedDiablo
 
     This is a script that are both for the leader, as the follower. (no seperated diablo/diahelper scripts).
     You can do a teamed fast diablo, or a solo full diablo run with it. It seems to knock of 20% of the time of a 
-    regular diablo run in my test.
+    regular diablo run in my tests.
 
 SpeedBaal
     
@@ -69,13 +66,11 @@ SpeedBaal
  put in your config file: `Config.Party = false;`
  
  ## New precasting
- Precasting is always something that annoyed me personally allot with the original kolton. This will re-pre-casts whenever something is needed 
- or expires. Due to the fast switching of weapons now, you will barely notice it re-casted battle orders. It also keeps an eye on your merc, 
- or your summoned goods that not have an bo yet.
+ Precasting is always something that annoyed me personally allot with the original kolton. This will re-pre-casts whenever something is needed or expired. Due to the fast switching of weapons now, you will barely notice it re-casted battle orders. It also keeps an eye on your merc, or your summoned goods that not have an bo yet.
  
  ## Faster weapon switching
  As mentioned above, switching weapons is about 5 times (no kidding) faster as regular kolton. Not much more to tell about that ;) 
- This benefits stuff like teleswitching _allot_, as in the original, just switching weapons is so extremely slow, its pointless to do so.
+ This benefits stuff like teleswitching _allot_, as in the original just switching weapons is so extremely slow, its pointless to do so.
  
  ## Automatic Teleswitching
  This is very much in development, so i cant say much about it. But the idea is that it does this automatically, 
@@ -83,7 +78,7 @@ SpeedBaal
  
  ## More efficient towning
  This is also very much in development, but the idea is that if your close to an healer (like when you pass Atma in act 2), 
- just grab a heal anyway (unless you fully full), but not low enough to trigger the regular "heal" event.
+ just grab a heal anyway (unless you fully full).
  More stuff like this is due to come, but its tricky to setup without bugging the rest out of the game.
   
  # Great, how to set it up? 
@@ -96,6 +91,7 @@ So how?
 - Rename your new copy to "ProfileName.js", profilename as given in the manager, **not charname**
 - Open the file named after your profile. And set it up
 
+The example config file:
 ```javascript 1.6
 	// Figure out all settings on its own
 	// Including skills, inventory, belt, merc usage, chicken, everything
