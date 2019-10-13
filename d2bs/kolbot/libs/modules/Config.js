@@ -30,6 +30,12 @@
 			Pickit.init(getScript(true).name.toLowerCase() === 'default.dbj'); // only notify if we are the default thread
 
 			Config.Party && require('Party');
+
+			if (getScript(true).name.toLowerCase() === 'default.dbj') {
+				if (Array.isArray(Config.QuitList) && Config.QuitList.length || (typeof Config.QuitList === 'string' && Config.QuitList.length)) {
+					require('QuitList');
+				}
+			}
 		} else {
 			// If a follower is given, put it in D2BotFollower.js
 			Config.Follow && typeof JoinSettings === 'object' && JoinSettings && (JoinSettings[Config.Follow] = [me.windowtitle]);
@@ -355,6 +361,7 @@
 	Config.Development = '';
 	Config.Scripts = {};
 	Config.Party = false;
+	Config.QuitDelay = 0;
 
 	// Make the StarterConfig and AdvancedConfig visible in the config file
 	Config.StarterConfig = {};
