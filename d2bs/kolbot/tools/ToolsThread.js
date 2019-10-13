@@ -512,13 +512,6 @@ function main() {
 		case 0x00: // "%Name1(%Name2) dropped due to time out."
 		case 0x01: // "%Name1(%Name2) dropped due to errors."
 		case 0x03: // "%Name1(%Name2) left our world. Diablo's minions weaken."
-			if ((typeof Config.QuitList === "string" && Config.QuitList.toLowerCase() === "any") ||
-					(Config.QuitList instanceof Array && Config.QuitList.indexOf(name1) > -1)) {
-				print(name1 + (mode === 0 ? " timed out" : " left"));
-
-				quitFlag = true;
-			}
-
 			if (Config.AntiHostile) {
 				scriptBroadcast("remove " + name1);
 			}
@@ -625,16 +618,6 @@ function main() {
 	addEventListener("gameevent", this.gameEvent);
 	addEventListener("scriptmsg", this.scriptEvent);
 	//addEventListener("gamepacket", Events.gamePacket);
-
-	// Load Fastmod
-	Packet.changeStat(105, Config.FCR);
-	Packet.changeStat(99, Config.FHR);
-	Packet.changeStat(102, Config.FBR);
-	Packet.changeStat(93, Config.IAS);
-
-	if (Config.QuitListMode > 0) {
-		this.initQuitList();
-	}
 
 	// Start
 	while (true) {

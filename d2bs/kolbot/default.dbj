@@ -58,6 +58,12 @@ function main() {
 		return true;
 	}
 
+	if (getScript('D2BotManual.dbj')) {
+		while (true) {
+			delay(1000);
+		}
+	}
+
 	var i, sojPause, stats, anni,
 		sojCounter = 0,
 		startTime = getTickCount();

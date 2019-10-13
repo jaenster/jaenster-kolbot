@@ -1,4 +1,5 @@
 include('require.js');
+include('sdk.js');
 include("OOG.js");
 include("AutoMule.js");
 include("Gambling.js");
@@ -32,12 +33,12 @@ function main() {
 			delay(100);
 
 			if (mapThread.running) {
-				print("pause mapthread");
+				//print("pause mapthread");
 				mapThread.pause();
 			}
 		} else {
 			if (!mapThread.running) {
-				print("resume mapthread");
+				//print("resume mapthread");
 				mapThread.resume();
 			}
 		}
