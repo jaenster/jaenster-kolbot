@@ -72,11 +72,15 @@
 	Control.IPAdressOk = new Control(-1, 421, 337, 96, 32);
 
 	Control.JoinGameWindow = new Control(6, 652, 469, 120, 20);
+	Control.JoinGamePass = new Control(1, 606, 148, 155, 20);
+	Control.JoinGameName = new Control(1, 432, 148, 155, 20);
+
 	Control.CreateGameWindow = new Control(6, 533, 469, 120, 20);
-	Control.CharacterDifferenceButton = new Control(6, 431, 341, 15, 16);
-	Control.CharacterDifference = new Control(1, 657, 342, 27, 20);
 	Control.GameName = new Control(1, 432, 162, 158, 20);
 	Control.GamePass = new Control(1, 432, 217, 158, 20);
+	Control.CharacterDifferenceButton = new Control(6, 431, 341, 15, 16);
+	Control.CharacterDifference = new Control(1, 657, 342, 27, 20);
+
 	Control.CreateGame = new Control(6, 594, 433, 172, 32);
 	Control.Normal = new Control(6, 430, 381, 16, 16);
 	Control.Nightmare = new Control(6, 555, 381, 16, 16);

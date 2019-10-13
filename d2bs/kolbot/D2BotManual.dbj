@@ -1,0 +1,132 @@
+/** @description Development script. Easy to test multiple bots in TCP IP.
+ * @Author Jaenster
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * How to set up?
+ * Go to your profile config and setup the following 2 config settings:
+ * You do not need to set anything in D2Bot#, just select this entry file
+
+ StarterConfig.LoginChar = 'EpicSorc'; // Char you login with
+ StarterConfig.Follower = true; // Follow, or false if you want to host a tcp/ip game
+
+
+
+
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+StarterConfig = {
+	LoginChar: '', // setup in your config file which char you gonna play with (StarterConfig.LoginChar = 'yourChar';
+	Follower: false, // Create tcp/ip game, or join one
+};
+
+
+// I wrote to bot correctly with TCP/Ip, as the regular scripts try to connect with a server that isnt up.
+// i cant see if someone wants to play via TCP/Ip, as login(); already tries to join the game, even if itnt up.
+// wrote this from scratch, it isn't perfect
+print('ÿc2Jaensterÿc0 :: Started D2BotManual.dbj');
+include('require.js');
+include("sdk.js");
+include("OOG.js");
+include("common/misc.js");
+include("common/prototypes.js");
+let handle, gameInfo;
+
+function main() {
+	let lastGame = {
+		name: 'Jan4',
+		pass: '-1',
+	};
+	require('debug');
+
+	const LocationEvents = require('LocationEvents'),
+		Promise = require('Promise'),
+		Worker = require('Worker'),
+		Control = require('Control'),
+		Messaging = require('Messaging'),
+		Team = require('Team');
+
+	Messaging.on('pass', function (data) {
+		print('Got handle from debug function');
+		if (data.hasOwnProperty('handle')) {
+			handle = data.handle;
+			D2Bot.init();
+		}
+	});
+
+	addEventListener('copydata', function (mode, msg) {
+		//print(JSON.stringify({mode: mode, msg: msg}));
+		if (msg === "Handle") {
+			if (!handle) {
+				handle = mode;
+				print(handle);
+				DataFile.updateStats("handle", handle);
+				D2Bot.init();
+
+				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
+			}
+			return;
+		}
+		if (mode === 2) {
+			gameInfo = JSON.parse(msg);
+			gameInfo.charName = StarterConfig.LoginChar;
+		}
+		if (mode === 4) msg === "pingreq" && sendCopyData(null, me.windowtitle, 4, "pingrep");
+		return;
+	});
+
+	// create datafile (needs some refactoring trough)
+	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
+	print('getting handle? O_o');
+	while (!handle) delay(10);
+
+	let lastTimer = getTickCount();
+	D2Bot.requestGameInfo();
+	while (!gameInfo) {
+		if (getTickCount() - lastTimer > 500) {
+			lastTimer = getTickCount();
+			D2Bot.requestGameInfo();
+		}
+		delay(10);
+	}
+	getLocation() === sdk.locations.None && sendKey(32);
+
+	LocationEvents.on(sdk.locations.JoinGame, () => {
+		print('JOIN GAME EVENT');
+		Control.JoinGameName.setText(lastGame.name);
+		Control.JoinGamePass.setText(lastGame.pass);
+	});
+
+	const inGame = () => new Promise(x => me.gameReady && me.ingame && x())
+		.then(() => {
+			print('---------- in game -- ' + me.gamename + '/' + me.gamepassword);
+			lastGame = {name: me.gamename, pass: me.gamepassword};
+			new Promise(x => !me.ingame && x()).then(inGame);
+		});
+	inGame();
+
+	while (true) {
+		delay(10);
+	}
+}
