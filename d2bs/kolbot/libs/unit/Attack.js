@@ -216,7 +216,6 @@
 					});
 				break;
 			case me.classid === 2: // necro
-				print('HERE');
 				// recast bonearmor
 				!me.getState(sdk.states.BoneArmor) && me.cast(sdk.skills.BoneArmor) && me.cast(sdk.skills.BoneArmor);
 
