@@ -10,7 +10,7 @@
 			// Dont use on anything else as objects, or if any argument given
 			if (this.type !== sdk.unittype.Objects || args.length || !me.getSkill(sdk.skills.Telekinesis, 1)) return interact.apply(this, args);
 
-			this.cast(sdk.skills.Telekinesis, undefined, undefined, undefined, undefined, true);
+			return this.cast(sdk.skills.Telekinesis, undefined, undefined, undefined, undefined, true);
 		}
 	})(Unit.prototype.interact);
 
