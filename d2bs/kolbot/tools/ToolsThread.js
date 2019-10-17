@@ -496,6 +496,11 @@ function main() {
 			say("/fps");
 
 			break;
+		case 111: // Numpad / ( slash )
+			say("/nopickup");
+			me.overhead("No pickup switch toggled");
+
+			break;
 		case 105: // numpad 9 - get nearest preset unit id
 			print(this.getNearestPreset());
 
