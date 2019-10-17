@@ -55,8 +55,8 @@ let handle, gameInfo;
 
 function main() {
 	let lastGame = {
-		name: 'Jan4',
-		pass: '-1',
+		name: '',
+		pass: '',
 	};
 	require('debug');
 

@@ -81,6 +81,10 @@
 		let presetUnit = getPresetUnit(area, unitType, unitId);
 		return presetUnit && presetUnit.moveTo(offX, offY, clearPath, pop);
 	};
+	me.useWaypoint = function (targetArea) {
+		Pather.useWaypoint(targetArea);
+		return this;
+	};
 
 	me.on = Events.on;
 	me.off = Events.off;
