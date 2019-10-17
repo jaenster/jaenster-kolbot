@@ -216,6 +216,7 @@
 					});
 				break;
 			case me.classid === 2: // necro
+				print('HERE');
 				// recast bonearmor
 				!me.getState(sdk.states.BoneArmor) && me.cast(sdk.skills.BoneArmor) && me.cast(sdk.skills.BoneArmor);
 
@@ -245,6 +246,7 @@
 
 				if (corpse) for (; corpse.getNext();) {
 					if (getDistance(this, corpse) <= range && this.checkCorpse(corpse)) {
+						print('Exploding ' + corpse.name);
 						me.cast(74, 0, corpse);
 					}
 				}
