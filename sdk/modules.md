@@ -87,13 +87,13 @@ const Messaging = require('Messaging');
 
 // Hook upon incoming data 
 Messaging.on('myScript',function(data) {
-	// Data always isn an object
+	// Data always is an object
 	if (data.hasOwnProperty('test')) {
 		print(data.test);
 	}
 });
 
-// Hook upon outgoing data
+// send outgoing data
 Messaging.send({myScript: {test: 'Some Data'}});
 ```
 
@@ -133,6 +133,9 @@ Team.on('Baal',function(data) {
     for(let i of data) {
     	BaalData[i] = data[i];
     }
+    
+    // If you need, or want to reply on an message simply use
+    //BaalData.reply({reply: 'Something?'});
 });
 
 
@@ -142,6 +145,7 @@ if (Leader) { // the leader
 	Pather.journeyTo(sdk.areas.ThroneOfDestruction);
 	Pather.moveTo(15083, 5035);
 	Pather.makePortal(true);
+	
 	// Clear around baal
 	getUnit(1,sdk.monsters.ThroneBaal).clear(60);
 	
@@ -151,7 +155,10 @@ if (Leader) { // the leader
 } else { // the leecher
 	
 	Town.goToTown(5) && Town.move("portalspot");
-	while(!BaalData.safe) delay(50); // wait for safe tp
+	
+	// wait for safe tp
+	while(!BaalData.safe) delay(50); 
+	
 	Pather.usePortal(sdk.areas.ThroneOfDestruction,null);
 }
 ````
@@ -172,7 +179,8 @@ A way to hook upon the event of changing states of out of game locations.
 const LocationEvents = require('LocationEvents'),
     Control = require('Control');
 
-LocationEvents.on(sdk.locations.Lobby,function() {
+// Hook upon the location event.
+LocationEvents.on(sdk.locations.Lobby, function() {
   Control.EnterChat.click(); // Click on chat when we arrive in lobby
 });
 ````
@@ -267,6 +275,8 @@ Skills.town[sdk.skills.FrozenArmor];    // returns true, as frozen armor can be 
 Not much more as the old Storage system of kolton, but wrapped in a module. Some minor improvements are on it, but check the commits on it.
 ````javascript
 const Storage = require('Storage');
+
+Storage.Inventory.MoveTo(item);
 ````
 
 
@@ -299,3 +309,34 @@ module.exports = {
 
 # The rest
 I'll describe the rest later, but those are mainly internally used, or rarely specifiably required yourself by a script. What is above here is what would be very useful to use in your code
+
+
+# Prototypes
+I attempted to use objects more. So, allot of the attack, and movement functions are bounded on Diablo II units.
+
+This to automatically generate more readable code, compared to regular kolton.
+```javascript
+// Cast an enchant on friendly nearby unit.
+getUnits(-1) // Get all nearby units
+    .filter(unit=>unit.type < 2 && !unit.attackable) // Only friendly monsters/mercs/players
+    .forEach(unit => unit.cast(sdk.skills.Enchant)); // cast Enchant on all of them
+```
+```javascript
+// One-line to kill a specific monster
+getUnits(sdk.unittype.Monsters) // Get all units
+    .filter(x => x.name === getLocaleString(sdk.locale.monsters.TheCountess)) // filter out those that are not the countess
+    .first()    // Get the first (there is only one but still)
+    .kill(); // Kill it
+```
+```javascript
+// Go to river of flames, and as it returns the me object, cast an frozen armor
+me.useWaypoint(sdk.areas.RiverOfFlame).cast(sdk.skills.FrozenArmor);
+// Get the preset of vizier's active seal
+const vizierSeal = getPresetUnit(sdk.areas.ChaosSanctuary,sdk.unittype.Objects,sdk.units.DiabloSealVizierActive);
+// Move to it, get the actual unit, and cast telekenis on it
+vizierSeal.moveTo().unit.cast(sdk.skills.Telekinesis);
+```
+```javascript
+// Go to izual and kill him.
+me.journeyToPreset(sdk.areas.PlainsOfDespair,sdk.unittype.Monsters,sdk.monsters.Izual).unit.kill();
+```

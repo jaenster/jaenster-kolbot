@@ -4,11 +4,13 @@
  */
 (function (require) {
 	Unit.prototype.moveTo = function (offX, offY, clearPath, pop) {
-		return this.distance > 5 && Pather.moveTo(this.x + offX, this.y + offY, undefined, clearPath, pop);
+		this.distance > 5 && Pather.moveTo(this.x + offX, this.y + offY, undefined, clearPath, pop);
+		return this;
 	};
 
 	PresetUnit.prototype.moveTo = function (offX, offY, clearPath, pop) {
-		return Pather.moveTo(this.roomx * 5 + this.x + offX, this.roomy * 5 + this.y + offY, undefined, clearPath, pop);
+		Pather.moveTo(this.roomx * 5 + this.x + offX, this.roomy * 5 + this.y + offY, undefined, clearPath, pop);
+		return this;
 	};
 
 	Unit.prototype.bestSpot = function (distance) {
