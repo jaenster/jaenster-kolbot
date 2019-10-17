@@ -72,7 +72,10 @@ function SpeedBaal(Config, Attack, Pickit) {
 		}
 
 		// Precast in town, or go bo outside of town and return to act 4
-		(TownPrecast.can && TownPrecast()) || Precast.outTown(_ => Pather.useWaypoint(sdk.areas.PandemoniumFortress));
+		if (!(TownPrecast.can && TownPrecast())) {
+			Precast.outTown();
+			Pather.useWaypoint(sdk.areas.PandemoniumFortress);
+		}
 
 		// In case we in aren't in act < 4, go to act 4
 		me.area < sdk.areas.PandemoniumFortress && Town.goToTown(4); // Go to act 4.
@@ -211,7 +214,6 @@ function SpeedBaal(Config, Attack, Pickit) {
 		switch (build.me) {
 			case build.warcry:
 			case build.convict:
-				togglePartyScript(false);
 				clickParty(getParty(), 3); // leave party
 				break;
 			case build.curser:

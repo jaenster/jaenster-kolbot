@@ -33,7 +33,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 			let getPresets = () => getPresetUnits(108, 2).filter(ps => seals.indexOf(ps.id) > -1);
 			parts.push(function () {
 				// Do a seal
-				if (diaTick) return; // Dont do anything if dia is done
+				if (diaTick) return diaTick; // Dont do anything if dia is done
 				return getPresets().some(function (seal) {
 					if (diaTick) return diaTick;
 					// Clear to seal
@@ -65,7 +65,7 @@ function SpeedDiablo(Config, Attack, Pickit) {
 							boss = getUnit(1, getLocaleString(locale));
 							if (getTickCount() - timer > estimation || diaTick) {
 								print('Failed waiting for ' + getLocaleString(locale));
-								return;//break;
+								return diaTick;//break;
 							}
 						} while (!boss);
 

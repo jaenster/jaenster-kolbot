@@ -180,7 +180,6 @@
 	let check = getTickCount();
 	Unit.prototype.attack = function () {
 		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);
-		print(monsterEffort);
 		let populatedAttack = monsterEffort.first();
 		const move = (sk = populatedAttack.skill) => {
 			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4)) {
@@ -246,6 +245,7 @@
 
 				if (corpse) for (; corpse.getNext();) {
 					if (getDistance(this, corpse) <= range && this.checkCorpse(corpse)) {
+						print('Exploding ' + corpse.name);
 						me.cast(74, 0, corpse);
 					}
 				}

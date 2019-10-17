@@ -243,7 +243,7 @@ function main() {
 		scriptBroadcast("mule");
 	}
 
-	Storage = require('Storage');
+	const Storage = require('Storage');
 	// Anni handler. Mule Anni if it's in unlocked space and profile is set to mule torch/anni.
 	anni = me.findItem(603, 0, -1, 7);
 

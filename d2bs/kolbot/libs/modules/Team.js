@@ -113,9 +113,7 @@
 				return true; // always, to keep looping;
 			};
 		}).update;
-		while (true) {
-			delay(1000);
-		}
+		while (true) delay(1000);
 	} else {
 		(function (module, require) {
 			// start team thread, if not started
