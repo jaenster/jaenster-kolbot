@@ -65,7 +65,9 @@
 			for (let n in CustomConfig)
 				if (CustomConfig.hasOwnProperty(n) && CustomConfig[n].indexOf(me.profile) > -1)
 					return n;
-
+		if (getScript('D2BotManual.dbj') && !FileTools.exists("config/" + me.windowtitle + ".js")) {
+			return 'manual';
+		}
 		return me.windowtitle;
 	})();
 
