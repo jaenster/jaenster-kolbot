@@ -4,7 +4,7 @@
 
 (function (module, require, Config, AutoConfig, StarterConfig, Scripts) {
 	AutoConfig();
-	Scripts.Maphack = true;
+	Scripts.MapHack = true;
 	Config.PickitFiles.push("pots.nip");
 	module.exports = Scripts;
 })(module, require, require('Config'), require('AutoConfig'), require('Config').StarterConfig, {});
