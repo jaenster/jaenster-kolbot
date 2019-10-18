@@ -21,9 +21,9 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
-        Config.SpeedDiablo.Fast: false; // Do a fast diarun (only monsters
-        Config.SpeedDiablo.Follower: false; // Follow, dont teleport to it but take the portal
-        Config.SpeedDiablo.Entrance: true; // Clear the entrance
+        Config.SpeedDiablo.Fast = false; // Do a fast diarun (only monsters
+        Config.SpeedDiablo.Follower = false; // Follow, dont teleport to it but take the portal
+        Config.SpeedDiablo.Entrance = true; // Clear the entrance
 
 
     Scripts.SpeedBaal = true; // A better/smarter/high power baal run (in development, but already faster as regular ones)
