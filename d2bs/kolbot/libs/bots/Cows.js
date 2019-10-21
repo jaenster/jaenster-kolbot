@@ -295,6 +295,20 @@ function Cows(Config, Attack) {
 
 	let cowDone = false;
 
+	const Promise = require('Promise');
+	new Promise(resolve => {
+		const king = getUnits(sdk.unittype.Monsters) // Get all monsters
+			.filter(x => x.name === getLocaleString(sdk.locale.monsters.TheCowKing)) // get those named cow king
+			.first(); // get the first
+
+		if (king && king.distance < 80) { // if found and relativly in our location
+			resolve(king);
+		}
+	}).then(king => {
+		Town.goToTown();
+		throw new Error('King found, aborting');
+	});
+
 
 	require('Precast')();
 	this.clearCowLevel();
