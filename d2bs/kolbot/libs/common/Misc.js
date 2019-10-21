@@ -459,6 +459,7 @@ MainLoop:
 
 var Item = {
 	hasTier: function (item) {
+		const NTIP = require('NTIP');
 		return Misc.config.AutoEquip && NTIP.GetTier(item) > 0;
 	},
 
@@ -526,7 +527,7 @@ var Item = {
 
 	getEquippedItem: function (bodyLoc) {
 		var item = me.getItem();
-
+		const NTIP = require('NTIP');
 		if (item) {
 			do {
 				if (item.bodylocation === bodyLoc) {
@@ -631,7 +632,7 @@ var Item = {
 		if (!Misc.config.AutoEquip) {
 			return true;
 		}
-
+		const NTIP = require('NTIP');
 		var i,
 			tier = NTIP.GetTier(item),
 			bodyLoc = this.getBodyLoc(item);
@@ -658,6 +659,7 @@ var Item = {
 		if (!Misc.config.AutoEquip) {
 			return true;
 		}
+		const NTIP = require('NTIP');
 
 		var i, j, tier, bodyLoc, tome, gid,
 			items = me.findItems(-1, 0);
