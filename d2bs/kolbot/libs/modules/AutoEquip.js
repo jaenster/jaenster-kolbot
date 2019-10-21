@@ -40,7 +40,7 @@
 					+ ((hpmp() + res()) * 100)
 					+ def(),
 
-				rare: () => (skills() * 10_000)
+				rare: () => (skills() * 10000)
 					+ ((hpmp() + res()) * 1000)
 					+ def(),
 			},
@@ -62,13 +62,13 @@
 			},
 
 			armor: {
-				magic: () => ((skills() + res()) * 10_000)
+				magic: () => ((skills() + res()) * 10000)
 					+ (strdex() * 1000)
 					+ (hpmp() * 100)
 					+ def(),
 
-				rare: () => ((skills() + res()) * 100_000)
-					+ (strdex() * 10_000)
+				rare: () => ((skills() + res()) * 100000)
+					+ (strdex() * 10000)
 					+ (hpmp() * 1000)
 					+ def(),
 			},
@@ -79,7 +79,7 @@
 					+ (strdex() * 10)
 					+ fcr(),
 
-				rare: () => () => ((skills() + res()) * 10_000)
+				rare: () => () => ((skills() + res()) * 10000)
 					+ ((hpmp() + strdex()) * 1000)
 					+ fcr()
 			},
@@ -89,8 +89,8 @@
 					+ ((fbr() + ctb()) * 100)
 					+ def(),
 
-				set: () => (res() * 100_000)
-					+ ((strdex() + vita()) * 10_000)
+				set: () => (res() * 100000)
+					+ ((strdex() + vita()) * 10000)
 					+ ((fbr() + ctb()) * 1000)
 					+ def(),
 			},
@@ -100,47 +100,47 @@
 					+ ((hpmp() + strdex()) * 100)
 					+ fcr(),
 
-				rare: () => (res() * 10_000)
+				rare: () => (res() * 10000)
 					+ ((hpmp() + strdex()) * 1000)
 					+ fcr(),
 			},
 
 			belt: {
-				magic: () => (res() * 10_000)
+				magic: () => (res() * 10000)
 					+ (strdex() * 1000)
 					+ (hpmp() * 100)
 					+ (fhr() * 10)
 					+ def(),
 
-				rare: () => (res() * 100_000)
-					+ (strdex() * 10_000)
+				rare: () => (res() * 100000)
+					+ (strdex() * 10000)
 					+ (hpmp() * 1000)
 					+ (fhr() * 10)
 					+ def()
 			},
 
 			boots: {
-				magic: () => (res() * 10_000)
+				magic: () => (res() * 10000)
 					+ ((strdex() + vita()) * 100)
 					+ (hpmp() * 100)
 					+ (frw() * 10)
 					+ def(),
 
-				rare: () => (res() * 100_000)
-					+ ((strdex() + vita()) * 10_000)
+				rare: () => (res() * 100000)
+					+ ((strdex() + vita()) * 10000)
 					+ (hpmp() * 1000)
 					+ (frw() * 10)
 					+ def(),
 			},
 
 			gloves: {
-				magic: () => ((res() + skills()) * 10_000)
+				magic: () => ((res() + skills()) * 10000)
 					+ (strdex() * 1000)
 					+ (hpmp() * 100)
 					+ def(),
 
-				rare: () => ((res() * skills()) * 100_000)
-					+ (strdex() * 10_000)
+				rare: () => ((res() * skills()) * 100000)
+					+ (strdex() * 10000)
 					+ (hpmp() * 1000)
 					+ def(),
 			},
