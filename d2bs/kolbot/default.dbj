@@ -58,12 +58,6 @@ function main() {
 		return true;
 	}
 
-	if (getScript('D2BotManual.dbj')) {
-		while (true) {
-			delay(1000);
-		}
-	}
-
 	var i, sojPause, stats, anni,
 		sojCounter = 0,
 		startTime = getTickCount();
@@ -109,7 +103,7 @@ function main() {
 	};
 
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
-	const Config = require('Config')();
+	const Config = require('Config').call();
 	Pickit.init(true);
 	CraftingSystem.buildLists();
 	Runewords.init();
@@ -188,7 +182,6 @@ function main() {
 		scriptBroadcast("torch");
 	}
 
-	// Go
 	const Loader = require('Loader').call();
 
 	if (Config.MinGameTime && getTickCount() - startTime < Config.MinGameTime * 1000) {

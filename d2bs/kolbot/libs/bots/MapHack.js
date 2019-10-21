@@ -5,8 +5,10 @@
  */
 
 function MapHack() {
-	const GameData = require('GameData');
-	Worker = require('Worker');
+	const GameData = require('GameData'),
+		Worker = require('Worker'),
+		Promise = require('Promise'),
+		Skills = require('Skills');
 
 	const isAlive = GameData.isAlive,
 		isEnemy = GameData.isEnemy,
@@ -321,6 +323,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 	let items = {};
 	let otherShapes = [];
 	let POI = [];
+	let autoSkillSelection = false;
 	let keyMap = [
 		{key: 5, hotkey: 53}, // digit 5 = key
 		{key: 6, hotkey: 54},
@@ -329,6 +332,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		{key: 9, hotkey: 57},
 		{key: 'z', hotkey: 90},
 		{key: 'x', hotkey: 88},
+		{key: 'u', hotkey: 85, staticHandler: () => autoSkillSelection = !autoSkillSelection},
 
 	];
 
@@ -372,16 +376,16 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 
 	let area = me.area;
 	Worker.runInBackground.AutoBo = (function () {
-		if (area === me.area) {
-			let hands = [2, 3].map(x => me.getSkill(x)), success;
-			if (!me.inTown) {
-				success |= require('Precast').call();
-			} else {
-				success |= require('TownPrecast').prepare();
-			}
-			success && hands.forEach((sk, hand) => me.setSkill(sk, hand)); // put hand back
-			area = me.area;
+		if (area !== me.area) {
+			Worker.push(() => {
+				let hands = [2, 3].map(x => me.getSkill(x)), success;
+				if (!me.inTown) {
+					success = require('Precast').call();
+				}
+				success && hands.forEach((sk, hand) => me.setSkill(sk, hand)); // put hand back
+			});
 		}
+		area = me.area;
 		return true;
 	});
 
@@ -393,7 +397,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 	});
 
 	(function () {
-		let pressed = [];
+		const pressed = [];
 		addEventListener('keydown', key => keyMap.map(x => x.hotkey).indexOf(key) !== -1 && pressed.push(key));
 		addEventListener('keydown', key => print(key));
 
@@ -418,6 +422,8 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		let r = getRoom();
 
 		if (!r) {
+			print('HERE');
+			Worker.push(revealArea); // Try next loop
 			return false;
 		}
 		let correctTomb = r.correcttomb;
@@ -600,7 +606,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		}
 	}
 
-	let unit = getUnit(1), revealTime = 7;
+	let unit = getUnit(1), revealTime = 2;
 
 	if (unit) {
 		do {
@@ -610,26 +616,20 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		} while (unit.getNext());
 	}
 
-	deltas.track(() => me.area, () => revealTime = 7);
+	deltas.track(() => me.area, () => new Promise(resolve => me.gameReady && resolve()).then(() => {
+		let tick = getTickCount();
+		new Promise((resolve) => getTickCount() - tick > 250 && resolve()).then(revealArea);
+	}));
 
-	print('loaded!');
 
 	Worker.runInBackground.checker = function () {
-		if (me.gameReady && revealTime) {
-			if (!--revealTime) {
-				if (!revealArea()) {
-					revealTime = 7;
-				}
-			}
-		}
-
 		deltas.check();
 		update();
 		return true; // always do this
 	};
 
 	Worker.runInBackground.stamina = function () {
-		if (typeof me === 'undefined') return true; // happens when we are dead
+		if (typeof me === 'undefined' || me.dead) return true; // happens when we are dead
 
 		if (me.runwalk === 1 && me.stamina / me.staminamax * 100 <= 25) {
 			//{"type":4,"classid":513,"mode":0,"name":"Stamina Potion","act":1,"gid":6,"x":8,"y":1,"hp":0,"hpmax":0,"mp":0,"mpmax":0,"stamina":0,"staminamax":0,"charlvl":0,"owner":0,"ownertype":0,"uniqueid":-1,"code":"vps","prefixes":[],"suffixes":[],"prefixnum":0,"suffixnum":0,"prefixnums":[],"suffixnums":[],"fname":"Stamina Potion","quality":2,"node":1,"location":3,"sizex":1,"sizey":1,"itemType":79,"description":"ÿc0Stamina Potion","bodylocation":0,"ilvl":1,"lvlreq":0,"gfx":0}
@@ -638,7 +638,21 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 
 		}
 	};
+	Worker.runInBackground.autoSkillSelection = function () {
+		if (typeof me === 'undefined' || me.dead || !autoSkillSelection) return true; // happens when we are dead
 
+		let cursor = getUnit(101);
+		if (cursor && cursor.type === sdk.unittype.Monsters && cursor.attackable) {
+			print(cursor);
+			const effort = GameData.monsterEffort(cursor, cursor.area);
+			me.overhead('set skill to -- ' + effort.skill);
+			me.setSkill(effort.skill, 0);
+		}
+		return true;
+
+	};
+	require('Debug');
+	me.automap = true; // what is a maphack without an default enabled map
 	while (me.ingame) {
 		delay(40);
 	}

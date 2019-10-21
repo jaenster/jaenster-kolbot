@@ -48,6 +48,7 @@ StarterConfig = {
 print('ÿc2Jaensterÿc0 :: Started D2BotManual.dbj');
 include('require.js');
 include("sdk.js");
+getLocation() === sdk.locations.None && sendKey(32); // skip splash screen
 include("OOG.js");
 include("common/misc.js");
 include("common/prototypes.js");
@@ -80,7 +81,6 @@ function main() {
 		if (msg === "Handle") {
 			if (!handle) {
 				handle = mode;
-				print(handle);
 				DataFile.updateStats("handle", handle);
 				D2Bot.init();
 
@@ -98,7 +98,6 @@ function main() {
 
 	// create datafile (needs some refactoring trough)
 	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
-	print('getting handle? O_o');
 	while (!handle) delay(10);
 
 	let lastTimer = getTickCount();
@@ -110,17 +109,14 @@ function main() {
 		}
 		delay(10);
 	}
-	getLocation() === sdk.locations.None && sendKey(32);
 
 	LocationEvents.on(sdk.locations.JoinGame, () => {
-		print('JOIN GAME EVENT');
 		Control.JoinGameName.setText(lastGame.name);
 		Control.JoinGamePass.setText(lastGame.pass);
 	});
 
-	const inGame = () => new Promise(x => me.gameReady && me.ingame && x())
+	const inGame = () => new Promise(x => me.gameReady && me.ingame && me.gamename && x())
 		.then(() => {
-			print('---------- in game -- ' + me.gamename + '/' + me.gamepassword);
 			lastGame = {name: me.gamename, pass: me.gamepassword};
 			new Promise(x => !me.ingame && x()).then(inGame);
 		});

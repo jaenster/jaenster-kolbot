@@ -1480,3 +1480,7 @@ if (!Array.prototype.findIndex) {
 		writable: true
 	});
 }
+
+String.prototype.startsWith = function (prefix) {
+	return !prefix || this.substring(0, prefix.length) === prefix;
+};

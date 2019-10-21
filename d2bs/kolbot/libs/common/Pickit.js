@@ -276,11 +276,8 @@ MainLoop:
 					}
 				}
 
-				if (Pickit.config.FastPick < 2) {
-					Misc.click(0, 0, item);
-				} else {
-					sendPacket(1, 0x16, 4, 0x4, 4, item.gid, 4, 0);
-				}
+				// "click" the item
+				sendPacket(1, 0x16, 4, 0x4, 4, item.gid, 4, 0);
 			}
 
 			tick = getTickCount();

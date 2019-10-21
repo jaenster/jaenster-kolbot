@@ -4,12 +4,12 @@
  */
 (function (require) {
 	Unit.prototype.moveTo = function (offX, offY, clearPath, pop) {
-		this.distance > 5 && Pather.moveTo(this.x + offX, this.y + offY, undefined, clearPath, pop);
+		this.distance > 5 && Pather.moveTo(this.x + (offX || 0), this.y + (offY || 0), undefined, clearPath, pop);
 		return this;
 	};
 
 	PresetUnit.prototype.moveTo = function (offX, offY, clearPath, pop) {
-		Pather.moveTo(this.roomx * 5 + this.x + offX, this.roomy * 5 + this.y + offY, undefined, clearPath, pop);
+		Pather.moveTo(this.roomx * 5 + this.x + (offX || 0), this.roomy * 5 + this.y + (offY || 0), 4, clearPath, pop);
 		return this;
 	};
 

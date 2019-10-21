@@ -7,3 +7,15 @@ var CustomConfig = {
 
 
 };
+
+/* Jaenster: Easier way to configure
+
+
+// Check if title starts with MyBotsPrefix,
+if (me.windowtitle.indexOf('MyBotsPrefix') === 0) {
+	// Put it to the list of CustomConfig
+	CustomConfig['MyConfigFile'] = [me.windowtitle];
+}
+
+
+ */

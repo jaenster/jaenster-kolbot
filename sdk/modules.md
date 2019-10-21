@@ -331,11 +331,14 @@ getUnits(sdk.unittype.Monsters) // Get all units
 ```javascript
 // Go to river of flames, and as it returns the me object, cast an frozen armor
 me.useWaypoint(sdk.areas.RiverOfFlame).cast(sdk.skills.FrozenArmor);
+
 // Get the preset of vizier's active seal
 const vizierSeal = getPresetUnit(sdk.areas.ChaosSanctuary,sdk.unittype.Objects,sdk.units.DiabloSealVizierActive);
+
 // Move to it, get the actual unit, and cast telekenis on it
 vizierSeal.moveTo().unit.cast(sdk.skills.Telekinesis);
 ```
+
 ```javascript
 // Go to izual and kill him.
 me.journeyToPreset(sdk.areas.PlainsOfDespair,sdk.unittype.Monsters,sdk.monsters.Izual).unit.kill();
