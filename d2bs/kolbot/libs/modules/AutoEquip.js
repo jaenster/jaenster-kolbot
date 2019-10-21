@@ -166,7 +166,7 @@
 			crafted: 8,
 		};
 
-		if (isRuneword || item.quality >= quality.magic) {
+		if (isRuneword || item.quality >= quality.rare) {
 			return rareTier()
 		} else { // magical, or lower
 			return magicTier();
