@@ -14,7 +14,6 @@ include("CraftingSystem.js");
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Misc.js");
-include("common/Pickit.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
@@ -68,8 +67,6 @@ function main() {
 
 	// Init config and attacks
 	D2Bot.init();
-	Config.init();
-	Pickit.init();
 	CraftingSystem.buildLists();
 	Runewords.init();
 	Cubing.init();

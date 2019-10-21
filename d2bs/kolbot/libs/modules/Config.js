@@ -26,8 +26,8 @@
 		if (me.ingame) {
 			Config.Silence && (global.say = print); // Remove the say function, to instantly make the bot silenced
 
-			// Setup the pickit stuff
-			Pickit.init(getScript(true).name.toLowerCase() === 'default.dbj'); // only notify if we are the default thread
+			// Load pickit if files are configured
+			Array.isArray(Config.PickitFiles) && Config.PickitFiles.length && require('Pickit');
 
 			Config.Party && require('Party');
 
