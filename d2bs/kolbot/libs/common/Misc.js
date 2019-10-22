@@ -955,6 +955,7 @@ var Misc = {
 		if (!range) {
 			range = 15;
 		}
+		const Pickit = require('Pickit');
 
 		// Testing all container code
 		if (Misc.config.OpenChests === 2) {
@@ -1004,6 +1005,7 @@ var Misc = {
 		var i, j, shrine,
 			index = -1,
 			shrineList = [];
+		const Pickit = require('Pickit');
 
 		// Initiate shrine states
 		if (!this.shrineStates) {
@@ -1304,6 +1306,7 @@ var Misc = {
 			break;
 		}
 
+		const Pickit = require('Pickit');
 		return this.fileAction("logs/ItemLog.txt", 2, dateString + " <" + me.profile + "> <" + action + "> (" + Pickit.itemQualityToName(unit.quality) + ") " + desc + (text ? " {" + text + "}" : "") + "\n");
 	},
 

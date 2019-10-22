@@ -104,11 +104,8 @@ function main() {
 
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
 	const Config = require('Config').call();
-	Pickit.init(true);
+	const Pickit = require('Pickit');
 	CraftingSystem.buildLists();
-	Runewords.init();
-	Cubing.init();
-	LocalChat.init();
 
 	// Load events
 	addEventListener("scriptmsg", this.scriptEvent);
@@ -133,7 +130,6 @@ function main() {
 	if (CraftingSystem.inGameCheck()) {
 		return true;
 	}
-
 	me.maxgametime = Config.MaxGameTime * 1000;
 	stats = DataFile.getStats();
 
@@ -144,7 +140,6 @@ function main() {
 		DataFile.updateStats("deaths");
 		D2Bot.updateDeaths();
 	}
-
 	DataFile.updateStats(["experience", "name"]);
 	me.switchWeapons(0); // always start at slot 0
 	// Load threads
@@ -154,17 +149,8 @@ function main() {
 		load("tools/TownChicken.js");
 	}
 
-	if (Config.PublicMode) {
-		load("tools/Party.js");
-	}
-
 	if (Config.AntiHostile) {
 		load("tools/AntiHostile.js");
-	}
-
-	if (Config.FastPick) {
-		print("ÿc2Fast pickit active.");
-		addEventListener("itemaction", this.itemEvent);
 	}
 
 	// One time maintenance - get corpse, clear leftover items, pick items in case anything important was dropped
@@ -172,7 +158,7 @@ function main() {
 		Town.getCorpse();
 		Town.clearBelt();
 		Town.clearInventory();
-		//Pickit.pickItems();
+	Pickit.pickItems();
 	// }
 
 	me.automap = Config.AutoMap;

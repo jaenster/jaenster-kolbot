@@ -17,7 +17,6 @@ include("MuleLogger.js");
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Misc.js");
-include("common/Pickit.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
@@ -135,7 +134,6 @@ function main() {
 	print("ÿc3Start ToolsThread script");
 	D2Bot.init();
 	Config();
-	Pickit.init(false);
 	CraftingSystem.buildLists();
 	Runewords.init();
 	Cubing.init();

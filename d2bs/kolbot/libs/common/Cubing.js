@@ -155,7 +155,8 @@ var Cubing = {
 		var i, cube, chest;
 
 		Pather.useWaypoint(57, true);
-		require('Precast')()
+		require('Precast').call()
+		const Pickit = require('Pickit');
 
 		if (Pather.moveToExit(60, true) && Pather.moveToPreset(me.area, 2, 354)) {
 			chest = getUnit(2, 354);
@@ -966,6 +967,7 @@ IngredientLoop:
 
 	validItem: function (unit, recipe) {
 		const Storage = require('Storage');
+		const NTIP = require('NTIP');
 		// Don't use items in locked inventory space
 		if (unit.mode === 0 && unit.location === 3 && Storage.Inventory.IsLocked(unit, Recipe.config.Inventory)) {
 			return false;
@@ -1104,6 +1106,7 @@ IngredientLoop:
 			return false;
 		}
 		const Storage = require('Storage');
+		const Pickit = require('Pickit');
 		var i, j, items, string, result, tempArray;
 
 		this.update();

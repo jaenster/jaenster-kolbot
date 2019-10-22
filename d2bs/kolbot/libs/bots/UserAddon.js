@@ -25,10 +25,6 @@ function UserAddon(Config, Attack, Pickit) {
 		}
 	};
 
-	if (!Config.FastPick) { // Make sure the item event is loaded
-		addEventListener("itemaction", this.itemEvent);
-	}
-
 	if (!FileTools.exists("libs/config/" + classes[me.classid] + "." + me.name + ".js")) {
 		showConsole();
 		print("ÿc4UserAddonÿc0: Press HOME and then press SPACE if you want to create character config.");

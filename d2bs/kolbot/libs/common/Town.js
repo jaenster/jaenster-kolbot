@@ -515,6 +515,7 @@ var Town = {
 		var i, item, tome, scroll, npc, list, timer, tpTome, result,
 			tpTomePos = {};
 
+		const Pickit = require('Pickit');
 		this.cainID();
 		const Storage = require('Storage');
 		list = Storage.Inventory.Compare(Town.config.Inventory);
@@ -658,6 +659,7 @@ MainLoop:
 		if (!Town.config.CainID.Enable) {
 			return false;
 		}
+		const Pickit = require('Pickit');
 
 		// Check if we're already in a shop. It would be pointless to go to Cain if so.
 		var i, cain, unids, result,
@@ -733,7 +735,7 @@ MainLoop:
 		var list, tome, item, result;
 
 		list = this.getUnids();
-
+		const Pickit = require('Pickit');
 		if (!list) {
 			return false;
 		}
@@ -877,6 +879,7 @@ CursorLoop:
 		if (!Town.config.MiniShopBot) {
 			return true;
 		}
+		const Pickit = require('Pickit');
 
 		var i, item, result,
 			items = [],
@@ -927,6 +930,7 @@ CursorLoop:
 		if (!this.needGamble() || Town.config.GambleItems.length === 0) {
 			return true;
 		}
+		const Pickit = require('Pickit');
 
 		var i, item, items, npc, newItem, result,
 			list = [];
@@ -1530,6 +1534,8 @@ MainLoop:
 		if (!this.needStash()) {
 			return true;
 		}
+		const Pickit = require('Pickit');
+		const NTIP = require('NTIP');
 		me.cancel();
 		const Storage = require('Storage');
 		var i, result, tier,
@@ -1809,7 +1815,7 @@ MainLoop:
 			items = [];
 		const Storage = require('Storage');
 		this.checkQuestItems(); // only golden bird quest for now
-
+		const Pickit = require('Pickit');
 		// Return potions to belt
 		item = me.getItem(-1, 0);
 

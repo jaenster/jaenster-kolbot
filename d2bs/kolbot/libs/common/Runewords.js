@@ -106,6 +106,7 @@ var Runewords = {
 		if (!Runewords.config.MakeRunewords) {
 			return;
 		}
+		const NTIP = require('NTIP');
 
 		var i, info, parsedLine;
 
@@ -287,6 +288,7 @@ RuneLoop:
 			item = me.getItem(base, 0);
 		}
 
+		const NTIP = require('NTIP');
 		if (item) {
 			do {
 				if (item && item.quality < 4 && item.getStat(194) === runeword.length) {
@@ -368,6 +370,7 @@ RuneLoop:
 		if (!Runewords.config.MakeRunewords) {
 			return false;
 		}
+		const NTIP = require('NTIP');
 
 		var i, items;
 

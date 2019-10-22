@@ -16,7 +16,6 @@ include("TorchSystem.js");
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Misc.js");
-include("common/Pickit.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
@@ -29,6 +28,7 @@ var gidList = [];
 
 function main() {
 	const Config = require('Config')();
+	const Pickit = require('Pickit');
 	this.playerIn = function (area) {
 		if (!area) {
 			area = me.area;
@@ -1328,7 +1328,6 @@ MainLoop:
 
 	// Start
 	Config.init(false);
-	Pickit.init(false);
 	Storage.Init();
 	CraftingSystem.buildLists();
 	Runewords.init();

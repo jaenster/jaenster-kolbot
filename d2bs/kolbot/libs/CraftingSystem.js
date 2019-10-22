@@ -221,6 +221,7 @@ CraftingSystem.fullSets = [];
 
 // Check whether item can be used for crafting
 CraftingSystem.validItem = function (item) {
+	const NTIP = require('NTIP');
 	switch (item.itemType) {
 	case 58: // Jewel
 		return NTIP.CheckItem(item) === 0; // Use junk jewels only

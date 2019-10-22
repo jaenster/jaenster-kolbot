@@ -16,7 +16,6 @@ include("MuleLogger.js");
 include("common/Cubing.js");
 include("common/Config.js");
 include("common/Misc.js");
-include("common/Pickit.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
@@ -24,10 +23,12 @@ include("common/Runewords.js");
 include("common/Town.js");
 
 
+// ToDo; looking at the script, it seems to not work with this kolton version. Needs fixing?
+
 function main() {
 	D2Bot.init();
-	const Config = require('Config')();
-	Pickit.init();
+	const Config = require('Config').call();
+	const Pickit = require('Pickit');
 	CraftingSystem.buildLists();
 	include("bots/KillDclone.js");
 
