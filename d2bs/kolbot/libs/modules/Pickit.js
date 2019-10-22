@@ -23,6 +23,7 @@
 
 		const wantedByHook = Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
 		if (wantedByHook) { // If wanted by a hook
+			print('Wanted by hook -- ' + wantedByHook.name);
 			return {
 				result: wantedByHook.id,
 				line: null,
@@ -87,7 +88,6 @@
 				(Pather.useTeleport() || me.inTown || !checkCollision(me, pickList[0], 0x1))) { // Don't pick items behind walls/obstacles when walking
 				// Check if the item should be picked
 				status = this.checkItem(pickList[0]);
-
 				if (status.result && this.canPick(pickList[0])) {
 					// Override canFit for scrolls, potions and gold
 					canFit = Storage.Inventory.CanFit(pickList[0]) || [4, 22, 76, 77, 78].indexOf(pickList[0].itemType) > -1;
@@ -543,7 +543,7 @@
 	// Just sort by distance for general item pickup
 	Pickit.sortItems = (a, b) => a.distance - b.distance;
 
-	Config.PickitFiles.forEach(file => NTIP.OpenFile("pickit/" + file, getScript(true).name.toLowerCase().split('').reverse().splice(0, '.dbj'.length).reverse().join('') === '.dbj'));
+	Pickit.LoadFiles = (files) => files.forEach(file => NTIP.OpenFile("pickit/" + file, getScript(true).name.toLowerCase().split('').reverse().splice(0, '.dbj'.length).reverse().join('') === '.dbj'));
 
 	Pickit.hooks = []; // You can hook upon the pickit module
 	module.exports = Pickit;

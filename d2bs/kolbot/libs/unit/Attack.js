@@ -183,7 +183,7 @@
 		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);
 		let populatedAttack = monsterEffort.first();
 		const move = (sk = populatedAttack.skill) => {
-			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4)) {
+			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > 40) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
 					ignoreMonster.push(this.gid);
 					return false;

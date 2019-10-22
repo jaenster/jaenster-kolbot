@@ -27,7 +27,10 @@
 			Config.Silence && (global.say = print); // Remove the say function, to instantly make the bot silenced
 
 			// Load pickit if files are configured
-			Array.isArray(Config.PickitFiles) && Config.PickitFiles.length && require('Pickit');
+			if (Array.isArray(Config.PickitFiles) && Config.PickitFiles.length) {
+				let Pickit = require('Pickit');
+				Pickit.LoadFiles(Config.PickitFiles);
+			}
 
 			Config.Party && require('Party');
 
@@ -36,8 +39,6 @@
 					require('QuitList');
 				}
 			}
-
-			!getScript('tools/ToolsThread.js') && load('tools/ToolsThread.js');
 		} else {
 			// If a follower is given, put it in D2BotFollower.js
 			Config.Follow && typeof JoinSettings === 'object' && JoinSettings && (JoinSettings[Config.Follow] = [me.windowtitle]);

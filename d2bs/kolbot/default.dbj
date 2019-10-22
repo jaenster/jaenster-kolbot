@@ -102,11 +102,10 @@ function main() {
 		}
 	};
 
-	print('lkasdjflkasdjflkasdjfklasdf');
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
 	const Config = require('Config').call();
+	const Pickit = require('Pickit');
 	CraftingSystem.buildLists();
-	print('lkasdjflkasdjflkasdjfklasdf - 2');
 
 	// Load events
 	addEventListener("scriptmsg", this.scriptEvent);
@@ -131,7 +130,6 @@ function main() {
 	if (CraftingSystem.inGameCheck()) {
 		return true;
 	}
-	print('lkasdjflkasdjflkasdjfklasdf - 3');
 	me.maxgametime = Config.MaxGameTime * 1000;
 	stats = DataFile.getStats();
 
@@ -142,7 +140,6 @@ function main() {
 		DataFile.updateStats("deaths");
 		D2Bot.updateDeaths();
 	}
-	print('lkasdjflkasdjflkasdjfklasdf - 4');
 	DataFile.updateStats(["experience", "name"]);
 	me.switchWeapons(0); // always start at slot 0
 	// Load threads
@@ -161,7 +158,7 @@ function main() {
 		Town.getCorpse();
 		Town.clearBelt();
 		Town.clearInventory();
-		//Pickit.pickItems();
+	Pickit.pickItems();
 	// }
 
 	me.automap = Config.AutoMap;
