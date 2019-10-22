@@ -23,6 +23,7 @@ const clickItemAndWait = (...args) => {
 };
 
 Unit.prototype.equip = function (destLocation = undefined) {
+	const Storage = require('Storage');
 	let doubleHanded = [26, 27, 34, 35, 67, 85, 86], spot, findspot = function (item) {
 		let tempspot = Storage.Stash.FindSpot(item);
 
