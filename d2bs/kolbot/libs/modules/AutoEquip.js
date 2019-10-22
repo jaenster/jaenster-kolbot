@@ -79,7 +79,7 @@
 					+ (strdex() * 10)
 					+ fcr(),
 
-				rare: () => () => ((skills() + res()) * 10000)
+				rare: () => ((skills() + res()) * 10000)
 					+ ((hpmp() + strdex()) * 1000)
 					+ fcr()
 			},
@@ -151,8 +151,10 @@
 
 		if (!bodyLoc) return false; // Its not an equitable item
 
+		print(bodyLoc + ' -- ' + item.name);
+
 		const isRuneword = !!item.getFlag(0x4000000 /* runeword*/),
-			tierFuncs = Object.values(tier)[bodyLoc],
+			tierFuncs = Object.keys(tiers).map(key => tiers[key])[bodyLoc - 1],
 			[magicTier, rareTier] = [tierFuncs.magic, tierFuncs.rare];
 
 		const quality = {
@@ -167,9 +169,13 @@
 		};
 
 		if (isRuneword || item.quality >= quality.rare) {
-			return rareTier()
+			var tier = rareTier();
+			print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
+			return tier;
 		} else { // magical, or lower
-			return magicTier();
+			var tier = magicTier();
+			print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
+			return tier;
 		}
 	}
 
@@ -184,13 +190,19 @@
 
 	}
 
+	require('Debug');
 	AutoEquip.want = function (item) {
+		print('AutoEquip? Want ' + item.name + ' -- ');
 		return !!item.getBodyLoc(); // for now, we want all items that we can equip
 	};
 
 	AutoEquip.handle = function (item) {
+		print(item);
+
 		function dealWithIt(item) {
+
 			const tier = formula(item);
+			print('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
 			const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
 			const currentItem = me.getItems()
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
