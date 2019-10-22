@@ -89,8 +89,8 @@
 					if ( // If no party is formed, or im member of the biggest party
 						this.partyflag !== INVITED && // Already invited
 						this.partyflag !== ACCEPTABLE && // Need to accept invite, so cant invite
-						this.partyflag !== PARTY_MEMBER && // cant party again with soemone
-						this.partyid === NO_PARTY // Can only invite someone that isnt in a party
+						this.partyflag !== PARTY_MEMBER && // cant party again with someone
+						this.partyid === NO_PARTY // Can only invite someone that isn't in a party
 						&& ( // If im not in a party, only if there is no party
 							myPartyId === NO_PARTY && biggestPartyId === NO_PARTY
 							// OR, if im part of the biggest party
