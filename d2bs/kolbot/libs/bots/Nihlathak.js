@@ -4,7 +4,7 @@
 *	@desc		kill Nihlathak
 */
 
-function Nihlathak(Config, Attack) {
+function Nihlathak(Config, Attack, Pickit) {
 
 	if (!me.journeyToPreset(124, 2, 462, 0, 0, false, true)) {
 		throw new Error("Failed to go to Nihlathak");

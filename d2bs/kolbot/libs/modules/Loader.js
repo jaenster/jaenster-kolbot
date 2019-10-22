@@ -55,6 +55,7 @@
 		const Config = require('Config');
 		const Attack = require('Attack');
 		const Scripts = Config.Scripts;
+		const Pickit = require('Pickit');
 		const Messaging = require('Messaging');
 
 		if (Loader.fileList.indexOf(script) < 0) {

@@ -36,6 +36,8 @@
 					require('QuitList');
 				}
 			}
+
+			!getScript('tools/ToolsThread.js') && load('tools/ToolsThread.js');
 		} else {
 			// If a follower is given, put it in D2BotFollower.js
 			Config.Follow && typeof JoinSettings === 'object' && JoinSettings && (JoinSettings[Config.Follow] = [me.windowtitle]);

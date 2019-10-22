@@ -3,6 +3,7 @@
 	const Precast = require('Precast');
 	const GameData = require('GameData');
 	const Config = require('Config');
+	const Pickit = require('Pickit');
 	const ignoreMonster = [];
 
 	Unit.prototype.clear = function (range, spectype) {
