@@ -201,7 +201,7 @@
 		if (!bodyLoc) return false; // Only items that we can wear
 
 		const forClass = getBaseStat("itemtypes", item.itemType, "class");
-		if (forClass >= 0 || forClass <= 6 && forClass !== me.classid) {
+		if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
 			print('Item is for another class as me');
 		}
 
