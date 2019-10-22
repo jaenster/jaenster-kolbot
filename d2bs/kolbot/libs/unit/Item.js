@@ -1,5 +1,5 @@
 const clickItemAndWait = (...args) => {
-	let before = !!me.itemoncursor,
+	let before,
 		itemEvent = false,
 		timeout = getTickCount(),
 		gamePacket = bytes => bytes && bytes.length > 0 && bytes[0] === 0x9D /* item event*/ && (itemEvent = true) && false; // false to not block
@@ -9,6 +9,7 @@ const clickItemAndWait = (...args) => {
 	clickItem.apply(undefined, args);
 	delay(Math.max(me.ping * 2, 50));
 
+	before = !me.itemoncursor;
 	while (!itemEvent) { // Wait until item is picked up.
 		delay(3);
 
@@ -23,6 +24,7 @@ const clickItemAndWait = (...args) => {
 };
 
 Unit.prototype.equip = function (destLocation = undefined) {
+	const Storage = require('Storage');
 	let doubleHanded = [26, 27, 34, 35, 67, 85, 86], spot, findspot = function (item) {
 		let tempspot = Storage.Stash.FindSpot(item);
 
@@ -134,3 +136,13 @@ Unit.prototype.getBodyLoc = function () {
 
 	return bodyLoc.map(loc => parseInt(loc));
 };
+
+Object.defineProperties(Unit.prototype, {
+	identified: {
+		get: function () {
+			if (this.type !== sdk.unittype.Item) return undefined; // Can't tell, as it isn't an item
+
+			return this.getFlag(0x10);
+		}
+	}
+});

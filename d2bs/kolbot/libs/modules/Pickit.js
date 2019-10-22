@@ -21,9 +21,8 @@
 	Pickit.checkItem = function (unit) {
 		const rval = NTIP.CheckItem(unit, false, true);
 
-		const wantedByHook = Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
+		const wantedByHook = unit instanceof Unit && Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
 		if (wantedByHook) { // If wanted by a hook
-			print('Wanted by hook -- ' + wantedByHook.name);
 			return {
 				result: wantedByHook.id,
 				line: null,

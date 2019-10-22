@@ -1484,3 +1484,12 @@ if (!Array.prototype.findIndex) {
 String.prototype.startsWith = function (prefix) {
 	return !prefix || this.substring(0, prefix.length) === prefix;
 };
+
+if (!String.prototype.endsWith) {
+	String.prototype.endsWith = function (search, this_len) {
+		if (this_len === undefined || this_len > this.length) {
+			this_len = this.length;
+		}
+		return this.substring(this_len - search.length, this_len) === search;
+	};
+}
