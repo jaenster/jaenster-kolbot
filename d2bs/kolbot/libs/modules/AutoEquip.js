@@ -191,8 +191,45 @@
 	}
 
 	require('Debug');
+
+	const ClassOnly = [
+		me.classid !== 6 && 22506, // strAssassinOnly
+		me.classid !== 5 && 22505, // strDruidOnly
+		me.classid !== 4 && 22508, // strBarbarianOnly
+		me.classid !== 3 && 4096, // strPaladinOnly
+		me.classid !== 2 && 4095, // strNecromanerOnly
+		me.classid !== 1 && 4097, // strSorceressOnly
+		me.classid !== 0 && 22507 // strAmazonOnly
+	].filter(x => x).map(x => getLocaleString(x)); // filter out the one we dont want
+
 	AutoEquip.want = function (item) {
-		print('AutoEquip? Want ' + item.name + ' -- ');
+		if (!item) return false; // We dont want an item that doesnt exists
+		const bodyLoc = item.getBodyLoc().first();
+
+		print('AutoEquip? Want ' + item.name + ' -- ' + bodyLoc + ' -- ' + item.itemType);
+
+		if (!bodyLoc) return false; // Only items that we can wear
+
+		// ToDo, get a propper way of getting item class
+		if (item.location /*not on the floor*/ && ClassOnly.some(x => item.description.includes(x))) {
+			print('Item is for another class as me'); // We cant wear an item that is for another class
+			return false;
+		}
+
+		const currentItem = me.getItems()
+			.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
+			.first();
+
+		// This item's specs are already fully readable
+		if (item.identified && currentItem) {
+			print('items specs are fully readable -- ' + item.name);
+			if (compare(currentItem, item) === item) {
+				print('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
+				return true;
+			} else {
+				return false;
+			}
+		}
 		return !!item.getBodyLoc(); // for now, we want all items that we can equip
 	};
 
@@ -227,7 +264,7 @@
 		}
 
 		const tome = me.findItem(519, 0, 3);
-		if (tome && !item.getFlag(0x10) && item.location === sdk.storage.Inventory) {
+		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
 			const gid = item.gid;
 
 			// We need to identify. But maybe we cant right now?
@@ -270,21 +307,21 @@
 
 				// Try to id the item, 3 attempts
 				for (let i = 0, timer = getTickCount();
-					 i < 3 && item.getFlag(0x10);
+					 i < 3 && item.identified;
 					 i++, timer = getTickCount()
 				) {
 					getCursorType() !== 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
-					while (!item.getFlag(0x10)) {
+					while (!item.identified) {
 						delay(3);
 						if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
 					}
 				}
 
-				if (item.getFlag(0x10)) dealWithIt(item);
+				if (item.identified) dealWithIt(item);
 			});
 		}
 
-		return item.getFlag(0x10) && dealWithIt(item);
+		return item.identified && dealWithIt(item);
 	};
 
 	AutoEquip.id = 'AutoEquip';
