@@ -55,7 +55,7 @@
 			}
 		}
 
-		return names.filter(n => n.name !== me.name) // Filter out ourselves, cant form a party with myself.
+		return names.filter(name => name !== me.name) // Filter out ourselves, cant form a party with myself.
 			.sort((a, b) => toMd5Int(a) - toMd5Int(b)) // Sort by md5's int's id.
 			.first();
 	};
