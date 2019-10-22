@@ -192,16 +192,6 @@
 
 	require('Debug');
 
-	const ClassOnly = [
-		me.classid !== 6 && 22506, // strAssassinOnly
-		me.classid !== 5 && 22505, // strDruidOnly
-		me.classid !== 4 && 22508, // strBarbarianOnly
-		me.classid !== 3 && 4096, // strPaladinOnly
-		me.classid !== 2 && 4095, // strNecromanerOnly
-		me.classid !== 1 && 4097, // strSorceressOnly
-		me.classid !== 0 && 22507 // strAmazonOnly
-	].filter(x => x).map(x => getLocaleString(x)); // filter out the one we dont want
-
 	AutoEquip.want = function (item) {
 		if (!item) return false; // We dont want an item that doesnt exists
 		const bodyLoc = item.getBodyLoc().first();
@@ -210,10 +200,9 @@
 
 		if (!bodyLoc) return false; // Only items that we can wear
 
-		// ToDo, get a propper way of getting item class
-		if (item.location /*not on the floor*/ && ClassOnly.some(x => item.description.includes(x))) {
-			print('Item is for another class as me'); // We cant wear an item that is for another class
-			return false;
+		const forClass = getBaseStat("itemtypes", item.itemType, "class");
+		if (forClass >= 0 || forClass <= 6 && forClass !== me.classid) {
+			print('Item is for another class as me');
 		}
 
 		const currentItem = me.getItems()
