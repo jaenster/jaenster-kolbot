@@ -189,6 +189,9 @@
 					return false;
 				}
 			}
+			if (this.distance > 40) { // Still on high distance?
+				ignoreMonster.push(this.gid);
+			}
 		};
 		while (monsterEffort && Skills.manaCost[monsterEffort.skill] < me.mp) {
 			populatedAttack = monsterEffort.shift();
