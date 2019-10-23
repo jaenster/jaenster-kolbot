@@ -14,6 +14,7 @@
 				ignoreMonster.indexOf(unit.gid) === -1 // Dont attack those we ignore
 				&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
 				&& unit.attackable // Dont attack those we cant attack
+				&& unit.area === me.area
 				&& (
 					start.length // If start has a length
 						? start.distance < range // If it has a range smaller as from the start point (when using me.clear)
@@ -212,12 +213,12 @@
 		//@ToDo; Here some specific class stuff.
 		switch (true) {
 			case me.classid === 1: // sorc
-				getUnits(2, 'shrine')
-					.filter(shrine => shrine.distance <= 25)
-					.some(function (shrine) {
-						print('getting shrine with telekenis');
-						return shrine.cast(sdk.skills.Telekinesis, undefined, undefined, undefined, undefined, true);
-					});
+				// getUnits(2, 'shrine')
+				// 	.filter(shrine => shrine.distance <= 25)
+				// 	.filter(shrine => shrine.mode)
+				// 	.some(function (shrine) {
+				// 		return shrine.cast(sdk.skills.Telekinesis, undefined, undefined, undefined, undefined, true);
+				// 	});
 				break;
 			case me.classid === 2: // necro
 				// recast bonearmor
