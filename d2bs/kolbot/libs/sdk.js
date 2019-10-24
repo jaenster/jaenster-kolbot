@@ -2386,6 +2386,7 @@ let sdk = {
         Soulstone: 551,
         BookOfSkill: 552,
         tpScroll: 529,
+        idScroll: 530,
     },
     unittype: {
         Player: 0,
