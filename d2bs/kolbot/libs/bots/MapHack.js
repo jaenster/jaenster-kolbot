@@ -657,3 +657,12 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		delay(40);
 	}
 };
+
+(function () {
+	!isIncluded('require.js') && include('require.js');
+	if (getScript.startAsThread() === 'thread') {
+		const Worker = require('Worker');
+		addEventListener('gamepacket', bytes => bytes && bytes.length && ((bytes[0] === 0xA4 /* baal laughs*/ && Worker.push(() => print('Baal laughed')))) && false);
+		while (me.ingame) delay(10);
+	}
+})();
