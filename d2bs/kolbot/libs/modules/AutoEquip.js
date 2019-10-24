@@ -6,10 +6,58 @@
 (function (module, require) {
 	const Pickit = require('Pickit');
 	const Promise = require('Promise');
+	const GameData = require('GameData');
+
+	let bestSkills = [];
+	(function () {
+		let level = me.charlvl;
+
+		// Recalculate everything when we are lvl up
+		const promiser = () => new Promise(resolve => me.charlvl !== level && resolve(getTickCount()))
+			.then((time) => // First wait 4 seconds
+				new Promise(resolve => getTickCount() - time > 1e4 && resolve())
+					.then(calculateSkills)
+			);
+
+		const calculateSkills = function () {
+			promiser(); // Set the promise up.
+
+			bestSkills = GameData.mostUsedSkills(true).map(sk => {
+				// We want to know some stuff of the skill
+				return {
+					skillId: sk,
+					baseDamage: GameData.baseSkillDamage(sk),
+				}
+			});
+		};
+	}).call();
 
 	function formula(item) {
 		// + item.getStatEx(sdk.stats.AddskillTab, 10) //ToDO; Fix tab skill we use the most ;)
-		const skills = () => item.getStatEx(sdk.stats.Allskills) + item.getStatEx(sdk.stats.Addclassskills, me.classid), // get all skills
+		const skills = () => {
+				let val = item.getStatEx(sdk.stats.Allskills) + item.getStatEx(sdk.stats.Addclassskills, me.classid);
+
+				// Calculate imported skill tabs.
+				const tabs = [],
+					char = sdk.skillTabs[['amazon']['sorc']['necro']['paladin']['barb']['druid']['assassin'][me.classid]];
+
+				// Loop over all skill tabs of this char
+				// And push every skill that has a tab
+				Object.keys(char).forEach(types => char[types].skills.some(sk => bestSkills.find(bsk => bsk.skillId === sk)) && tabs.push(char[types].id));
+
+				// Sum total value of all tabs
+				val += tabs
+					.filter((v, i, s) => s.indexOf(v) === i) // Filter to only have uniques (shouldnt happen, better safe as sorry)
+					.reduce((a, tab) => a + item.getStatEx(sdk.stats.AddskillTab, tab), 0); // Sum them
+
+				// Take care of specific + skills
+				val += bestSkills.reduce((a, c) => a
+					+ item.getStatEx(sdk.stats.Addclassskills, c) // + skills on item
+					+ item.getStatEx(sdk.stats.Nonclassskill, c) // + o skills. Dont think it will happen, but, we wouldnt mind if it did happen
+				);
+
+				return val * 10; // Boost the value, +1 skills are worth allot
+			}, // get all skills
 			res = () => (item.getStatEx(sdk.stats.Fireresist)
 				+ item.getStatEx(sdk.stats.Coldresist)
 				+ item.getStatEx(sdk.stats.Lightresist)
