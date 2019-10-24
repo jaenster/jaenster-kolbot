@@ -25,11 +25,13 @@
 			bestSkills = GameData.mostUsedSkills(true).map(sk => {
 				// We want to know some stuff of the skill
 				return {
-					skillId: sk,
-					baseDamage: GameData.baseSkillDamage(sk),
+					skillId: sk.skillId,
+					used: sk.used,
+					type: GameData.damageTypes[getBaseStat('skills', sk.skillId, 'EType')],
 				}
 			});
 		};
+		calculateSkills();
 	}).call();
 
 	function formula(item) {
@@ -39,7 +41,7 @@
 
 				// Calculate imported skill tabs.
 				const tabs = [],
-					char = sdk.skillTabs[['amazon']['sorc']['necro']['paladin']['barb']['druid']['assassin'][me.classid]];
+					char = sdk.skillTabs[['amazon', 'sorc', 'necro', 'paladin', 'barb', 'druid', 'assassin'][me.classid]];
 
 				// Loop over all skill tabs of this char
 				// And push every skill that has a tab
@@ -54,15 +56,15 @@
 				val += bestSkills.reduce((a, c) => a
 					+ item.getStatEx(sdk.stats.Addclassskills, c) // + skills on item
 					+ item.getStatEx(sdk.stats.Nonclassskill, c) // + o skills. Dont think it will happen, but, we wouldnt mind if it did happen
-				);
+					, 0);
 
 				return val * 10; // Boost the value, +1 skills are worth allot
 			}, // get all skills
 
 			// Take care of the elemental damage of your best skill. (facets/eschutas/the lot)
 			elementDmg = () => bestSkills.reduce(function (a, c) {
-				if (sdk.stats.hasOwnProperty('Passive' + c.baseDamage.type + 'Mastery')) a += item.getStatEx(c); // + skill damage
-				if (sdk.stats.hasOwnProperty('Passive' + c.baseDamage.type + 'Pierce')) a += item.getStatEx(c); // - enemy resistance
+				if (sdk.stats.hasOwnProperty('Passive' + c.type + 'Mastery')) a += item.getStatEx(sdk.stats['Passive' + c.type + 'Mastery']); // + skill damage
+				if (sdk.stats.hasOwnProperty('Passive' + c.type + 'Pierce')) a += item.getStatEx(sdk.stats['Passive' + c.type + 'Pierce']); // - enemy resistance
 				return a;
 			}, 0),
 
@@ -83,7 +85,13 @@
 			def = () => item.getStatEx(sdk.stats.Armorclass /*defense*/),
 			fhr = () => item.getStatEx(sdk.stats.Fastergethitrate /* fhr*/),
 			frw = () => item.getStatEx(sdk.stats.Fastermovevelocity /* fwr*/),
-			ctb = () => item.getStatEx(sdk.stats.Toblock /*ctb = chance to block*/);
+			ctb = () => item.getStatEx(sdk.stats.Toblock /*ctb = chance to block*/),
+			ias = () => {
+				// This is a tricky one. A sorc, doesnt give a shit about IAS.
+				// 0='amazon',1='sorc',2='necro',3='paladin',4='barb',5='druid',6='assassin'
+				// ToDo; make
+
+			};
 
 		const tiers = {
 			helm: {
@@ -236,18 +244,20 @@
 				let tier = rareTier();
 				print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
 				return tier;
-			} else {
-				print('Error? magicTier is not an function?');
 			}
-		} else { // magical, or lower
-			if (typeof magicTier === 'function') {
-				let tier = magicTier();
-				print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
-				return tier;
-			} else {
-				print('Error? magicTier is not an function?');
-			}
+			print('Error? magicTier is not an function?');
+			return 0;
 		}
+		// magical, or lower
+		if (typeof magicTier === 'function') {
+			let tier = magicTier();
+			print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
+			return tier;
+		}
+		print('Error? magicTier is not an function?');
+		return 0;
+
+
 	}
 
 	/**
@@ -270,8 +280,6 @@
 
 			if (!item) return false; // We dont want an item that doesnt exists
 			const bodyLoc = item.getBodyLoc().first();
-
-			print('AutoEquip? Want ' + item.name + ' -- ' + bodyLoc + ' -- ' + item.itemType);
 
 			if (!bodyLoc) return false; // Only items that we can wear
 
@@ -419,6 +427,7 @@
 	};
 
 	AutoEquip.id = 'AutoEquip';
+	AutoEquip.formula = formula;
 
 	module.exports = AutoEquip;
 
