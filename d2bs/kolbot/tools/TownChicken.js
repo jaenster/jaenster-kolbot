@@ -18,10 +18,10 @@ include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Town.js");
 
 function main() {
 	const Config = require('Config');
+	const Town = require('Town');
 	var townCheck = false;
 
 	this.togglePause = function () {

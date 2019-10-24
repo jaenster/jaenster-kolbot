@@ -14,28 +14,24 @@ include("TorchSystem.js");
 include("MuleLogger.js");
 
 include("common/Cubing.js");
-include("common/Config.js");
 include("common/Misc.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Town.js");
 
 
 // ToDo; looking at the script, it seems to not work with this kolton version. Needs fixing?
 
 function main() {
 	D2Bot.init();
-	const Config = require('Config').call();
-	const Pickit = require('Pickit');
+
 	CraftingSystem.buildLists();
 	include("bots/KillDclone.js");
-
 	if (typeof KillDclone === "function") {
 		try {
 			D2Bot.printToConsole("Trying to kill DClone.", 7);
-			KillDclone.call();
+			KillDclone.apply(KillDclone, ['Config', 'Attack', 'Pickit', 'Pather', 'Town'].map(x => require(x)));
 		} catch (e) {
 			Misc.errorReport(e, "CloneKilla.js");
 		}
