@@ -14,21 +14,18 @@ include("CraftingSystem.js");
 include("TorchSystem.js");
 
 include("common/Cubing.js");
-include("common/Config.js");
 include("common/Misc.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Storage.js");
-include("common/Town.js");
 
 //ToDo; replace this with a good rusher script
-var gidList = [];
-
 function main() {
 	const Config = require('Config')();
 	const Pickit = require('Pickit');
+	const Town = require('Town');
+	const Attack = require('Attack');
 	this.playerIn = function (area) {
 		if (!area) {
 			area = me.area;

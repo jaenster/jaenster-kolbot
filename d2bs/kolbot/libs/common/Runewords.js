@@ -343,6 +343,7 @@ RuneLoop:
 			return scroll;
 		}
 
+		const Town = require('Town');
 		npc = Town.initNPC("Shop");
 
 		if (!npc) {
@@ -371,6 +372,7 @@ RuneLoop:
 			return false;
 		}
 		const NTIP = require('NTIP');
+		const Town = require('Town');
 
 		var i, items;
 
@@ -382,7 +384,6 @@ RuneLoop:
 			if (!items) { // can't make runewords - exit loop
 				break;
 			}
-
 			if (!Town.openStash()) {
 				return false;
 			}
@@ -409,19 +410,18 @@ RuneLoop:
 
 	rerollRunewords: function () {
 		const Storage = require('Storage');
-		var i, base, scroll, hel;
-
-		for (i = 0; i < Runewords.config.Runewords.length; i += 1) {
-			hel = me.getItem(624, 0);
+		const Town = require('Town');
+		for (let i = 0; i < Runewords.config.Runewords.length; i += 1) {
+			let hel = me.getItem(624, 0);
 
 			if (!hel) {
 				return false;
 			}
 
-			base = this.getBase(Runewords.config.Runewords[i][0], Runewords.config.Runewords[i][1], (Runewords.config.Runewords[i][2] || 0), true); // get a bad runeword
+			let base = this.getBase(Runewords.config.Runewords[i][0], Runewords.config.Runewords[i][1], (Runewords.config.Runewords[i][2] || 0), true); // get a bad runeword
 
 			if (base) {
-				scroll = this.getScroll();
+				let scroll = this.getScroll();
 
 				// failed to get scroll or open stash most likely means we're stuck somewhere in town, so it's better to return false
 				if (!scroll || !Town.openStash() || !Cubing.emptyCube()) {

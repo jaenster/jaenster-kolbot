@@ -1,16 +1,16 @@
 /**
-*	@filename	Tristram.js
-*	@author		kolton, cuss
-*	@desc		clear Tristram
-*/
+ *    @filename    Tristram.js
+ *    @author        kolton, cuss
+ *    @desc        clear Tristram
+ */
 
-function Tristram(Config, Attack, Pickit) {
-	var tree, scroll, akara, stones, gibbet;
+function Tristram(Config, Attack, Pickit, Pather, Town) {
+	let tree, scroll, akara, stones, gibbet;
 
 	if (!me.getQuest(4, 4) && !me.getItem(525)) {
 		if (!me.getItem(524)) {
 			// print("We need Scroll of Inifuss");
-			Town.doChores();
+			Town();
 			if (!me.journeyToPreset(sdk.areas.DarkWood, 2, 30, 5, 5)) {
 				throw new Error("Failed to move to Tree of Inifuss");
 			}
@@ -37,7 +37,7 @@ function Tristram(Config, Attack, Pickit) {
 
 	Pather._teleport = Pather.teleport;
 
-	Town.doChores();
+	Town();
 	if (!me.journeyToPreset(sdk.areas.StonyField, 1, 737, 0, 0, false, true)) {
 		throw new Error("Failed to move to Rakanishu");
 	}

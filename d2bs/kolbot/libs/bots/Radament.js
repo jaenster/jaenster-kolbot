@@ -4,8 +4,8 @@
 *	@desc		kill Radament
 */
 
-function Radament(Config, Attack, Pickit) {
-	Town.doChores();
+function Radament(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!me.journeyToPreset(49, 2, 355)) {
 		throw new Error("Failed to move to Radament");

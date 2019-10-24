@@ -1,10 +1,10 @@
 /**
-*	@filename	Pindleskin.js
-*	@author		kolton
-*	@desc		kill Pindleskin and optionally Nihlathak
-*/
+ *    @filename    Pindleskin.js
+ *    @author      kolton
+ *    @desc        kill Pindleskin and optionally Nihlathak
+ */
 
-function Pindleskin(Config, Attack, Pickit) {
+function Pindleskin(Config, Attack, Pickit, Pather, Town) {
 	let anya;
 	const Precast = require('Precast');
 
@@ -19,6 +19,7 @@ function Pindleskin(Config, Attack, Pickit) {
 			throw new Error("Failed to move to Nihlahak's Temple");
 		}
 	} else {
+		const NPC = require('NPC');
 		Town.move(NPC.Anya);
 
 		if (!Pather.getPortal(121) && me.getQuest(37, 1)) {
@@ -56,10 +57,6 @@ function Pindleskin(Config, Attack, Pickit) {
 			print("Tomb Vipers found.");
 
 			return true;
-		}
-
-		if (Config.Pindleskin.ClearVipers) {
-			Attack.clearList(Attack.getMob(597, 0, 20));
 		}
 
 		Attack.kill(526); // Nihlathak

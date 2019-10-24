@@ -1,10 +1,10 @@
 /**
-*	@filename	Duriel.js
-*	@author		kolton
-*	@desc		kill Duriel
-*/
+ *    @filename    Duriel.js
+ *    @author      kolton
+ *    @desc        kill Duriel
+ */
 
-function Duriel(Config, Attack) {
+function Duriel(Config, Attack, Pickit, Pather, Town) {
 	this.killDuriel = function () {
 		var i, target;
 
@@ -22,13 +22,8 @@ function Duriel(Config, Attack) {
 			throw new Error("Duriel not found.");
 		}
 
-		if (Config.MFLeader) {
-			Pather.makePortal();
-			say("kill " + 211);
-		}
-
 		for (i = 0; i < 300; i += 1) {
-			ClassAttack.doAttack(target);
+			target.attack();
 
 			if (target.dead) {
 				return true;
@@ -45,11 +40,11 @@ function Duriel(Config, Attack) {
 	var i, unit;
 
 	if (me.area !== 46) {
-		Town.doChores();
+		Town();
 		Pather.useWaypoint(46);
 	}
 
-	require('Precast')();
+	require('Precast').call();
 
 	if (!me.journeyToPreset(getRoom().correcttomb, 2, 152, -11, 3)) {
 		throw new Error("Failed to move to Orifice");

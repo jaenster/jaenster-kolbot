@@ -4,11 +4,11 @@
  *	@desc		clear Throne of Destruction and kill Baal
  */
 
-function Baal(Config, Attack, Pickit) {
-	var portal, tick;
+function Baal(Config, Attack, Pickit, Pather, Town) {
+	let portal, tick;
 
 	this.preattack = function () {
-		var check;
+		let check;
 
 		switch (me.classid) {
 		case 1: // Sorceress
@@ -196,7 +196,7 @@ function Baal(Config, Attack, Pickit) {
 		say(string);
 	};
 
-	Town.doChores();
+	Town();
 	if (!Pather.journeyTo(131)) {
 		throw new Error("Failed to move to Throne of Destruction.");
 	}

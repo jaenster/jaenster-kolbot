@@ -1295,9 +1295,9 @@
 
 			return raritypool ? effortpool / raritypool : 0;
 		},
-		mostUsedSkills: function () {
+		mostUsedSkills: function (force = false) {
 			const Skills = require('Skills');
-			if (me.hasOwnProperty('__cachedMostUsedSkills') && me.__cachedMostUsedSkills) return me.__cachedMostUsedSkills;
+			if (!force && me.hasOwnProperty('__cachedMostUsedSkills') && me.__cachedMostUsedSkills) return me.__cachedMostUsedSkills;
 
 			const effort = [], uniqueSkills = [];
 			for (let i = 50; i < 120; i++) {

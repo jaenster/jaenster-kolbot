@@ -11,20 +11,21 @@ include("OOG.js");
 include("Gambling.js");
 include("CraftingSystem.js");
 
-include("common/Cubing.js");
 include("common/Config.js");
 include("common/Misc.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Town.js");
 
 function main() {
 	// Variables and functions
 	var player, attackCount, prevPos, check, missile, outside,
 		charClass = ["Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"],
 		hostiles = [];
+
+	const Attack = require('Attack');
+	const Town = require('Town');
 
 	// AntiHostile gets game event info from ToolsThread
 	this.scriptEvent = function (msg) {
@@ -142,20 +143,6 @@ function main() {
 	// Init config and attacks
 	D2Bot.init();
 	const Config = require('Config')();
-
-	// Use PVP range for attacks
-	Skill.usePvpRange = true;
-
-	// Attack sequence adjustments - this only affects the AntiHostile thread
-	switch (me.classid) {
-	case 6: // Assassin - use Mind Blast with trapsins
-		if (me.getSkill(273, 1) && [251, 256].indexOf(Config.AttackSkill[1]) > -1) {
-			Config.AttackSkill[1] = 273; // Mind Blast
-			ClassAttack.trapRange = 40;
-		}
-
-		break;
-	}
 
 	// A simple but fast player dodge function
 	this.moveAway = function (unit, range) {

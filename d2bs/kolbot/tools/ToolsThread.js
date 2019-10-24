@@ -15,13 +15,11 @@ include("TorchSystem.js");
 include("MuleLogger.js");
 
 include("common/Cubing.js");
-include("common/Config.js");
 include("common/Misc.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
-include("common/Town.js");
 include("sdk.js ");
 function main() {
 	var Experience = {
@@ -130,6 +128,8 @@ function main() {
 		cloneWalked = false,
 		canQuit = true,
 		timerLastDrink = [];
+
+	const Town = require('Town');
 
 	print("ÿc3Start ToolsThread script");
 	D2Bot.init();

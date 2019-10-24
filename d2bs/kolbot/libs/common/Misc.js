@@ -484,6 +484,7 @@ var Item = {
 		if (!this.canEquip(item)) {
 			return false;
 		}
+		const Town = require('Town');
 
 		// Already equipped in the right slot
 		if (item.mode === 1 && item.bodylocation === bodyLoc) {
@@ -690,7 +691,7 @@ var Item = {
 				i -= 1;
 			}
 		}
-
+		const Town = require('Town');
 		while (items.length > 0) {
 			items.sort(sortEq);
 
@@ -1664,6 +1665,7 @@ var Misc = {
 		if (me.area === 136 || me.dead) {
 			return false;
 		}
+		const Town = require('Town');
 
 		if (Misc.config.TownCheck && !me.inTown) {
 			try {

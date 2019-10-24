@@ -1,11 +1,11 @@
 /**
-*	@filename	Corpsefire.js
-*	@author		kolton
-*	@desc		kill Corpsefire and optionally clear Den of Evil
-*/
+ *    @filename    Corpsefire.js
+ *    @author      kolton
+ *    @desc        kill Corpsefire and optionally clear Den of Evil
+ */
 
-function Corpsefire(Config, Attack) {
-	Town.doChores();
+function Corpsefire(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!me.journeyToPreset(me.area, 1, 774, 0, 0, false, true)) {
 		throw new Error("Failed to move to Corpsefire");

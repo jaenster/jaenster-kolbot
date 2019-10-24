@@ -4,12 +4,10 @@
 *	@desc		Clears any area
 */
 
-function ClearAnyArea(Config) {
-	var i;
+function ClearAnyArea(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
-	Town.doChores();
-
-	for (i = 0; i < Config.ClearAnyArea.AreaList.length; i += 1) {
+	for (let i = 0; i < Config.ClearAnyArea.AreaList.length; i += 1) {
 		if (Pather.journeyTo(Config.ClearAnyArea.AreaList[i])) {
 			Attack.clearLevel(Config.ClearType);
 		}

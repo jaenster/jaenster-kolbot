@@ -122,6 +122,9 @@ function pickItems() {
 		rval = "fail",
 		list = [];
 
+	const Town = require('Town');
+	const Pickit = require('Pickit');
+
 	while (!me.name || !me.gameReady) {
 		if (!me.ingame) {
 			return rval;
@@ -434,14 +437,9 @@ include("oog.js");
 include("automule.js");
 include("mulelogger.js");
 include("torchsystem.js");
-include("common/storage.js");
-include("common/pickit.js");
-include("common/town.js");
 include("common/pather.js");
 include("common/misc.js");
-include("common/config.js");
 include("common/prototypes.js");
-include("common/collmap.js");
 
 
 addEventListener("copydata", ReceiveCopyData);
@@ -486,6 +484,7 @@ function main() {
 	var obj, tick,
 		inGame = false;
 
+	const Town = require('Town');
 	try {
 		// ugly solution to uglier problem - pickItem area update
 		if (!FileTools.exists("data/" + me.profile + ".json")) {

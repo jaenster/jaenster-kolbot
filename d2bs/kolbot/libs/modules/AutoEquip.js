@@ -6,10 +6,69 @@
 (function (module, require) {
 	const Pickit = require('Pickit');
 	const Promise = require('Promise');
+	const GameData = require('GameData');
+
+	let bestSkills = [];
+	(function () {
+		let level = me.charlvl;
+
+		// Recalculate everything when we are lvl up
+		const promiser = () => new Promise(resolve => me.charlvl !== level && resolve(getTickCount()))
+			.then((time) => // First wait 4 seconds
+				new Promise(resolve => getTickCount() - time > 1e4 && resolve())
+					.then(calculateSkills)
+			);
+
+		const calculateSkills = function () {
+			promiser(); // Set the promise up.
+
+			bestSkills = GameData.mostUsedSkills(true).map(sk => {
+				// We want to know some stuff of the skill
+				return {
+					skillId: sk.skillId,
+					used: sk.used,
+					type: GameData.damageTypes[getBaseStat('skills', sk.skillId, 'EType')],
+				}
+			});
+		};
+		calculateSkills();
+	}).call();
 
 	function formula(item) {
 		// + item.getStatEx(sdk.stats.AddskillTab, 10) //ToDO; Fix tab skill we use the most ;)
-		const skills = () => item.getStatEx(sdk.stats.Allskills) + item.getStatEx(sdk.stats.Addclassskills, me.classid), // get all skills
+		const skills = () => {
+				let val = item.getStatEx(sdk.stats.Allskills) + item.getStatEx(sdk.stats.Addclassskills, me.classid);
+
+				// Calculate imported skill tabs.
+				const tabs = [],
+					char = sdk.skillTabs[['amazon', 'sorc', 'necro', 'paladin', 'barb', 'druid', 'assassin'][me.classid]];
+
+				// Loop over all skill tabs of this char
+				// And push every skill that has a tab
+				Object.keys(char).forEach(types => char[types].skills.some(sk => bestSkills.find(bsk => bsk.skillId === sk)) && tabs.push(char[types].id));
+
+				// Sum total value of all tabs
+				val += tabs
+					.filter((v, i, s) => s.indexOf(v) === i) // Filter to only have uniques (shouldnt happen, better safe as sorry)
+					.reduce((a, tab) => a + item.getStatEx(sdk.stats.AddskillTab, tab), 0); // Sum them
+
+				// Take care of specific + skills
+				val += bestSkills.reduce((a, c) => a
+					+ item.getStatEx(sdk.stats.Addclassskills, c) // + skills on item
+					+ item.getStatEx(sdk.stats.Nonclassskill, c) // + o skills. Dont think it will happen, but, we wouldnt mind if it did happen
+					, 0);
+
+				return val * 10; // Boost the value, +1 skills are worth allot
+			}, // get all skills
+
+			// Take care of the elemental damage of your best skill. (facets/eschutas/the lot)
+			elementDmg = () => bestSkills.reduce(function (a, c) {
+				if (sdk.stats.hasOwnProperty('Passive' + c.type + 'Mastery')) a += item.getStatEx(sdk.stats['Passive' + c.type + 'Mastery']); // + skill damage
+				if (sdk.stats.hasOwnProperty('Passive' + c.type + 'Pierce')) a += item.getStatEx(sdk.stats['Passive' + c.type + 'Pierce']); // - enemy resistance
+				return a;
+			}, 0),
+
+			// ToDo; take in account the current resistance. Because at some point, enough is enough
 			res = () => (item.getStatEx(sdk.stats.Fireresist)
 				+ item.getStatEx(sdk.stats.Coldresist)
 				+ item.getStatEx(sdk.stats.Lightresist)
@@ -26,18 +85,25 @@
 			def = () => item.getStatEx(sdk.stats.Armorclass /*defense*/),
 			fhr = () => item.getStatEx(sdk.stats.Fastergethitrate /* fhr*/),
 			frw = () => item.getStatEx(sdk.stats.Fastermovevelocity /* fwr*/),
-			ctb = () => item.getStatEx(sdk.stats.Toblock /*ctb = chance to block*/);
+			ctb = () => item.getStatEx(sdk.stats.Toblock /*ctb = chance to block*/),
+			ias = () => {
+				// This is a tricky one. A sorc, doesnt give a shit about IAS.
+				// 0='amazon',1='sorc',2='necro',3='paladin',4='barb',5='druid',6='assassin'
+				// ToDo; make
 
+			};
 
 		const tiers = {
 			helm: {
 				magic: () => (skills() * 1000)
+					+ (elementDmg() * 100)
 					+ ((hpmp() + res()) * 100)
 					+ def(),
 
 				rare: () => (skills() * 10000)
+					+ (elementDmg() * 1000)
 					+ ((hpmp() + res()) * 1000)
-					+ def(),
+					+ def()
 			},
 
 			amulet: {
@@ -51,18 +117,23 @@
 					+ (res() * 1000)
 					+ (strdex() * 100)
 					+ (hpmp() * 10)
+					+ (ctb() * 100) // Safety crafted amulet
 					+ (fcr() + fbr() + def()),
 
 
 			},
 
 			armor: {
-				magic: () => ((skills() + res()) * 10000)
+				magic: () => (skills() * 10000)
+					+ (res() * 1000)
+					+ (elementDmg() * 1000)
 					+ (strdex() * 1000)
 					+ (hpmp() * 100)
 					+ def(),
 
-				rare: () => ((skills() + res()) * 100000)
+				rare: () => (skills() * 100000)
+					+ (res() * 10000)
+					+ (elementDmg() * 10000)
 					+ (strdex() * 10000)
 					+ (hpmp() * 1000)
 					+ def(),
@@ -70,23 +141,27 @@
 
 			weapon: {
 				magic: () => (skills() * 10000)
+					+ (elementDmg() * 5000)
 					+ (res() * 1000)
 					+ (hpmp() * 100)
 					+ (strdex() * 10)
 					+ fcr(),
 
 				rare: () => ((skills()) * 10000)
+					+ (elementDmg() * 5000)
 					+ (res() * 1000)
 					+ ((hpmp() + strdex()) * 1000)
 					+ fcr()
 			},
 			shield: {
 				magic: () => (res() * 10000)
+					+ (elementDmg() * 5000)
 					+ ((strdex() + vita()) * 1000)
 					+ ((fbr() + ctb()) * 100)
 					+ def(),
 
 				set: () => (res() * 100000)
+					+ (elementDmg() * 50000)
 					+ ((strdex() + vita()) * 10000)
 					+ ((fbr() + ctb()) * 1000)
 					+ def(),
@@ -169,18 +244,20 @@
 				let tier = rareTier();
 				print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
 				return tier;
-			} else {
-				print('Error? magicTier is not an function?');
 			}
-		} else { // magical, or lower
-			if (typeof magicTier === 'function') {
-				let tier = magicTier();
-				print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
-				return tier;
-			} else {
-				print('Error? magicTier is not an function?');
-			}
+			print('Error? magicTier is not an function?');
+			return 0;
 		}
+		// magical, or lower
+		if (typeof magicTier === 'function') {
+			let tier = magicTier();
+			print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
+			return tier;
+		}
+		print('Error? magicTier is not an function?');
+		return 0;
+
+
 	}
 
 	/**
@@ -203,8 +280,6 @@
 
 			if (!item) return false; // We dont want an item that doesnt exists
 			const bodyLoc = item.getBodyLoc().first();
-
-			print('AutoEquip? Want ' + item.name + ' -- ' + bodyLoc + ' -- ' + item.itemType);
 
 			if (!bodyLoc) return false; // Only items that we can wear
 
@@ -352,6 +427,7 @@
 	};
 
 	AutoEquip.id = 'AutoEquip';
+	AutoEquip.formula = formula;
 
 	module.exports = AutoEquip;
 
