@@ -7,7 +7,7 @@ const clickItemAndWait = (...args) => {
 	addEventListener('gamepacket', gamePacket);
 
 	clickItem.apply(undefined, args);
-	delay(Math.max(me.ping * 2, 50));
+	delay(Math.max(me.ping * 2, 250));
 
 	before = !me.itemoncursor;
 	while (!itemEvent) { // Wait until item is picked up.
@@ -25,24 +25,26 @@ const clickItemAndWait = (...args) => {
 
 Unit.prototype.equip = function (destLocation = undefined) {
 	const Storage = require('Storage');
-	let doubleHanded = [26, 27, 34, 35, 67, 85, 86], spot, findspot = function (item) {
-		let tempspot = Storage.Stash.FindSpot(item);
+	let spot;
+	const doubleHanded = [26, 27, 34, 35, 67, 85, 86],
+		findspot = function (item) {
+			let tempspot = Storage.Stash.FindSpot(item);
 
-		if (getUIFlag(0x19) && tempspot) {
-			return {location: Storage.Stash.location, coord: tempspot};
-		}
+			if (getUIFlag(0x19) && tempspot) {
+				return {location: Storage.Stash.location, coord: tempspot};
+			}
 
-		tempspot = Storage.Inventory.FindSpot(item);
+			tempspot = Storage.Inventory.FindSpot(item);
 
-		if (tempspot) {
-			return {location: Storage.Inventory.location, coord: tempspot};
-		}
+			if (tempspot) {
+				return {location: Storage.Inventory.location, coord: tempspot};
+			}
 
-		return false; // no spot found
-	};
+			return false; // no spot found
+		};
 
 	// Not an item, or unidentified, or not enough stats
-	if (this.type !== 4 || !this.getFlag(0x10) || this.getStat(92) > me.getStat(12) || this.dexreq > me.getStat(2) || this.strreq > me.getStat(0)) {
+	if (this.type !== 4 || !this.getFlag(0x10) || this.getStat(sdk.stats.Levelreq) > me.getStat(sdk.stats.Level) || this.dexreq > me.getStat(sdk.stats.Dexterity) || this.strreq > me.getStat(sdk.stats.Strength)) {
 		return false;
 	}
 
@@ -51,8 +53,8 @@ Unit.prototype.equip = function (destLocation = undefined) {
 
 	print('equiping ' + this.name);
 
-	if (this.location === 1) {
-		return true; // Item is equiped
+	if (this.location === sdk.storage.Equipment) {
+		return true; // Item is already equiped
 	}
 
 
@@ -69,6 +71,7 @@ Unit.prototype.equip = function (destLocation = undefined) {
 		)
 	).sort((a, b) => b - a); // shields first
 
+
 	// if nothing is equipped at the moment, just equip it
 	if (!currentEquiped.length) {
 		clickItemAndWait(0, this);
@@ -79,11 +82,15 @@ Unit.prototype.equip = function (destLocation = undefined) {
 			// Last item, so swap instead of putting off first
 			if (index === (currentEquiped.length - 1)) {
 				print('swap ' + this.name + ' for ' + item.name);
+				D2Bot.printToConsole('Swapping item ' + this.name + ' for ' + item.name);
+				require('Config').Debug && D2Bot.printToConsole('New\r\n' + this.description + '\r\n -- Old\r\n' + item.description);
 				let oldLoc = {x: this.x, y: this.y, location: this.location};
 				clickItemAndWait(0, this); // Pick up current item
 				clickItemAndWait(0, destLocation.first()); // the swap of items
+
 				// Find a spot for the current item
 				spot = findspot(item);
+				print('Find spot for old item? ' + (spot));
 
 				if (!spot) { // If no spot is found for the item, rollback
 					clickItemAndWait(0, destLocation.first()); // swap again
@@ -146,3 +153,13 @@ Object.defineProperties(Unit.prototype, {
 		}
 	}
 });
+
+(function () {
+	const fields = ['x', 'y', 'sizex', 'sizey', 'classid', 'hpmax', 'itemcount', 'uniqueid', 'code', 'fname', 'quality', 'node', 'location', 'description', 'ilvl', 'lvlreq', 'gfx'];
+	Object.defineProperty(Unit.prototype, 'uniqueId', {
+		get: function () {
+			let text = fields.map(key => (this.hasOwnProperty(key) && this[key] || '').toString()).filter(x => x);
+			return md5(JSON.stringify(text));
+		}
+	});
+})();

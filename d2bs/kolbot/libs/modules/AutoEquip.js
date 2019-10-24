@@ -8,16 +8,11 @@
 	const Promise = require('Promise');
 
 	function formula(item) {
-		const skills = () =>
-			item.getStatEx(sdk.stats.Allskills) // get all skills
-			//+ item.getStatEx(sdk.stats.AddskillTab, 10) //ToDO; Fix tab skill we use the most ;)
-			+ item.getStatEx(sdk.stats.Addclassskills, me.classid), // Get class skills of my classid
-			res = () => (
-				(
-					item.getStatEx(sdk.stats.Fireresist)
-					+ item.getStatEx(sdk.stats.Coldresist)
-					+ item.getStatEx(sdk.stats.Lightresist)
-				) * 1000
+		// + item.getStatEx(sdk.stats.AddskillTab, 10) //ToDO; Fix tab skill we use the most ;)
+		const skills = () => item.getStatEx(sdk.stats.Allskills) + item.getStatEx(sdk.stats.Addclassskills, me.classid), // get all skills
+			res = () => (item.getStatEx(sdk.stats.Fireresist)
+				+ item.getStatEx(sdk.stats.Coldresist)
+				+ item.getStatEx(sdk.stats.Lightresist)
 			),
 			strdex = () => item.getStatEx(sdk.stats.Strength)
 				+ item.getStatEx(sdk.stats.Dexterity),
@@ -74,12 +69,14 @@
 			},
 
 			weapon: {
-				magic: () => ((res() + skills()) * 1000)
+				magic: () => (skills() * 10000)
+					+ (res() * 1000)
 					+ (hpmp() * 100)
 					+ (strdex() * 10)
 					+ fcr(),
 
-				rare: () => ((skills() + res()) * 10000)
+				rare: () => ((skills()) * 10000)
+					+ (res() * 1000)
 					+ ((hpmp() + strdex()) * 1000)
 					+ fcr()
 			},
@@ -139,7 +136,7 @@
 					+ (hpmp() * 100)
 					+ def(),
 
-				rare: () => ((res() * skills()) * 100000)
+				rare: () => ((res() + skills()) * 100000)
 					+ (strdex() * 10000)
 					+ (hpmp() * 1000)
 					+ def(),
@@ -151,7 +148,6 @@
 
 		if (!bodyLoc) return false; // Its not an equitable item
 
-		print(bodyLoc + ' -- ' + item.name);
 
 		const isRuneword = !!item.getFlag(0x4000000 /* runeword*/),
 			tierFuncs = Object.keys(tiers).map(key => tiers[key])[bodyLoc - 1],
@@ -169,13 +165,21 @@
 		};
 
 		if (isRuneword || item.quality >= quality.rare) {
-			var tier = rareTier();
-			print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
-			return tier;
+			if (typeof rareTier === 'function') {
+				let tier = rareTier();
+				print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
+				return tier;
+			} else {
+				print('Error? magicTier is not an function?');
+			}
 		} else { // magical, or lower
-			var tier = magicTier();
-			print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
-			return tier;
+			if (typeof magicTier === 'function') {
+				let tier = magicTier();
+				print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
+				return tier;
+			} else {
+				print('Error? magicTier is not an function?');
+			}
 		}
 	}
 
@@ -192,100 +196,78 @@
 
 	require('Debug');
 
-	const ClassOnly = [
-		me.classid !== 6 && 22506, // strAssassinOnly
-		me.classid !== 5 && 22505, // strDruidOnly
-		me.classid !== 4 && 22508, // strBarbarianOnly
-		me.classid !== 3 && 4096, // strPaladinOnly
-		me.classid !== 2 && 4095, // strNecromanerOnly
-		me.classid !== 1 && 4097, // strSorceressOnly
-		me.classid !== 0 && 22507 // strAmazonOnly
-	].filter(x => x).map(x => getLocaleString(x)); // filter out the one we dont want
-
 	AutoEquip.want = function (item) {
-		if (!item) return false; // We dont want an item that doesnt exists
-		const bodyLoc = item.getBodyLoc().first();
+		return item.__wanted__by_AutoEquip = (function () {
+			// If we already excluded this item, lets not rerun this
+			if (item.hasOwnProperty('__wanted__by_AutoEquip') && !item.__wanted__by_AutoEquip) return false;
 
-		print('AutoEquip? Want ' + item.name + ' -- ' + bodyLoc + ' -- ' + item.itemType);
+			if (!item) return false; // We dont want an item that doesnt exists
+			const bodyLoc = item.getBodyLoc().first();
 
-		if (!bodyLoc) return false; // Only items that we can wear
+			print('AutoEquip? Want ' + item.name + ' -- ' + bodyLoc + ' -- ' + item.itemType);
 
-		// ToDo, get a propper way of getting item class
-		if (item.location /*not on the floor*/ && ClassOnly.some(x => item.description.includes(x))) {
-			print('Item is for another class as me'); // We cant wear an item that is for another class
-			return false;
-		}
+			if (!bodyLoc) return false; // Only items that we can wear
 
-		const currentItem = me.getItems()
-			.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
-			.first();
-
-		// This item's specs are already fully readable
-		if (item.identified && currentItem) {
-			print('items specs are fully readable -- ' + item.name);
-			if (compare(currentItem, item) === item) {
-				print('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
-				return true;
-			} else {
+			const forClass = getBaseStat("itemtypes", item.itemType, "class");
+			if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
+				print('Item is for another class as me');
 				return false;
 			}
-		}
-		return !!item.getBodyLoc(); // for now, we want all items that we can equip
-	};
 
-	AutoEquip.handle = function (item) {
-		print(item);
-
-		function dealWithIt(item) {
-
-			const tier = formula(item);
-			print('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
-			const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
 			const currentItem = me.getItems()
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 				.first();
 
-			// No current item? Im pretty sure we want to equip it then
-			if (!currentItem) return item.bodyloc === bodyLoc;
+			// This item's specs are already fully readable
+			if (item.identified && currentItem) {
+				print('items specs are fully readable -- ' + item.name);
+				if (compare(currentItem, item) === item) {
+					print('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
+					return true;
+				} else {
+					return false;
+				}
+			}
+			return !!item.getBodyLoc(); // for now, we want all items that we can equip
+		}).call();
+	};
 
-			// Is the current item better as the new item?
-			if (compare(item, currentItem) !== item) return false; // No need to replace
+	AutoEquip.handle = function (item) {
+		function dealWithIt(item) {
+			item.__wanted__by_AutoEquip = (function () {
+				const tier = formula(item);
+				print('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
+				const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
+				const currentItem = me.getItems()
+					.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
+					.first();
 
-			// Is the new item better as the old item?
-			const old = item.equip(bodyLoc);
+				// No current item? Im pretty sure we want to equip it then
+				if (!currentItem) return item.bodyloc === bodyLoc;
 
-			// Sometimes it happens the OLD item seems better once we have the new one in place
-			const newTier = formula(old.unequiped.first());
+				// Is the current item better as the new item?
+				if (compare(item, currentItem) !== item) return false; // No need to replace
 
-			// Was the old item better?
-			if (newTier > tier) return !!old.rollback(); // Rollback and return false
+				// Is the new item better as the old item?
+				const old = item.equip(bodyLoc);
 
-			return true;
+				// Sometimes it happens the OLD item seems better once we have the new one in place
+				const newTier = formula(old.unequiped.first());
+
+				// Was the old item better?
+				if (newTier > tier) return !!old.rollback(); // Rollback and return false
+
+				return true;
+			}).call()
 		}
 
-		const tome = me.findItem(519, 0, 3);
-		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
-			const gid = item.gid;
+		function identify(gid) {
+			let returnTo = {area: me.area, x: me.x, y: me.y};
+			// We can id right now. So lets
 
-			// We need to identify. But maybe we cant right now?
-			return new Promise(function (resolve) {
-				// Check if we are in town
-				if (me.inTown) {
-					resolve();// We are
-				}
-
-				if (getUnits(1)
-					.filter(monster => monster.attackable && monster.distance < 30 /*&& checkCollision(me,monster,0x04)*/)
-					.length < 4
-				) {
-					// Right now, its relative safe to id the item
-					resolve();
-				}
-			}).then(function () {
-				// We can id right now. So lets
-
-				// it can be a while ago, got the tome
-				const tome = me.findItem(519, 0, 3); // ToDo Use loose scrolls
+			// it can be a while ago, got the tome
+			let tome = me.findItem(519, 0, 3); // ToDo Use loose scrolls
+			if (tome) {
 				const item = getUnits(4, -1, -1, gid).first();
 				if (!tome || !item) {
 					return; // Without an tome or item, we cant id the item
@@ -303,22 +285,67 @@
 					delay(3);
 					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
 				}
+			} else { // Dont have a tome
+
+				//ToDo; go to cain if he is closer by and we dont have scrolls & nothing else to identify
+
+				Town.goToTown();
+				// Lets go to town to identify
+				const npc = Town.initNPC("Shop", "identify");
+				const scroll = npc.getItem(sdk.items.idScroll);
+				scroll.buy();
+				tome = scroll;
+			}
+
+			// Try to id the item, 3 attempts
+			for (let i = 0, timer = getTickCount();
+				 i < 3 && item.identified;
+				 i++, timer = getTickCount()
+			) {
+				getCursorType() !== 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
+				while (!item.identified) {
+					delay(3);
+					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
+				}
+			}
 
 
-				// Try to id the item, 3 attempts
-				for (let i = 0, timer = getTickCount();
-					 i < 3 && item.identified;
-					 i++, timer = getTickCount()
-				) {
-					getCursorType() !== 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
-					while (!item.identified) {
-						delay(3);
-						if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
-					}
+			let failed;
+			if ((failed = !(item.identified && dealWithIt(item)))) item.__wanted__by_AutoEquip = false; // Somehow failed, give up
+
+			if (returnTo.area !== me.area) {
+				Town.moveToSpot('portal');
+				Pather.usePortal(returnTo.area);
+				Pather.moveTo(returnTo.x, returnTo.y);
+			}
+
+			return !failed;
+		}
+
+		const tome = me.findItem(519, 0, 3);
+		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
+			const gid = item.gid;
+
+			// if we are in town, we can identify
+			if (me.inTown) {
+				identify(gid); // So lets
+			}
+
+			// We need to identify. But maybe we cant right now?
+			return new Promise(function (resolve) {
+				// Check if we are in town
+				if (me.inTown) {
+					resolve();// We are
 				}
 
-				if (item.identified) dealWithIt(item);
-			});
+				if (getUnits(1)
+					.filter(monster => monster.attackable && monster.distance < 30 /*&& checkCollision(me,monster,0x04)*/)
+					.length < 4
+				) {
+					// Right now, its relative safe to id the item
+					resolve();
+				}
+			}).then(() => identify(gid));
 		}
 
 		return item.identified && dealWithIt(item);
