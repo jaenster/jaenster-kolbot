@@ -58,6 +58,15 @@
 
 				return val * 10; // Boost the value, +1 skills are worth allot
 			}, // get all skills
+
+			// Take care of the elemental damage of your best skill. (facets/eschutas/the lot)
+			elementDmg = () => bestSkills.reduce(function (a, c) {
+				if (sdk.stats.hasOwnProperty('Passive' + c.baseDamage.type + 'Mastery')) a += item.getStatEx(c); // + skill damage
+				if (sdk.stats.hasOwnProperty('Passive' + c.baseDamage.type + 'Pierce')) a += item.getStatEx(c); // - enemy resistance
+				return a;
+			}, 0),
+
+			// ToDo; take in account the current resistance. Because at some point, enough is enough
 			res = () => (item.getStatEx(sdk.stats.Fireresist)
 				+ item.getStatEx(sdk.stats.Coldresist)
 				+ item.getStatEx(sdk.stats.Lightresist)
@@ -76,16 +85,17 @@
 			frw = () => item.getStatEx(sdk.stats.Fastermovevelocity /* fwr*/),
 			ctb = () => item.getStatEx(sdk.stats.Toblock /*ctb = chance to block*/);
 
-
 		const tiers = {
 			helm: {
 				magic: () => (skills() * 1000)
+					+ (elementDmg() * 100)
 					+ ((hpmp() + res()) * 100)
 					+ def(),
 
 				rare: () => (skills() * 10000)
+					+ (elementDmg() * 1000)
 					+ ((hpmp() + res()) * 1000)
-					+ def(),
+					+ def()
 			},
 
 			amulet: {
@@ -99,18 +109,23 @@
 					+ (res() * 1000)
 					+ (strdex() * 100)
 					+ (hpmp() * 10)
+					+ (ctb() * 100) // Safety crafted amulet
 					+ (fcr() + fbr() + def()),
 
 
 			},
 
 			armor: {
-				magic: () => ((skills() + res()) * 10000)
+				magic: () => (skills() * 10000)
+					+ (res() * 1000)
+					+ (elementDmg() * 1000)
 					+ (strdex() * 1000)
 					+ (hpmp() * 100)
 					+ def(),
 
-				rare: () => ((skills() + res()) * 100000)
+				rare: () => (skills() * 100000)
+					+ (res() * 10000)
+					+ (elementDmg() * 10000)
 					+ (strdex() * 10000)
 					+ (hpmp() * 1000)
 					+ def(),
@@ -118,23 +133,27 @@
 
 			weapon: {
 				magic: () => (skills() * 10000)
+					+ (elementDmg() * 5000)
 					+ (res() * 1000)
 					+ (hpmp() * 100)
 					+ (strdex() * 10)
 					+ fcr(),
 
 				rare: () => ((skills()) * 10000)
+					+ (elementDmg() * 5000)
 					+ (res() * 1000)
 					+ ((hpmp() + strdex()) * 1000)
 					+ fcr()
 			},
 			shield: {
 				magic: () => (res() * 10000)
+					+ (elementDmg() * 5000)
 					+ ((strdex() + vita()) * 1000)
 					+ ((fbr() + ctb()) * 100)
 					+ def(),
 
 				set: () => (res() * 100000)
+					+ (elementDmg() * 50000)
 					+ ((strdex() + vita()) * 10000)
 					+ ((fbr() + ctb()) * 1000)
 					+ def(),
