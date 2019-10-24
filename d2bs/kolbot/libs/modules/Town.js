@@ -149,7 +149,7 @@
 
 		var npc = getInteractedNPC();
 
-		if (npc && npc.name.toLowerCase() !== this.tasks[me.act - 1][task]) {
+		if (npc && npc.name.toLowerCase() !== tasks[me.act - 1][task]) {
 			me.cancel();
 
 			npc = null;
@@ -163,12 +163,12 @@
 		}
 
 		if (!npc) {
-			npc = getUnit(1, this.tasks[me.act - 1][task]);
+			npc = getUnit(1, tasks[me.act - 1][task]);
 
 			if (!npc) {
-				this.move(this.tasks[me.act - 1][task]);
+				this.move(tasks[me.act - 1][task]);
 
-				npc = getUnit(1, this.tasks[me.act - 1][task]);
+				npc = getUnit(1, tasks[me.act - 1][task]);
 			}
 		}
 
@@ -665,7 +665,7 @@
 		var i, cain, unids, result,
 			npc = getInteractedNPC();
 
-		if (npc && npc.name.toLowerCase() === this.tasks[me.act - 1].Shop) {
+		if (npc && npc.name.toLowerCase() === tasks[me.act - 1].Shop) {
 			return false;
 		}
 
