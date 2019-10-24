@@ -512,7 +512,7 @@ var Town = {
 	},
 
 	identify: function () {
-		var i, item, tome, scroll, npc, list, timer, tpTome, result,
+		var i, item, tome, scroll, npc, list, timer, tpTome,
 			tpTomePos = {};
 
 		const Pickit = require('Pickit');
@@ -552,11 +552,23 @@ MainLoop:
 			item = list.shift();
 
 			if (!item.getFlag(0x10) && item.location === 3 && this.ignoredItemTypes.indexOf(item.itemType) === -1) {
-				result = Pickit.checkItem(item);
+				let result = Pickit.checkItem(item);
 
-				// Force ID for unid items matching autoEquip criteria
-				if (result.result === 1 && !item.getFlag(0x10) && Item.hasTier(item)) {
-					result.result = -1;
+				const hook = Pickit.hooks.find(hook => result.result === hook.id);
+				print(result);
+				print(hook);
+				if (hook) {
+					const uniqueId = item.uniqueId;
+					hook.handle(item);
+					if (uniqueId !== item.uniqueId) {
+						// If something changed on the item, it means we did something with it
+
+						// If its still in inventory, lets rerun the entire loop again with the item
+						if (item.location === sdk.storage.Inventory) {
+							list.unshift(item); // put it back in the array
+							continue; // re-loop and restore process
+						}
+					}
 				}
 
 				switch (result.result) {
@@ -1526,37 +1538,41 @@ MainLoop:
 		return true;
 	},
 
-	stash: function (stashGold) {
-		if (stashGold === undefined) {
-			stashGold = true;
-		}
-
+	stash: function (stashGold = true) {
 		if (!this.needStash()) {
 			return true;
 		}
 		const Pickit = require('Pickit');
-		const NTIP = require('NTIP');
 		me.cancel();
 		const Storage = require('Storage');
-		var i, result, tier,
-			items = Storage.Inventory.Compare(Town.config.Inventory);
+		const items = Storage.Inventory.Compare(Town.config.Inventory);
 
 		if (items) {
-			for (i = 0; i < items.length; i += 1) {
-				if (this.canStash(items[i])) {
-					result = (Pickit.checkItem(items[i]).result > 0 && Pickit.checkItem(items[i]).result < 4) || Cubing.keepItem(items[i]) || Runewords.keepItem(items[i]) || CraftingSystem.keepItem(items[i]);
+			for (let i = 0; i < items.length; i += 1) {
+				if (this.canStash(items[i]) && items[i].location === sdk.storage.Inventory /*yeah we need to check this, as hooks can alter it*/) {
+					const item = copyUnit(items[i]);
+					let result = Pickit.checkItem(items[i]).result;
 
-					// Don't stash low tier autoequip items.
-					if (Town.config.AutoEquip && Pickit.checkItem(items[i]).result === 1) {
-						tier = NTIP.GetTier(items[i]);
-
-						if (tier > 0 && tier < 100) {
-							result = false;
+					const hook = Pickit.hooks.find(x => x.id === result);
+					if (hook) {// Found a hook that linked upon it
+						print('Found a hooking item');
+						const uniqueId = item.uniqueId;
+						result = !hook.handle(item); // If it handled succesfully, it doesnt need to stash it
+						if (uniqueId !== item.uniqueId) {
+							// If something changed on the item, it means we did something with it
+							print('Unique id is changed?');
+							// If its still in inventory, lets rerun the entire loop again with the item
+							if (item.location === sdk.storage.Inventory) {
+								print('Still in inventory, lets parse again');
+								list.unshift(item); // put it back in the array
+							}
+							continue; // continue
 						}
 					}
 
-					if (result) {
+					if (result === 1) {
 						Misc.itemLogger("Stashed", items[i]);
+						print('MOVING TO STASH??');
 						Storage.Stash.MoveTo(items[i]);
 					}
 				}
