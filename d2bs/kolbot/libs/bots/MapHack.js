@@ -660,9 +660,14 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 
 (function () {
 	!isIncluded('require.js') && include('require.js');
+	!isIncluded('common/Misc.js') && include('common/Misc.js');
 	if (getScript.startAsThread() === 'thread') {
 		const Worker = require('Worker');
-		addEventListener('gamepacket', bytes => bytes && bytes.length && ((bytes[0] === 0xA4 /* baal laughs*/ && Worker.push(() => print('Baal laughed')))) && false);
+		let tick = 0;
+		addEventListener('gamepacket', bytes => bytes && bytes.length && ((bytes[0] === 0xA4 /* baal laughs*/ && Worker.push(() => {
+			if (getTickCount() - tick > 3000) new PacketBuilder().byte(38).byte(1, me.locale).word(2, 0, 0).byte(90).string('jaenster', 'baal laughs').get();
+			tick = getTickCount();
+		}))) && false);
 		while (me.ingame) delay(10);
 	}
 })();
