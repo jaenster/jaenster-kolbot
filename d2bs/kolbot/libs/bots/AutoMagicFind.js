@@ -38,7 +38,6 @@ function AutoMagicFind(Config, Attack) {
 		}
 		bosses[x].area = GameData.AreaData[bosses[x].location.area];
 		bosses[x].name = x;
-		print(bosses[x]);
 	});
 	let areas = GameData.AreaData.map(area => ({
 		area: area,
