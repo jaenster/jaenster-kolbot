@@ -57,6 +57,7 @@
 		const Scripts = Config.Scripts;
 		const Pickit = require('Pickit');
 		const Messaging = require('Messaging');
+		const Town = require('Town');
 
 		if (Loader.fileList.indexOf(script) < 0) {
 			Misc.errorReport("ÿc1Script " + script + " doesn't exist.");
@@ -78,7 +79,7 @@
 					Messaging.send(JSON.stringify({currScript: script}));
 
 					// Assign a new object to the config object
-					global[script](Object.assign(typeof Scripts[script] === 'object' && Scripts[script] || {}, Config), Attack, Pickit);
+					global[script](Object.assign(typeof Scripts[script] === 'object' && Scripts[script] || {}, Config), Attack, Pickit, Pather, Town);
 				}
 			} catch (error) {
 				Misc.errorReport(error, script);

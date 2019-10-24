@@ -4,10 +4,9 @@
 *	@desc		Got to Palace Cellar level 3 and kill Diablo Clone.
 */
 
-function KillDclone(Config, Attack) {
-	//Town.doChores();
+function KillDclone(Config, Attack, Pickit, Pather, Town) {
 	Pather.useWaypoint(74);
-	require('Precast')();
+	require('Precast').call();
 
 	if (!Pather.usePortal(null)) {
 		throw new Error("Failed to move to Palace Cellar");

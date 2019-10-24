@@ -1,10 +1,10 @@
 /**
-*	@filename	Eyeback.js
-*	@author		kolton
-*	@desc		kill Eyeback the Unleashed
-*/
+ *    @filename    Eyeback.js
+ *    @author      kolton
+ *    @desc        kill Eyeback the Unleashed
+ */
 
-function Eyeback(Config, Attack) {
+function Eyeback(Config, Attack, Pickit, Pather, Town) {
 	Town.doChores();
 	if (!me.journeyToPreset(111, 1, 784)) {
 		throw new Error("Failed to move to Eyeback the Unleashed");

@@ -289,9 +289,10 @@ Unit.prototype.toCursor = function () {
 		return true;
 	}
 
-	var i, tick;
+	let i, tick;
 
 	if (this.location === 7) {
+		const Town = require('NPC');
 		Town.openStash();
 	}
 

@@ -8,6 +8,7 @@
 	const Config = require('Config'),
 		Storage = require('Storage'),
 		NTIP = require('NTIP'),
+		Town = require('Town'),
 		beltSize = Storage.BeltSize(),
 		ignoreLog = [4, 5, 6, 22, 41, 76, 77, 78, 79, 80, 81]; // Ignored item types for item logging
 

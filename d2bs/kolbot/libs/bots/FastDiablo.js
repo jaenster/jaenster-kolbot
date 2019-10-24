@@ -4,7 +4,7 @@
 *	@desc		kill seal bosses and Diablo
 */
 
-function FastDiablo(Config, Attack) {
+function FastDiablo(Config, Attack, Pickit, Pather, Town) {
 	this.getLayout = function (seal, value) {
 		var sealPreset = getPresetUnit(108, 2, seal);
 
@@ -211,9 +211,9 @@ function FastDiablo(Config, Attack) {
 		throw new Error("Failed to open seal (id " + classid + ")");
 	};
 
-	Town.doChores();
+	Town();
 	Pather.useWaypoint(107);
-	require('Precast')()
+	require('Precast').call()
 	this.initLayout();
 	this.openSeal(395);
 	this.openSeal(396);

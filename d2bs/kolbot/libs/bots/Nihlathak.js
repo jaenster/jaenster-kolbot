@@ -1,12 +1,12 @@
 /**
-*	@filename	Nihlathak.js
-*	@author		kolton
-*	@desc		kill Nihlathak
-*/
+ *    @filename    Nihlathak.js
+ *    @author      kolton
+ *    @desc        kill Nihlathak
+ */
 
-function Nihlathak(Config, Attack, Pickit) {
+function Nihlathak(Config, Attack, Pickit, Pather, Town) {
 
-	Town.doChores();
+	Town();
 	if (!me.journeyToPreset(124, 2, 462, 0, 0, false, true)) {
 		throw new Error("Failed to go to Nihlathak");
 	}

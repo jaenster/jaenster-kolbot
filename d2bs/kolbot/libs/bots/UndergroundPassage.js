@@ -4,8 +4,8 @@
 *	@desc		Move and clear Underground passage level 2
 */
 
-function UndergroundPassage(Config) {
-	Town.doChores();
+function UndergroundPassage(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!Pather.journeyTo(14)) {
 		throw new Error("Failed to move to Underground passage level 2");

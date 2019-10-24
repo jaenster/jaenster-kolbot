@@ -1,11 +1,11 @@
 /**
-*	@filename	Worldstone.js
-*	@author		kolton
-*	@desc		Clear Worldstone levels
-*/
+ *    @filename    Worldstone.js
+ *    @author      kolton
+ *    @desc        Clear Worldstone levels
+ */
 
-function Worldstone(Config, Attack, Pickit) {
-	Town.doChores();
+function Worldstone(Config, Attack, Pickit, Pather, Town) {
+	Town();
 	Pather.journeyTo(129);
 	Attack.clearLevel(Config.ClearType);
 

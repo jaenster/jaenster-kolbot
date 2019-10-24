@@ -179,6 +179,7 @@
 
 		return true;
 	};
+	const Town = require('Town');
 	let check = getTickCount();
 	Unit.prototype.attack = function () {
 		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);

@@ -144,13 +144,12 @@ function main() {
 		load("tools/AntiHostile.js");
 	}
 
-	// One time maintenance - get corpse, clear leftover items, pick items in case anything important was dropped
-	// if (!Config.Scripts.UserAddon && !Config.Scripts.Test) {
-		Town.getCorpse();
-		Town.clearBelt();
-		Town.clearInventory();
+	const Town = require('Town');
+
+	Town.getCorpse();
+	me.charlvl > 1 && Town.clearBelt();
+	me.charlvl > 1 && Town.clearInventory();
 	Pickit.pickItems();
-	// }
 
 	me.automap = Config.AutoMap;
 
@@ -177,21 +176,24 @@ function main() {
 	DataFile.updateStats("gold");
 
 	if (sojPause) {
-		try {
-			Town.goToTown();
-			Town.doChores();
+		(function () {
+			const Town = require('Town');
+			try {
+				Town.goToTown();
+				Town();
 
-			me.maxgametime = 0;
+				me.maxgametime = 0;
 
-			while (sojCounter < Config.SoJWaitTime) {
-				me.overhead("Waiting for SoJ sales... " + (Config.SoJWaitTime - sojCounter) + " min");
-				delay(6e4);
+				while (sojCounter < Config.SoJWaitTime) {
+					me.overhead("Waiting for SoJ sales... " + (Config.SoJWaitTime - sojCounter) + " min");
+					delay(6e4);
 
-				sojCounter += 1;
+					sojCounter += 1;
+				}
+			} catch (e2) {
+				print(e2);
 			}
-		} catch (e2) {
-			print(e2);
-		}
+		}).call()
 	}
 
 	if (Config.LastMessage) {

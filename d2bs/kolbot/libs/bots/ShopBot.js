@@ -1,4 +1,4 @@
-function ShopBot(Config) {
+function ShopBot(Config, Attack, Pickit, Pather, Town) {
 	var i, tickCount,
 		cycles = 0,
 		cyclesText = new Text("Cycles in last minute:", 50, 260, 2, 1),
@@ -142,9 +142,9 @@ function ShopBot(Config) {
 
 		for (i = 0; i < items.length; i += 1) {
 			if (Storage.Inventory.CanFit(items[i]) && Pickit.canPick(items[i]) &&
-					me.gold >= items[i].getItemCost(0) &&
-					NTIP.CheckItem(items[i], this.pickEntries)
-					) {
+				me.gold >= items[i].getItemCost(0) &&
+				NTIP.CheckItem(items[i], this.pickEntries)
+			) {
 				beep();
 				D2Bot.printToConsole("Match found!", 7);
 				delay(1000);
@@ -174,42 +174,42 @@ function ShopBot(Config) {
 			menuId = "Shop";
 
 		switch (name) {
-		case NPC.Charsi:
-			menuId = "Repair";
-		case NPC.Akara:
-		case NPC.Gheed:
-			wp = 1;
+			case NPC.Charsi:
+				menuId = "Repair";
+			case NPC.Akara:
+			case NPC.Gheed:
+				wp = 1;
 
-			break;
-		case NPC.Fara:
-			menuId = "Repair";
-		case NPC.Elzix:
-		case NPC.Drognan:
-			wp = 40;
+				break;
+			case NPC.Fara:
+				menuId = "Repair";
+			case NPC.Elzix:
+			case NPC.Drognan:
+				wp = 40;
 
-			break;
-		case NPC.Hratli:
-			menuId = "Repair";
-		case NPC.Asheara:
-		case NPC.Ormus:
-			wp = 75;
+				break;
+			case NPC.Hratli:
+				menuId = "Repair";
+			case NPC.Asheara:
+			case NPC.Ormus:
+				wp = 75;
 
-			break;
-		case NPC.Halbu:
-			menuId = "Repair";
-		case NPC.Jamella:
-			wp = 103;
+				break;
+			case NPC.Halbu:
+				menuId = "Repair";
+			case NPC.Jamella:
+				wp = 103;
 
-			break;
-		case NPC.Larzuk:
-			menuId = "Repair";
-		case NPC.Malah:
-		case NPC.Anya:
-			wp = 109;
+				break;
+			case NPC.Larzuk:
+				menuId = "Repair";
+			case NPC.Malah:
+			case NPC.Anya:
+				wp = 109;
 
-			break;
-		default:
-			throw new Error("Invalid NPC");
+				break;
+			default:
+				throw new Error("Invalid NPC");
 		}
 
 		if (!Pather.useWaypoint(wp)) {

@@ -1,12 +1,13 @@
 /**
-*	@filename	Questing.js
-*	@author		kolton
-*	@desc		Do quests, only most popular ones for now
-*/
+ *    @filename    Questing.js
+ *    @author      kolton
+ *    @desc        Do quests, only most popular ones for now
+ */
 
-function Questing(Config, Attack, Pickit) {
+function Questing(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
-	var i, j,
+	const NPC = require('NPC');
+	let i, j,
 		quests = [
 			[1, "clearDen"],
 			[9, "killRadament"],
@@ -241,9 +242,7 @@ function Questing(Config, Attack, Pickit) {
 	};
 
 	for (i = 0; i < quests.length; i += 1) {
-		if (me.inTown) {
-			Town.doChores();
-		}
+		me.inTown && Town();
 
 		for (j = 0; j < 3; j += 1) {
 			if (!this.checkQuest(quests[i][0], 0)) {

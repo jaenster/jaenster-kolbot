@@ -137,7 +137,7 @@ function MFHelper(Config, Attack) {
 	};
 
 	addEventListener("chatmsg", ChatEvent);
-	Town.doChores();
+	Town();
 	Town.move("portalspot");
 
 	if (Config.Leader) {

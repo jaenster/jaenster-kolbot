@@ -1,11 +1,11 @@
 /**
-*	@filename	Sharptooth.js
-*	@author		loshmi
-*	@desc		kill Thresh Socket
-*/
+ *    @filename    Sharptooth.js
+ *    @author      loshmi
+ *    @desc        kill Thresh Socket
+ */
 
-function SharpTooth(Config, Attack, Pickit) {
-	Town.doChores();
+function SharpTooth(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!me.journeyToPreset(111, 1, 790)) {
 		throw new Error("Failed to move to Sharptooth Slayer");

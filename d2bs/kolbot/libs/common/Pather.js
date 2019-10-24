@@ -701,6 +701,7 @@ var Pather = {
 	*/
 	useWaypoint: function useWaypoint(targetArea, check) {
 		const CollMap = require('CollMap');
+		const NPC = require('NPC');
 		switch (targetArea) { // error handling
 			case typeof targetArea !== "number":
 				throw new Error("useWaypoint: Invalid targetArea parameter");
@@ -716,7 +717,7 @@ var Pather = {
 		check |= targetArea === null || targetArea === 'random';
 
 		let retry;
-
+		const Town = require('Town');
 		for (let i = 0; i < 12; i += 1) {
 			if (me.area === targetArea || me.dead) break;
 
@@ -928,6 +929,7 @@ var Pather = {
 		var i, tick, portal,
 			preArea = me.area;
 
+		const Town = require('Town');
 		for (i = 0; i < 10; i += 1) {
 			if (me.dead) {
 				break;
@@ -1185,6 +1187,8 @@ var Pather = {
 	journeyTo: function (area, clearPath) {
 		const Precast = require('Precast');
 		const TownPrecast = require('TownPrecast');
+		const NPC = require('NPC');
+		const Town = require('Town');
 		var i, special, unit, tick, target;
 
 		target = this.plotCourse(area, me.area);
