@@ -5,7 +5,7 @@
 
 
 (function (module, require) {
-	Worker = require('Worker');
+	const Worker = require('Worker');
 
 	function skill(build) {
 		// Checking if we can spend skill
