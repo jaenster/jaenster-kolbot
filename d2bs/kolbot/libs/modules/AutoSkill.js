@@ -93,4 +93,4 @@
 	 */
 	];
 
-}).call(module, require);
+}).call(null, module, require);

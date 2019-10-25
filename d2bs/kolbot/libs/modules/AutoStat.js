@@ -110,4 +110,4 @@
 		energy: [0, 0],
 	};
 
-}).call(module, require);
+}).call(null, module, require);
