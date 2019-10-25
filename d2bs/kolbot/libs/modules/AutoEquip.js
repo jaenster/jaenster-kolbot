@@ -7,6 +7,7 @@
 	const Pickit = require('Pickit');
 	const Promise = require('Promise');
 	const GameData = require('GameData');
+	const Town = require('Town');
 
 	let bestSkills = [];
 	(function () {
@@ -172,9 +173,8 @@
 					+ ((hpmp() + strdex()) * 100)
 					+ fcr(),
 
-				rare: () => (res() * 10000)
-					+ ((hpmp() + strdex()) * 1000)
-					+ fcr(),
+				rare: () => (res() + fcr() * 10000)
+					+ ((hpmp() + strdex()) * 1000),
 			},
 
 			belt: {
@@ -225,8 +225,14 @@
 
 
 		const isRuneword = !!item.getFlag(0x4000000 /* runeword*/),
-			tierFuncs = Object.keys(tiers).map(key => tiers[key])[bodyLoc - 1],
-			[magicTier, rareTier] = [tierFuncs.magic, tierFuncs.rare];
+			tierFuncs = Object.keys(tiers).map(key => tiers[key])[bodyLoc - 1];
+
+		if (tierFuncs === undefined) {
+			print('klasdfjlkasdjflkasdjflkasdjflkasdjfkl --- ' + item.name);
+			//throw Error('Should not happen?');
+			return 0;
+		}
+		const [magicTier, rareTier] = [tierFuncs.magic, tierFuncs.rare];
 
 		const quality = {
 			lowquality: 1,
@@ -300,14 +306,19 @@
 					print('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
 					return true;
 				} else {
+					print('Current item is better, skip');
 					return false;
 				}
+			}
+			if (!item.identified) { // Tell the network we need to identify it first
+				return -1; // We want to identify this
 			}
 			return !!item.getBodyLoc(); // for now, we want all items that we can equip
 		}).call();
 	};
 
 	AutoEquip.handle = function (item) {
+		print('Handle item?');
 		function dealWithIt(item) {
 			item.__wanted__by_AutoEquip = (function () {
 				const tier = formula(item);
@@ -337,6 +348,7 @@
 		}
 
 		function identify(gid) {
+			print('identifing');
 			let returnTo = {area: me.area, x: me.x, y: me.y};
 			// We can id right now. So lets
 
@@ -354,11 +366,12 @@
 				for (let i = 0, timer = getTickCount();
 					 i < 3 && getCursorType() !== 6;
 					 i++, timer = getTickCount()
-				)
+				) {
 					sendPacket(1, 0x27, 4, gid, 4, tome.gid);
-				while (getCursorType() !== 6) {
-					delay(3);
-					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
+					while (getCursorType() !== 6) {
+						delay(3);
+						if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
+					}
 				}
 			} else { // Dont have a tome
 
@@ -372,12 +385,14 @@
 				tome = scroll;
 			}
 
+			print('Identified cursor? ' + (getCursorType() === 6));
 			// Try to id the item, 3 attempts
 			for (let i = 0, timer = getTickCount();
-				 i < 3 && item.identified;
+				 i < 3 && !item.identified;
 				 i++, timer = getTickCount()
 			) {
-				getCursorType() !== 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
+				print('send packet of identifing');
+				getCursorType() === 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
 				while (!item.identified) {
 					delay(3);
 					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
@@ -401,26 +416,9 @@
 		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
 			const gid = item.gid;
 
+			print('identify?');
 			// if we are in town, we can identify
-			if (me.inTown) {
-				identify(gid); // So lets
-			}
-
-			// We need to identify. But maybe we cant right now?
-			return new Promise(function (resolve) {
-				// Check if we are in town
-				if (me.inTown) {
-					resolve();// We are
-				}
-
-				if (getUnits(1)
-					.filter(monster => monster.attackable && monster.distance < 30 /*&& checkCollision(me,monster,0x04)*/)
-					.length < 4
-				) {
-					// Right now, its relative safe to id the item
-					resolve();
-				}
-			}).then(() => identify(gid));
+			identify(gid); // So lets
 		}
 
 		return item.identified && dealWithIt(item);
