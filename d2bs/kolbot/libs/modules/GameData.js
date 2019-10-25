@@ -1261,7 +1261,9 @@
 							eret.skill = sk | 0;
 							eret.type = skillDamageInfo[eret.skill].type;
 							eret.name = getSkillById(eret.skill);
-							all && allData.unshift(eret);
+							if (all) {
+								allData.unshift(Misc.copy(eret));
+							}
 						}
 					}
 				}
