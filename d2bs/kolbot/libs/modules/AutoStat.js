@@ -26,7 +26,7 @@
 		return me.getStat(stat) - bonus;
 	}
 
-	function stat() {
+	function stat(build) {
 		// Stat the char to a specified build. Thanks dzik <3
 		let points, stat, items, one, before, tick,
 			missing = [0, 0, 0, 0],
@@ -53,14 +53,14 @@
 		// check for the stats at the items
 		for (let i = 0; i < 4; i++) {
 			stat = checkStat(i, items);
-			if (stat < module.exports.build[names[i]][0]) {
-				missing[i] = module.exports.build[names[i]][0] - stat;
+			if (stat < build[names[i]][0]) {
+				missing[i] = build[names[i]][0] - stat;
 			}
 		}
 
 		while (!!points) { // in case we have more than one level at once.
 			for (let i = 0; i < 4; i++) {
-				one = Math.max(Math.min(module.exports.build[names[i]][1], missing[i] - send[i], points), 0);
+				one = Math.max(Math.min(build[names[i]][1], missing[i] - send[i], points), 0);
 				send[i] += one;
 				points -= one;
 			}
@@ -94,13 +94,16 @@
 		}
 	}
 
-	/** @return {boolean} */
-	Worker.runInBackground.AutoStat = function () {
-		me.getStat(sdk.stats.Statpts) && stat();
-		return true; // keep looping
-	};
+	// Only start the worker for the main thread
+	if (getScript(true).name.toLowerCase() === 'default.dbj') {
+		/** @return {boolean} */
+		Worker.runInBackground.AutoStat = function () {
+			me.getStat(sdk.stats.Statpts) && stat(module.exports.stats);
+			return true; // keep looping
+		};
+	}
 
-	module.exports = { // Default skills
+	module.exports.stats = { // Default skills
 		strength: [156, 1],
 		dexterity: [0, 0],
 		vitality: [200, 3], // Last but not least

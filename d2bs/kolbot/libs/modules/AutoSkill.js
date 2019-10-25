@@ -59,30 +59,36 @@
 		return true;
 	}
 
-	/** @return {boolean} */
-	Worker.runInBackground.AutoSkill = function () {
-		me.getStat(sdk.stats.Newskills) && skill(module.exports);
-		return true;
-	};
 
-	module.exports = [// Example config
+	// Only start the worker for the main thread
+	if (getScript(true).name.toLowerCase() === 'default.dbj') {
+
+		/** @return {boolean} */
+		Worker.runInBackground.AutoSkill = function () {
+			me.getStat(sdk.stats.Newskills) && skill(module.exports.skills);
+			return true;
+		};
+	}
+
+
+	module.exports.skills = [// Example config
 		/*
 
 		// First the skills needed
-		[Skills.Telekinesis, 1],
-		[Skills.Teleport, 1],
-		[Skills.FrozenArmor, 1],
-		[Skills.Warmth, 1],
-		[Skills.StaticField, 1],
+		[sdk.skills.Telekinesis, 1],
+		[sdk.skills.Teleport, 1],
+		[sdk.skills.FrozenArmor, 1],
+		[sdk.skills.Warmth, 1],
+		[sdk.skills.StaticField, 1],
 
-		[Skills.FrostNova, 1], // <-- Frost nova is a pre needed skill
-		[Skills.ColdMastery, 1], // <-- 1 skill before maxing the rest to be sure
+		[sdk.skills.FrostNova, 1], // <-- Frost nova is a pre needed skill
+		[sdk.skills.ColdMastery, 1], // <-- 1 skill before maxing the rest to be sure
 
-		[Skills.Blizzard, 20],
-		[Skills.IceBlast, 20],
-		[Skills.GlacialSpike, 20],
-		[Skills.IceBolt, 20],
-		[Skills.ColdMastery, 20], // <-- max cold mastery to 20, last thing we do
+		[sdk.skills.Blizzard, 20],
+		[sdk.skills.IceBlast, 20],
+		[sdk.skills.GlacialSpike, 20],
+		[sdk.skills.IceBolt, 20],
+		[sdk.skills.ColdMastery, 20], // <-- max cold mastery to 20, last thing we do
 
 	 */
 	];
