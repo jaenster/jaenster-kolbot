@@ -626,38 +626,6 @@ function main() {
 	while (true) {
 		try {
 			if (me.gameReady && !me.inTown) {
-				if (Config.UseHP > 0 && me.hp < Math.floor(me.hpmax * Config.UseHP / 100)) {
-					this.drinkPotion(0);
-				}
-
-				if (Config.UseRejuvHP > 0 && me.hp < Math.floor(me.hpmax * Config.UseRejuvHP / 100)) {
-					this.drinkPotion(2);
-				}
-
-				if (Config.LifeChicken > 0 && me.hp <= Math.floor(me.hpmax * Config.LifeChicken / 100)) {
-					D2Bot.printToConsole("Life Chicken (" + me.hp + "/" + me.hpmax + ")" + this.getNearestMonster() + " in " + Pather.getAreaName(me.area) + ". Ping: " + me.ping, 9);
-					D2Bot.updateChickens();
-					this.exit();
-
-					break;
-				}
-
-				if (Config.UseMP > 0 && me.mp < Math.floor(me.mpmax * Config.UseMP / 100)) {
-					this.drinkPotion(1);
-				}
-
-				if (Config.UseRejuvMP > 0 && me.mp < Math.floor(me.mpmax * Config.UseRejuvMP / 100)) {
-					this.drinkPotion(2);
-				}
-
-				if (Config.ManaChicken > 0 && me.mp <= Math.floor(me.mpmax * Config.ManaChicken / 100)) {
-					D2Bot.printToConsole("Mana Chicken: (" + me.mp + "/" + me.mpmax + ") in " + Pather.getAreaName(me.area), 9);
-					D2Bot.updateChickens();
-					this.exit();
-
-					break;
-				}
-
 				if (Config.IronGolemChicken > 0 && me.classid === 2) {
 					if (!ironGolem || copyUnit(ironGolem).x === undefined) {
 						ironGolem = this.getIronGolem();

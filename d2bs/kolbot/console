@@ -1,9 +1,27 @@
+const global = this;
 function main () {
 	print('ÿc2D2BSÿc0 :: Started Console Script');
     include('require.js');
     require('Debug');
     include('sdk.js');
     include('common/prototypes.js')
+    Chicken = {};
+    Object.defineProperty(Chicken,'off',{
+    		get: function() {
+    			if (getScript('libs\\modules\\Chicken.js')) {
+    			    print('Paused chicken');
+    			    getScript('libs\\modules\\Chicken.js').pause();
+    			}
+    		}
+    	});
+    Object.defineProperty(Chicken,'on',{
+                get: function() {
+                    if (getScript('libs\\modules\\Chicken.js')) {
+                        print('resumed chicken');
+                        getScript('libs\\modules\\Chicken.js').resume();
+                    }
+                }
+            });
 	while (true) {
 		delay(10000);
 	}

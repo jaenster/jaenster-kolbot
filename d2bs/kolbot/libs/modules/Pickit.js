@@ -103,12 +103,19 @@
 						if (this.canMakeRoom()) {
 							print("ÿc7Trying to make room for " + this.itemColor(pickList[0]) + pickList[0].name);
 
-							// Go to town and do town chores
-							if (Town.visitTown()) {
-								// Recursive check after going to town. We need to remake item list because gids can change.
-								// Called only if room can be made so it shouldn't error out or block anything.
+							if (Config.FieldID) {
+								// We id in the field
+								Town.fieldID();
+								continue; // Re do the loop
+							} else {
 
-								return this.pickItems();
+								// Go to town and do town chores
+								if (Town.visitTown()) {
+									// Recursive check after going to town. We need to remake item list because gids can change.
+									// Called only if room can be made so it shouldn't error out or block anything.
+
+									return this.pickItems();
+								}
 							}
 
 							// Town visit failed - abort
@@ -153,7 +160,26 @@
 
 		if (items) {
 			for (i = 0; i < items.length; i += 1) {
-				switch (this.checkItem(items[i]).result) {
+				const item = items[i];
+				const result = this.checkItem(item).result;
+				const hook = Pickit.hooks.find(hook => result === hook.id);
+				if (hook) {
+					const uniqueId = item.uniqueId;
+					hook.handle(item);
+					if (uniqueId !== item.uniqueId) {
+						// If something changed on the item, it means we did something with it
+
+						// If its still in inventory, lets rerun the entire loop again with the item
+						if (item.location === sdk.storage.Inventory) {
+							i--; // put it back in the array
+							continue; // re-loop and restore process
+						}
+					} else {
+						i--; // put it back in the array
+						continue; // re-loop and restore process
+					}
+				}
+				switch (result) {
 					case -1: // Item needs to be identified
 						// For low level chars that can't actually get id scrolls -> prevent an infinite loop
 						if (me.getStat(14) + me.getStat(15) < 100) {
@@ -162,6 +188,8 @@
 
 						return true;
 					case 0:
+						item.drop();
+						return true;
 						break;
 					default: // Check if a kept item can be stashed
 						if (Town.canStash(items[i])) {

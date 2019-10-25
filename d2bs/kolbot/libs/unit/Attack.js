@@ -183,7 +183,7 @@
 	let check = getTickCount();
 	Unit.prototype.attack = function () {
 		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);
-		let populatedAttack = monsterEffort.first();
+		let populatedAttack = monsterEffort.find(x => Skills.manaCost[x.skill] < me.mp);
 		const move = (sk = populatedAttack.skill) => {
 			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > 40) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
@@ -195,9 +195,7 @@
 				ignoreMonster.push(this.gid);
 			}
 		};
-		while (monsterEffort && Skills.manaCost[monsterEffort.skill] < me.mp) {
-			populatedAttack = monsterEffort.shift();
-		}
+
 		if (!populatedAttack) return false; // dont know how to attack this
 		let hand = 0;
 
