@@ -59,6 +59,7 @@
 		return true;
 	}
 
+	/** @return {boolean} */
 	Worker.runInBackground.AutoSkill = function () {
 		me.getStat(sdk.stats.Newskills) && skill(module.exports);
 		return true;

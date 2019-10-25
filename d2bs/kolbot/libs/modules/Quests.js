@@ -49,6 +49,10 @@
 		if (!states.hasOwnProperty(q)) {
 			states[q] = getQuests(q);
 			questEvents.emit(q, states[q]); // First time in game, or when this is used, trigger all
+			questEvents.emit('all', {
+				q: q,
+				state: states[q],
+			});
 			return; // re-check next time
 		}
 
@@ -63,6 +67,10 @@
 
 			states[q] = newQuestState;
 			questEvents.emit(q, states[q]); // Trigger
+			questEvents.emit('all', {
+				q: q,
+				state: states[q],
+			});
 		}
 
 	}

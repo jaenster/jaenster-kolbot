@@ -94,6 +94,7 @@
 		}
 	}
 
+	/** @return {boolean} */
 	Worker.runInBackground.AutoStat = function () {
 		me.getStat(sdk.stats.Statpts) && stat();
 		return true; // keep looping
