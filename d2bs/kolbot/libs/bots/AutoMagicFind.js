@@ -4,7 +4,7 @@
  */
 
 //ToDo; Make this work propperly
-function AutoMagicFind(Config, Attack) {
+function AutoMagicFind(Config, Attack, Pickit, Pather, Town) {
 	const Promise = require('Promise');
 	const GameData = require('GameData');
 	//const excluded = [0, 133, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, 134, 135, 136, sdk.areas.AncientsWay, sdk.areas.MooMooFarm];
@@ -59,7 +59,7 @@ function AutoMagicFind(Config, Attack) {
 	});
 
 	// Start of game is a good moment to do all chores
-	Town.doChores();
+	Town();
 
 	const inTownPromise = () => (new Promise(resolve => me.inTown && resolve()).then(function () {
 		// When we happen to be in town, do some basic choring
