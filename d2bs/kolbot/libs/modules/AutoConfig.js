@@ -40,6 +40,7 @@
 	};
 
 	AutoConfig.Chicken = function () {
+		require('Chicken'); // Load the chicken
 		Config.HealHP = 50;
 		Config.HealMP = 50;
 		Config.HealStatus = false;
