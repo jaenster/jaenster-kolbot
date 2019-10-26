@@ -20,6 +20,7 @@
 	const GameEvent = require('GameEvent');
 	const Precast = require('Precast');
 	const Promise = require('Promise');
+	const Town = require('Town');
 
 	GameEvent.on('quit', function (name, account) { // Remove member from list
 		const member = Object.keys(Members).indexOf(name);
