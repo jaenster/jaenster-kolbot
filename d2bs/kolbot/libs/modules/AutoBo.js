@@ -26,6 +26,9 @@
 		if (member > -1) delete Members[member];
 	});
 
+	// Broadcast our self when a new player joins the game
+	GameEvent.on('join', () => hi());
+
 
 	const Members = {};
 	Members[me.charname] = {
@@ -51,7 +54,7 @@
 		}
 	});
 
-	Team.broadcastInGame({
+	const hi = () => Team.broadcastInGame({
 		AutoBo: {
 			hi: {
 				name: me.charname,
@@ -60,6 +63,7 @@
 			}
 		}
 	});
+	hi();
 
 	const moveToArea = (doWhat) => {
 		let [area, x, y] = [me.area, me.x, me.y];
