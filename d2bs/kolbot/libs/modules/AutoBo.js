@@ -44,6 +44,7 @@
 			Object.keys(data.hi).forEach(key => Members[data.hi.name][key] = data.hi[key]); // Store info
 		}
 		if (data.hasOwnProperty('want') && data.want.hasOwnProperty('name') && data.want.hasOwnProperty('boLvl') && data.want.hasOwnProperty('profile')) {
+			data.reply({AutoBo: {ok: Members[me.charname]}});
 			// Someone wants an bo of me. (s)he can get it.
 			moveToArea(() => {
 				while (!getUnit(sdk.unittype.Player, data.want.name)) delay(3);
