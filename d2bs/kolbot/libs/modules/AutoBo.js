@@ -12,8 +12,7 @@
 	if (getScript(true).name.toLowerCase() !== 'default.dbj') return;
 
 	// ToDo; get the area location of all bots
-	const workArea = sdk.areas.CatacombsLvl4;
-
+	const workArea = sdk.areas.CatacombsLvl2;
 
 	const Skills = require('Skills');
 	const Worker = require('Worker');
@@ -90,7 +89,7 @@
 
 			// It appears i give the highest bo, so do it ourselves.
 			if (giver === Members[me.charname]) return (!me.inTown && (Precast() || true))
-				|| (me.inTown && Precast.outTown((currentArea => () => Pather.useWaypoint(currentArea))(me.area)) || true)
+				|| (me.inTown && Precast.outTown((currentArea => () => Pather.useWaypoint(currentArea))(me.area)) || true);
 
 			// Send the bo-er
 			Team.send(giver.profile, {AutoBo: {want: Members[me.charname]}});
