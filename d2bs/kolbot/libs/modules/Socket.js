@@ -11,6 +11,17 @@
 	function Socket(hostname, port) {
 		typeof Socket.__socketCounter === 'undefined' && (Socket.__socketCounter = 0);
 
+		let buffer;
+		Object.defineProperty(this, 'buffer', {
+			get: function () {
+				return buffer;
+			},
+			set: function (obj) {
+				return buffer += obj && typeof obj === 'object' ? JSON.stringify(obj) : String(obj);
+			}
+		});
+
+
 		const myEvents = new Events;
 
 		this.buffer = '';
@@ -22,7 +33,7 @@
 
 		const close = () => {
 			this.socket = null;
-			myEvents.emit('close');
+			myEvents.emit('close', this);
 		};
 
 		this.recv = () => {
@@ -40,27 +51,17 @@
 		};
 
 		this.send = () => {
-			if (!this.buffer || !this.socket) return;
+			if (!buffer || !this.socket) return;
 
 			try {
-				this.socket.send(this.buffer);
+				this.socket.send(buffer);
 			} catch (e) {
 				close();
 			}
 		};
 
 		Worker.runInBackground['__socket__' + (++Socket.__socketCounter)] = () => this.recv() || this.send() || true;
-
 	}
-
-	Object.defineProperty(Socket, 'buffer', {
-		get: function () {
-			return this.buffer;
-		},
-		set: function (obj) {
-			return this.buffer += obj && typeof obj === 'object' ? JSON.stringify(obj) : String(obj);
-		}
-	});
 
 	module.exports = Socket;
 }).call(null, module, require, Socket);
