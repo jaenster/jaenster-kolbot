@@ -58,6 +58,7 @@
 			} catch (e) {
 				close();
 			}
+			buffer = '';
 		};
 
 		Worker.runInBackground['__socket__' + (++Socket.__socketCounter)] = () => this.recv() || this.send() || true;
