@@ -21,9 +21,9 @@
 	/** @param {string} input -- hex'd string
 	 * @returns {string}
 	 */
-	encrypt.unpack = input => (input.match(/.{1,4}/g) || []).map(hex => String.fromCharCode(parseInt(hex, 16))).join(''),
+	encrypt.unpack = input => (input.match(/.{1,4}/g) || []).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
-		module.exports = encrypt;
+	module.exports = encrypt;
 
 	/*
 		Tested in node
