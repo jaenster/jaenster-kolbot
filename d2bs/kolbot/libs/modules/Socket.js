@@ -50,11 +50,11 @@
 			data && myEvents.emit('data', data);
 		};
 
-		this.send = () => {
-			if (!buffer || !this.socket) return;
+		this.send = (data) => {
+			if (!data || !buffer || !this.socket) return;
 
 			try {
-				this.socket.send(buffer);
+				this.socket.send(data || buffer);
 			} catch (e) {
 				close();
 			}
