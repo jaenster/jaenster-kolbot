@@ -25,7 +25,7 @@
 		const myEvents = new Events;
 
 		this.buffer = '';
-		this.connect = () => (this.socket = buildinSock.open(hostname, port) && false) || this;
+		this.connect = () => (this.socket = buildinSock.open(hostname, port)) && this;
 
 		this.on = myEvents.on;
 		this.off = myEvents.off;
@@ -37,7 +37,7 @@
 		};
 
 		this.recv = () => {
-			if (this.socket) return;
+			if (this.socket || !this.socket.readable) return;
 
 			const data = (() => {
 				try {
