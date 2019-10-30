@@ -20,8 +20,8 @@ const require = (function (include, isIncluded, print, notify) {
 			return modules[packageName].exports;
 		}
 
-		if (field.endsWith('.json')) { // Simply reads a json file
-			return modules[packageName] = File.open(path + field, 0);
+		if (field.hasOwnProperty('endsWith') && field.endsWith('.json')) { // Simply reads a json file
+			return modules[packageName] = File.open('libs/'+path + field, 0).readAllLines();
 		}
 
 		if (!isIncluded(path + field + '.js')) {

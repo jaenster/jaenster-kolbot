@@ -5,7 +5,7 @@
 */
 
 function ChestMania(Config, Attack, Pickit, Pather, Town) {
-	Town.doChores();
+	Town();
 
 	for (let prop in Config.ChestMania) {
 		if (Config.ChestMania.hasOwnProperty(prop)) {
@@ -14,7 +14,7 @@ function ChestMania(Config, Attack, Pickit, Pather, Town) {
 				Misc.openChestsInArea(Config.ChestMania[prop][i]);
 			}
 
-			Town.doChores();
+			Town();
 		}
 	}
 
