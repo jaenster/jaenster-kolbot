@@ -4,7 +4,7 @@
  *  @description a more useful maphack
  */
 
-function MapHack(Config, Attack, Pickit) {
+function MapHack(Config, Attack, Pickit, Pather, Town) {
 	const GameData = require('GameData'),
 		Worker = require('Worker'),
 		Promise = require('Promise'),

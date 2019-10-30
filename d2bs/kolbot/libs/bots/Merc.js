@@ -16,7 +16,7 @@ const Merc = (function () {
 		if (getScript(true).name.toString() !== 'default.dbj') return false;
 
 		// pickit after doing chores
-		(_ => Town.doChores = new Function('return ' + _.toString().replace(/this\./gi, 'Town.').replace('return true;', 'return Pickit.pickItems()'))())(Town.doChores);
+		(_ => Town = new Function('return ' + _.toString().replace(/this\./gi, 'Town.').replace('return true;', 'return Pickit.pickItems()'))())(Town);
 
 		// Override Misc.errorReport as i want stack info as well.
 		(_ => Misc.errorReport = new Function('return ' + _.toString().replace(/this\./gi, 'Misc.').replace('print(msg);', "print(msg);typeof error === 'object' && print(error.stack);"))())(Misc.errorReport);
@@ -346,7 +346,7 @@ const Merc = (function () {
 				wp.interact(); // click the bloodly waypoint
 			})();
 
-			Town.doChores();
+			Town();
 
 			let spamTick = 0;
 			while (true) {

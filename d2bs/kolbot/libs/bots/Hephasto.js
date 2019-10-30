@@ -4,8 +4,8 @@
 *	@desc		kill Hephasto the Armorer
 */
 
-function Hephasto(Config) {
-	Town.doChores();
+function Hephasto(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!me.journeyToPreset(107, 2, 376)) {
 		throw new Error("Failed to move to Hephasto");

@@ -3,7 +3,7 @@
  * @author Jaenster
  */
 
-function SpeedBaal(Config, Attack, Pickit) {
+function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
 	const TownPrecast = require('TownPrecast');
 	const GameData = require('GameData');
@@ -52,7 +52,7 @@ function SpeedBaal(Config, Attack, Pickit) {
 		};
 
 	this.toThrone = function () {
-		Town.doChores();
+		Town();
 		Config.FieldID && Town.fieldID();
 
 		// 2 ways to go to throne, either travel our self, or take an portal.

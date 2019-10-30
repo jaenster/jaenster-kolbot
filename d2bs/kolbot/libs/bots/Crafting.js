@@ -7,7 +7,7 @@
 var info,
 	gameRequest = false;
 
-function Crafting(Config) {
+function Crafting(Config, Attack, Pickit, Pather, Town) {
 	var i, npcName, num;
 
 	info = CraftingSystem.getInfo();
@@ -18,7 +18,7 @@ function Crafting(Config) {
 
 	me.maxgametime = 0;
 	Town.goToTown(1);
-	Town.doChores();
+	Town();
 	Town.move("stash");
 	updateInfo();
 	pickItems();
@@ -427,7 +427,7 @@ function shopStuff(npcId, classids, amount) {
 		return gameRequest;
 	};
 
-	Town.doChores();
+	Town();
 
 	switch (npcId.toLowerCase()) {
 	case "fara":

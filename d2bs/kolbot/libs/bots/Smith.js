@@ -4,8 +4,8 @@
 *	@desc		kill the Smith
 */
 
-function Smith(Config, Attack, Pickit) {
-	Town.doChores();
+function Smith(Config, Attack, Pickit, Pather, Town) {
+	Town();
 	if (!me.journeyToPreset(28, 2, 108)) {
 		throw new Error("Failed to move to the Smith");
 	}

@@ -4,8 +4,8 @@
 *	@desc		kill Icehawk Riftwing
 */
 
-function Icehawk(Config) {
-	Town.doChores();
+function Icehawk(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!Pather.journeyTo(93)) {
 		throw new Error("Failed to move to Icehawk");

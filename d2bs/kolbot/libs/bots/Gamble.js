@@ -4,7 +4,7 @@
 *	@desc		keep gambling while other players supply you with gold
 */
 
-function Gamble(Config) {
+function Gamble(Config, Attack, Pickit, Pather, Town) {
 	var gold,
 		info = Gambling.getInfo(),
 		needGold = false;

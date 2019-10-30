@@ -4,8 +4,8 @@
 *	@desc		clear Pit
 */
 
-function Pit(Config, Attack, Pickit) {
-	Town.doChores();
+function Pit(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!Pather.journeyTo(12)) {
 		throw new Error("Failed to move to Pit level 1");

@@ -4,9 +4,9 @@
 *	@desc		kill Thresh Socket
 */
 
-function ThreshSocket(Config, Attack, Pickit) {
+function ThreshSocket(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
-	Town.doChores();
+	Town();
 	Pather.useWaypoint(112);
 	Precast();
 

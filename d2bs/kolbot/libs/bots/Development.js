@@ -137,7 +137,7 @@ const Development = (function (global) {
 		return files;
 	}
 
-	return function (Config) {
+	return function (Config, Attack, Pickit, Pather, Town) {
 		let restart = false;
 		if (!Config.Development) throw Error('Nothing to develop'); // Nothing to develop
 		addEventListener('scriptmsg', function (data) {

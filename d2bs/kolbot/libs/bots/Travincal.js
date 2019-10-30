@@ -4,7 +4,7 @@
 *	@desc		kill Counncil members in Travincal
 */
 
-function Travincal(Config, _, Pickit) {
+function Travincal(Config, Attack, Pickit, Pather, Town) {
 	var i, orgX, orgY, coords;
 
 	this.buildList = function (checkColl) {
@@ -22,7 +22,7 @@ function Travincal(Config, _, Pickit) {
 		return monsterList;
 	};
 
-	Town.doChores();
+	Town();
 	Pather.journeyTo(83);
 
 	orgX = me.x;

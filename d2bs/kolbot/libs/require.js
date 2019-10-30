@@ -20,6 +20,10 @@ const require = (function (include, isIncluded, print, notify) {
 			return modules[packageName].exports;
 		}
 
+		if (field.hasOwnProperty('endsWith') && field.endsWith('.json')) { // Simply reads a json file
+			return modules[packageName] = File.open('libs/'+path + field, 0).readAllLines();
+		}
+
 		if (!isIncluded(path + field + '.js')) {
 			depth && notify && print('ÿc2Jaensterÿc0 ::    - loading dependency: ' + path + field);
 			!depth && notify && print('ÿc2Jaensterÿc0 :: Loading module: ' + path + field);

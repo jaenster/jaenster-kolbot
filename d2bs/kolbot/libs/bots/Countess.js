@@ -4,10 +4,10 @@
 *	@desc		kill The Countess and optionally kill Ghosts along the way
 */
 
-function Countess(Config, Attack) {
+function Countess(Config, Attack, Pickit, Pather, Town) {
 	var i, poi;
 
-	Town.doChores();
+	Town();
 
 	if (!Pather.journeyTo(sdk.areas.TowerCellarLvl5)) {
 		throw new Error("Failed to move to Countess");

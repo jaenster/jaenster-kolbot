@@ -4,8 +4,8 @@
 *	@desc		kill Izual
 */
 
-function Izual(Config) {
-	Town.doChores();
+function Izual(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!me.journeyToPreset(105, 1, 256)) {
 		throw new Error("Failed to move to Izual.");

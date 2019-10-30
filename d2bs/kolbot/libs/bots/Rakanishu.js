@@ -4,8 +4,8 @@
 *	@desc		kill Rakanishu and optionally Griswold
 */
 
-function Rakanishu(Config, Attack, Pickit) {
-	Town.doChores();
+function Rakanishu(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!me.journeyToPreset(4, 1, 737, 0, 0, false, true)) {
 		throw new Error("Failed to move to Rakanishu");

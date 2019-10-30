@@ -4,8 +4,8 @@
 *	@desc		clear Mausoleum
 */
 
-function Mausoleum(Config, Attack) {
-	Town.doChores();
+function Mausoleum(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!Pather.journeyTo(17, true)) {
 		throw new Error("Failed to move to Burial Grounds");

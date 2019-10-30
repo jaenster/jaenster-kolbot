@@ -4,8 +4,8 @@
 *	@desc		kill Snapchip and optionally clear Icy Cellar
 */
 
-function Snapchip(Config, Attack) {
-	Town.doChores();
+function Snapchip(Config, Attack, Pickit, Pather, Town) {
+	Town();
 	if (!me.journeyToPreset(119, 2, 397)) {
 		throw new Error("Failed to move to Snapchip Shatter");
 	}

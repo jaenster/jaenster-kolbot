@@ -8,7 +8,7 @@
  */
 
 
-function Rush(Config, Attack, Pickit) {
+function Rush(Config, Attack, Pickit, Pather, Town) {
 	const aloneInGame = function () {
 		for (let party = getParty(), acceptFirst; party && party.getNext();) if (party.name !== me.name) return false;
 		return true; // Yep
@@ -40,7 +40,7 @@ function Rush(Config, Attack, Pickit) {
 			let leader = portalTaker[questList.indexOf(number)], poi;
 			print('DOING QUEST -- ' + number + ' -- Portal taker ' + leader);
 			Team.broadcastInGame({rush: {doing: number, rusher: me.charname}});
-			Town.doChores();
+			Town();
 			switch (number) { // Going to the location
 				case sdk.quests.ForgottenTower: // Countress
 					Pather.journeyTo(sdk.areas.TowerCellarLvl5);
@@ -130,7 +130,7 @@ function Rush(Config, Attack, Pickit) {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////         rushee               /////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		const Quests = require('Quests');
+		const Quests = require('QuestEvents');
 
 		const rusher = questList.map(x => false);
 		const questStart = new (require('Events'))();

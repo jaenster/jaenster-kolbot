@@ -9,7 +9,7 @@ function Pindleskin(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
 
 	Town.goToTown(Config.Pindleskin.UseWaypoint ? undefined : 5);
-	Town.doChores();
+	Town();
 
 	if (Config.Pindleskin.UseWaypoint) {
 		Pather.useWaypoint(123);

@@ -106,7 +106,7 @@
 	module.exports.stats = { // Default stats
 		strength: [156, 1],
 		dexterity: [0, 0],
-		vitality: [200, 3], // Last but not least
+		vitality: [400, 3], // Last but not least
 		energy: [0, 0],
 	};
 

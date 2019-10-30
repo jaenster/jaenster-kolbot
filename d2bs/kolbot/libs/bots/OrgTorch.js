@@ -5,7 +5,7 @@
 *	@notes		Search for the word "Start" and follow the comments if you want to know what this script does and when.
 */
 
-function OrgTorch(Config, Attack) {
+function OrgTorch(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
 	const Storage = require('Storage');
 	this.doneAreas = [];
@@ -17,7 +17,7 @@ function OrgTorch(Config, Attack) {
 			Pather.usePortal(109);
 		}
 
-		Town.doChores();
+		Town();
 
 		if (!Config.OrgTorch.MakeTorch) {
 			return false;
@@ -128,7 +128,7 @@ function OrgTorch(Config, Attack) {
 			item3 = mode === 0 ?  me.findItem("pk3", 0) : me.findItem("mbr", 0);
 
 		Town.goToTown(5);
-		Town.doChores();
+		Town();
 
 		if (Town.openStash() && Cubing.emptyCube()) {
 			if (!Storage.Cube.MoveTo(item1) || !Storage.Cube.MoveTo(item2) || !Storage.Cube.MoveTo(item3)) {
