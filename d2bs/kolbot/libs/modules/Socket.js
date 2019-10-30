@@ -11,20 +11,9 @@
 	function Socket(hostname, port) {
 		typeof Socket.__socketCounter === 'undefined' && (Socket.__socketCounter = 0);
 
-		let buffer;
-		Object.defineProperty(this, 'buffer', {
-			get: function () {
-				return buffer;
-			},
-			set: function (obj) {
-				return buffer += obj && typeof obj === 'object' ? JSON.stringify(obj) : String(obj);
-			}
-		});
 
 
 		const myEvents = new Events;
-
-		this.buffer = '';
 		this.connect = () => (this.socket = buildinSock.open(hostname, port)) && this;
 
 		this.on = myEvents.on;
@@ -51,14 +40,13 @@
 		};
 
 		this.send = (data) => {
-			if (!data || !buffer || !this.socket) return;
+			if (!data || !this.socket) return;
 
 			try {
-				this.socket.send(data || buffer);
+				this.socket.send(data);
 			} catch (e) {
 				close();
 			}
-			buffer = '';
 		};
 
 		Worker.runInBackground['__socket__' + (++Socket.__socketCounter)] = () => this.recv() || this.send() || true;
