@@ -46,7 +46,7 @@
 *	quit - exit game
 */
 
-function Follower(Config) {
+function Follower(Config, Attack, Pickit, Pather, Town) {
 	var i, j, stop, leader, leaderUnit, charClass, piece, skill, result, unit, player, coord,
 		commanders = [Config.Leader],
 		attack = true,
@@ -833,7 +833,7 @@ WPLoop:
 		case "3":
 			if (me.inTown) {
 				say("Running town chores");
-				Town.doChores();
+				Town();
 				Town.move("portalspot");
 				say("Ready");
 			}

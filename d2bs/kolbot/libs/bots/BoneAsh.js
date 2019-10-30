@@ -4,8 +4,8 @@
 *	@desc		kill Bone Ash
 */
 
-function BoneAsh(Config, Attack, Pickit) {
-	Town.doChores();
+function BoneAsh(Config, Attack, Pickit, Pather, Town) {
+	Town();
 	Pather.journeyTo(sdk.areas.InnerCloister);
 
 	if (!Pather.moveTo(20047, 4898)) {

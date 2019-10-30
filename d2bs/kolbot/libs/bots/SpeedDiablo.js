@@ -2,7 +2,7 @@
  * @author Jaenster
  * @description An improved version of a diablo run.
  */
-function SpeedDiablo(Config, Attack, Pickit) {
+function SpeedDiablo(Config, Attack, Pickit, Pather, Town) {
 	const Promise = require('Promise'),
 		TownPrecast = require('TownPrecast'),
 		Precast = require('Precast');
@@ -100,14 +100,14 @@ function SpeedDiablo(Config, Attack, Pickit) {
 		// cast portal once close to star
 		new Promise(resolve => star.distance < 15 && resolve()).then(Pather.makePortal);
 
-		Town.doChores(); // Do the chores
+		Town(); // Do the chores
 		Pather.useWaypoint(107);
 		Precast();
 	} else {
 		// town precast if possible, or go bo
 		!TownPrecast() && Precast.outTown();
 
-		Town.doChores();
+		Town();
 		Town.goToTown(4); // make sure we really are in act 4
 		Town.move("portalspot");
 		print('wait for portal');

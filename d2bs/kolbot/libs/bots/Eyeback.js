@@ -5,7 +5,7 @@
  */
 
 function Eyeback(Config, Attack, Pickit, Pather, Town) {
-	Town.doChores();
+	Town();
 	if (!me.journeyToPreset(111, 1, 784)) {
 		throw new Error("Failed to move to Eyeback the Unleashed");
 	}

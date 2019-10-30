@@ -4,7 +4,7 @@
 *	@desc		Enchant other players, open cow portal and give waypoints on command
 */
 
-function Enchant(Config) {
+function Enchant(Config, Attack, Pickit, Pather, Town) {
 	var command, hostile, nick, spot, tick, s, m,
 		startTime = getTickCount(),
 		shitList = [],
@@ -431,7 +431,7 @@ MainLoop:
 			}
 		}
 
-		Town.doChores();
+		Town();
 		Town.goToTown(1);
 		Town.move("portalspot");
 
@@ -566,7 +566,7 @@ MainLoop:
 
 	addEventListener("chatmsg", ChatEvent);
 	addEventListener("gameevent", GreetEvent);
-	Town.doChores();
+	Town();
 	Town.goToTown(1);
 	Town.move("portalspot");
 

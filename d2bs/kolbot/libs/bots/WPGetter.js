@@ -1,5 +1,5 @@
-function WPGetter(Config, Attack, Pickit) {
-	Town.doChores();
+function WPGetter(Config, Attack, Pickit, Pather, Town) {
+	Town();
 	Town.goToTown(1);
 	Pather.getWP(me.area);
 

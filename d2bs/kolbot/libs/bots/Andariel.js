@@ -4,8 +4,8 @@
 *	@desc		kill Andariel
 */
 
-function Andariel(Config, Attack, Pickit) {
-	Town.doChores();
+function Andariel(Config, Attack, Pickit, Pather, Town) {
+	Town();
 	if (!Pather.journeyTo(sdk.areas.CatacombsLvl4)) {
 		throw Error('Failed to move to Andariel');
 	}

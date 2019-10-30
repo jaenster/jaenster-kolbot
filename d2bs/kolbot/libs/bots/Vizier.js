@@ -4,7 +4,7 @@
 *	@desc		kill Grand Vizier of Chaos
 */
 
-function Vizier(Config, Attack, Pickit) {
+function Vizier(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
 	var i, tick, seal;
 
@@ -32,7 +32,7 @@ function Vizier(Config, Attack, Pickit) {
 		return false;
 	};
 
-	Town.doChores();
+	Town();
 	Pather.useWaypoint(107);
 	Precast();
 

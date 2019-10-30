@@ -4,8 +4,8 @@
 *	@desc		kill Stormtree
 */
 
-function Stormtree(Config) {
-	Town.doChores();
+function Stormtree(Config, Attack, Pickit, Pather, Town) {
+	Town();
 
 	if (!Pather.journeyTo(78)) {
 		throw new Error("Failed to move to Stormtree");

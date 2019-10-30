@@ -269,7 +269,7 @@ function ShopBot(Config, Attack, Pickit, Pather, Town) {
 
 	this.buildPickList();
 	print("Shopbot: Pickit entries: " + this.pickEntries.length);
-	Town.doChores();
+	Town();
 
 	tickCount = getTickCount();
 

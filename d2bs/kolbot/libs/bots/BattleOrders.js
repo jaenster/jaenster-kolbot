@@ -4,7 +4,7 @@
 *	@desc		give or receive Battle Orders buff
 */
 
-function BattleOrders(Config) {
+function BattleOrders(Config, Attack, Pickit, Pather, Town) {
 	this.giveBO = function (list) {
 		var i, unit,
 			failTimer = 60,
@@ -30,7 +30,7 @@ function BattleOrders(Config) {
 		return true;
 	};
 
-	Town.doChores();
+	Town();
 
 	try {
 		Pather.useWaypoint(35, true); // catacombs

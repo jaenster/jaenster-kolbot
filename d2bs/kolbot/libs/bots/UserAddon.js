@@ -7,7 +7,7 @@
 *				Shows other players' gear.
 */
 
-function UserAddon(Config, Attack, Pickit) {
+function UserAddon(Config, Attack, Pickit, Pather, Town) {
 	var i, unit, title, dummy,
 		info = new UnitInfo(),
 		classes = ["Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"],

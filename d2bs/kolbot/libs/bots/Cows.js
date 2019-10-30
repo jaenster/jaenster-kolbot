@@ -4,7 +4,7 @@
  *    @desc        clear the Moo Moo Farm without killing the Cow King
  */
 
-function Cows(Config, Attack) {
+function Cows(Config, Attack, Pickit, Pather, Town) {
 	this.buildCowRooms = function () {
 		var i, j, room, kingPreset, badRooms, badRooms2,
 			finalRooms = [],

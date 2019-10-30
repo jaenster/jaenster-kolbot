@@ -4,7 +4,7 @@
 *	@desc		kill Mephisto
 */
 
-function Mephisto(Config, Attack, Pickit) {
+function Mephisto(Config, Attack, Pickit, Pather, Town) {
 	const TownPrecast = require('TownPrecast');
 	this.killMephisto = function () {
 		var i, angle, angles,

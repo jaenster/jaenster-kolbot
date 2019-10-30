@@ -4,7 +4,7 @@
 *	@desc		help another player kill bosses or clear areas
 */
 
-function MFHelper(Config, Attack) {
+function MFHelper(Config, Attack, Pickit, Pather, Town) {
 	var i, player, playerAct, split,
 		oldCommand = "",
 		command = "";

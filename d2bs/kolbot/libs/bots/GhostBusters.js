@@ -4,7 +4,7 @@
 *	@desc		who you gonna call?
 */
 
-function GhostBusters(Config, Attack) {
+function GhostBusters(Config, Attack, Pickit, Pather, Town) {
 	this.clearGhosts = function () {
 		var room, result, rooms, monster, monList;
 
@@ -148,7 +148,7 @@ function GhostBusters(Config, Attack) {
 		sequence = ["cellar", "jail", "cathedral", "tombs", "flayerDungeon", "crystalinePassage", "glacialTrail", "icyCellar"];
 
 	for (i = 0; i < sequence.length; i += 1) {
-		Town.doChores();
+		Town();
 
 		try {
 			this[sequence[i]]();

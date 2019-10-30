@@ -4,7 +4,7 @@
 *	@desc		clear Chaos Sanctuary and kill Diablo
 */
 
-function Diablo(Config, Attack) {
+function Diablo(Config, Attack, Pickit, Pather, Town) {
 	// Sort function
 	this.sort = function (a, b) {
 		if (Config.BossPriority) {
@@ -423,7 +423,7 @@ function Diablo(Config, Attack) {
 	Pather._teleport = Pather.teleport;
 
 	// start
-	Town.doChores();
+	Town();
 	Pather.useWaypoint(Config.RandomPrecast ? "random" : 107);
 	require('Precast')()
 
