@@ -384,6 +384,35 @@
 			!this.getState(104) && // nodraw
 			!this.getState(107) && // shatter
 			!this.getState(118);
-	}
+	};
+
+	Object.defineProperty(Unit.prototype, 'partied', {
+		get: function () {
+			if (this.type > sdk.unittype.Monsters) return false; // Only players can be a member of a party, or pets/merc's (aka monsters)
+
+			let self = this;
+			if (this.type === sdk.unittype.Monsters) {
+				// In case this monster is owned by someone, it can be a party member
+				const parent = this.getParent();
+				if (!parent || parent.type !== sdk.unittype.Player) return false; // Doesn't have an (player) parent.
+
+				self = parent; // we want to know if we are partied with the owner of this pet/merc
+			}
+
+			// get party object, and my party
+			const party = getParty(), myPartyId = (party || {partyid: 0}).partyid;
+			if (!party || myPartyId === 0xFFFF) return false; // We are not in the same party, if im not in a party
+
+			for (; party && party.getNext();) if (party.name === self.name && myPartyId === party.partyid) return true;
+
+			return false;
+		}
+	});
+
+	Object.defineProperty(Unit.prototype, 'allies', {
+		get: function () {
+			return ([sdk.unittype.Player,sdk.unittype.Monsters].indexOf(this.type)+1 && this.partied);
+		}
+	});
 
 })(require, delay);
