@@ -17,7 +17,9 @@
                 sdk.skills[i] === result.skill && (skillName = i);
             }
 
-            let mySpot = self.calculateBestSpot(spot, Skills.range[result.skill]);
+            const merc = me.getMerc(),
+                mySpot = self.calculateBestSpot(spot, Skills.range[result.skill]);
+
             mySpot && mySpot.moveTo();
             !mySpot && me.moveTo(spot.x, spot.y);
 
@@ -43,11 +45,15 @@
                     // Comes quite specific
                     break;
 
-
                 default:
                     doAttack = (estimated < 4e3);
                     break;
             }
+
+
+			// in case our merc moves away from the spot.
+			merc && !!merc.filter(item => item.getPrefix(sdk.locale.items.Infinity)).length && new PacketBuilder().byte(0x47).dword(merc.gid).word(spot.x, 0, spot.y, 0).send();
+
             if (doAttack) {
                 me.overhead('PreAttacking with ' + skillName + ' -- ' + result.skill);
                 me.cast(result.skill, undefined, spot.x, spot.y);
