@@ -399,6 +399,8 @@
 				self = parent; // we want to know if we are partied with the owner of this pet/merc
 			}
 
+			if (self === me) return true; // we are always "partied" with ourselfs (trick for our own merc)
+
 			// get party object, and my party
 			const party = getParty(), myPartyId = (party || {partyid: 0}).partyid;
 			if (!party || myPartyId === 0xFFFF) return false; // We are not in the same party, if im not in a party
