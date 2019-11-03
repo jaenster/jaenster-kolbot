@@ -60,6 +60,7 @@ function main() {
 		pass: '',
 	};
 	require('debug');
+	require('Config').call();
 
 	const LocationEvents = require('LocationEvents'),
 		Promise = require('Promise'),

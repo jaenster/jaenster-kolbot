@@ -7,4 +7,5 @@
 	Scripts.MapHack = true;
 	Config.PickitFiles.push("pots.nip");
 	module.exports = Scripts;
+	require('PacketSnooper');
 })(module, require, require('Config'), require('AutoConfig'), require('Config').StarterConfig, {});
