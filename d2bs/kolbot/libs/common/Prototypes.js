@@ -33,23 +33,27 @@ String.prototype.trim = function () {
 };
 
 // Check if unit is idle
-Unit.prototype.__defineGetter__("idle",
-	function () {
+Object.defineProperty(Unit.prototype, "idle", {
+	get: function () {
 		if (this.type > 0) {
 			throw new Error("Unit.idle: Must be used with player units.");
 		}
 
 		return (this.mode === 1 || this.mode === 5 || this.mode === 17); // Dead is pretty idle too
-	});
+	},
+	enumerable: true
+});
 
-Unit.prototype.__defineGetter__("gold",
-	function () {
+Object.defineProperty(Unit.prototype, "gold", {
+	get: function () {
 		return this.getStat(14) + this.getStat(15);
-	});
+	},
+	enumerable: true
+});
 
 // Death check
-Unit.prototype.__defineGetter__("dead",
-	function () {
+Object.defineProperty(Unit.prototype, "dead", {
+	get: function () {
 		switch (this.type) {
 		case 0: // Player
 			return this.mode === 0 || this.mode === 17;
@@ -58,32 +62,40 @@ Unit.prototype.__defineGetter__("dead",
 		default:
 			return false;
 		}
-	});
+	},
+	enumerable: true
+});
 
 // Check if unit is in town
-Unit.prototype.__defineGetter__("inTown",
-	function () {
+Object.defineProperty(Unit.prototype, "inTown", {
+	get: function () {
 		if (this.type > 0) {
 			throw new Error("Unit.inTown: Must be used with player units.");
 		}
 
 		return [1, 40, 75, 103, 109].indexOf(this.area) > -1;
-	});
+	},
+	enumerable: true
+});
 
 // Check if party unit is in town
-Party.prototype.__defineGetter__("inTown",
-	function () {
+Object.defineProperty(Party.prototype, "inTown", {
+	get: function () {
 		return [1, 40, 75, 103, 109].indexOf(this.area) > -1;
-	});
+	},
+	enumerable: true
+});
 
-Unit.prototype.__defineGetter__("attacking",
-	function () {
+Object.defineProperty(Unit.prototype, "attacking", {
+	get: function () {
 		if (this.type > 0) {
 			throw new Error("Unit.attacking: Must be used with player units.");
 		}
 
 		return [7, 8, 10, 11, 12, 13, 14, 15, 16, 18].indexOf(this.mode) > -1;
-	});
+	},
+	enumerable: true
+});
 
 // Open NPC menu
 Unit.prototype.openMenu = function (addDelay) {
@@ -228,8 +240,8 @@ Unit.prototype.buy = function (shiftBuy, gamble) {
 };
 
 // Item owner name
-Unit.prototype.__defineGetter__("parentName",
-	function () {
+Object.defineProperty(Unit.prototype, "parentName", {
+	get: function () {
 		if (this.type !== 4) {
 			throw new Error("Unit.parentName: Must be used with item units.");
 		}
@@ -241,7 +253,9 @@ Unit.prototype.__defineGetter__("parentName",
 		}
 
 		return false;
-	});
+	},
+	enumerable: true
+});
 
 // You MUST use a delay after Unit.sell() if using custom scripts. delay(500) works best, dynamic delay is used when identifying/selling (500 - item id time)
 Unit.prototype.sell = function () {
@@ -503,8 +517,8 @@ Unit.prototype.getSuffix = function (id) {
 	return false;
 };
 
-Unit.prototype.__defineGetter__("dexreq",
-	function () {
+Object.defineProperty(Unit.prototype, "dexreq", {
+	get: function () {
 		var finalReq,
 			ethereal = this.getFlag(0x400000),
 			reqModifier = this.getStat(91),
@@ -517,10 +531,12 @@ Unit.prototype.__defineGetter__("dexreq",
 		}
 
 		return Math.max(finalReq, 0);
-	});
+	},
+	enumerable: true
+});
 
-Unit.prototype.__defineGetter__("strreq",
-	function () {
+Object.defineProperty(Unit.prototype, "strreq", {
+	get: function () {
 		var finalReq,
 			ethereal = this.getFlag(0x400000),
 			reqModifier = this.getStat(91),
@@ -533,10 +549,12 @@ Unit.prototype.__defineGetter__("strreq",
 		}
 
 		return Math.max(finalReq, 0);
-	});
+	},
+	enumerable: true
+});
 
-Unit.prototype.__defineGetter__('itemclass',
-	function () {
+Object.defineProperty(Unit.prototype, 'itemclass', {
+	get: function () {
 		if (getBaseStat(0, this.classid, 'code') === undefined) {
 			return 0;
 		}
@@ -550,7 +568,9 @@ Unit.prototype.__defineGetter__('itemclass',
 		}
 
 		return 0;
-	});
+	},
+	enumerable: true
+});
 
 Unit.prototype.getStatEx = function (id, subid) {
 	var i, temp, rval, regex;
@@ -1257,8 +1277,11 @@ Unit.prototype.castChargedSkill = function (...args) {
 	return false;
 };
 
-PresetUnit.prototype.__defineGetter__('unit', function () {
-	return getUnits(this.type, this.id).first();
+Object.defineProperty(PresetUnit.prototype, 'unit', {
+	get: function () {
+		return getUnits(this.type, this.id).first();
+	},
+	enumerable: true
 });
 
 /**
@@ -1283,7 +1306,8 @@ function getUnits(...args) {
 Object.defineProperty(Unit.prototype, 'distance', {
 	get: function() {
 		return getDistance(me,this);
-	}
+	},
+	enumerable: true
 });
 
 
@@ -1333,10 +1357,6 @@ if (!Array.prototype.findIndex) {
 		writable: true
 	});
 }
-
-PresetUnit.prototype.__defineGetter__('unit', function () {
-	return getUnits(this.type, this.id).first();
-});
 
 String.prototype.lcsGraph = function (compareToThis) {
 	if (!this.length || !compareToThis || !compareToThis.length) {

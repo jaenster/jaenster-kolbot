@@ -11,8 +11,6 @@
 	function Socket(hostname, port) {
 		typeof Socket.__socketCounter === 'undefined' && (Socket.__socketCounter = 0);
 
-
-
 		const myEvents = new Events;
 		this.connect = () => (this.socket = buildinSock.open(hostname, port)) && this;
 

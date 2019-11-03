@@ -18,7 +18,10 @@
 			me.gametype !== 0 && me.weaponswitch !== result.slot && me.switchWeapons(result.slot);
 
 			print('Precasting ' + getSkillById(result.skillId) + ' on slot ' + result.slot);
-			me.cast(result.skillId);
+			if (result.skillId === sdk.skills.Enchant) { // Cast enchant on everyone that is a party member
+				return getUnits(-1).filter(unit=>unit.allies && unit.getState(sdk.states.Enchant)).cast(result.skillId);
+			}
+			return me.cast(result.skillId);
 		});
 
 		me.switchWeapons(beforeSlot);
@@ -49,6 +52,9 @@
 				// In case no function is given, see if we have the state
 				return undefined;
 
+			case typeof what.skillId === sdk.skills.Enchant:
+				// If any monster/unit around us is in enchant-less, return true.
+				return !!getUnits(-1).filter(unit=>unit.allies && unit.getState(sdk.states.Enchant)).length;
 			case typeof what.skillId === 'number' || Array.isArray(what.skillId):
 				// If skillId is an array, it can, for example the frozen armor / chilling armor combo,
 				// we dont need to re-pre-cast it if either state is set. So cast it to an array and loop over it,
