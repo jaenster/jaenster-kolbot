@@ -7,6 +7,8 @@
 			return true;
 		}
 
+		while(typeof me !== 'object') delay(10);
+
 		let originalSlot = this.weaponswitch;
 
 

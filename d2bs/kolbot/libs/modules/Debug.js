@@ -1,5 +1,5 @@
 /**
- * @description Ability to restart D2BotAuto.dbj, and in the feature, default.dbj
+ * @description Ability to restart D2BotAuto.js, and in the feature, default.dbj
  * @author Jaenster
  */
 
@@ -27,7 +27,7 @@
 		let passTrough = {};
 		// Just load this as an thread
 		const Worker = require('Worker');
-		// Some debug function, reload D2BotAuto.dbj
+		// Some debug function, reload D2BotAuto.js
 		Worker.runInBackground.reset = (new function () {
 			let controlDown = false, reload = false;
 
@@ -49,10 +49,10 @@
 			this.update = function () {
 				if (reload) {
 					let script;
-					while ((script = getScript('D2BotAuto.dbj'))) {
+					while ((script = getScript('D2BotAuto.js'))) {
 						script.stop();
 					}
-					load('D2BotAuto.dbj');
+					load('D2BotAuto.js');
 					reload = false;
 
 					delay(100); // wait a bit

@@ -177,7 +177,7 @@
 			}
 		}
 
-		return true;
+		return this;
 	};
 	const Town = require('Town');
 	let check = getTickCount();

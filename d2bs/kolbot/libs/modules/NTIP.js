@@ -3,7 +3,7 @@
 [Item-parser Syntax Information]
 
 1. [Keyword] separates into two groups
-   - [Property Keywords] : [Type], [Name], [Class], [Quality], [Flag], [Level], [Prefix], [Suffix]
+   - [Property Keywords] : [Type], [Name], [Class], [Quality], [Flag], [Level], [Prefix], [Suffix], [Skin]
    - [Stat Keywords] : [Number or Alias]
 
 2. [Keyword] must be surrounded by '[' and ']'
@@ -363,6 +363,10 @@
 
 						p_end += 2;
 
+                		break;
+            		case 'skin':
+                		p_result[0] += "item.skinCode";
+
 						break;
 					default:
 						Misc.errorReport("Unknown property: " + property + " File: " + info.file + " Line: " + info.line);
@@ -457,6 +461,16 @@
 						case 'prefix':
 						case 'suffix':
 							p_result[0] += "\"" + p_keyword + "\")";
+
+                    		break;
+						case 'skin':
+							if (NTIPAliasSkin[p_keyword] === undefined) {
+								Misc.errorReport("Unknown skin: " + p_keyword + " File: " + info.file + " Line: " + info.line);
+
+								return false;
+							}
+
+							p_result[0] += "\"" + NTIPAliasSkin[p_keyword] + "\"";
 
 							break;
 					}
