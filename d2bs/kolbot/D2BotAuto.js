@@ -48,7 +48,7 @@ const StarterConfig = {
 	CharacterDifference: 0,
 };
 
-print('ÿc2Jaensterÿc0 :: Started D2BotAuto.dbj');
+print('ÿc2Jaensterÿc0 :: Started D2BotAuto.js');
 
 
 include('require.js');
