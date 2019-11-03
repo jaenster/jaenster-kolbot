@@ -11,6 +11,7 @@
 	const PRESET_SUPER_COUNT = 66;
 	const PRESET_PLACE_COUNT = 37;
 	const AREA_INDEX_COUNT = 137;
+	const MISSILES_COUNT = 385;
 	const SUPER = [0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 0, 1, 4, 0, 2, 3, 1, 0, 1, 1, 0, 0, 0, 1, 3, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 5, 1, 1, 1, 1, 3];
 	const AREA_LOCALE_STRING = [5389, 5055, 5054, 5053, 5052, 5051, 5050, 5049, 5048, 5047, 5046, 5045, 5044, 5043, 5042, 5041, 5040, 5039, 5038, 5037, 5036, 5035, 5034, 5033, 5032, 5031, 5030, 5029, 5028, 5027, 5026, 5025, 5024, 5023, 5022, 5021, 5020, 5019, 5018, 788, 852, 851, 850, 849, 848, 847, 846, 845, 844, 843, 842, 841, 840, 839, 838, 837, 836, 835, 834, 833, 832, 831, 830, 829, 828, 827, 826, 826, 826, 826, 826, 826, 826, 825, 824, 820, 819, 818, 817, 816, 815, 814, 813, 812, 810, 811, 809, 808, 806, 805, 807, 804, 845, 844, 803, 802, 801, 800, 799, 798, 797, 796, 795, 790, 792, 793, 794, 791, 789, 22646, 22647, 22648, 22649, 22650, 22651, 22652, 22653, 22654, 22655, 22656, 22657, 22658, 22659, 22660, 22662, 21865, 21866, 21867, 22663, 22664, 22665, 22667, 22666, 5389, 5389, 5389, 5018];
 	const MONSTER_KEYS = [
@@ -120,6 +121,10 @@
 				Min: getBaseStat('monstats', index, 'PartyMin'),
 				Max: getBaseStat('monstats', index, 'PartyMax')
 			}),
+			Velocity: getBaseStat('monstats', index, 'Velocity'),
+			Run: getBaseStat('monstats', index, 'Run'),
+			SizeX: getBaseStat('monstats', index, 'SizeX'),
+			SizeY: getBaseStat('monstats', index, 'SizeY'),
 		});
 	}
 
@@ -180,6 +185,28 @@
 	};
 
 //(PresetMonsters);
+
+	/**
+	 *  MissilesData
+	 */
+
+	var MissilesData = Array(MISSILES_COUNT);
+
+	for (let i = 0; i < MissilesData.length; i++) {
+		let index = i;
+		MissilesData[i] = ({
+			Index: index,
+			ClassID: index,
+			InternalName: getBaseStat('missiles', index, 'Missile'),
+			Velocity: getBaseStat('missiles', index, 'Vel'),
+			VelocityMax: getBaseStat('missiles', index, 'MaxVel'),
+			Acceleration: getBaseStat('missiles', index, 'Accel'),
+			Range: getBaseStat('missiles', index, 'Range'),
+			Size: getBaseStat('missiles', index, 'Size'),
+		});
+	}
+
+//(MissilesData);
 
 	/**
 	 *  AreaData[areaID]
@@ -1336,6 +1363,7 @@
 	};
 
 // Export data
+	GameData.MissilesData = MissilesData;
 	GameData.AreaData = AreaData;
 	GameData.isEnemy = isEnemy;
 	GameData.isAlive = isAlive;
