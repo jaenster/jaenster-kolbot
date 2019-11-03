@@ -62,7 +62,8 @@ var StarterConfig = {
 	ConnectingTimeout: 20, // Seconds to wait before cancelling the 'Connecting...' screen
 	PleaseWaitTimeout: 10, // Seconds to wait before cancelling the 'Please Wait...' screen
 	WaitInLineTimeout: 60, // Seconds to wait before cancelling the 'Waiting in Line...' screen
-	GameDoesNotExistTimeout: 30 // Seconds to wait before cancelling the 'Game does not exist.' screen
+	GameDoesNotExistTimeout: 30, // Seconds to wait before cancelling the 'Game does not exist.' screen
+	PublicJoinMaxElapsedTime: -1 // If game elapsed time is more than this value, bot won't join. Set to -1 to disable elapsed time checking.
 };
 
 /**
@@ -516,13 +517,22 @@ function locationAction(location) {
 						return b.players - a.players;
 					});
 
-					for (i = 0; i < gameList.length; i += 1) {
+					for (i = 0; i < gameList.length && !gameToJoin; i++) {
 						if (doneGames.indexOf(gameList[i].gameName) === -1 && includeCheck(gameList[i].gameName) && excludeCheck(gameList[i].gameName)) {
-							print("ÿc7Game: " + gameList[i].gameName + ", Players: " + gameList[i].players);
-
-							gameToJoin = gameList[i].gameName;
-
-							break;
+							if (StarterConfig.PublicJoinMaxElapsedTime > 0) {
+		                        var elapsedTime = ControlAction.getGameElapsedTime(gameList[i].gameName);
+		                        if (elapsedTime > -1 && elapsedTime < StarterConfig.PublicJoinMaxElapsedTime) {
+		                            print("ÿc7Game: " + gameList[i].gameName + ", Players: " + gameList[i].players + ", Elapsed Time: " + elapsedTime + "sec");
+		                            gameToJoin = gameList[i].gameName;
+		                        }
+		                        else {
+		                            delay(rand(200,1000));
+		                        }
+		                    }
+		                    else {
+		                        print("ÿc7Game: " + gameList[i].gameName + ", Players: " + gameList[i].players);
+		                        gameToJoin = gameList[i].gameName;
+		                    }
 						}
 					}
 
