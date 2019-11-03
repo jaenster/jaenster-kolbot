@@ -162,12 +162,11 @@
 						return false; // dont block the packet
 					}
 				}
-
-				return false; // dont block the packet
 			} catch (e) {
 				print(e);
 				print(e.message);
 			}
+			return false; // dont block the packet
 		});
 
 		while (true) delay(1000);
