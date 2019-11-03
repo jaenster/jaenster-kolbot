@@ -1,0 +1,386 @@
+Missile	Id	Vel	MaxVel	Accel	Range	LevRange	Light	Flicker	Red	Green	Blue	InitSteps	Activate	LoopAnim	CelFile	AnimLen	RandStart	SubLoop	SubStart	SubStop	CollideType	CollideKill	CollideFriend	LastCollide	Collision	ClientSend	NextHit	NextDelay	Size	CanDestroy	ToHit	AlwaysExplode	Explosion	NeverDup	ReturnFire	GetHit	KnockBack	Trans	Qty	Pierce	Param1	Param1 Comment	Param2	Param2 Comment	SpecialSetup	Open	Beta	Skill	HitShift	SrcDamage	MinDamage	MaxDamage	LevDamage	EType	EMin	Emax	ELevel	ELen	ELevelLen	HitClass	NumDirections	LocalBlood
+Arrow	0	24	24	0	50	0	0	0	255	255	255	1	0	0	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	32	0
+Javelin	1	24	24	0	40	0	0	0	255	255	255	0	0	0	Javelin	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	6	32	0
+Bighead1	2	8	8	0	40	0	5	0	143	143	255	3	0	1	BigheadLightningMissile	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	3	7	4	0	0	0	1	0
+Bighead2	3	12	12	0	40	0	5	0	143	143	255	3	0	1	BigheadLightningMissile	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	3	6	4	0	0	0	1	0
+Bighead3	4	14	14	0	40	0	5	0	143	143	255	3	0	1	BigheadLightningMissile	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	2	4	3	0	0	0	1	0
+Bighead4	5	10	10	0	40	0	5	0	143	143	255	3	0	1	BigheadLightningMissile	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	2	5	3	0	0	0	1	0
+Bighead5	6	16	16	0	40	0	5	0	143	143	255	3	0	1	BigheadLightningMissile	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	6	15	5	0	0	0	1	0
+Spike1	7	10	10	0	40	0	0	0	255	255	255	1	0	1	SpikeFiendMissle	2	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	2	3	0	0	0	0	0	0	10	32	0
+Spike2	8	13	13	0	40	0	0	0	255	255	255	1	0	1	SpikeFiendMissle	2	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	3	3	0	0	0	0	0	0	10	32	0
+Spike3	9	16	16	0	40	0	0	0	255	255	255	1	0	1	SpikeFiendMissle	2	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	4	3	0	0	0	0	0	0	10	32	0
+Spike4	10	20	20	0	40	0	0	0	255	255	255	1	0	1	SpikeFiendMissle	2	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	4	4	0	0	0	0	0	0	10	32	0
+Spike5	11	24	24	0	40	0	0	0	255	255	255	1	0	1	SpikeFiendMissle	2	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	2	7	5	0	0	0	0	0	0	10	32	0
+FireArrow	12	24	24	0	40	0	5	0	255	178	64	1	0	1	FireArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	1	1	0	none	0	none	0	1	1	7	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+CRArrow1	13	14	14	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	3	3	0	0	0	0	0	0	10	32	0
+CRArrow2	14	16	16	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	4	4	0	0	0	0	0	0	10	32	0
+CRArrow3	15	18	18	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	2	4	4	0	0	0	0	0	0	10	32	0
+CRArrow4	16	20	20	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	2	5	4	0	0	0	0	0	0	10	32	0
+CRArrow5	17	24	24	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	3	8	5	0	0	0	0	0	0	10	32	0
+Blood1	18	3	3	0	128	0	0	0	255	255	255	0	0	0	BloodSmall01	9	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	8	1
+Blood2	19	4	4	0	128	0	0	0	255	255	255	0	0	0	BloodSmall02	9	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	8	1
+BigBlood1	20	3	3	0	128	0	0	0	255	255	255	0	0	0	BloodLarge01	9	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	8	1
+BigBlood2	21	4	4	0	128	0	0	0	255	255	255	0	0	0	BloodLarge02	9	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	8	1
+ShaFire1	22	8	8	0	40	0	5	0	255	178	64	1	0	1	ShamanFireball	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	1	4	4	0	0	0	16	0
+ShaFire2	23	10	10	0	40	0	5	0	255	178	64	1	0	1	ShamanFireball	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	2	6	4	0	0	0	16	0
+ShaFire3	24	12	12	0	40	0	5	0	255	178	64	1	0	1	ShamanFireball	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	2	7	4	0	0	0	16	0
+ShaFire4	25	16	16	0	40	0	5	0	255	178	64	1	0	1	ShamanFireball	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	2	8	4	0	0	0	16	0
+ShaFire5	26	20	20	0	40	0	5	0	255	178	64	1	0	1	ShamanFireball	3	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	8	14	5	0	0	0	16	0
+MagicArrow	27	24	24	0	40	0	3	0	255	255	255	1	0	1	SafeArrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	6	0	0	0	0	0	0	0	0	0	0	0	10	32	0
+IceArrow	28	24	24	0	40	0	5	0	81	81	255	1	0	1	IceArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	1	1	0	none	0	none	0	1	1	21	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+FireExplode	29	0	0	0	12	0	13	0	255	178	64	0	0	0	FireArrowExplode2	12	5	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+IceExplode	30	0	0	0	16	0	11	0	81	81	255	0	0	0	IceArrowExplode	16	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Bolt	31	24	24	0	50	0	0	0	255	255	255	1	0	0	XBowBolt	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	32	0
+Andrial	32	15	15	0	40	0	0	0	255	255	255	3	0	1	AndarielSpell	24	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	193	103	0	none	0	1	1	0	0	0	1792	2560	1280	5	32	64	32	400	0	0	1	0
+BigHeadExp	33	0	0	0	6	0	8	0	143	143	255	0	0	0	BigheadLightningExplosion	7	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ShamanExp	34	0	0	0	11	0	8	0	255	178	64	0	0	0	ShamanFireballExplodeFinal	12	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ThrowAxe	35	24	24	0	20	0	0	0	255	255	255	1	0	1	MissileHandAxe	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	2	32	0
+ThrowKnife	36	24	24	0	20	0	0	0	255	255	255	1	0	0	MissileDagger	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	6	32	0
+Glaive	37	24	24	0	40	0	0	0	255	255	255	0	0	0	Glaive	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	6	32	0
+PoisonJav	38	24	24	0	15	0	0	0	128	255	128	0	0	0	Javelin	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	15	0	0	0	0	0	0	0	0	0	0	0	6	32	0
+PoisonJavCloud	39	0	0	0	60	0	0	0	128	255	128	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	1	1	15	0	-1	0	0	0	0	0	0	0	0	0	6	8	0
+ColdArrow	40	24	24	0	20	0	5	0	81	81	255	1	0	1	IceArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	1	1	0	none	0	none	0	1	1	11	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+ExplodingArrow	41	24	24	0	40	0	5	0	255	178	64	1	0	1	FireArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	1	1	3	Radius	0	none	0	1	1	16	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+ExplodingArrowExplode	42	0	0	0	16	0	15	0	255	178	64	0	0	0	ExpArrowExplode	16	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+PlagueJavelin	43	24	24	0	15	0	4	0	128	255	128	0	0	0	Javelin	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	1	1	0	none	0	none	0	0	0	25	0	0	0	0	0	0	0	0	0	0	0	6	32	0
+OilPotion	44	16	16	0	30	0	0	0	255	128	128	0	0	0	mslops	8	0	0	0	0	6	1	0	1	0	0	0	0	1	0	0	1	0	0	1	1	0	0	1	1	2	Radius	0	none	1	1	1	0	8	0	2	5	0	1	3	5	0	0	0	0	1	0
+ExplosivePotion	45	16	16	0	30	0	0	0	255	128	128	0	0	0	mslopm	8	0	0	0	0	6	1	0	1	0	0	0	0	1	0	0	1	0	0	1	1	0	0	1	1	3	Radius	0	none	1	1	1	0	8	0	5	7	0	1	6	8	0	0	0	0	1	0
+FulminatingPotion	46	16	16	0	30	0	0	0	255	128	128	0	0	0	mslopl	8	0	0	0	0	6	1	0	1	0	0	0	0	1	0	0	1	0	0	1	1	0	0	1	1	6	Radius	0	none	1	1	1	0	8	0	7	10	0	1	9	10	0	0	0	0	1	0
+RancidGasPotion	47	16	16	0	30	0	0	0	128	255	128	0	0	0	mslgps	8	0	0	0	0	6	1	0	1	0	0	0	0	1	0	0	1	0	0	1	1	0	0	1	1	30	Poison Length	0	none	1	1	1	0	1	0	0	0	0	5	24	24	0	150	0	0	1	0
+ChokingGasPotion	48	16	16	0	30	0	0	0	128	255	128	0	0	0	mslgpm	8	0	0	0	0	6	1	0	1	0	0	0	0	1	0	0	1	0	0	1	1	0	0	1	1	60	Poison Length	0	none	1	1	1	0	1	0	0	0	0	5	48	48	0	200	0	0	1	0
+StranglingGasPotion	49	16	16	0	30	0	0	0	128	255	128	0	0	0	mslgpl	8	0	0	0	0	6	1	0	1	0	0	0	0	1	0	0	1	0	0	1	1	0	0	1	1	90	Poison Length	0	none	1	1	1	0	1	0	0	0	0	5	72	72	0	300	0	0	1	0
+Not Used	50	0	0	0	0	0	0	0	255	255	255	0	0	0	null	2	0	0	0	0	3	1	0	1	0	0	0	0	1	0	0	0	0	0	1	1	0	0	1	1	0	acid (destroys AC or dur)	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ExplosivePotionExp	51	0	0	0	12	0	13	0	255	178	64	0	0	0	PotionExplode	29	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	2	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ExplosivePotionDebris1	52	0	0	0	0	0	0	0	255	255	255	0	0	0	PotionExplodeDebris01	29	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ExplosivePotionDebris2	53	0	0	0	0	0	0	0	255	255	255	0	0	0	PotionExplodeDebris02	29	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ExplosivePotionDebris3	54	0	0	0	0	0	0	0	255	255	255	0	0	0	PotionExplodeDebris03	29	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HolyBolt	55	20	20	0	50	0	7	0	222	222	255	1	0	1	HolyBoltMissile	16	0	0	0	0	3	1	1	1	0	0	0	0	1	0	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	101	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+ChargedBolt	56	12	12	0	98	0	3	1	255	255	255	1	0	1	ChargedBolt	10	0	1	2	8	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	38	0	0	0	0	0	0	0	0	0	0	0	64	16	0
+SanctuaryBolt	57	0	0	0	14	0	0	0	222	222	255	0	0	1	Gleam	8	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+FireBolt	58	20	20	0	50	0	7	0	255	178	64	1	0	1	Firebolt	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	36	0	0	0	0	0	0	0	0	0	0	0	0	16	0
+IceBolt	59	12	12	0	50	0	7	0	81	81	255	1	0	1	Icebolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	39	0	0	0	0	0	0	0	0	0	0	0	0	16	0
+InfernoFlame1	60	12	12	0	30	0	5	0	255	178	64	1	0	0	Flamethrower	15	0	0	0	0	3	0	0	0	2	0	0	0	1	1	0	0	0	1	1	1	0	1	0	1	8	"Mana Use, 16ths."	7	Minimum range	0	1	1	41	0	0	0	0	0	0	0	0	0	0	0	32	1	0
+InfernoFlame2	61	12	12	0	30	0	5	0	255	178	64	1	0	0	Flamethrower2	15	0	0	0	0	3	0	0	0	2	0	0	0	1	1	0	0	0	1	1	1	0	1	0	1	8	"Mana Use, 16ths."	7	Minimum range	0	1	1	41	0	0	0	0	0	0	0	0	0	0	0	32	1	0
+FireBall	62	20	20	0	50	0	7	0	255	178	64	1	0	1	Fireball	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	3	Radius	0	none	0	1	1	47	0	0	0	0	0	0	0	0	0	0	0	0	16	0
+Mummy1	63	5	5	0	24	0	0	0	255	255	255	0	0	0	GreaterMummyBreath	24	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	0	1	0	1	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	0	0	0	5	9	9	3	100	0	0	8	0
+Mummy2	64	5	5	0	24	0	0	0	255	255	255	0	0	0	GreaterMummyBreath	24	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	0	1	0	1	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	0	0	0	5	9	9	3	200	0	0	8	0
+Mummy3	65	5	5	0	24	0	0	0	255	255	255	0	0	0	GreaterMummyBreath	24	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	0	1	0	1	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	0	0	0	5	9	9	4	300	0	0	8	0
+Mummy4	66	5	5	0	24	0	0	0	255	255	255	0	0	0	GreaterMummyBreath	24	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	0	1	0	1	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	0	0	0	5	9	9	4	400	0	0	8	0
+Blaze	67	0	0	0	90	25	5	1	255	178	64	0	0	1	groundFireBig	37	0	1	12	36	3	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	46	0	0	0	0	0	0	0	0	0	0	0	32	1	0
+FirewallMaker	68	12	12	0	7	2	8	0	255	178	64	0	0	1	groundFireBig	2	0	1	1	2	8	0	0	1	1	1	0	0	1	1	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+Firewall	69	0	0	0	90	25	5	1	255	178	64	0	0	1	groundFireBig	37	0	1	12	36	3	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	0	0	51	0	0	0	0	0	0	0	0	0	0	0	32	1	0
+GooSpit1	70	10	10	0	24	0	0	0	255	255	255	3	0	0	SandMaggotGooSpit	24	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	1	3	3	5	4	4	3	200	0	176	16	0
+GooSpit2	71	10	10	0	24	0	0	0	255	255	255	3	0	0	SandMaggotGooSpit	24	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	2	3	3	5	5	5	3	300	0	176	16	0
+GooSpit3	72	10	10	0	24	0	0	0	255	255	255	3	0	0	SandMaggotGooSpit	24	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	2	4	3	5	6	6	3	400	0	176	16	0
+GooSpit4	73	10	10	0	24	0	0	0	255	255	255	3	0	0	SandMaggotGooSpit	24	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	2	5	4	5	7	7	3	500	0	176	16	0
+GooSpit5	74	10	10	0	24	0	0	0	255	255	255	3	0	0	SandMaggotGooSpit	24	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	0	1	0	Client No Velocity	0	none	0	1	1	0	1	0	3	5	4	5	8	8	3	600	0	176	16	0
+GooSplat	75	0	0	0	15	0	0	0	255	255	255	0	0	0	GooHit	15	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	0	1	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Sand Pile	76	0	0	0	128	0	0	0	255	255	255	0	0	0	SandMaggotSandPile	1	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	1	0	Client No Velocity	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	8	0
+UnHolyBolt1	77	12	12	0	40	0	5	0	0	0	0	1	0	1	UnholyBolt	16	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	2	0	1	0	none	0	none	0	0	0	0	8	0	3	6	4	0	0	0	0	0	0	0	1	0
+UnHolyBolt2	78	12	12	0	40	0	5	0	0	0	0	1	0	1	UnholyBolt	16	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	2	0	1	0	none	0	none	0	0	0	0	8	0	3	7	4	0	0	0	0	0	0	0	1	0
+UnHolyBolt3	79	12	12	0	40	0	5	0	0	0	0	1	0	1	UnholyBolt	16	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	2	0	1	0	none	0	none	0	0	0	0	8	0	4	8	4	0	0	0	0	0	0	0	1	0
+UnHolyBolt4	80	12	12	0	40	0	5	0	0	0	0	1	0	1	UnholyBolt	16	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	2	0	1	0	none	0	none	0	0	0	0	8	0	4	9	4	0	0	0	0	0	0	0	1	0
+SanctuaryCenter	81	0	0	0	125	0	0	0	0	0	0	0	0	1	sanctuary	40	0	1	10	30	0	0	0	1	0	1	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+FireExplosion	82	0	0	0	15	0	0	0	255	178	64	0	0	0	FireArrowExplode2	12	0	0	0	0	3	0	0	1	0	0	0	0	1	0	0	0	2	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	8	16	2	0	0	0	1	0
+StuckArrow	83	1	1	0	128	0	0	0	0	0	0	0	0	0	ArrowInGround	1	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	32	0
+FootPrint	84	0	0	0	128	0	0	0	0	0	0	0	0	0	Footsteps01	2	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	32	0
+ImmolationArrow	85	24	24	0	40	0	9	0	255	178	64	1	0	1	FireArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	1	1	3	Radius	0	none	0	0	0	27	0	0	0	0	0	0	0	0	0	0	0	10	32	0
+GuidedArrow	86	24	24	0	128	0	3	0	255	255	255	1	0	1	SafeArrow	1	0	0	0	0	3	1	0	0	1	0	0	0	1	1	0	1	0	0	1	1	0	1	1	0	0	none	0	none	0	0	0	22	0	0	0	0	0	0	0	0	0	0	0	10	32	0
+FreezingArrow	87	24	24	0	40	0	5	0	81	81	255	1	0	1	IceArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	1	1	0	none	0	none	0	0	0	31	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+FreezingArrowExplode1	88	0	0	0	16	0	11	0	81	81	255	0	0	0	FreezeExplodeCenter	15	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+FreezingArrowExplode2	89	0	0	0	16	0	0	0	81	81	255	0	0	0	FreezeExplodeEjecta	15	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	8	0
+Nova	90	24	24	-1000	13	0	0	0	255	255	255	0	0	0	ElectricNova	13	0	0	0	0	3	0	0	1	1	0	1	4	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	1	48	0	0	0	0	0	0	0	0	0	0	0	64	16	0
+IceBlast	91	12	12	0	50	0	7	0	81	81	255	1	0	1	IceBlast	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	4	Radius	0	none	0	1	1	45	0	0	0	0	0	0	0	0	0	0	0	0	16	0
+BlessedHammer	92	18	30	250	120	0	5	0	222	222	255	6	0	1	blessedhammer	6	0	0	0	0	3	0	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	112	0	0	0	0	0	0	0	0	0	0	0	0	16	0
+ChainLightning	93	30	30	0	25	0	4	0	255	255	255	0	0	1	LightningStrike	8	0	0	0	0	3	1	0	1	1	0	1	4	2	1	0	0	0	0	1	1	0	1	0	0	0	none	0	none	0	0	0	53	0	0	0	0	0	0	0	0	0	0	0	64	32	0
+FistOfAres	94	12	12	0	128	0	3	0	255	255	255	0	0	1	FOAorbiter	9	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ChillBlood	95	8	8	0	128	0	4	0	81	81	255	1	0	1	ChillBlood	16	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	48	1	0
+GlacialSpike	96	16	16	0	40	0	5	0	81	81	255	1	0	1	GlacialSpike	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	55	0	0	0	0	0	0	0	0	0	0	0	0	16	0
+Teleport	97	0	0	0	18	0	6	0	255	255	255	0	0	0	Teleport	18	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+LightningBolt	98	30	30	0	25	0	4	0	255	255	255	0	0	2	null	2	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	49	0	0	0	0	0	0	0	0	0	0	0	64	1	0
+LightningHit	99	0	0	0	12	0	3	1	255	255	255	0	0	1	LightningStrike	8	0	1	0	7	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	1	0	0	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	2	2	5	2	0	0	64	32	0
+Meteor	100	0	0	0	60	0	0	0	0	0	0	0	0	1	Meteor	12	0	0	0	0	0	1	0	1	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	none	0	none	0	0	0	56	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+MeteorCenter	101	0	0	0	60	0	2	0	255	64	64	0	0	1	MeteorTargetIndicator	17	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	1	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MeteorTail	102	0	0	0	60	0	0	0	0	0	0	0	0	1	MeteorTail	12	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MeteorExplode	103	0	0	0	16	0	13	0	255	178	64	0	0	0	ExpArrowExplode	16	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	1	1	0	1	0	1	2	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+FireSmall	104	0	0	0	90	25	2	1	255	178	64	0	0	1	groundFireSmall	37	0	1	12	36	3	0	0	0	0	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	2	Rand Light Radius Add	0	none	0	1	1	0	0	0	0	0	0	1	1	1	1	0	0	32	1	0
+FireMedium	105	0	0	0	90	25	3	1	255	178	64	0	0	1	groundFireMedium	37	0	1	12	36	3	0	0	0	0	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	2	Rand Light Radius Add	0	none	0	1	1	0	0	0	0	0	0	1	2	2	2	0	0	32	1	0
+MonBlizCenter	106	0	0	0	25	15	9	0	81	81	255	0	0	1	null	2	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MonBliz1	107	0	0	0	9	0	0	0	0	0	0	0	0	1	icestormfallvar01	6	0	0	0	0	3	0	0	1	0	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	0	0	0	1	2	2	4	4	9	2	0	0	0	1	0
+MonBliz2	108	0	0	0	9	0	0	0	0	0	0	0	0	1	icestormfallvar02	6	0	0	0	0	3	0	0	1	0	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	0	0	0	1	2	2	4	4	9	2	0	0	0	1	0
+MonBliz3	109	0	0	0	9	0	0	0	0	0	0	0	0	1	icestormfallvar03	6	0	0	0	0	3	0	0	1	0	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	0	0	0	1	2	2	4	4	9	2	0	0	0	1	0
+MonBliz4	110	0	0	0	9	0	0	0	0	0	0	0	0	1	icestormfallvar04	6	0	0	0	0	3	0	0	1	0	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	0	0	0	1	2	2	4	4	9	2	0	0	0	1	0
+MonBlizExplode1	111	0	0	0	6	0	0	0	0	0	0	0	0	0	icestormimpactvar01	6	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MonBlizExplode2	112	0	0	0	6	0	0	0	0	0	0	0	0	0	icestormimpactvar02	6	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MonBlizExplode3	113	0	0	0	6	0	0	0	0	0	0	0	0	0	icestormimpactvar02	6	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Teeth	114	16	16	0	50	0	3	0	255	255	255	1	0	0	teethMissile	30	0	1	0	15	3	1	0	1	1	0	1	4	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	67	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+CorpseExplosion	115	0	0	0	13	0	5	0	255	178	64	0	0	0	CorpseExplodeGuts	13	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	1	1	0	0	0	1	0	none	0	none	0	1	1	74	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+PoisonCorpseExplosion	116	0	0	0	13	0	5	0	255	178	64	0	0	0	CorpseExplodeGutsPoison	13	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	1	0	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+MonsterCorpseExplode	117	0	0	0	13	0	5	0	255	178	64	0	0	0	CorpseExplodeGuts	13	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	1	0	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+PoisonNova	118	12	12	0	30	0	0	0	0	0	0	0	0	0	poisonNova	30	0	0	0	0	3	1	0	1	1	0	1	4	1	1	0	0	0	0	1	0	0	1	0	1	0	none	0	none	0	0	0	92	8	0	0	0	0	0	0	0	0	0	0	80	32	0
+FrostNova	119	24	24	-1000	14	0	0	0	81	81	255	0	0	0	FrostNova	14	0	0	0	0	3	0	0	1	1	0	1	4	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	44	0	0	0	0	0	0	0	0	0	0	0	48	16	0
+Rogue1	120	24	24	0	40	0	0	0	255	255	255	1	0	0	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	1	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	1	1	0	0	0	0	0	0	0	10	32	0
+Rogue2	121	24	24	0	40	0	5	0	255	178	64	1	0	1	FireArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	1	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	2	1	1	0	1	2	4	0	0	0	10	32	0
+Rogue3	122	24	24	0	40	0	5	0	81	81	255	1	0	1	IceArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	1	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	2	1	1	0	4	2	4	0	50	0	10	32	0
+Bat Lightning Bolt	123	16	16	0	16	0	4	0	255	255	255	1	0	2	null	2	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	49	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+Bat Lightning Trail	124	0	0	0	10	0	3	1	255	255	255	1	0	0	ChargedBolt	10	0	1	2	8	3	0	0	1	1	0	0	0	1	1	0	0	0	0	0	1	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	2	2	5	3	0	0	0	16	0
+SkMage1	125	9	9	0	40	0	5	0	255	255	255	2	0	0	poisonNova	30	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	1	0	0	0	0	5	9	9	6	150	0	0	32	0
+SkMage2	126	12	12	0	40	0	5	0	255	255	255	2	0	1	Icebolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	4	1	3	3	25	0	0	16	0
+SkMage3	127	14	14	0	40	0	5	0	255	255	255	2	0	1	Firebolt	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	1	4	3	0	0	0	16	0
+SkMage4	128	14	14	0	40	0	5	0	255	255	255	2	0	1	ChargedBolt	10	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	1	4	3	0	0	0	16	0
+VampireFireball	129	14	14	0	30	0	8	0	255	178	64	1	0	1	Fireball	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	1	0	0	1	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	3	6	3	0	0	0	16	0
+VampireFirewallMaker	130	12	12	0	10	0	8	0	255	178	64	0	0	1	groundFireBig	2	0	1	1	2	8	0	0	1	1	1	0	0	1	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+VampireFirewall	131	0	0	0	90	0	2	1	255	178	64	0	0	1	groundFireSmall	37	0	1	12	36	3	0	0	0	0	1	0	0	1	0	0	0	0	0	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	2	0	0	0	0	1	2	4	2	0	0	32	1	0
+VampireMeteor	132	0	0	0	60	0	0	0	0	0	0	0	0	1	Meteor	12	0	0	0	0	0	1	0	1	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	none	0	none	0	0	0	171	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+VampireMeteorCenter	133	0	0	0	60	0	2	0	255	64	64	0	0	1	MeteorTargetIndicator	17	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	1	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+VampireMeteorExplode	134	0	0	0	16	0	13	0	255	178	64	0	0	0	ExpArrowExplode	16	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	1	1	1	0	1	0	1	2	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Raven1	135	16	16	0	50	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	5	10	0	0	0	0	0	0	0	10	32	0
+Raven2	136	16	16	0	50	0	9	0	255	178	64	1	0	1	FireArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	6	14	5	0	0	10	32	0
+AmphibianGoo1	137	12	12	0	15	0	2	1	64	255	64	1	0	1	FrogPoisonMissile	7	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	33	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	1	9	9	5	500	0	176	16	0
+AmphibianGoo2	138	12	12	0	18	0	2	1	64	255	64	1	0	1	FrogPoisonMissile	7	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	33	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	1	9	9	5	700	0	176	16	0
+TentacleGoo	139	12	12	0	40	0	2	1	64	255	64	8	0	1	FrogPoisonMissile	7	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	1	0	0	1	1	33	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	5	16	24	0	800	0	176	16	0
+AmphibianExplode	140	0	0	0	15	0	0	0	255	255	255	0	0	0	GooHit	15	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+PoisonPuff	141	1	15	0	25	0	0	0	255	255	255	0	0	0	PoisonSmokePuff	26	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+CurseEffectRed	142	0	0	0	20	0	1	1	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+SpiderGooLay	143	1	1	0	16	0	0	0	0	0	0	0	0	0	Spider_Goo_Missile	17	0	0	0	0	1	0	0	1	0	1	0	0	1	0	0	1	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	8	0
+FetishInferno1	144	12	12	0	30	0	4	0	255	178	64	3	0	0	Flamethrower	15	0	0	0	0	3	0	0	1	1	0	0	0	1	1	0	0	0	1	1	1	0	1	0	1	0	none	7	Minimum range	0	0	0	0	0	0	0	0	0	1	512	1024	512	0	0	32	1	0
+FetishInferno2	145	12	12	0	30	0	4	0	255	178	64	3	0	0	Flamethrower2	15	0	0	0	0	3	0	0	1	1	0	0	0	1	1	0	0	0	1	1	1	0	1	0	1	0	none	7	Minimum range	0	0	0	0	0	0	0	0	0	1	512	1024	512	0	0	32	1	0
+SpiderGoo	146	0	0	0	200	0	0	0	0	0	0	0	0	1	Spider_Goo_Disappear	9	0	1	0	1	3	0	0	1	1	1	0	0	3	0	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	8	0
+CurseCast	147	3	5	0	20	0	1	1	255	0	0	6	0	0	CurseCast	25	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Howl	148	12	12	-1000	12	0	0	0	192	192	192	1	0	0	BAYellShockWave01	15	0	0	0	0	3	0	0	1	1	0	0	0	1	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+Shout	149	30	30	-500	15	0	0	0	192	192	192	1	0	0	BAYellShockWave01	15	0	0	0	0	3	0	1	0	1	0	0	0	1	1	0	0	0	0	0	0	0	1	0	1	2	Vel / level increase	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+Dust	150	4	4	0	100	0	0	0	255	255	255	0	0	0	FireSmoke	26	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	4	0
+RedLightMissile	151	0	0	0	10	10	5	0	255	178	64	0	0	0	null	2	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+GreenLightMissile	152	0	0	0	10	10	5	0	128	255	128	0	0	0	null	2	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+BlueLightMissile	153	0	0	0	10	10	5	0	81	81	255	0	0	0	null	2	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+WhiteLightMissile	154	0	0	0	10	10	5	0	255	255	255	0	0	0	null	2	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+CorpsePoisonCloud	155	0	0	0	80	0	2	0	128	255	128	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	1	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	0	0	0	1	0	0	0	0	5	2	2	1	175	0	0	8	0
+ChillBloodCloud	156	4	4	0	80	0	3	0	81	81	255	1	0	0	null	2	0	0	0	0	3	0	0	1	1	1	0	0	1	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	0	0	60	8	0	0	0	0	0	0	0	0	0	0	48	1	0
+ChillBloodPuff	157	1	15	0	25	0	3	0	81	81	255	0	0	0	ChillBloodPuff	26	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	48	1	0
+BlizzardCenter	158	0	0	0	75	25	9	0	81	81	255	0	0	1	null	2	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Blizzard1	159	0	0	0	9	0	0	0	0	0	0	0	0	1	icestormfallvar01	6	0	0	0	0	3	0	0	1	1	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	59	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+Blizzard2	160	0	0	0	9	0	0	0	0	0	0	0	0	1	icestormfallvar02	6	0	0	0	0	3	0	0	1	1	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	59	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+Blizzard3	161	0	0	0	9	0	0	0	0	0	0	0	0	1	Blizzard	8	0	0	0	0	3	0	0	1	1	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	59	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+Blizzard4	162	0	0	0	9	0	0	0	0	0	0	0	0	1	Blizzard	8	0	0	0	0	3	0	0	1	1	0	0	0	2	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	59	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+BlizzardExplode1	163	0	0	0	6	0	0	0	0	0	0	0	0	0	icestormimpactvar01	6	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BlizzardExplode2	164	0	0	0	6	0	0	0	0	0	0	0	0	0	icestormimpactvar02	6	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BlizzardExplode3	165	0	0	0	6	0	0	0	0	0	0	0	0	0	icestormimpactvar02	6	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ThunderStorm1	166	2	2	0	9	0	10	0	255	255	255	0	0	1	LightningboltBig	8	0	0	0	0	3	0	0	0	1	0	0	0	3	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	1	1	57	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+ThunderStorm2	167	2	2	0	9	0	10	0	255	255	255	0	0	1	LightningboltBig	8	0	0	0	0	3	0	0	0	1	0	0	0	3	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	1	1	57	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+ThunderStorm3	168	2	2	0	9	0	10	0	255	255	255	0	0	1	LightningboltBig	8	0	0	0	0	3	0	0	0	1	0	0	0	3	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	1	1	57	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+ThunderStorm4	169	2	2	0	9	0	10	0	255	255	255	0	0	1	LightningboltBig	8	0	0	0	0	3	0	0	0	1	0	0	0	3	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	1	1	57	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+MonsterLight	170	30	30	0	25	0	4	0	255	255	255	3	0	2	null	2	0	0	0	0	3	1	0	1	1	0	0	0	2	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	2	512	1280	256	0	0	0	1	0
+PoisonBall	171	12	12	0	30	0	0	0	255	255	255	0	0	0	poisonNova	30	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	5	6	6	6	400	0	0	32	0
+DiabLight	172	20	20	0	30	0	3	0	255	255	255	3	0	0	DiabloLightning	15	0	0	0	0	3	0	0	1	1	0	0	3	2	1	0	0	0	1	1	1	0	1	0	1	0	none	30	Minimum range	0	0	0	0	8	0	1	2	5	2	3	15	5	0	0	0	8	0
+Redemption	173	0	0	0	18	0	6	0	255	255	255	0	0	0	RedemptionGhost	16	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	0	1	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+RedemptionFail	174	0	0	0	13	0	5	0	255	178	64	0	0	0	CorpseExplodeGuts	13	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+HandOfGod	175	2	2	0	9	0	10	0	255	255	255	0	0	1	LightningBolt	8	0	0	0	0	3	0	0	1	0	0	0	0	1	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	0	121	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+DiabFire	176	30	30	0	50	0	3	1	255	255	255	1	0	1	groundFireBig	37	0	1	12	36	3	0	0	1	1	0	1	4	2	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	1	3	10	5	0	0	32	1	0
+FingerMageSpider	177	6	6	0	80	0	0	0	255	178	178	1	0	1	FingerMageSpider	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	7	0	3	9	2	1	6	12	6	0	0	0	16	0
+Electric ThrowAxe	178	24	24	0	20	0	4	0	255	255	255	1	0	1	MissileHandAxe	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	5	10	4	0	0	0	32	0
+DiabWallMaker	179	20	20	0	80	0	3	0	255	178	64	2	0	1	groundFireMedium	2	0	1	1	2	3	0	0	1	1	1	0	0	1	1	0	0	0	0	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+DiabWall	180	0	0	0	36	0	3	1	255	178	64	0	0	1	groundFireMedium	37	0	1	12	36	3	0	0	0	0	1	0	0	2	0	0	0	0	0	0	1	0	1	0	1	4	Rand Light Radius Add	0	none	0	0	0	0	2	0	3	5	4	1	10	25	9	0	0	0	1	0
+CurseAmplifyDamage	181	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseDimVision	182	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseWeaken	183	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseIronMaiden	184	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseTerror	185	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseAttract	186	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseReverseVampire	187	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseConfuse	188	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseDecrpify	189	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseLowerResist	190	0	0	0	20	0	0	0	255	0	0	1	0	0	CurseArea	20	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+CurseCenter	191	0	0	0	20	0	0	0	255	0	0	0	0	0	null	2	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+BoneSpear	192	24	24	0	40	0	3	0	255	255	255	0	0	1	BoneSpear	6	0	0	0	0	3	0	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	84	8	0	0	0	0	0	0	0	0	0	0	6	16	0
+BoneSpirit	193	12	12	0	128	0	3	0	255	255	255	1	0	1	BoneSpirit	8	0	0	0	0	3	1	0	0	1	0	0	0	1	0	0	1	0	0	1	1	0	1	0	0	0	none	0	none	0	0	0	93	8	0	0	0	0	0	0	0	0	0	0	0	8	0
+ColdUnique	194	24	24	-1000	14	0	0	0	81	81	255	0	0	0	FrostNova	14	0	0	0	0	3	0	0	1	1	0	1	3	1	1	0	0	0	0	1	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	4	6	8	4	75	25	0	16	0
+LightUnique	195	12	12	0	98	0	3	1	255	255	255	1	3	1	ChargedBolt	10	0	1	2	8	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	2	1	1	2	0	0	64	16	0
+SKBowArrow1	196	24	24	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	3	3	0	0	0	0	0	0	10	32	0
+SKBowArrow2	197	24	24	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	3	3	0	0	0	0	0	0	10	32	0
+SKBowArrow3	198	24	24	0	40	0	0	0	255	255	255	1	0	1	Arrow	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	1	4	4	0	0	0	0	0	0	10	32	0
+SKBowArrow4	199	24	24	0	40	0	5	0	255	178	64	1	0	1	FireArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	2	5	5	0	0	10	32	0
+SKBowArrow5	200	24	24	0	40	0	5	0	255	255	255	1	0	1	SafeArrow	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	1	4	4	2	1	4	0	0	0	10	32	0
+Nova1	201	24	24	-1000	13	0	0	0	255	255	255	0	0	0	null	2	0	0	0	0	3	0	0	1	1	0	1	4	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	48	0	0	0	0	0	0	0	0	0	0	0	64	1	0
+Nova2	202	24	24	-1000	13	0	0	0	255	255	255	0	0	0	null	2	0	0	0	0	3	0	0	1	1	0	1	4	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	48	0	0	0	0	0	0	0	0	0	0	0	64	1	0
+AndyPoisonBolt	203	20	20	0	50	0	5	0	255	255	255	3	0	0	poisonNova	30	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	0	0	1280	1792	1280	5	32	64	32	800	0	0	32	0
+TeethExplode	204	0	0	0	13	0	0	0	0	0	0	0	0	0	teethexplode	13	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+LightningJavelin	205	30	30	0	25	0	6	1	255	255	255	0	0	1	LightningJavelin	5	0	0	0	0	3	1	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	1	1	0	none	0	none	0	1	1	20	0	0	0	0	0	0	0	0	0	0	0	64	16	0
+LightningFury	206	30	30	0	25	0	6	1	255	255	255	0	0	1	LightningJavelin	5	0	0	0	0	3	1	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	1	1	0	none	0	none	0	0	0	35	0	0	0	0	0	0	0	0	0	0	0	64	16	0
+BoneWallMaker	207	12	12	0	7	2	3	0	255	255	255	0	0	0	null	2	0	0	0	0	8	0	0	1	1	1	0	0	1	1	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+NecroMage1	208	14	14	0	30	0	5	0	255	255	255	1	0	0	poisonNova	30	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	1280	0	5	6	6	1	500	250	0	32	0
+NecroMage2	209	14	14	0	30	0	5	0	255	255	255	1	0	1	Icebolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	4	1	4	1	25	25	0	16	0
+NecroMage3	210	14	14	0	30	0	5	0	255	255	255	1	0	1	Firebolt	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	1	2	6	2	0	0	0	16	0
+NecroMage4	211	14	14	0	30	0	5	0	255	255	255	1	0	1	ChargedBolt	10	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	2	1	7	1	0	0	0	16	0
+Sparkle	212	4	4	0	30	0	0	0	255	255	255	1	0	1	Gleam	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	5	2	6	2	0	0	0	1	0
+MultipleShotArrow	213	24	24	0	50	0	0	0	255	255	255	1	0	0	Arrow	1	0	0	0	0	3	1	0	1	1	0	1	4	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	32	0
+MultipleShotBolt	214	24	24	0	50	0	0	0	255	255	255	1	0	0	XBowBolt	1	0	0	0	0	3	1	0	1	1	0	1	4	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	32	0
+ChargedStrikeBolt	215	12	12	0	98	0	3	1	255	255	255	1	3	1	ChargedBolt	10	0	1	2	8	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	2	2	4	2	0	0	0	16	0
+BoneSpearExplode	216	0	0	0	13	0	0	0	0	0	0	0	0	0	teethexplode	13	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+PoisonExplosionCloud	217	0	0	0	60	0	0	0	128	255	128	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	0	0	83	8	0	0	0	0	0	0	0	0	0	0	0	8	0
+BoneCast	218	0	0	0	20	0	0	0	255	255	255	0	0	0	BoneCast	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+BattleCry	219	12	12	-1000	12	0	0	0	192	192	192	1	0	0	BAYellShockWave01	15	0	0	0	0	3	0	0	1	1	0	1	4	1	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+PrimePoisonCloud	220	0	0	0	60	0	0	0	255	255	255	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	0	0	0	0	0	0	0	0	5	10	10	5	300	20	0	8	0
+PlagueJavCloud	221	0	0	0	60	0	0	0	255	255	255	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	1	1	25	0	-1	0	0	0	0	0	0	0	0	0	0	8	0
+RancidGasCloud	222	0	0	0	60	0	0	0	255	255	255	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	1	1	0	0	0	0	0	0	5	10	10	0	500	0	0	8	0
+ChokingGasCloud	223	0	0	0	60	0	0	0	255	255	255	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	1	1	0	0	0	0	0	0	5	20	20	0	500	0	0	8	0
+StranglingGasCloud	224	0	0	0	60	0	0	0	255	255	255	0	0	1	PoisonSparks	31	0	1	10	19	3	0	0	1	1	1	0	0	2	1	0	0	0	0	0	0	0	1	0	1	2	"Slow drift speed, fourths."	4	"Fast drift speed, fourths."	0	1	1	0	0	0	0	0	0	5	30	30	0	500	0	0	8	0
+BugLightning	225	12	12	0	98	0	3	1	255	255	255	1	3	1	ChargedBolt	10	0	1	2	8	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	0	0	0	0	0	2	256	256	128	0	0	64	16	0
+PantherJav1	226	20	20	0	80	0	0	0	255	255	255	1	0	1	Javelin	1	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	1	1	0	none	0	none	0	0	0	0	8	0	2	5	4	0	0	0	0	0	0	6	32	0
+PantherJav2	227	20	20	0	80	0	0	0	255	255	255	1	0	1	Javelin	1	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	1	1	0	none	0	none	0	0	0	0	8	0	3	7	4	0	0	0	0	0	0	6	32	0
+PantherJav3	228	20	20	0	80	0	0	0	255	255	255	1	0	1	Javelin	1	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	1	1	0	none	0	none	0	0	0	0	8	0	4	9	4	0	0	0	0	0	0	6	32	0
+PantherJav4	229	20	20	0	80	0	0	0	255	255	255	1	0	1	Javelin	1	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	0	1	1	0	none	0	none	0	0	0	0	8	0	5	11	5	0	0	0	0	0	0	6	32	0
+ImmolationFire	230	0	0	0	90	25	5	1	255	178	64	0	0	1	groundFireBig	37	0	1	12	36	3	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	0	0	0	2	0	0	0	0	1	7	9	5	0	0	32	1	0
+FuryLightning	231	30	30	0	25	0	4	0	255	255	255	0	0	1	LightningStrike	8	0	1	0	7	3	0	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	2	1	40	4	0	0	64	32	0
+LightningStrike	232	30	30	0	25	0	4	0	255	255	255	0	0	1	LightningStrike	8	0	0	0	0	3	1	0	1	1	0	1	4	2	1	0	0	0	0	1	1	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	2	8	14	2	0	0	64	32	0
+FistoftheHeavensDelay	233	0	0	0	10	0	0	0	0	0	0	0	0	0	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	1	0	none	0	none	0	0	0	121	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+FistoftheHeavensBolt	234	12	12	0	50	0	8	0	222	222	255	1	2	1	HolyBoltMissile	16	0	0	0	0	3	1	1	1	0	0	0	4	1	0	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	3	8	16	6	0	0	0	1	0
+Warcry	235	12	12	-600	16	0	0	0	192	192	192	1	0	0	WarcryShockwave	16	0	0	0	0	3	0	0	1	1	0	1	6	1	1	0	0	0	0	0	1	0	1	0	1	0	none	0	none	0	0	0	154	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+BattleCommand	236	30	30	-500	15	0	0	0	192	192	192	1	0	0	BAYellShockWave01	15	0	0	0	0	3	0	1	1	1	0	1	4	1	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+BattleOrders	237	30	30	-500	15	0	0	0	192	192	192	1	0	0	BAYellShockWave01	15	0	0	0	0	3	0	1	1	1	0	1	4	1	1	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	32	0
+PantherPotOrange	238	16	16	0	128	0	0	0	255	128	128	0	0	0	mslops	8	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	1	0	0	1	1	0	0	1	1	2	Radius	0	none	1	0	0	0	8	0	3	5	3	1	2	5	3	0	0	0	1	0
+PantherPotGreen	239	16	16	0	128	0	0	0	128	255	128	0	0	0	mslgps	8	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	1	0	0	1	1	0	0	1	1	40	Poison Length	0	none	1	0	0	0	1	0	0	0	0	5	9	12	6	400	0	0	1	0
+MeteorFire	240	0	0	0	90	25	3	1	255	178	64	0	0	1	groundFireMedium	37	0	1	12	36	3	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	2	Rand Light Radius Add	0	none	0	0	0	0	2	0	0	0	0	1	14	18	6	0	0	32	1	0
+Trap Spike Right	241	9	9	0	50	0	0	0	255	255	255	1	0	1	SpikeRight	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	1	0
+Trap Spike Left	242	9	9	0	50	0	0	0	255	255	255	1	0	1	SpikeLeft	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	1	0
+Trap Cursed Skull Right	243	6	6	0	50	0	0	0	255	255	255	1	0	1	SkullRight	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	1	0
+Trap Cursed Skull Left	244	6	6	0	50	0	0	0	255	255	255	1	0	1	SkullLeft	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	1	0
+Trap Poison Ball Right	245	6	6	0	50	0	0	0	255	255	255	1	0	1	PoisonRight	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	1	0
+Trap Poison Ball Left	246	6	6	0	50	0	0	0	255	255	255	1	0	1	PoisonLeft	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	1	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	10	1	0
+Hydra	247	14	14	0	30	0	5	0	255	255	255	2	0	1	Firebolt	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	62	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+BoneSpearTrail	248	0	0	0	8	0	0	0	255	255	255	0	0	0	BoneSpearTrail	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	32	0
+GrimWardSmallStart	249	0	0	0	5	0	0	0	0	0	0	0	0	0	GrimWardSmallStart	5	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardSmall	250	0	0	0	200	0	0	0	0	0	0	0	0	1	GrimWardSmall	1	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardSmallStop	251	0	0	0	9	0	0	0	0	0	0	0	0	0	GrimWardSmallStop	9	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardMediumStart	252	0	0	0	8	0	0	0	0	0	0	0	0	0	GrimWardMediumStart	8	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardMedium	253	0	0	0	200	0	0	0	0	0	0	0	0	1	GrimWardMedium	1	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardMediumStop	254	0	0	0	9	0	0	0	0	0	0	0	0	0	GrimWardMediumStop	9	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardLargeStart	255	0	0	0	8	0	0	0	0	0	0	0	0	0	GrimWardLargeStart	8	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardLarge	256	0	0	0	200	0	0	0	0	0	0	0	0	1	GrimWardLarge	1	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+GrimWardLargeStop	257	0	0	0	9	0	0	0	0	0	0	0	0	0	GrimWardLargeStop	9	0	0	0	0	0	0	0	0	0	1	0	0	1	1	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	1
+ZakarumLight	258	0	0	0	12	0	3	1	255	255	255	0	0	1	LightningStrike	8	0	1	0	7	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	64	32	0
+GrimWardScare	259	2	2	0	24	12	0	0	0	0	0	0	0	0	null	2	0	0	0	0	3	0	0	1	1	0	1	6	2	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+FrozenOrb	260	10	10	0	30	0	6	0	81	81	255	1	0	1	IceOrb	16	0	0	0	0	3	0	0	1	1	0	0	0	1	1	0	1	0	1	1	1	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+FrozenOrbBolt	261	18	18	0	25	0	4	0	81	81	255	0	0	1	IceBolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	1	1	1	0	1	0	0	0	none	0	none	0	0	0	64	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+FrozenOrbNova	262	24	24	0	25	0	4	0	81	81	255	0	0	1	IceBolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	1	1	1	0	1	0	0	0	none	0	none	0	0	0	64	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+FrozenOrbExplode	263	0	0	0	16	0	6	0	81	81	255	0	0	0	IceOrbExplode	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ChillingArmorBolt	264	18	18	0	25	0	4	0	81	81	255	0	0	1	IceBolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	1	1	1	0	1	0	0	0	none	0	none	0	0	0	60	8	0	0	0	0	0	0	0	0	0	0	0	16	0
+FireExplosion	265	0	0	0	12	0	0	0	0	0	0	0	0	0	FireArrowExplode2	12	5	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BlowGun	266	20	20	0	90	0	0	0	255	255	255	1	0	1	Blowdart	8	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	0	4	6	1	0	0	0	0	0	0	10	16	0
+ChainLightning	267	30	30	0	25	0	4	0	255	255	255	0	0	1	LightningStrike	8	0	0	0	0	3	0	0	1	1	0	1	4	2	1	0	0	0	0	1	1	1	1	0	0	0	none	0	none	0	0	0	53	0	0	0	0	0	0	0	0	0	0	0	64	32	0
+ReviveSmall	268	0	0	0	25	0	5	0	255	178	64	0	0	0	Revive	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ReviveMedium	269	0	0	0	25	0	5	0	255	178	64	0	0	0	Revive	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ReviveLarge	270	0	0	0	25	0	5	0	255	178	64	0	0	0	Revive	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MonGlacialSpike	271	18	18	0	40	0	5	0	81	81	255	1	0	1	GlacialSpike	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	4	2	4	2	0	0	0	16	0
+IceBreakSmall	272	0	0	0	30	0	0	0	255	255	255	0	0	0	IceBreakSmall	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+IceBreakMedium	273	0	0	0	30	0	0	0	255	255	255	0	0	0	IceBreakLarge	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+IceBreakLarge	274	0	0	0	30	0	0	0	255	255	255	0	0	0	IceBreakLarge	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+IceBreakSmoke	275	0	0	0	15	0	0	0	255	255	255	0	0	0	IceBreakSmoke	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Mephisto	276	24	24	0	40	0	9	0	255	255	255	0	0	1	MephistoMissile	10	0	0	0	0	3	1	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	3	4	1	4	12	18	3	75	0	0	16	0
+Firehead	277	14	14	0	40	0	8	0	255	178	64	1	0	1	VampireMissile	19	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	1	0	0	1	0	0	1	0	1	0	none	0	none	0	0	0	0	6	0	0	0	0	1	4	10	1	0	0	0	16	0
+Whilrwind	278	12	12	0	3	0	0	0	0	0	0	0	0	0	null	2	0	0	0	0	3	0	0	0	1	0	0	0	2	0	0	0	0	0	0	1	1	0	0	0	0	none	0	none	0	0	0	151	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+ArcaneLightningBolt	279	32	32	0	40	0	8	1	178	178	255	1	0	2	null	2	0	0	0	0	1	0	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	2	7	14	5	600	0	64	1	0
+FrogFire	280	15	15	0	40	0	4	1	255	64	64	1	0	1	Fireball	5	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	33	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	1	9	18	6	0	0	0	16	0
+FrogCold	281	12	12	0	35	0	4	1	64	64	255	1	0	1	Icebolt	6	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	33	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	4	6	12	5	600	0	0	16	0
+FrogPois	282	12	12	0	30	0	4	1	64	255	64	1	0	1	FrogPoisonMissile	7	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	33	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	5	6	12	5	600	0	0	16	0
+DesertFireBall	283	16	16	0	40	0	6	1	255	64	64	1	0	1	Fireball	5	0	0	0	0	1	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	2	Radius	0	none	0	0	0	0	8	0	0	0	0	1	3	5	4	600	0	0	16	0
+BRDeathControl	284	0	0	0	375	0	6	1	255	255	255	25	0	0	null	2	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathLightningBolt	285	32	32	0	20	0	4	0	255	255	255	0	0	2	null	2	0	0	0	0	0	0	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	64	1	0
+BRDeathLightningHit	286	0	0	0	12	0	0	0	255	255	255	0	0	1	LightningStrike	8	0	1	0	7	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	1	0	0	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	2	2	5	4	0	0	64	32	0
+DenOfEvilLight	287	0	0	0	300	0	10	0	255	255	255	0	0	1	LightBeams	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+CairnStones	288	0	0	0	300	0	0	0	255	255	255	0	0	1	null	2	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	1	0	0	0	0	0	1	0	0	40	Fade frames	2	Lightning delay	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	64	1	0
+CairnStonesSky	289	0	0	0	5	0	0	0	255	255	255	0	0	1	null	2	0	0	0	0	3	1	1	0	0	0	0	0	2	1	0	1	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	2	1	6	0	0	0	64	1	0
+CairnStonesGround	290	20	20	0	30	0	0	0	255	255	255	0	0	1	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	64	1	0
+TowerMist	291	2	2	0	400	0	2	0	255	255	255	0	0	1	null	2	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	1	1	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+TowerMistTrail	292	3	3	0	50	0	2	0	255	255	255	0	0	1	mist	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathSmokeS1	293	0	0	0	60	0	0	0	0	0	0	40	0	1	BRSmokeS1	20	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathSmokeNU	294	0	0	0	340	0	0	0	0	0	0	0	0	1	BRSmokeNU	20	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathSmokeDT	295	0	0	0	20	0	0	0	0	0	0	0	0	1	BRSmokeDT	20	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathSpiritS1	296	0	0	0	60	0	4	0	255	255	255	40	0	1	BRSpiritS1	20	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathSpiritNU	297	0	0	0	340	0	4	0	255	255	255	0	0	1	BRSpiritNU	20	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+BRDeathSpiritDT	298	0	0	0	20	0	4	0	255	255	255	0	0	1	BRSpiritDT	20	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoDeathControl	299	0	0	0	275	0	6	1	255	255	255	0	0	0	null	2	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoFirewallMaker	300	8	8	0	50	0	5	0	255	178	64	0	0	1	groundFireSmall	2	0	1	1	2	0	0	0	1	1	1	0	0	1	1	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+MephistoFirewall	301	0	0	0	25	0	5	1	255	178	64	0	0	0	groundFireSmall	37	0	1	12	36	0	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+MephistoFlyingRocksBig	302	12	12	0	10	3	0	0	0	0	0	0	0	1	ExplosionSpark	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoExplosionBig	303	0	0	0	12	0	13	0	255	178	64	0	0	0	FireArrowExplode2	12	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoFlyingRocksSmall	304	12	12	0	5	3	0	0	0	0	0	0	0	1	ExplosionSparkSmall	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoExplosionSmall	305	0	0	0	12	0	13	0	255	178	64	0	0	0	FireArrowExplode2	12	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoDoNotDraw	306	0	0	0	70	0	0	0	0	0	0	0	0	0	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyControl0	307	0	0	0	350	0	0	0	0	0	0	0	0	0	null	2	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyFirewallMaker	308	8	8	0	50	0	8	0	255	178	64	0	0	1	groundFireSmall	2	0	1	1	2	0	0	0	1	1	1	0	0	1	1	0	0	0	1	0	0	0	1	0	1	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+AndyFirewall	309	0	0	0	25	0	5	0	255	178	64	0	0	0	groundFireSmall	37	0	1	12	36	0	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+AndyColumnFireBase	310	0	0	0	25	0	5	0	255	178	64	0	0	0	groundFireMedium	37	0	1	12	36	0	0	0	0	1	1	0	0	1	0	0	0	0	1	0	0	0	1	0	1	4	Rand Light Radius Add	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	32	1	0
+AndyColumnFire	311	0	0	0	15	0	0	0	192	128	128	0	0	0	AndarielFlameDeath	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyFallingDebris1	312	0	0	0	8	0	0	0	0	0	0	0	0	0	CeilingChunkFall01	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyFallingDebris2	313	0	0	0	8	0	0	0	0	0	0	0	0	0	CeilingChunkFall02	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyFallingDebris3	314	0	0	0	8	0	0	0	0	0	0	0	0	0	CeilingChunkFall03	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyDebrisExplosion1	315	0	0	0	11	0	0	0	0	0	0	0	0	0	CeilingChunkVanish01	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyDebrisExplosion2	316	0	0	0	11	0	0	0	0	0	0	0	0	0	CeilingChunkVanish02	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyDebrisExplosion3	317	0	0	0	11	0	0	0	0	0	0	0	0	0	CeilingChunkRemain01	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyDebrisExplosion4	318	0	0	0	11	0	0	0	0	0	0	0	0	0	CeilingChunkRemain02	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+AndyDebrisExplosion5	319	0	0	0	11	0	0	0	0	0	0	0	0	0	CeilingChunkRemain03	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+WillowispLightningBolt	320	32	32	0	40	0	8	1	178	178	255	1	0	2	null	2	0	0	0	0	3	0	0	1	1	0	0	0	2	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	2	7	14	5	600	0	64	1	0
+QueenPoisonCloud	321	8	64	1	92	0	4	0	64	255	64	16	0	0	poisonNova	30	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	0	0	0	0	0	5	6	16	6	800	0	0	32	0
+Dirt Pile	322	0	0	0	128	0	0	0	255	255	255	0	0	0	SandMaggotDirtPile	1	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	1	0	Client No Velocity	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	8	0
+UndeadMissile1	323	20	20	0	40	0	9	0	255	255	255	1	0	1	SkullPoison	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	5	4	6	1	350	0	0	16	0
+UndeadMissile2	324	20	20	0	40	0	9	0	255	255	255	1	0	1	SkullFire	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	1	1344	2880	512	0	0	0	8	0
+UndeadMissile3	325	20	20	0	40	0	9	0	255	255	255	1	0	1	SkullIce	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	0	0	0	0	0	4	1344	2880	512	40	0	0	16	0
+UndeadMissile4	326	20	20	0	40	0	9	0	255	255	255	1	0	1	SkullUnholy	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	0	0	0	1	1	0	1	0	1	0	none	0	none	0	1	1	0	0	0	900	2000	180	0	0	0	0	0	0	0	16	0
+BoneSpiritExplode	327	0	0	0	12	0	0	0	255	255	255	0	0	0	BoneSpiritExplode	13	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+DopplezonExplode	328	0	0	0	25	0	0	0	255	255	255	0	0	0	DopplezonExplode	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+MonBoneSpirit	329	12	12	0	128	0	3	0	255	255	255	1	0	1	BoneSpirit	8	0	0	0	0	3	1	0	0	1	0	0	0	1	0	0	1	0	0	1	1	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	3	10	15	7	0	0	0	8	0
+TowerMistFade	330	0	0	0	128	1	0	0	255	255	255	0	0	0	Mist_fade	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+CountessFirewall	331	0	0	0	1000	1	5	1	255	178	64	0	0	1	groundFireSmall	37	0	1	12	36	3	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	1	0	1	0	none	0	none	0	1	1	0	1	0	0	0	0	1	3	5	4	0	0	0	1	0
+TowerChestSpawner	332	0	0	0	400	1	15	0	192	192	255	0	0	0	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	150	start delay	2	spawn interval divisor	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HellMeteorLaunch1	333	0	0	0	22	0	0	0	255	255	255	0	0	0	meteorlavaburst	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HellMeteorLaunch2	334	0	0	0	22	0	0	0	255	255	255	0	0	0	meteorlavaburst2	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HellMeteorUp	335	0	0	0	50	0	0	0	255	255	255	0	0	1	meteorlavaup	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HellMeteorDown	336	0	0	0	225	0	5	0	255	255	255	0	0	1	meteorlavadown	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	1	1	0	0	5	Radius	0	none	0	0	0	0	8	0	0	0	0	1	5	15	5	0	0	0	1	0
+HellMeteorBall	337	0	0	0	225	0	5	0	255	255	255	0	0	1	meteorlavarock	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HoradricStaff	338	0	0	0	440	0	0	0	255	255	255	0	0	1	HoradricStaff	8	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+HoradricLightning	339	20	20	0	30	0	3	0	255	255	255	0	0	1	LightningStrike	8	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	64	32	0
+HoradricLight	340	0	0	0	225	0	2	0	255	255	255	0	0	1	HoradricLightBeamstreaks	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	32	0
+RegurgitatorCorpse	341	14	14	0	200	0	2	0	255	64	64	1	0	1	SlugMissile	12	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	1	0	0	1	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	25	55	15	0	0	0	0	0	0	0	8	1
+RegurgitatorCorpseExplode	342	0	0	0	12	0	13	0	255	64	64	0	0	0	Slug Missile Explode	12	0	0	0	0	0	1	0	1	0	0	0	0	1	0	0	0	1	1	0	1	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	1
+HighPriestLightning	343	8	8	0	16	0	12	0	255	64	64	0	0	0	HighPriestLightning	9	0	0	0	0	3	1	0	1	1	0	0	0	1	1	0	1	0	0	1	0	0	1	0	1	0	none	0	none	0	0	0	0	8	0	0	0	0	1	4	12	5	0	0	0	8	0
+IceBreakSmallMelt	344	0	0	0	150	0	0	0	255	255	255	0	0	0	IceBreakSmallMelt	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+IceBreakLargeMelt	345	0	0	0	150	0	0	0	255	255	255	0	0	0	IceBreakLargeMelt	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+LeapKnockBack	346	0	0	0	2	0	0	0	0	0	0	0	0	0	null	2	0	0	0	0	3	0	0	0	1	0	0	0	2	0	0	0	0	1	0	0	1	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+RadamentDeath	347	0	0	0	400	0	15	0	255	255	255	0	0	0	null	2	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+RadamentHandOfGod	348	0	0	0	21	0	0	0	0	0	0	0	0	0	HandOfGod	21	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+RadamentHolyBolt	349	12	12	0	50	0	0	0	255	255	255	0	0	1	HolyBoltMissile	16	0	0	0	0	3	0	1	0	1	0	0	0	1	0	0	0	0	1	0	0	1	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+TaintedSunControl	350	0	0	0	300	0	0	0	255	255	255	0	0	1	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+TaintedSunFlash	351	0	0	0	12	0	4	0	255	255	255	0	0	1	yellowBallGlowIntro	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+TaintedSunBall	352	12	12	0	300	0	0	0	255	255	255	0	0	1	yellowBallGlow2	10	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+QueenDeathCenter	353	0	0	0	100	0	0	0	255	255	255	0	0	1	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+QueenDeathGlob	354	6	6	0	20	0	0	0	255	255	255	0	0	0	QueenDeathGuts	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+QueenDeathSplat1	355	0	0	0	50	0	0	0	255	255	255	0	0	0	QueenDeathPuddle	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+QueenDeathSplat2	356	0	0	0	50	0	0	0	255	255	255	0	0	0	QueenDeathPuddle2	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+HealingBolt	357	14	14	0	30	0	2	0	222	222	255	1	0	1	HolyBoltMissile	16	0	0	0	0	3	1	1	0	1	0	0	0	1	0	0	0	0	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoHoleDelay	358	0	0	0	50	0	0	0	0	0	0	0	0	0	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoHoleBirth	359	0	0	0	21	0	0	0	0	0	0	0	0	0	smithholebirth	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoHoleNeutral	360	0	0	0	189	0	0	0	0	0	0	0	0	1	smithholeneutral	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoHoleDeath	361	0	0	0	21	0	0	0	0	0	0	0	0	0	smithholedeath	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+MephistoHoleDead	362	0	0	0	400	0	0	0	0	0	0	0	0	1	smithholedead	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+DurielDeathControl	363	0	0	0	400	0	0	0	0	0	0	0	0	1	null	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+DurielDeathRock	364	0	0	0	40	0	0	0	0	0	0	0	0	1	Rock_large	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+DurielDeathDebris	365	12	12	0	40	0	0	0	0	0	0	0	0	1	Rock_small	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+DurielDeathSmoke	366	0	0	0	25	0	0	0	0	0	0	0	0	0	FireSmoke	26	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	4	0
+MephistoExplosion	367	0	0	0	12	0	0	0	255	255	255	0	0	0	MephistoMissileExplosion	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+OrbMist	368	2	2	0	400	0	2	0	255	125	125	0	0	1	null	2	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	1	1	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+OrbMistTrail	369	3	3	0	50	0	2	0	255	125	125	0	0	1	mist_Fade_Orb_Loop	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+OrbMistFade	370	3	3	0	15	0	2	0	255	125	125	0	0	0	mist_Fade_Orb	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Pilum	371	24	24	0	40	0	0	0	255	255	255	0	0	0	Pilum	1	0	0	0	0	3	1	0	1	1	0	0	0	1	1	1	0	0	0	1	1	0	0	0	1	0	none	0	none	0	1	1	0	8	2	0	0	0	0	0	0	0	0	0	6	32	0
+Diablo Appears	372	0	0	0	300	0	0	0	255	255	255	0	0	0	null	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+HFControl	373	0	0	0	200	0	8	1	255	255	255	0	0	0	null	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+HFFragment1	374	6	6	0	16	0	0	0	255	255	255	0	0	1	SoulForgeShard	47	0	1	8	30	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+HFFragment2	375	0	0	0	25	0	0	0	255	255	255	0	0	1	SoulForgeShard	47	0	1	8	30	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+HFFragment3	376	0	0	0	10	0	0	0	255	255	255	0	0	1	SoulForgeShard	47	0	1	8	30	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+HFSpirit1	377	8	4	0	55	0	0	0	255	255	255	0	0	1	SoulForgeRisingSoul	33	0	1	8	19	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+HFReserved3	378	0	0	0	0	0	0	0	255	255	255	0	0	0	null	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	1	0	0	0	none	0	none	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+Izual Control	379	0	0	0	200	0	0	0	255	255	255	0	0	0	null	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	25	Lightning Start	150	Lightning Stop	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0
+Izual Mist Loop	380	4	4	0	50	0	2	0	255	255	255	0	0	0	IzualDeathClouds	16	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	1	1	0	0	0	0	1	0	0	0	none	0	none	0	1	1	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Izual Mist Fade	381	0	0	0	15	0	0	0	255	255	255	0	0	0	null	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Izual Lightning	382	3	3	0	50	0	2	0	255	255	255	0	0	0	IzualDeathParticles	25	0	0	0	0	3	0	1	0	1	0	0	0	1	0	0	0	0	1	0	0	1	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Izual Lightning Trail	383	3	3	0	50	0	0	0	255	255	255	0	0	0	null	1	0	0	0	0	3	0	1	0	1	0	0	0	1	0	0	0	0	1	0	0	1	1	0	0	0	none	0	none	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0	0	1	0
+Cairn Stones Bolt	384	0	0	0	9	0	10	0	255	255	255	0	0	1	LightningboltBig	8	0	0	0	0	3	0	0	0	1	0	0	0	3	0	0	1	0	1	1	1	0	1	0	1	0	none	0	none	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0

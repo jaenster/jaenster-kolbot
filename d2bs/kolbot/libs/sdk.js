@@ -2393,6 +2393,7 @@ let sdk = {
         NPC: 1,
         Monsters: 1,
         Objects: 2,
+        Missiles: 3,
         Item: 4,
         Stairs: 5, // ToDo: might be more as stairs
     },

@@ -8,6 +8,10 @@
 		return this;
 	};
 
+	Unit.prototype.moveBy = function (offX, offY, clearPath, pop) {
+		return this.distance > 5 && Pather.moveTo(this.x + offX, this.y + offY, undefined, clearPath, pop);
+	};
+
 	PresetUnit.prototype.moveTo = function (offX, offY, clearPath, pop) {
 		Pather.moveTo(this.roomx * 5 + this.x + (offX || 0), this.roomy * 5 + this.y + (offY || 0), 4, clearPath, pop);
 		return this;
