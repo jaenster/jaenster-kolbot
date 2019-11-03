@@ -1592,3 +1592,32 @@ if (!Array.from) {
 		};
 	}());
 }
+
+
+// Filter null or undefined objects in array
+Array.prototype.filterNull = function() {
+	return this.filter(x => x);
+};
+
+// Map the objects with the callback function and filter null values after mapping.
+Array.prototype.compactMap = function(callback) {
+	return this.map((x, i, array) => {
+		if (x == null) {
+			return null;
+		}
+		return callback(x, i, array);
+	})
+	.filterNull();
+};
+
+// Returns a random object in array
+Array.prototype.random = function () {
+  return this[Math.floor((Math.random()*this.length))];
+};
+
+// Returns a random integer between start and end included.
+Math.randomIntBetween = function(start, end) {
+	let min = Math.ceil(start);
+    let max = Math.floor(end);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};

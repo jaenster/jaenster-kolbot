@@ -866,40 +866,4 @@ function Collision(u1, u2, time) {
 	this.u1 = u1;
 	this.u2 = u2;
 	this.time = time;
-}
-
-
-Array.prototype.filterNull = function() {
-	return this.filter(x => x );
-};
-
-Array.prototype.compactMap = function(callback) {
-	return this.map((x, i, array) => {
-		if (x == null) {
-			return null;
-		}
-		return callback(x, i, array);
-	})
-	.filterNull();
-};
-
-Array.prototype.compactMap = function(callback) {
-	return this.map((x, i, array) => {
-		if (x == null) {
-			return null;
-		}
-		return callback(x, i, array);
-	})
-	.filterNull();
-};
-
-Array.prototype.random = function () {
-  return this[Math.floor((Math.random()*this.length))];
-};
-
-
-Math.randomIntBetween = function(start, end) {
-	let min = Math.ceil(start);
-    let max = Math.floor(end);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 };
