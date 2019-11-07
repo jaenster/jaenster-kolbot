@@ -37,13 +37,13 @@ function Diablo(Config, Attack, Pickit, Pather, Town) {
 				return getPresets().some(function (seal) {
 					if (diaTick) return diaTick;
 					// Clear to seal
-					!diaTick && !Config.SpeedDiablo.Fast && seal.path.forEach(node => !diaTick && node.moveTo() && Attack.clear(40));
+					!diaTick && !Config.Diablo.Fast && seal.path.forEach(node => !diaTick && node.moveTo() && Attack.clear(40));
 
 					// move to right position to "click" seal
 					!diaTick && Pather.moveTo(seal.roomx * 5 + seal.x + (seal.id === 394 ? 5 : 2), seal.roomy * 5 + seal.y + (seal.id === 394 ? 5 : 0));
 
 					// click on the seal.
-					!diaTick && SpeedDiablo.openSeal(seal.unit);
+					!diaTick && Diablo.openSeal(seal.unit);
 
 
 					// Is it an active seal?
@@ -69,7 +69,7 @@ function Diablo(Config, Attack, Pickit, Pather, Town) {
 							}
 						} while (!boss);
 
-						return diaTick || !(Config.SpeedDiablo.Fast && Attack.kill(boss) || Attack.clear(40, 0, getLocaleString(locale), diaSort));
+						return diaTick || !(Config.Diablo.Fast && Attack.kill(boss) || Attack.clear(40, 0, getLocaleString(locale), diaSort));
 					}
 					return diaTick;
 				});
@@ -93,9 +93,9 @@ function Diablo(Config, Attack, Pickit, Pather, Town) {
 	});
 
 
-	if (!Config.SpeedDiablo.Follower) {
+	if (!Config.Diablo.Follower) {
 		// Cast portal once in chaos
-		Config.SpeedDiablo.Entrance && new Promise(resolve => entrance.distance < 5 && resolve()).then(Pather.makePortal);
+		Config.Diablo.Entrance && new Promise(resolve => entrance.distance < 5 && resolve()).then(Pather.makePortal);
 
 		// cast portal once close to star
 		new Promise(resolve => star.distance < 15 && resolve()).then(Pather.makePortal);
@@ -119,14 +119,14 @@ function Diablo(Config, Attack, Pickit, Pather, Town) {
 	}
 
 
-	if (Config.SpeedDiablo.Entrance) { //ToDo; change to "doing entrance"
+	if (Config.Diablo.Entrance) { //ToDo; change to "doing entrance"
 		entrance.moveTo();
 		star.path.forEach(node => node.moveTo() && Attack.clear(30));
 	}
 
 	const Messaging = require('Messaging');
 
-	Messaging.on('SpeedDiablo', function (data) {
+	Messaging.on('Diablo', function (data) {
 		if (data.hasOwnProperty('diaTick')) {
 			diaTick = data.diaTick;
 		}
@@ -151,11 +151,11 @@ function Diablo(Config, Attack, Pickit, Pather, Town) {
 		}
 
 	} finally { // Dont care for errors, just want to make sure the packet handler is removed after it
-		Messaging.send({SpeedDiablo: {done: true}});
+		Messaging.send({Diablo: {done: true}});
 	}
 }
 
-SpeedDiablo.openSeal = function (seal) {
+Diablo.openSeal = function (seal) {
 	for (let i = 0; i < 5; i += 1) {
 		if (seal.mode) return true;
 
@@ -193,10 +193,10 @@ SpeedDiablo.openSeal = function (seal) {
 			bytes // If bytes is set
 			&& bytes.hasOwnProperty(0) // if it has the property 0 (it isnt an array)
 			&& bytes[0] === 0x89 // If the firste is "special game event"
-			&& Messaging.send({SpeedDiablo: {diaTick: diaTick = getTickCount() - (me.ping / 2)}})
+			&& Messaging.send({Diablo: {diaTick: diaTick = getTickCount() - (me.ping / 2)}})
 			&& false; // dont block the packet by always returning false
 
-		Messaging.on('SpeedDiablo', function (data) {
+		Messaging.on('Diablo', function (data) {
 			if (data.hasOwnProperty('done')) {
 				done = data.done;
 			}
