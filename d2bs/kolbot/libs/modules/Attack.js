@@ -50,11 +50,10 @@
 				y: Math.round(Math.sin(Math.atan2(me.y - unit.y, me.x - unit.x)) * Config.DodgeRange + unit.y)
 			};
 
-		monList = getUnits(1).filter(x=>!x.allies);
+		monList = getUnits(1).filter(x => !x.allies).sort((a, b) => a.distance - b.distance);
 
-		monList.sort(Sort.units);
 
-		if (this.getMonsterCount(me.x, me.y, 15, monList) === 0) {
+		if (monList.filter(x => x.distance < 15).length === 0) {
 			return true;
 		}
 
