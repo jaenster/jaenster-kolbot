@@ -79,7 +79,7 @@
 				x: grid[i].x,
 				y: grid[i].y
 			}, 0x4)) {
-				currCount = this.getMonsterCount(grid[i].x, grid[i].y, range, monList);
+				currCount = monList.filter(x => x.distance < 15).length;
 
 				if (currCount < count) {
 					index = i;
