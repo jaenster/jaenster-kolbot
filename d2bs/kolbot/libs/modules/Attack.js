@@ -15,6 +15,10 @@
 
 	Attack.checkMonster = function (monster) {
 		return monster.attackable;
+	};
+	Attack.deploy = function(...args) {
+		// ToDO; create, atleast this doesnt break the entire scripts
+		return true; // always succeeded
 	}
 
 	Attack.clearLevel = function (obj) {
@@ -124,8 +128,7 @@
 		}
 
 		return true;
-	},
+	}
 
-
-		module.exports = Attack;
+	module.exports = Attack;
 })(module, require);
