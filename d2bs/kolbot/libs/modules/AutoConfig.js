@@ -150,7 +150,5 @@
 		)
 	};
 
-	AutoConfig.FastQuit = () => require('FastQuit'); // Load the fast quit module
-
 	module.exports = AutoConfig;
 })(module, require);
