@@ -7,60 +7,12 @@
 function Baal(Config, Attack, Pickit, Pather, Town) {
 	let portal, tick;
 
+	const PreAttack = require('PreAttack');
+
 	this.preattack = function () {
-		let check;
+		let check,center = {x: 15094, y: 5029};
 
-		switch (me.classid) {
-		case 1: // Sorceress
-			switch (Config.AttackSkill[3]) {
-			case 49:
-			case 53:
-			case 56:
-			case 59:
-			case 64:
-				if (me.getState(121)) {
-					while (me.getState(121)) {
-						delay(100);
-					}
-				} else {
-					return Skill.cast(Config.AttackSkill[1], 0, 15094 + rand(-1, 1), 5028);
-				}
-
-				break;
-			}
-
-			break;
-		case 3: // Paladin
-			if (Config.AttackSkill[3] === 112) {
-				if (Config.AttackSkill[4] > 0) {
-					Skill.setSkill(Config.AttackSkill[4], 0);
-				}
-
-				return Skill.cast(Config.AttackSkill[3], 1);
-			}
-
-			break;
-		case 5: // Druid
-			if (Config.AttackSkill[3] === 245) {
-				return Skill.cast(Config.AttackSkill[3], 0, 15094 + rand(-1, 1), 5028);
-			}
-
-			break;
-		case 6: // Assassin
-			if (Config.UseTraps) {
-				check = ClassAttack.checkTraps({x: 15094, y: 5028});
-
-				if (check) {
-					return ClassAttack.placeTraps({x: 15094, y: 5028}, 5);
-				}
-			}
-
-			if (Config.AttackSkill[3] === 256) { // shock-web
-				return Skill.cast(Config.AttackSkill[3], 0, 15094, 5028);
-			}
-
-			break;
-		}
+		PreAttack.do([0, 23, 105, 557, 558, 571][lastwave+1], 12e3 - (getTickCount() -tick), center);
 
 		return false;
 	};
@@ -114,7 +66,7 @@ function Baal(Config, Attack, Pickit, Pather, Town) {
 			}
 
 			if (monList.length) {
-				Attack.clearList(monList);
+				monList.forEach(monster=> monster.kill());
 			}
 		}
 
@@ -231,6 +183,7 @@ function Baal(Config, Attack, Pickit, Pather, Town) {
 		say(Config.Baal.SafeTPMessage);
 	}
 
+	let lastwave = 0;
 	tick = getTickCount();
 
 	Pather.moveTo(15094, me.classid === 3 ? 5029 : 5038);
@@ -245,7 +198,7 @@ MainLoop:
 			break MainLoop;
 		}
 
-		switch (this.checkThrone()) {
+		switch (lastwave = this.checkThrone()) {
 		case 1:
 			Attack.clear(40);
 
