@@ -13,6 +13,10 @@
 		return me.clear.apply(me, [range]);
 	};
 
+	Attack.checkMonster = function (monster) {
+		return monster.attackable;
+	}
+
 	Attack.clearLevel = function (obj) {
 		let room = getRoom(), rooms = [], result, myRoom, currentArea = getArea().id,
 			previousArea,
