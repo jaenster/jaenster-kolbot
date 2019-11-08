@@ -1773,3 +1773,11 @@ Math.randomIntBetween = function(start, end) {
 	let max = Math.floor(end);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+// Fill an array with the same value from start to end indexes.
+Array.prototype.fill = function(value, start = 0, end = undefined) {
+	var stop = end || this.length;
+	for (var i = start; i < stop; i++) {
+		this[i] = value;
+	}
+};

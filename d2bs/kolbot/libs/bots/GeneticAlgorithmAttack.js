@@ -6,13 +6,20 @@
 
 
 
-global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
-	function GeneticAlgorithmAttack(Config, Attack, PickIt) {
+//global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
+	let GameData = require("GameData");
+	let Config = require("Config");
+	let Skills = require("Skills");
+	let CollMap = require("CollMap");
 
+	function GeneticAlgorithmAttack(Config, Attack, PickIt) {
 		let PresetMonsters = GameData.PresetMonsters;
 		let AreaData = GameData.AreaData;
 		let ping = me.ping;
 		myPrint("ping : " + ping);
+
+		let realFCR = me.getStat(105) - Config.FCR;
+		let fcrFrames = GameData.FCRFrames(realFCR, me.classid);
 
 		/* PresetMonsters[presetUnit.id] =
 	"Index":149,
@@ -94,10 +101,15 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		}
 	};
 
-
-	const POPULATION_SIZE = 50; // number of solutions
-	const DNA_SIZE = 2;			 // number of commands per solution
+	// number of solutions to try
+	const POPULATION_SIZE = 100;
+	// number of commands per solution
+	// the more commands you simulate, the farther the simulated game state would be from real game state, leading to not accurate solution
+	const DNA_SIZE = 2;
 	const MUTATION_RATE = 0.05;
+
+	// the algorithm will compute during X game frames, the higher it is, the laggier the bot will look (longer simulation)
+	const FRAMES_TIME_SIMULATION = 4;
 
 
 	function GA() {
@@ -114,7 +126,10 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 			this.shouldStop = true;
 		};
 
-		let fcr = me.getStat(105) - Config.FCR;
+		let realFCR = me.getStat(105) - Config.FCR;
+		let fcrFrames = GameData.FCRFrames(realFCR, me.classid);
+		//CollMap.getNearbyRooms();
+		//print(fcrFrames);
 
 		// This is the loop that generate next population and calculate fitness after the initial population
 		this.continue = function () {
@@ -141,10 +156,9 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 					myPrint("Generations : " + this.generations + " (" + loopTime + " s)");
 
 					time = getTickCount() - time;
-					print("time " + time);
-					print("generations " + this.generations);
 				}
-				while (time < 40 * fcr); // 40ms = 1 frame time (25fps = 40ms/frame)
+				while (time < 40 * FRAMES_TIME_SIMULATION);
+				// 40ms = 1 frame time (25fps = 40ms/frame)
 
 				var best = this.getBest();
 				if (best) {
@@ -152,12 +166,15 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 					myPrint(JSON.stringify(best));
 					myPrint(best.gameState.debugString());
 					best.apply();
+					// restart with real game state as we now have applied the best solution
 					this.gameState = new GameState(new SimulatedUnit(me), getMonsters(), getMissiles());
 					//myPrint("Real game state :");
 					//myPrint(this.gameState.debugString());
 					//delay(2000);
+
+					print("applied solution at generation: "+ this.generations +" time " + ((getTickCount() - time)/1000) + "\nsolution fitness: "+best.fitness);
 				} else {
-					myPrint("No best found");
+					print("No best found");
 				}
 			}
 			// end while
@@ -268,9 +285,10 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 			for (var i = 0; i < this.genes.length; i++) {
 				//myPrint(JSON.stringify(this.genes[i]));
 				newGameState = newGameState.simulate(this.genes[i]);
-				this.fitness += newGameState.calculateFitness(this.genes[i]);
+				//this.fitness += newGameState.calculateFitness(this.genes[i]);
 				//newGameState.debug();
 			}
+			this.fitness = newGameState.calculateFitness();
 			//myPrint("Game state after simulation :");
 			//myPrint(newGameState.debugString());
 			this.gameState = newGameState;
@@ -300,7 +318,7 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		// Use this DNA to play
 		this.apply = function () {
 			for (var i = 0; i < this.genes.length; i++) {
-				this.genes[i].apply();
+				this.genes[i].apply(this.fitness);
 			}
 		};
 	}
@@ -312,7 +330,8 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		this.args = args;
 
 		// Actually use the command to drive the character
-		this.apply = function () {
+		// fitness: fitness of the solution applying this command
+		this.apply = function (fitness) {
 			switch (this.name) {
 				case "moveBy":
 					myPrint("moving " + JSON.stringify(this.args));
@@ -328,10 +347,10 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 					myPrint("casting " + JSON.stringify(this.args.skills[0]));
 					if (target.unit) {
 						target.unit.cast(skillId);
-						me.overhead("cast " + skillId + " " + target.x + "," + target.y);
+						me.overhead("cast " + skillId + " " + target.x + "," + target.y + " ("+fitness+")");
 					} else {
 						me.cast(skillId, undefined, x, y);
-						me.overhead("cast " + skillId + " " + x + "," + y);
+						me.overhead("cast " + skillId + " " + x + "," + y + " ("+fitness+")");
 					}
 					while (me.attacking) {
 						delay(10);
@@ -347,7 +366,8 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 
 // SimulatedUnit is a wrapper around a Unit (or a SimulatedUnit) to work with the genetic algorithm
 // so that you can modify properties (position, target, hp etc...) in order to simulate the game without editing Unit instance
-	function SimulatedUnit(unit) {
+	// castDelay : for missiles created by algorithm, we need to add a delay before the missile is casted (FCR)
+	function SimulatedUnit(unit, castDelay) {
 		if (unit.unit) {
 			// If unit is a SimulatedUnit, it already has the reference unit
 			this.unit = unit.unit;
@@ -371,8 +391,11 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		this.mode = unit.mode;
 		this.type = unit.type;
 		this.owner = unit.owner;
+		if (unit.type == sdk.unittype.Missiles) {
+			this.castFramesDelay = castDelay;
+		}
 
-		switch (unit.type) {
+		switch (this.type) {
 			case sdk.unittype.Player:
 				this.walkingYPS = 4; // walking speed yards per second
 				this.runningYPS = 6; // running speed yards per second
@@ -555,6 +578,13 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 			this.mp = this.mp | 0;
 			this.stamina = this.stamina | 0;
 		};
+
+		this.isCasted = function () {
+			if (this.type == sdk.unittype.Missiles) {
+				return this.castFramesDelay <= 0;
+			}
+			return true;
+		};
 	}
 
 
@@ -607,11 +637,16 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 					var newMissiles = this.missiles;
 					var newPlayer = new SimulatedUnit(this.player);
 
-					var manaCost = Skill.getManaCost(skills[0].id);
-					if (newPlayer.distanceTo(target) <= Skills.range[skills[0].id] && newPlayer.mp >= manaCost) {
+					let skill = skills[0];
+					var manaCost = Skill.getManaCost(skill.id);
+					//TODO: create simulated missile from skill
+					//let missile = new SimulatedMissile();
+					let collision = checkCollision(newPlayer.area, newPlayer.x, newPlayer.y, newPlayer.xsize, x, y, 2/*missile.size*/, 0x4);
+					
+					if (newPlayer.distanceTo(target) <= Skills.range[skill.id]-5 && newPlayer.mp >= manaCost && !collision) {
 						var targetHPPercent = target.hp * 100 / target.hpmax;
-						var minDmg = Math.max(skills[0].pmin, skills[0].min);
-						var maxDmg = Math.max(skills[0].pmax, skills[0].max);
+						var minDmg = Math.max(skill.pmin, skill.min);
+						var maxDmg = Math.max(skill.pmax, skill.max);
 						var averageDmg = (minDmg + maxDmg) / 2;
 						var targetMaxHP = GameData.monsterMaxHP(target.classid, target.area);
 						var targetRealHP = targetMaxHP * targetHPPercent / 100;
@@ -639,21 +674,32 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 			}
 		};
 
-		// Calculates the fitness of the current game state with the given command.
-		// The command should not be needed.
-		this.calculateFitness = function (command) {
+		// Calculates the fitness of the current game state.
+		this.calculateFitness = function () {
+			const fitnessFactor = 1000; // just for debug readability
 			var numberOfMonsters = this.monsters.length;
 			if (numberOfMonsters == 0) {
-				return 1;
+				return fitnessFactor;
 			}
 
-			var manaFactor = 0.05;
-			var monsterHPFactor = 1000;
-			var playerHPFactor = 1;
-			var averageDistanceFactor = 0.5;
-			var closestDistanceFactor = 0.5;
-			var numberOfMonstersFactor = 1000;
-			var attackDmgFactor = 200;
+			if (![this.player.x, this.player.y].validSpot) {
+				myPrint(this.player.x+", "+this.player.y+" : not a valid spot");
+				return 0;
+			}
+
+			/*if (!Pather.checkSpot(this.player.x, this.player.y)) {
+				// not a valid position
+				print("not a valid position "+this.player.x+" "+ this.player.y);
+				return 0;
+			}*/
+
+			const manaFactor = 0.001;
+			const monsterHPFactor = 10;
+			const playerHPFactor = 1;
+			const averageDistanceFactor = 0.01;
+			const closestDistanceFactor = 0.01;
+			const numberOfMonstersFactor = 100;
+
 
 			var closestMonster;
 			var closestDistance = 1000;
@@ -685,8 +731,9 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 				if (collision) {
 					var framesBeforeCollision = collision.time * Math.sqrt(m.velocityYPFx * m.velocityYPFx + m.velocityYPFy * m.velocityYPFy);
 					var realFCR = me.getStat(105) - Config.FCR;
+					// can't dodge
 					if (framesBeforeCollision <= realFCR) {
-						this.player.hp -= 10; // TODO: get dmg of missile
+						this.player.hp /= 10; // TODO: get dmg of missile
 					}
 				}
 			}
@@ -712,17 +759,17 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 			fitness += Math.sqrt(numberOfMonsters) * numberOfMonstersFactor; // more monsters, worst fitness
 			fitness += Math.sqrt(hpPerMonsters) * monsterHPFactor; // more monsters hp, worst fitness
 			//fitness += Math.sqrt(closestDistance) * 1/closestDistanceFactor;
-			fitness += Math.pow(averageDistance, 2) * averageDistanceFactor; // closer monsters, worst fitness (depend on character and gameplay)
+			//fitness += Math.pow(averageDistance, 2) * averageDistanceFactor; // closer monsters, worst fitness (depend on character and gameplay)
 			//fitness += playerHPPercent * playerHPFactor;
-			fitness += Math.sqrt(manaPercent) * manaFactor; // less mana, worst fitness
+			fitness -= Math.sqrt(manaPercent) * manaFactor; // less mana, worst fitness
 
 			fitness /= playerHPPercent * playerHPFactor; // less hp, worst fitness
 
 			// inverse fitness = the higher is fitness, the worst this game state is
 			if (fitness == 0) {
-				return 1;
+				return fitnessFactor;
 			}
-			return 1 / fitness;
+			return (1 / fitness)*fitnessFactor;
 		};
 
 		this.debugString = function () {
@@ -736,7 +783,7 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 	}
 
 
-	let possibleMoves = [-30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30];
+	let possibleMoves = [-40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40];
 
 	function generateRandomGene(gameState) {
 		return randomCommand(gameState);
@@ -756,7 +803,7 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		var args = {};
 		switch (name) {
 			case "moveBy":
-				args = {x: possibleMoves.random(), y: possibleMoves.random()};
+				args = {x: Math.randomIntBetween(-30, 30), y: Math.randomIntBetween(-30, 30)};
 				break;
 
 			case "attack":
@@ -775,8 +822,8 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 					.sort((s1, s2) => (Math.max(s2.pmin, s2.min) + Math.max(s2.pmax, s2.max)) / 2 - (Math.max(s1.pmin, s1.min) + Math.max(s1.pmax, s1.max)) / 2);
 				args = {
 					skills: [skillsArray.first(), skillsArray.first()],
-					x: targetMonster.x,
-					y: targetMonster.y,
+					x: targetMonster.targetx,
+					y: targetMonster.targety,
 					target: targetMonster
 				};
 				break;
@@ -864,5 +911,6 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		this.u2 = u2;
 		this.time = time;
 	}
-	return GeneticAlgorithmAttack;
-}).call(require("GameData"), require('Skills'), require('Config'));
+
+	//return GeneticAlgorithmAttack;
+//}).call(require("GameData"), require('Skills'), require('Config'));
