@@ -282,14 +282,6 @@
 	Config.Corpsefire = {
 		ClearDen: false
 	};
-	Config.Diablo = {
-		Entrance: false,
-		SealWarning: "Leave the seals alone!",
-		EntranceTP: "Entrance TP up",
-		StarTP: "Star TP up",
-		DiabloMsg: "Diablo",
-		WalkClear: false
-	};
 	Config.BattleOrders = {
 		Mode: 0,
 		Getters: [],
@@ -347,7 +339,7 @@
 	Config.ClearAnyArea = {
 		AreaList: []
 	};
-	Config.SpeedDiablo = {
+	Config.Diablo = {
 		Fast: false,
 		Follower: false,
 		Entrance: true,

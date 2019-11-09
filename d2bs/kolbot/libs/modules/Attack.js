@@ -4,13 +4,103 @@
  */
 
 (function (module, require) {
-
+	const CollMap = require('CollMap');
 	const Attack = function () {
 
 	};
 
 	Attack.clear = function (range) {
 		return me.clear.apply(me, [range]);
+	};
+
+	Attack.checkMonster = function (monster) {
+		return monster.attackable;
+	};
+	Attack.deploy = function (unit, distance, spread, range) {
+		if (arguments.length < 4) {
+			throw new Error("deploy: Not enough arguments supplied");
+		}
+		const buildGrid = function (xmin, xmax, ymin, ymax, spread) {
+			if (xmin >= xmax || ymin >= ymax || spread < 1) {
+				throw new Error("buildGrid: Bad parameters");
+			}
+
+			var i, j, coll,
+				grid = [];
+
+			for (i = xmin; i <= xmax; i += spread) {
+				for (j = ymin; j <= ymax; j += spread) {
+					coll = CollMap.getColl(i, j, true);
+
+					if (typeof coll === "number") {
+						grid.push({x: i, y: j, coll: coll});
+					}
+				}
+			}
+
+			return grid;
+		};
+
+		var i, grid, index, currCount,
+			tick = getTickCount(),
+			monList = [],
+			count = 999,
+			idealPos = {
+				x: Math.round(Math.cos(Math.atan2(me.y - unit.y, me.x - unit.x)) * Config.DodgeRange + unit.x),
+				y: Math.round(Math.sin(Math.atan2(me.y - unit.y, me.x - unit.x)) * Config.DodgeRange + unit.y)
+			};
+
+		monList = getUnits(1).filter(x => !x.allies).sort((a, b) => a.distance - b.distance);
+
+
+		if (monList.filter(x => x.distance < 15).length === 0) {
+			return true;
+		}
+
+		CollMap.getNearbyRooms(unit.x, unit.y);
+
+		grid = buildGrid(unit.x - distance, unit.x + distance, unit.y - distance, unit.y + distance, spread);
+
+		//print("Grid build time: " + (getTickCount() - tick));
+
+		if (!grid.length) {
+			return false;
+		}
+
+		function sortGrid(a, b) {
+			//return getDistance(a.x, a.y, idealPos.x, idealPos.y) - getDistance(b.x, b.y, idealPos.x, idealPos.y);
+			return getDistance(b.x, b.y, unit.x, unit.y) - getDistance(a.x, a.y, unit.x, unit.y);
+		}
+
+		grid.sort(sortGrid);
+
+		for (i = 0; i < grid.length; i += 1) {
+			if (!(CollMap.getColl(grid[i].x, grid[i].y, true) & 0x1) && !CollMap.checkColl(unit, {
+				x: grid[i].x,
+				y: grid[i].y
+			}, 0x4)) {
+				currCount = monList.filter(x => x.distance < 15).length;
+
+				if (currCount < count) {
+					index = i;
+					count = currCount;
+				}
+
+				if (currCount === 0) {
+					break;
+				}
+			}
+		}
+
+		//print("Safest spot with " + count + " monsters.");
+
+		if (typeof index === "number") {
+			//print("Dodge build time: " + (getTickCount() - tick));
+
+			return Pather.moveTo(grid[index].x, grid[index].y, 0);
+		}
+
+		return false;
 	};
 
 	Attack.clearLevel = function (obj) {
@@ -120,8 +210,7 @@
 		}
 
 		return true;
-	},
+	}
 
-
-		module.exports = Attack;
+	module.exports = Attack;
 })(module, require);

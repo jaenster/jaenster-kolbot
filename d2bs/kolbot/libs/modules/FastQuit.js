@@ -16,7 +16,6 @@
 // 				quitting = true;
 // 				let Default = getScript('default.dbj');
 // 				Default && Default.stop();
-// 				quit(); // quit the game
 // 				print('fast quitting');
 // 				getScript(true).stop();
 // 			};
@@ -30,9 +29,11 @@
 // 			break;
 // 		case 'started':
 // 		case 'loaded':
+// 			const oldQuit = quit;
 // 			typeof global !== 'undefined' && (global.quit = function (reason) {
 // 				Message.send({FastQuit: {act: true, reason: reason}});
 // 				getScript(true).stop();
+// 				oldQuit();
 // 			});
 // 	}
 // })(this);

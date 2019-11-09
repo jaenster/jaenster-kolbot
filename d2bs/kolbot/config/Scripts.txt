@@ -20,11 +20,6 @@
     //////// Some new scripts that are not in original kolton
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
-        Config.SpeedDiablo.Fast = false; // Do a fast diarun (only monsters
-        Config.SpeedDiablo.Follower = false; // Follow, dont teleport to it but take the portal
-        Config.SpeedDiablo.Entrance = true; // Clear the entrance
-
 
     Scripts.SpeedBaal = true; // A better/smarter/high power baal run (in development, but already faster as regular ones)
         Config.SpeedBaal.Follower = false; // Follow, dont teleport to it but take the portal
@@ -112,18 +107,10 @@
 	Scripts.Izual = false;
 	Scripts.Hephasto = false;
 	Scripts.Vizier = false; // Intended for classic sorc, kills Vizier only.
-	Scripts.FastDiablo = false;
-	Scripts.Diablo = false;
-		Config.Diablo.WalkClear = false; // Disable teleport while clearing to protect leechers
-		Config.Diablo.Entrance = true; // Start from entrance
-		Config.Diablo.SealWarning = "Leave the seals alone!";
-		Config.Diablo.EntranceTP = "Entrance TP up";
-		Config.Diablo.StarTP = "Star TP up";
-		Config.Diablo.DiabloMsg = "Diablo";
-    Scripts.SpeedDiablo = true; // A better/smarter/high power diablo run
-        Config.SpeedDiablo.Fast: false; // Do a fast diarun (only monsters
-        Config.SpeedDiablo.Follower: false; // Follow, dont teleport to it but take the portal
-        Config.SpeedDiablo.Entrance: true; // Clear the entrance
+    Scripts.Diablo = true; // A better/smarter/high power diablo run
+        Config.Diablo.Fast = false; // Do a fast diarun (only monsters
+        Config.Diablo.Follower = false; // Follow, dont teleport to it but take the portal
+        Config.Diablo.Entrance = true; // Clear the entrance
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////// Act 5

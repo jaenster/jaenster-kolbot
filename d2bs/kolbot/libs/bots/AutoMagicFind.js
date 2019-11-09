@@ -99,7 +99,7 @@ function AutoMagicFind(Config, Attack, Pickit, Pather, Town) {
 			case sdk.areas.ChaosSanctuary: //If we are in chaos, simply open all seals
 				const star = {x: 7792, y: 5292};
 				new Promise(resolve => star.distance < 40 && resolve()).then(function () {
-					include('bots/SpeedDiablo.js');
+					include('bots/Diablo.js');
 					// Once close to the star, just quickly open all seals
 					[sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive,
 						sdk.units.DiabloSealSeizActive, sdk.units.DiabloSealInfectorInActive,
