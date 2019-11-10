@@ -25,7 +25,7 @@
 		socket.connect();
 
 		// Override the send function, so we can just send data blobs
-		(orgSend => socket.send = data => data !== undefined && orgSend.call(orgSend, JSON.stringify(data) + String.fromCharCode(10, 13)))(socket.send);
+		(orgSend => socket.send = data => data !== undefined && orgSend.call(orgSend, JSON.stringify(data) + String.fromCharCode(13, 10)))(socket.send);
 
 		require('debug');
 		// Respond on message's from other threads
@@ -60,13 +60,15 @@
 		module.exports = exports;
 		Message.on('BotNet', function (data) {
 
-			// Trigger global events
-			myEvents.emit(null, data.emit);
+			if (data.hasOwnProperty('emit')) {
+				// Trigger global events
+				myEvents.emit(null, data.emit);
 
-			// Hook specifically on a channel
-			if (data.hasOwnProperty('emit') && data.emit.hasOwnProperty('channel') && data.emit.hasOwnProperty('data')) {
-				// Trigger as channel event
-				myEvents.emit(data.channel, data.emit.data);
+				// Hook specifically on a channel
+				if (data.hasOwnProperty('emit') && data.emit.hasOwnProperty('channel') && data.emit.hasOwnProperty('data')) {
+					// Trigger as channel event
+					myEvents.emit(data.channel, data.emit.data);
+				}
 			}
 		});
 	}
