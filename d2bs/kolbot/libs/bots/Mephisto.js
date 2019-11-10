@@ -4,13 +4,10 @@
 *	@desc		kill Mephisto
 */
 
-function Mephisto(Config, Attack, Pickit, Pather, Town) {
+module.exports = function (Config, Attack, Pickit, Pather, Town) {
 	const TownPrecast = require('TownPrecast');
 	this.killMephisto = function () {
-		var i, angle, angles,
-			pos = {},
-			attackCount = 0,
-			meph = getUnit(1, 242);
+		const meph = getUnit(1, sdk.monsters.Mephisto);
 
 		if (!meph) {
 			throw new Error("Mephisto not found!");
@@ -18,7 +15,7 @@ function Mephisto(Config, Attack, Pickit, Pather, Town) {
 
 		meph.kill();
 
-		return (meph.mode === 0 || meph.mode === 12);
+		return meph.dead;
 	};
 
 	TownPrecast();
