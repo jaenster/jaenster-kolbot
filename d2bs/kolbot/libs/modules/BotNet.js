@@ -1,3 +1,8 @@
+/**
+ * @description Communication between bots, via sockets. Globally. Development currently
+ * @author Jaenster
+ *
+ */
 (function (module, require) {
 
 	const Message = require('Messaging');
