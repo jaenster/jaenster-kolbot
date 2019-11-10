@@ -4,7 +4,7 @@
 *	@desc		give or receive Battle Orders buff
 */
 
-function BattleOrders(Config, Attack, Pickit, Pather, Town) {
+module.exports = function (Config, Attack, Pickit, Pather, Town) {
 	this.giveBO = function (list) {
 		var i, unit,
 			failTimer = 60,
@@ -21,7 +21,7 @@ function BattleOrders(Config, Attack, Pickit, Pather, Town) {
 						quit();
 					}
 
-					require('Precast')()
+					require('Precast')();
 					delay(1000);
 				}
 			}
@@ -97,4 +97,4 @@ MainLoop:
 	}
 
 	return true;
-}
+};
