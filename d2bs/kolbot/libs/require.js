@@ -3,6 +3,7 @@
  * @author Jaenster
  */
 
+!isIncluded('polyfill.js') && include('polyfill.js');
 if (typeof global === 'undefined') var global = this; // need a var here as a let would block the scope
 
 global['module'] = {exports: undefined};
@@ -21,7 +22,7 @@ const require = (function (include, isIncluded, print, notify) {
 		}
 
 		if (field.hasOwnProperty('endsWith') && field.endsWith('.json')) { // Simply reads a json file
-			return modules[packageName] = File.open('libs/'+path + field, 0).readAllLines();
+			return modules[packageName] = File.open('libs/' + path + field, 0).readAllLines();
 		}
 
 		if (!isIncluded(path + field + '.js')) {
@@ -30,7 +31,7 @@ const require = (function (include, isIncluded, print, notify) {
 
 			let old = Object.create(global['module']);
 			delete global['module'];
-			global['module'] = {exports: {here: 'failed module'}};
+			global['module'] = {exports: undefined};
 
 			// Include the file;
 			try {
@@ -64,3 +65,19 @@ me.ingame && (function () {
 		.filter(file => file.endsWith('.js'))
 		.forEach(x => !isIncluded('unit/' + x) && include('unit/' + x));
 }).call();
+
+getScript.startAsThread = function () {
+	let stack = new Error().stack.match(/[^\r\n]+/g),
+		filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
+
+	if (getScript(true).name.toLowerCase() === filename.toLowerCase()) {
+		return 'thread';
+	}
+
+	if (!getScript(filename)) {
+		load(filename);
+		return 'started';
+	}
+
+	return 'loaded';
+};

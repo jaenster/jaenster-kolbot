@@ -300,7 +300,7 @@
 	Config.Mephisto = {
 		MoatTrick: false,
 		KillCouncil: false,
-		TakeRedPortal: false
+		TakeRedPortal: true
 	};
 	Config.ShopBot = {
 		ScanIDs: [],

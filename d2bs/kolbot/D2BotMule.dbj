@@ -2,7 +2,7 @@
  *
  *
  * You do not need to set-up anything here
- *    You do this in the character config file
+ *    You do this in the profile config file
  *
  *
  *
