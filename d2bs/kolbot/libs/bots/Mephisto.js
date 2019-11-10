@@ -19,6 +19,7 @@ module.exports = function (Config, Attack, Pickit, Pather, Town) {
 	};
 
 	TownPrecast();
+	Town();
 	if (!Pather.journeyTo(102)) {
 		throw new Error("Failed to move to Durance Level 3");
 	}
