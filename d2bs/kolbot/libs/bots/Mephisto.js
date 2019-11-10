@@ -1,8 +1,8 @@
 /**
-*	@filename	Mephisto.js
-*	@author		kolton, njomnjomnjom, jaenster
-*	@desc		kill Mephisto
-*/
+ *    @filename    Mephisto.js
+ *    @author      kolton, njomnjomnjom, jaenster
+ *    @desc        kill Mephisto
+ */
 
 module.exports = function (Config, Attack, Pickit, Pather, Town) {
 	const TownPrecast = require('TownPrecast');
@@ -42,12 +42,12 @@ module.exports = function (Config, Attack, Pickit, Pather, Town) {
 
 	if (Config.Mephisto.TakeRedPortal) {
 		// bridge not activated yet?
-		if (getCollision(me.area, 17601, 8070,17590, 8068) !== 0) Pather.moveTo(17590, 8068); // so activate
+		if (getCollision(me.area, 17601, 8070, 17590, 8068) !== 0) Pather.moveTo(17590, 8068); // so activate
 
-		let tick = getTickCount(),time =0;
-		while(getCollision(me.area, 17601, 8070,17590, 8068) !== 0) {
+		let tick = getTickCount(), time = 0;
+		while (getCollision(me.area, 17601, 8070, 17590, 8068) !== 0) {
 			delay(3);
-			if ((time = getTickCount()-tick > 1500)) break;
+			if ((time = getTickCount() - tick > 1500)) break;
 		}
 		if (time > 2000) { // somehow failed
 			Town.goToTown();
