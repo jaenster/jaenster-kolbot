@@ -6,22 +6,14 @@
 (function (module, require) {
 	require('Debug');
 
-	const Events = require('Events');
-	const globalEvents = new Events;
-	const inGameEvents = new Events;
+	const myEvents = new (require('Events'));
 	const exports = {
-		on: globalEvents.on,
-		off: globalEvents.off,
-		once: globalEvents.once,
+		on: myEvents.on,
+		off: myEvents.off,
+		once: myEvents.once,
 		register: channel => Message.send({BotNet: {register: channel}}),
 		send: (channel, data) => {
 			Message.send({BotNet: {send: {channel: {data: data, name: channel}}}})
-		},
-		inGame: {
-			send: data => exports.send(me.mapid, data),
-			on: inGameEvents.on,
-			off: inGameEvents.off,
-			once: inGameEvents.once,
 		},
 	};
 	const Message = require('Messaging');
@@ -33,11 +25,7 @@
 		socket.connect();
 
 		// Override the send function, so we can just send data blobs
-		((orgSend, fakeObj) => socket.send = data => {
-			if (data === undefined) return;
-			fakeObj = JSON.stringify(data)+String.fromCharCode(10,13);
-			orgSend.call(orgSend, fakeObj);
-		})(socket.send);
+		(orgSend => socket.send = data => data !== undefined && orgSend.call(orgSend, JSON.stringify(data) + String.fromCharCode(10, 13)))(socket.send);
 
 		require('debug');
 		// Respond on message's from other threads
@@ -73,15 +61,12 @@
 		Message.on('BotNet', function (data) {
 
 			// Trigger global events
-			globalEvents.emit(null, data.emit);
+			myEvents.emit(null, data.emit);
 
 			// Hook specifically on a channel
 			if (data.hasOwnProperty('emit') && data.emit.hasOwnProperty('channel') && data.emit.hasOwnProperty('data')) {
 				// Trigger as channel event
-				globalEvents.emit(data.channel, data.emit.data);
-
-				// Trigger upon a key, for ingame events, like Team and Messaging (so BotNet.inGame.on('Baal',data => {}));
-				me.mapid === data.emit.channel && Object.keys(data.emit.data).forEach(key => inGameEvents.emit(key, data.emit.data[key]));
+				myEvents.emit(data.channel, data.emit.data);
 			}
 		});
 	}
