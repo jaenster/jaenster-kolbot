@@ -38,7 +38,7 @@
 
 		socket.on('data', function (data) {
 			try {
-				data = JSON.stringify(data);
+				data = JSON.parse(data);
 				Message.send({BotNet: {emit: data}})
 			} catch (e) {
 				// Ignore
@@ -65,9 +65,9 @@
 				myEvents.emit(null, data.emit);
 
 				// Hook specifically on a channel
-				if (data.hasOwnProperty('emit') && data.emit.hasOwnProperty('channel') && data.emit.hasOwnProperty('data')) {
+				if (data.emit.hasOwnProperty('channel') && data.emit.channel.hasOwnProperty('name') && data.emit.channel.hasOwnProperty('data')) {
 					// Trigger as channel event
-					myEvents.emit(data.channel, data.emit.data);
+					myEvents.emit(data.emit.channel.name, data.emit.channel.data);
 				}
 			}
 		});
