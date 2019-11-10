@@ -21,7 +21,7 @@ const require = (function (include, isIncluded, print, notify) {
 		}
 
 		if (field.hasOwnProperty('endsWith') && field.endsWith('.json')) { // Simply reads a json file
-			return modules[packageName] = File.open('libs/'+path + field, 0).readAllLines();
+			return modules[packageName] = File.open('libs/' + path + field, 0).readAllLines();
 		}
 
 		if (!isIncluded(path + field + '.js')) {
@@ -64,3 +64,19 @@ me.ingame && (function () {
 		.filter(file => file.endsWith('.js'))
 		.forEach(x => !isIncluded('unit/' + x) && include('unit/' + x));
 }).call();
+
+getScript.startAsThread = function () {
+	let stack = new Error().stack.match(/[^\r\n]+/g),
+		filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
+
+	if (getScript(true).name.toLowerCase() === filename.toLowerCase()) {
+		return 'thread';
+	}
+
+	if (!getScript(filename)) {
+		load(filename);
+		return 'started';
+	}
+
+	return 'loaded';
+};

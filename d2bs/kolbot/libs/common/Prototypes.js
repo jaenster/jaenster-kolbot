@@ -1577,23 +1577,6 @@ Array.prototype.isEqual = function (t) {
 	return this.map((x, i) => t.hasOwnProperty(i) && x === t[i]).reduce((a, c) => c & a, true);
 };
 
-
-getScript.startAsThread = function () {
-	let stack = new Error().stack.match(/[^\r\n]+/g),
-		filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
-
-	if (getScript(true).name.toLowerCase() === filename.toLowerCase()) {
-		return 'thread';
-	}
-
-	if (!getScript(filename)) {
-		load(filename);
-		return 'started';
-	}
-
-	return 'loaded';
-};
-
 Array.prototype.filterHighDistance = function () {
 	const distances = this.map(
 		(x, i) => this
