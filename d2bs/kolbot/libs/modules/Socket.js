@@ -8,6 +8,7 @@
 	const Worker = require('Worker');
 	const Events = require('Events');
 
+	/** @constructor */
 	function Socket(hostname, port) {
 		typeof Socket.__socketCounter === 'undefined' && (Socket.__socketCounter = 0);
 
