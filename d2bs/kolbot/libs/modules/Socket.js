@@ -25,7 +25,7 @@
 		};
 
 		this.recv = () => {
-			if (this.socket || !this.socket.readable) return;
+			if (!this.socket || !this.socket.readable) return;
 
 			const data = (() => {
 				try {
