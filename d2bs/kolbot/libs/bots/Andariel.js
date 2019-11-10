@@ -1,20 +1,26 @@
 /**
 *	@filename	Andariel.js
-*	@author		kolton
+*	@author		jaenster
 *	@desc		kill Andariel
 */
 
-function Andariel(Config, Attack, Pickit, Pather, Town) {
+module.exports =  function(Config, Attack, Pickit, Pather, Town) {
 	Town();
 	if (!Pather.journeyTo(sdk.areas.CatacombsLvl4)) {
 		throw Error('Failed to move to Andariel');
 	}
 
 	Pather.moveTo(22549, 9520);
-	Attack.kill(156); // Andariel
+	const andy = getUnit(1,sdk.monsters.Andariel); // Andariel
 
-	delay(2000); // Wait for minions to die.
+	if (!andy) throw new Error('Andariel not found');
+
+	andy.kill();
+
+	// Wait for minions to die.
+	while(getUnits(1).filter(x=>x.attackable).filter(x=>getDistance(andy,x) < 15).length > 3) delay(3);
+
 	Pickit.pickItems();
 
 	return true;
-}
+};
