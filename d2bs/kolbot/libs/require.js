@@ -30,7 +30,7 @@ const require = (function (include, isIncluded, print, notify) {
 
 			let old = Object.create(global['module']);
 			delete global['module'];
-			global['module'] = {exports: {here: 'failed module'}};
+			global['module'] = {exports: undefined};
 
 			// Include the file;
 			try {
