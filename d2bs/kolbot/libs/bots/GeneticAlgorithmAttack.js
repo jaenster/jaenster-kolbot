@@ -865,4 +865,4 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 		this.time = time;
 	}
 	return GeneticAlgorithmAttack;
-}).call(require("GameData"), require('Skills'), require('Config'));
+}).call(null, require("GameData"), require('Skills'), require('Config'));
