@@ -6,11 +6,7 @@
 
 
 
-//global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
-	let GameData = require("GameData");
-	let Config = require("Config");
-	let Skills = require("Skills");
-	let CollMap = require("CollMap");
+global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 
 	function GeneticAlgorithmAttack(Config, Attack, PickIt) {
 		let PresetMonsters = GameData.PresetMonsters;
@@ -125,11 +121,6 @@
 		this.stop = function () {
 			this.shouldStop = true;
 		};
-
-		let realFCR = me.getStat(105) - Config.FCR;
-		let fcrFrames = GameData.FCRFrames(realFCR, me.classid);
-		//CollMap.getNearbyRooms();
-		//print(fcrFrames);
 
 		// This is the loop that generate next population and calculate fitness after the initial population
 		this.continue = function () {
@@ -911,6 +902,5 @@
 		this.u2 = u2;
 		this.time = time;
 	}
-
-	//return GeneticAlgorithmAttack;
-//}).call(require("GameData"), require('Skills'), require('Config'));
+	return GeneticAlgorithmAttack;
+}).call(null, require("GameData"), require('Skills'), require('Config'));

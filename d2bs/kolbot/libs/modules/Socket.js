@@ -8,6 +8,7 @@
 	const Worker = require('Worker');
 	const Events = require('Events');
 
+	/** @constructor */
 	function Socket(hostname, port) {
 		typeof Socket.__socketCounter === 'undefined' && (Socket.__socketCounter = 0);
 
@@ -24,7 +25,7 @@
 		};
 
 		this.recv = () => {
-			if (this.socket || !this.socket.readable) return;
+			if (!this.socket || !this.socket.readable) return;
 
 			const data = (() => {
 				try {

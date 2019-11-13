@@ -1,16 +1,13 @@
 /**
-*	@filename	Mephisto.js
-*	@author		kolton, njomnjomnjom
-*	@desc		kill Mephisto
-*/
+ *    @filename    Mephisto.js
+ *    @author      kolton, njomnjomnjom, jaenster
+ *    @desc        kill Mephisto
+ */
 
-function Mephisto(Config, Attack, Pickit, Pather, Town) {
+module.exports = function (Config, Attack, Pickit, Pather, Town) {
 	const TownPrecast = require('TownPrecast');
 	this.killMephisto = function () {
-		var i, angle, angles,
-			pos = {},
-			attackCount = 0,
-			meph = getUnit(1, 242);
+		const meph = getUnit(1, sdk.monsters.Mephisto);
 
 		if (!meph) {
 			throw new Error("Mephisto not found!");
@@ -18,14 +15,19 @@ function Mephisto(Config, Attack, Pickit, Pather, Town) {
 
 		meph.kill();
 
-		return (meph.mode === 0 || meph.mode === 12);
+		return meph.dead;
 	};
 
 	TownPrecast();
+	Town();
 	if (!Pather.journeyTo(102)) {
 		throw new Error("Failed to move to Durance Level 3");
 	}
 
+	if (Config.Mephisto.TakeRedPortal) {
+		Pather.moveTo(17590, 8068); // Save time and activate the river bank
+		delay(400);
+	}
 	Pather.moveTo(17566, 8069);
 	this.killMephisto();
 	Pickit.pickItems();
@@ -40,9 +42,19 @@ function Mephisto(Config, Attack, Pickit, Pather, Town) {
 	}
 
 	if (Config.Mephisto.TakeRedPortal) {
-		Pather.moveTo(17590, 8068);
-		delay(1500);
-		Pather.moveTo(17601, 8070);
-		Pather.usePortal(null);
+		// bridge not activated yet?
+		if (getCollision(me.area, 17601, 8070, 17590, 8068) !== 0) Pather.moveTo(17590, 8068); // so activate
+
+		let tick = getTickCount(), time = 0;
+		while (getCollision(me.area, 17601, 8070, 17590, 8068) !== 0) {
+			delay(3);
+			if ((time = getTickCount() - tick > 1500)) break;
+		}
+		if (time > 2000) { // somehow failed
+			Town.goToTown();
+		} else {
+			Pather.moveTo(17601, 8070);
+			Pather.usePortal(null);
+		}
 	}
-}
+};
