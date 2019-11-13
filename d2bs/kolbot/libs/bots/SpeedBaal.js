@@ -7,10 +7,12 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 	const Precast = require('Precast');
 	const TownPrecast = require('TownPrecast');
 	const GameData = require('GameData');
-	const Skills = require('Skills');
 	const PreAttack = require('PreAttack');
+	const inGameChannel = require('Channel').inGame;
+	const Delta = new (require('Deltas'));
 
-	const getUnits = (...args) => {
+	const self = this,
+		getUnits = (...args) => {
 			let units = [], unit = getUnit.apply(undefined, args);
 
 			if (unit instanceof Unit) {
@@ -21,7 +23,6 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 
 			return units;
 		},
-		self = this,
 		/**
 		 * @param x
 		 * @param y
@@ -101,11 +102,8 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 
 		// Wait for the portal
 		for (let i = 0, delayI = 10; i < 30 * (1000 / delayI); i += 1) {
-			if (config.Leecher) {
-
-			} else if (Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) {
-				break;
-			}
+			if (config.Leecher && self.safe && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
+			if (!config.Leecher && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
 
 			delay(delayI);
 		}
@@ -116,6 +114,15 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 	this.wave = 0;
 	this.nextWave = 1;
 	this.baaltick = 0;
+	this.safe = false;
+
+	inGameChannel.on('SpeedBaal', function (data) {
+		if (data.hasOwnProperty('safe')) {
+			self.safe = data.safe;
+		}
+	});
+
+	Delta.track(() => this.baaltick, () => this.nextWave === 1 && inGameChannel.send({SpeedBaal: {safe: true}}));
 
 	this.checkThrone = function () {
 		let waveMonsters = [23, 62, 105, 381, 557, 558, 571], waves = [1, 1, 2, 2, 3, 4, 5],
@@ -133,7 +140,6 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 
 			if (!this.wave) {
 				this.clear(); // First clear the throne
-				this.nextWave = 1
 				PreAttack.do([0, 23, 105, 557, 558, 571][this.nextWave], 12e3 - (getTickCount() - this.baaltick), spots.throne.center);
 			} else {
 
@@ -221,7 +227,6 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 				if (unit) {
 					print('cast lower curse on distance on baal');
 					Skill.cast(91, 0, 15166, 5903);
-					return true;
 				}
 				break;
 		}
