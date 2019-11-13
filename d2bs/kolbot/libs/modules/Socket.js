@@ -34,6 +34,7 @@
 				} catch (e) {
 					close();
 				}
+				return undefined;
 			})();
 
 			data && myEvents.emit('data', data);

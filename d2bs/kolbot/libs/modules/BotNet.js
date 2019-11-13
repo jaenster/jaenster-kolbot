@@ -4,7 +4,6 @@
  *
  */
 (function (module, require) {
-	require('Debug');
 	const myEvents = new (require('Events'));
 	const exports = {
 		on: myEvents.on,
@@ -20,26 +19,32 @@
 	if (getScript.startAsThread() === 'thread') {
 		/** @type Socket */
 		const Socket = require('Socket');
+		const hostname = 'localhost';
+		const registeredChannels = [];
 
-		const socket = new Socket('localhost', 0xD2B5);
+		const socket = new Socket(hostname, 0xD2B5);
 
 		// Override the send function, so we can just send data blobs
 		(orgSend => socket.send = data => data !== undefined && orgSend.call(orgSend, JSON.stringify(data) + String.fromCharCode(13, 10)))(socket.send);
 		// Override the connnect function
 		(orgSocket => socket.connect = () => {
 			try {
-				orgSocket.connect();
+				orgSocket();
+				print('Connected to ' + hostname);
+				registeredChannels.forEach(channel=> socket.send({register: channel}));
 			} catch (e) {
 				// Dont care for a failed connection
+				print('Failed to connect to ' + hostname + ' (' + e.message + ')');
 			}
 		})(socket.connect);
 
 		socket.connect();
-
-		require('debug');
 		// Respond on message's from other threads
 		Message.on('BotNet', function (data) {
-			if (data.hasOwnProperty('register') && typeof data.register === 'string') socket.send({register: data.register});
+			if (data.hasOwnProperty('register') && typeof data.register === 'string' && !registeredChannels.indexOf(data.register) === -1) {
+				registeredChannels.push(data.register);
+				socket.send({register: data.register});
+			}
 			if (data.hasOwnProperty('send') && typeof data.send === 'object' && data.send) {
 				socket.send(data.send)
 			}
@@ -72,6 +77,7 @@
 			}
 
 			if (!socket.connected && getTickCount() - lastReconnect > 5e3) {
+				print('Reconnecting to ' + hostname);
 				// In case its not connected, check the time since the last attempt to reconnect
 				lastReconnect = getTickCount();
 				socket.connect();
