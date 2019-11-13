@@ -12,6 +12,7 @@
 		}
 
 		this.on = function (name, callback) {
+			if (callback === undefined && typeof name === 'function') [callback,name] = [name,callback];
 			return new Hook(name, callback);
 		};
 
@@ -24,6 +25,7 @@
 		this.emit = this.trigger; // Alias for trigger
 
 		this.once = function (name, callback) {
+			if (callback === undefined && typeof name === 'function') [callback,name] = [name,callback];
 			const Hook = new Hook(name, function (...args) {
 				callback.apply(undefined, args);
 				delete self.hooks[this.id];
