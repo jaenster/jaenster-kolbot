@@ -17,26 +17,7 @@ function MapHack(Config, Attack, Pickit, Pather, Town) {
 		itemTier = GameData.itemTier
 	;
 
-	const deltas = {
-		values: [],
-		track: function (checkerFn, callback) {
-			this.values.push({fn: checkerFn, callback: callback, value: checkerFn()});
-		},
-		check: function () {
-			this.values.some(delta => {
-				let val = delta.fn();
-
-				if (delta.value !== val) {
-					let ret = delta.callback(delta.value, val);
-					delta.value = val;
-
-					return ret;
-				}
-
-				return null;
-			});
-		}
-	};
+	const deltas = new (require('Deltas'));
 
 	/*
 Usage:
