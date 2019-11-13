@@ -8,12 +8,12 @@
 	const Worker = require('Worker');
 	const Events = require('Events');
 
-	/** @constructor */
+	/** @constructor Socket*/
 	function Socket(hostname, port) {
 		typeof Socket.__socketCounter === 'undefined' && (Socket.__socketCounter = 0);
-
+		this.connected = false;
 		const myEvents = new Events;
-		this.connect = () => (this.socket = buildinSock.open(hostname, port)) && this;
+		this.connect = () => (this.socket = buildinSock.open(hostname, port)) && (this.connected = true) && this;
 
 		this.on = myEvents.on;
 		this.off = myEvents.off;
@@ -21,11 +21,12 @@
 
 		const close = () => {
 			this.socket = null;
+			this.connected = false;
 			myEvents.emit('close', this);
 		};
 
 		this.recv = () => {
-			if (!this.socket || !this.socket.readable) return;
+			if (!this.connected || !this.socket || !this.socket.readable) return;
 
 			const data = (() => {
 				try {
