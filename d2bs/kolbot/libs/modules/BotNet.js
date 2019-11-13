@@ -19,7 +19,7 @@
 	if (getScript.startAsThread() === 'thread') {
 		/** @type Socket */
 		const Socket = require('Socket');
-		const hostname = 'localhost';
+		const hostname = 'travinc.al';
 		const registeredChannels = [];
 
 		const socket = new Socket(hostname, 0xD2B5);
