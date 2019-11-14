@@ -24,7 +24,9 @@
 				typeof self._finally !== 'undefined' && self._finally.forEach(function (callback) {
 					return callback(self.value);
 				});
-			}, resolve = function (result) {
+			},
+
+			resolve = function (result) {
 				self.value = result;
 				self.stopped = true;
 				typeof self._after !== 'undefined' && self._after.forEach(function (callback) {
@@ -32,6 +34,7 @@
 				});
 				final();
 			},
+			
 			reject = function (e) {
 				self.stopped = true;
 				typeof self._catchers !== 'undefined' && (self._catchers.forEach(function (callback) {

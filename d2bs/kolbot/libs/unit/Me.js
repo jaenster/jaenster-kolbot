@@ -88,6 +88,77 @@
 		return this;
 	};
 
+	// get the item classid from chestid. Usefull for items like inifuss with tree, act 2 staff and amulet with chests etc...
+	me.getQuestItem = function (classid, chestid) { // Accepts classid only or a classid/chestid combination.
+		const Storage = require('Storage'),
+			Pickit = require('Pickit'),
+			Town = require('Town');
+		var i, chest, item,
+			tick = getTickCount();
+
+		if (me.findItem(classid)) { // Don't open "chest" or try picking up item if we already have it.
+			return true;
+		}
+
+		if (me.inTown) {
+			return false;
+		}
+
+		if (arguments.length > 1) {
+			chest = getUnit(2, chestid);
+			if (chest) {
+				Misc.openChest(chest);
+			}
+		}
+
+		for (i = 0 ; i < 50 ; i += 1) { // Give the quest item plenty of time (up to two seconds) to drop because if it's not detected the function will end.
+			item = getUnit(4, classid);
+			if (item) {
+				break;
+			}
+			delay(40);
+		}
+
+		while (!me.findItem(classid)) { // Try more than once in case someone beats me to it.
+			item = getUnit(4, classid);
+			if (item) {
+				if (Storage.Inventory.CanFit(item)) {
+					Pickit.pickItem(item);
+					delay(me.ping * 2 + 500);
+				} else {
+					if (Pickit.canMakeRoom()) {
+						print("ÿc1Trying to make room for " + Pickit.itemColor(item) + item.name);
+						Town.visitTown(); // Go to Town and do chores. Will throw an error if it fails to return from Town.
+					} else {
+						print("ÿc1Not enough room for " + Pickit.itemColor(item) + item.name);
+						return false;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	me.talkTo = (npc) => {
+		const NPC = require('NPC'),
+			Town = require('Town');
+		for (var i = 0; i < 5; i++) {
+			Town.move(npc === NPC.Jerhyn ? "palace" : npc);
+			var monkey = getUnit(sdk.unittype.NPC, npc === NPC.Cain ? "deckard cain" : npc);
+			if (monkey && monkey.openMenu() && me.cancel()) {
+				return true;
+			}
+			//Packet.flash(me.gid);
+			delay(me.ping * 2 + 500);
+			Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
+		}
+
+		return false;
+	};
+
 	me.on = Events.on;
 	me.off = Events.off;
 	me.once = Events.once;
