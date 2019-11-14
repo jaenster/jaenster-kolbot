@@ -1,0 +1,131 @@
+/***************************************************
+ * @author Jaenster
+ * @description Publicly join other bots
+ *
+ * You do not need to set-up anything here
+ *    You do this in the profile config file
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+print('ÿc2Jaensterÿc0 :: Started D2BotPublicJoin.dbj');
+include('require.js');
+include("sdk.js");
+include("OOG.js");
+include("common/misc.js");
+let handle, gameInfo;
+
+function main() {
+	const LocationEvents = require('LocationEvents');
+	const Config = require('Config').call();
+	const Worker = require('Worker');
+	const Advertisement = require('Advertisement');
+	const Control = require('Control');
+	const Delta = require('Delta');
+
+	const joinGame = {
+		name: '',
+		pass: '',
+	};
+
+	Advertisement.on('game', function (data) {
+		if (data.gamename.indexOf(gameInfo.gamename) > -1) {
+			Object.keys(key => joinGame[key] = data[key]);
+		}
+	});
+
+	Delta.track(() => joinGame.name, () => joinGame.name && !me.ingame && (() => {
+		// In case join game window is already open, emit the event again
+		if (sdk.locations.JoinGame === getlocation()) return LocationEvents.emit(sdk.locations.JoinGame);
+		// or just press the join game window
+		return Control.JoinGameWindow.click();
+	})());
+
+	require('debug');
+
+	addEventListener('copydata', function (mode, msg) {
+		//print(JSON.stringify({mode: mode, msg: msg}));
+		if (msg === "Handle") {
+			if (!handle) {
+				handle = mode;
+				Worker.push(() => DataFile.updateStats("handle", handle));
+				Worker.push(() => D2Bot.init());
+
+				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
+			}
+			return;
+		}
+		if (mode === 2) {
+			gameInfo = JSON.parse(msg);
+			gameInfo.charName = StarterConfig.LoginChar;
+		}
+		if (mode === 4) {
+			msg === "pingreq" && sendCopyData(null, me.windowtitle, 4, "pingrep");
+		}
+		return;
+	});
+
+	// create datafile (needs some refactoring trough)
+	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
+
+	while (!handle) delay(10);
+
+	let lastTimer = getTickCount();
+	D2Bot.requestGameInfo();
+	while (!gameInfo) {
+		if (getTickCount() - lastTimer > 500) {
+			lastTimer = getTickCount();
+			D2Bot.requestGameInfo();
+		}
+		delay(10);
+	}
+
+	getLocation() === sdk.locations.None && sendKey(32);
+	LocationEvents.on(sdk.locations.Lobby, Control.EnterChat.click); // join click
+	LocationEvents.on(sdk.locations.LobbyChat, () => {
+		//ToDo; join channel;
+	});
+	LocationEvents.on(sdk.locations.JoinGame, () => {
+		if (joinGame.name) {
+			Control.JoinGameName.setText(joinGame.name);
+			Control.JoinGamePass.setText(joinGame.pass);
+
+			Control.JoinGame.click();
+		}
+	});
+	login();
+
+}

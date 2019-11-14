@@ -641,7 +641,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 
 (function () {
 	!isIncluded('require.js') && include('require.js');
-	!isIncluded('common/Misc.js') && include('common/Misc.js');
+	const PacketBuilder = require('PacketBuilder');
 	if (getScript.startAsThread() === 'thread') {
 		const Worker = require('Worker');
 		let tick = 0;
