@@ -5,12 +5,18 @@
 
 module.exports = new function () {
 	const Config = require('Config');
-
+	const PacketBuilder = require('PacketBuilder');
+	
 	const LOCAL_CHAT_ID = 0xD2BAAAA;
 
 	let toggle, proxy = say;
 
-	let relay = (msg) => D2Bot.shoutGlobal(JSON.stringify({ msg: msg, realm: me.realm, charname: me.charname, gamename: me.gamename }), LOCAL_CHAT_ID);
+	let relay = (msg) => D2Bot.shoutGlobal(JSON.stringify({
+		msg: msg,
+		realm: me.realm,
+		charname: me.charname,
+		gamename: me.gamename
+	}), LOCAL_CHAT_ID);
 
 	let onChatInput = (speaker, msg) => {
 		relay(msg);
