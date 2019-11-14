@@ -59,11 +59,8 @@
 		// see if there is a new quest state
 		const newQuestState = getQuests(q);
 		if (!newQuestState.isEqual(states[q])) { // There are differences
-			// print(JSON.stringify(states[q]));
-			// print(JSON.stringify(newQuestState));
 			const changed = [];
 			newQuestState.forEach((c, i) => c !== states[q][i] && changed.push({key: i, value: c}));
-			print(JSON.stringify(changed));
 
 			states[q] = newQuestState;
 			questEvents.emit(q, states[q]); // Trigger

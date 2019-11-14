@@ -3,7 +3,9 @@
  * @author Jaenster
  */
 (function (module, require) {
+	/** @class Config */
 	function Config() {
+		if (Config.loaded) return Config;
 		if (!FileTools.exists("config/" + Config.file + ".js")) {
 			for (let i = 0; i < 8; i++) print(' ');
 			print('[ÿc1Errorÿc0] Config file doesnt exists.');
@@ -19,7 +21,7 @@
 		}
 
 		const scripts = require(Config.file, '../config/');
-
+		const currentScript = getScript(true).name.toLowerCase();
 		Object.keys(scripts || {})
 			.forEach(x => Config.Scripts[x] = scripts[x]);
 
@@ -34,7 +36,7 @@
 
 			Config.Party && require('Party');
 
-			if (getScript(true).name.toLowerCase() === 'default.dbj') {
+			if (currentScript === 'default.dbj') {
 				if (Array.isArray(Config.QuitList) && Config.QuitList.length || (typeof Config.QuitList === 'string' && Config.QuitList.length)) {
 					require('QuitList');
 				}
@@ -50,10 +52,18 @@
 			&& (AdvancedConfig[me.windowtitle] = Config.AdvancedConfig);
 
 			Object.keys(Config.StarterConfig).forEach(key => StarterConfig[key] = Config.StarterConfig[key])
-
 		}
+
+		// Load the advertisement module if we want to advertise
+		if (Config.Advertisement && currentScript.endsWith('.dbj') && currentScript !== 'default.dbj') {
+			require('Advertisement');
+		}
+
+		Config.loaded = true;
 		return Config;
 	}
+
+	Config.loaded = false;
 
 	Config.file = (function () {
 		try {
@@ -364,6 +374,8 @@
 	Config.StarterConfig = {};
 	Config.AdvancedConfig = {};
 
+	// if true, it shares the games globally
+	Config.Advertisement = false;
 
 	module.exports = Config;
 
