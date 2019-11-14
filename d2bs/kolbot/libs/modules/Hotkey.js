@@ -18,7 +18,7 @@
 	} else {
 		const myEvents = new (require('Events'));
 
-		Messaging.on('Hotkey', data => data.hasOwnProperty('emit') && myEvents.emit(data.emit) || myEvents.emit(null,data.emit));
+		Messaging.on('Hotkey', data => data.hasOwnProperty('emit') && myEvents.emit(data.emit) || myEvents.emit(null, data.emit));
 
 		(on => myEvents.on = args => Messaging.send({Hotkey: {data: ([key] = [args])}}) || on.apply(myEvents, args))(myEvents.on);
 
