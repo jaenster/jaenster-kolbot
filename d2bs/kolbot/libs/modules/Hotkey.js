@@ -20,7 +20,7 @@
 
 		Messaging.on('Hotkey', data => data.hasOwnProperty('emit') && myEvents.emit(data.emit) || myEvents.emit(null, data.emit));
 
-		(on => myEvents.on = args => Messaging.send({Hotkey: {data: ([key] = [args])}}) || on.apply(myEvents, args))(myEvents.on);
+		(on => myEvents.on = (...args) => Messaging.send({Hotkey: {register: args[0]}}) || on.apply(myEvents, args))(myEvents.on);
 
 		module.exports = {
 			on: myEvents.on,
