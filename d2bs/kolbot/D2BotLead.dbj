@@ -657,7 +657,6 @@ function locationAction(location) {
 						case getLocaleString(5208):
 							D2Bot.updateStatus("Invalid Account");
 							D2Bot.printToConsole("Invalid Account");
-
 							break;
 						case getLocaleString(5202): // cd key intended for another product
 						case getLocaleString(10915): // lod key intended for another product
@@ -715,7 +714,6 @@ function locationAction(location) {
 							} else {
 								D2Bot.stop();
 							}
-
 							break;
 					}
 				}
