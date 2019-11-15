@@ -1556,8 +1556,6 @@
 					}
 
 					if (result === 1) {
-						Misc.itemLogger("Stashed", items[i]);
-						print('MOVING TO STASH??');
 						Storage.Stash.MoveTo(items[i]);
 					}
 				}
