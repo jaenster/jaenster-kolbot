@@ -52,12 +52,6 @@ function main() {
 		sojCounter = 0,
 		startTime = getTickCount();
 
-	this.itemEvent = function (gid, mode, code, global) {
-		if (gid > 0 && mode === 0) {
-			Pickit.gidList.push(gid);
-		}
-	};
-
 	this.scriptEvent = function (msg) {
 		switch (msg) {
 		case "soj":
