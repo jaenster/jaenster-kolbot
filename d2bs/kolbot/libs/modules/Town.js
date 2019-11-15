@@ -1527,11 +1527,11 @@
 			return true;
 		}
 		const Pickit = require('Pickit');
+		me.cancel();
 		const Storage = require('Storage');
 		const items = Storage.Inventory.Compare(Config.Inventory);
 
 		if (items) {
-			Town.openStash();
 			for (let i = 0; i < items.length; i += 1) {
 				if (Town.canStash(items[i]) && items[i].location === sdk.storage.Inventory /*yeah we need to check this, as hooks can alter it*/) {
 					const item = copyUnit(items[i]);
@@ -1556,8 +1556,6 @@
 					}
 
 					if (result === 1) {
-						Misc.itemLogger("Stashed", items[i]);
-						print('MOVING TO STASH??');
 						Storage.Stash.MoveTo(items[i]);
 					}
 				}

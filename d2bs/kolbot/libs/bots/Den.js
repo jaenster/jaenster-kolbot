@@ -18,7 +18,7 @@
 		Rx.Observable.fromPromise(promise)
 			.subscribe(x => {
 				// 0xF = skip normal, 0x7 = champions/bosses, 0 = all
-				Attack.clearLevel({spectype: 0});
+				Attack.clearLevelWalk({spectype: 0});
 			},
 			e => {
 				print("error "+e);

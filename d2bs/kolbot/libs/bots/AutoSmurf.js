@@ -50,31 +50,32 @@
 			SecretCowLevel: 41,
 		*/
 
-		/*Quests.on(sdk.quests.DenOfEvil, (state) => {
+		Town();
+
+		Quests.on(sdk.quests.DenOfEvil, (state) => {
 			print("Den quest update");
 			if (state[0]) { // quest done
 				print("Den quest done");
+				return;
 			}
-			else if (state[1]) { // all monsters killed, talk to akara
+			if (!state[1]) { // quest not done
+				print("Doing Den quest");
+				require("../bots/Den")(Config, Attack, Pickit, Pather, Town);
+			}
+			else { // all monsters killed, talk to akara
 				if (me.inTown) {
 					me.talkTo(NPC.Akara);
 				}
 				else {
 					var tries = 0;
 					while (!me.inTown && tries < 3) {
-						Pather.journeyTo(sdk.areas.RogueEncampment, true);
+						me.journeyTo(sdk.areas.RogueEncampment, true);
 						tries++;
 					}
 					me.talkTo(NPC.Akara);
 				}
 			}
-			else {
-				print("Doing Den quest");
-				require("../bots/Den")(Config, Attack, Pickit, Pather, Town);
-			}
-		});*/
-		//require("../bots/Den")(Config, Attack, Pickit, Pather, Town);
-		//me.talkTo(NPC.Akara);
+		});
 
 
 		/*
@@ -88,8 +89,11 @@
 		ÿc7 gold
 		ÿc8 orange
 		ÿc9 yellow
+		ÿc; 
 		*/
-		
+
+		Town();
+
 		require("../bots/Cain")(Config, Attack, Pickit, Pather, Town);
 
 
