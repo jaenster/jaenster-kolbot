@@ -7,7 +7,8 @@
 	const Messaging = require('Messaging');
 	const local = module.exports = {
 		handle: 0,
-		gameInfo: {}
+		gameInfo: {},
+		crashInfo: {}
 	};
 
 	if (getScript.startAsThread() === 'thread') {
@@ -40,6 +41,10 @@
 				case mode === 4:
 					msg === "pingreq" && sendCopyData(null, me.windowtitle, 4, "pingrep");
 					break;
+				case mode === 0xf124:
+					gameInfo.crashInfo = JSON.parse(msg);
+					break;
+
 			}
 		};
 
