@@ -5,7 +5,6 @@
 
 (function (module, require) {
 	const Messaging = require('Messaging');
-	require('debug');
 	const local = module.exports = {
 		handle: 0,
 		gameInfo: {}
@@ -29,7 +28,6 @@
 		});
 		const Delta = new (require('Deltas'));
 		const onData = function (mode, msg) {
-			//print(JSON.stringify({mode: mode, msg: msg}));
 			switch (true) {
 				case msg === "Handle" && !local.handle:
 					local.handle = mode;
