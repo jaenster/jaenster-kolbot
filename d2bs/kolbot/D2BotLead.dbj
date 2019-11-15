@@ -112,12 +112,12 @@ include("craftingsystem.js");
 include("torchsystem.js");
 include("common/misc.js");
 
+const HeartBeat = require('HeartBeat');
 if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
 }
 
-var gameInfo, gameStart, ingame, chatActionsDone, pingQuit,
-	handle, useChat, firstLogin, connectFail,
+var gameStart, ingame, chatActionsDone, pingQuit, useChat, firstLogin, connectFail,
 	gameCount = DataFile.getStats().runs + 1,
 	loginRetry = 0,
 	lastGameStatus = "ready",
@@ -138,48 +138,27 @@ function sayMsg(string) {
 }
 
 function ReceiveCopyData(mode, msg) {
-	var obj;
-
-	switch (msg) {
-		case "Handle":
-			handle = mode;
-
-			break;
-	}
-
 	switch (mode) {
-		case 2: // Game info
-			print("Recieved Game Info");
-
-			gameInfo = JSON.parse(msg);
-
-			break;
 		case 3: // Game request
 				// Don't let others join mule/torch/key/gold drop game
 			if (AutoMule.inGame || Gambling.inGame || TorchSystem.inGame || CraftingSystem.inGame) {
 				break;
 			}
 
-			if (gameInfo) {
-				obj = JSON.parse(msg);
+			if (HeartBeat.gameInfo) {
+				const obj = JSON.parse(msg);
 
 				if (me.gameReady) {
 					D2Bot.joinMe(obj.profile, me.gamename.toLowerCase(), "", me.gamepassword.toLowerCase(), isUp);
 				} else {
-					D2Bot.joinMe(obj.profile, gameInfo.gameName.toLowerCase(), gameCount, gameInfo.gamePass.toLowerCase(), isUp);
+					D2Bot.joinMe(obj.profile, HeartBeat.gameInfo.gameName.toLowerCase(), gameCount, HeartBeat.gameInfo.gamePass.toLowerCase(), isUp);
 				}
-			}
-
-			break;
-		case 4: // Heartbeat ping
-			if (msg === "pingreq") {
-				sendCopyData(null, me.windowtitle, 4, "pingrep");
 			}
 
 			break;
 		case 0xf124: // Cached info retreival
 			if (msg !== "null") {
-				gameInfo.crashInfo = JSON.parse(msg);
+				HeartBeat.crashInfo = JSON.parse(msg);
 			}
 
 			break;
@@ -187,7 +166,7 @@ function ReceiveCopyData(mode, msg) {
 }
 
 function setNextGame() {
-	var nextGame = gameInfo.gameName;
+	let nextGame = HeartBeat.gameInfo.gameName;
 
 	if (StarterConfig.ResetCount && gameCount + 1 >= StarterConfig.ResetCount) {
 		nextGame += 1;
@@ -302,35 +281,17 @@ function main() {
 	addEventListener('copydata', ReceiveCopyData);
 	addEventListener('scriptmsg', ScriptMsgEvent);
 
-	while (!handle) {
-		delay(100);
-	}
-
-	DataFile.updateStats("handle", handle);
-	delay(500);
-	D2Bot.init();
-	load("tools/heartbeat.js");
 	require('Config')();
+	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
 
-	while (!gameInfo) {
-		D2Bot.requestGameInfo();
-		delay(500);
-	}
-
-	if (gameInfo.error) {
-		//D2Bot.retrieve();
+	if (HeartBeat.gameInfo.error) {
 		delay(200);
 
 		if (!!DataFile.getStats().debugInfo) {
-			gameInfo.crashInfo = DataFile.getStats().debugInfo;
+			HeartBeat.crashInfo = DataFile.getStats().debugInfo;
 
-			D2Bot.printToConsole("Crash Info: Script: " + JSON.parse(gameInfo.crashInfo).currScript + " Area: " + JSON.parse(gameInfo.crashInfo).area, 10);
+			D2Bot.printToConsole("Crash Info: Script: " + JSON.parse(HeartBeat.crashInfo).currScript + " Area: " + JSON.parse(HeartBeat.crashInfo).area, 10);
 		}
-
-		/*if (gameInfo.crashInfo) {
-			D2Bot.printToConsole("Crash Info: Script: " + gameInfo.crashInfo.currScript + " Area: " + gameInfo.crashInfo.area + (gameInfo.crashInfo.hasOwnProperty("lastAction") ? " " + gameInfo.crashInfo.lastAction : ""), 10);
-		}*/
-
 		ControlAction.timeoutDelay("Crash Delay", StarterConfig.CrashDelay * 1e3);
 		D2Bot.updateRuns();
 	}
@@ -370,7 +331,7 @@ function main() {
 }
 
 function locationAction(location) {
-	var i, control, string, text;
+	let i, control, string, text;
 
 	MainSwitch:
 		switch (location) {
@@ -404,7 +365,7 @@ function locationAction(location) {
 					break;
 				}
 
-				if (ingame || gameInfo.error) {
+				if (ingame || HeartBeat.gameInfo.error) {
 					if (!gameStart) {
 						gameStart = DataFile.getStats().ingameTick;
 					}
@@ -463,7 +424,7 @@ function locationAction(location) {
 					gameCount += 1;
 				}
 
-				if (ingame || gameInfo.error) {
+				if (ingame || HeartBeat.gameInfo.error) {
 					if (!gameStart) {
 						gameStart = DataFile.getStats().ingameTick;
 					}
@@ -562,7 +523,7 @@ function locationAction(location) {
 				}
 
 				if (chanInfo.announce) {
-					sayMsg("Next game is " + gameInfo.gameName + gameCount + (gameInfo.gamePass === "" ? "" : "//" + gameInfo.gamePass));
+					sayMsg("Next game is " + HeartBeat.gameInfo.gameName + gameCount + (HeartBeat.gameInfo.gamePass === "" ? "" : "//" + HeartBeat.gameInfo.gamePass));
 				}
 
 				if (!ControlAction.click(6, 533, 469, 120, 20)) { // Create
@@ -597,7 +558,7 @@ function locationAction(location) {
 				}
 
 				// Get game name if there is none
-				while (!gameInfo.gameName) {
+				while (!HeartBeat.gameInfo.gameName) {
 					D2Bot.requestGameInfo();
 					delay(500);
 				}
@@ -611,7 +572,7 @@ function locationAction(location) {
 					D2Bot.updateRuns();
 				}
 
-				ControlAction.createGame((gameInfo.gameName === "?" ? randomString(null,true) : gameInfo.gameName + gameCount), (gameInfo.gamePass === "?" ? randomString(null,true) : gameInfo.gamePass), gameInfo.difficulty, StarterConfig.CreateGameDelay * 1000);
+				ControlAction.createGame((HeartBeat.gameInfo.gameName === "?" ? randomString(null,true) : HeartBeat.gameInfo.gameName + gameCount), (HeartBeat.gameInfo.gamePass === "?" ? randomString(null,true) : HeartBeat.gameInfo.gamePass), HeartBeat.gameInfo.difficulty, StarterConfig.CreateGameDelay * 1000);
 
 				lastGameStatus = "pending";
 
@@ -701,10 +662,10 @@ function locationAction(location) {
 						case getLocaleString(5202): // cd key intended for another product
 						case getLocaleString(10915): // lod key intended for another product
 							D2Bot.updateStatus("Invalid CDKey");
-							D2Bot.printToConsole("Invalid CDKey: " + gameInfo.mpq, 6);
+							D2Bot.printToConsole("Invalid CDKey: " + HeartBeat.gameInfo.mpq, 6);
 							D2Bot.CDKeyDisabled();
 
-							if (gameInfo.switchKeys) {
+							if (HeartBeat.gameInfo.switchKeys) {
 								ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 								D2Bot.restart(true);
 							} else {
@@ -714,10 +675,10 @@ function locationAction(location) {
 							break;
 						case getLocaleString(5199):
 							D2Bot.updateStatus("Disabled CDKey");
-							D2Bot.printToConsole("Disabled CDKey: " + gameInfo.mpq, 6);
+							D2Bot.printToConsole("Disabled CDKey: " + HeartBeat.gameInfo.mpq, 6);
 							D2Bot.CDKeyDisabled();
 
-							if (gameInfo.switchKeys) {
+							if (HeartBeat.gameInfo.switchKeys) {
 								ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 								D2Bot.restart(true);
 							} else {
@@ -727,10 +688,10 @@ function locationAction(location) {
 							break;
 						case getLocaleString(10913):
 							D2Bot.updateStatus("Disabled LoD CDKey");
-							D2Bot.printToConsole("Disabled LoD CDKey: " + gameInfo.mpq, 6);
+							D2Bot.printToConsole("Disabled LoD CDKey: " + HeartBeat.gameInfo.mpq, 6);
 							D2Bot.CDKeyDisabled();
 
-							if (gameInfo.switchKeys) {
+							if (HeartBeat.gameInfo.switchKeys) {
 								ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 								D2Bot.restart(true);
 							} else {
@@ -748,7 +709,7 @@ function locationAction(location) {
 							D2Bot.updateStatus("Login Error");
 							D2Bot.printToConsole("Login Error - " + string);
 
-							if (gameInfo.switchKeys) {
+							if (HeartBeat.gameInfo.switchKeys) {
 								ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 								D2Bot.restart(true);
 							} else {
@@ -794,7 +755,7 @@ function locationAction(location) {
 				ControlAction.timeoutDelay("Realm Down", StarterConfig.RealmDownDelay * 6e4);
 				D2Bot.CDKeyRD();
 
-				if (gameInfo.switchKeys && !gameInfo.rdBlocker) {
+				if (HeartBeat.gameInfo.switchKeys && !HeartBeat.gameInfo.rdBlocker) {
 					D2Bot.printToConsole("Realm Down - Changing CD-Key");
 					ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 					D2Bot.restart(true);
@@ -822,10 +783,10 @@ function locationAction(location) {
 
 				break;
 			case 19: // Login - Cdkey In Use
-				D2Bot.printToConsole(gameInfo.mpq + " is in use by " + ControlAction.getText(4, 158, 310, 485, 40), 6);
+				D2Bot.printToConsole(HeartBeat.gameInfo.mpq + " is in use by " + ControlAction.getText(4, 158, 310, 485, 40), 6);
 				D2Bot.CDKeyInUse();
 
-				if (gameInfo.switchKeys) {
+				if (HeartBeat.gameInfo.switchKeys) {
 					ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 					D2Bot.restart(true);
 				} else {
@@ -858,10 +819,10 @@ function locationAction(location) {
 
 				switch (string) {
 					case getLocaleString(10914):
-						D2Bot.printToConsole(gameInfo.mpq + " LoD key in use by " + ControlAction.getText(4, 158, 310, 485, 40), 6);
+						D2Bot.printToConsole(HeartBeat.gameInfo.mpq + " LoD key in use by " + ControlAction.getText(4, 158, 310, 485, 40), 6);
 						D2Bot.CDKeyInUse();
 
-						if (gameInfo.switchKeys) {
+						if (HeartBeat.gameInfo.switchKeys) {
 							ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 							D2Bot.restart(true);
 						} else {
@@ -871,7 +832,7 @@ function locationAction(location) {
 
 						break;
 					default:
-						if (gameInfo.switchKeys) {
+						if (HeartBeat.gameInfo.switchKeys) {
 							D2Bot.printToConsole("Invalid CD-Key");
 							ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 							D2Bot.restart(true);
@@ -900,10 +861,10 @@ function locationAction(location) {
 
 					if (string === getLocaleString(11161)) { // CDKey disabled from realm play
 						D2Bot.updateStatus("Realm Disabled CDKey");
-						D2Bot.printToConsole("Realm Disabled CDKey: " + gameInfo.mpq, 6);
+						D2Bot.printToConsole("Realm Disabled CDKey: " + HeartBeat.gameInfo.mpq, 6);
 						D2Bot.CDKeyDisabled();
 
-						if (gameInfo.switchKeys) {
+						if (HeartBeat.gameInfo.switchKeys) {
 							ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 							D2Bot.restart(true);
 						} else {
@@ -915,7 +876,7 @@ function locationAction(location) {
 				if (!locationTimeout(StarterConfig.ConnectingTimeout * 1e3, location)) {
 					ControlAction.click(6, 33, 572, 128, 35);
 
-					if (gameInfo.rdBlocker) {
+					if (HeartBeat.gameInfo.rdBlocker) {
 						D2Bot.restart();
 					}
 				}
@@ -943,10 +904,10 @@ function locationAction(location) {
 			case 28: // Lobby - Game Does Not Exist
 				D2Bot.printToConsole("Game doesn't exist");
 
-				if (gameInfo.rdBlocker) {
-					D2Bot.printToConsole(gameInfo.mpq + " is probably flagged.", 6);
+				if (HeartBeat.gameInfo.rdBlocker) {
+					D2Bot.printToConsole(HeartBeat.gameInfo.mpq + " is probably flagged.", 6);
 
-					if (gameInfo.switchKeys) {
+					if (HeartBeat.gameInfo.switchKeys) {
 						ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);
 						D2Bot.restart(true);
 					}
