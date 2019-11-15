@@ -118,7 +118,7 @@
 			spectype = obj.hasOwnProperty('spectype') && obj.spectype || 0;
 			quitWhen = obj.hasOwnProperty('quitWhen') && typeof obj.quitWhen === 'function' && obj.quitWhen || quitWhen;
 		}
-		if (obj !== 'object') {
+		if (typeof obj !== 'object') {
 			spectype = Config.ClearType;
 		}
 

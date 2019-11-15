@@ -76,6 +76,19 @@ let PathDebug = {
 		}
 	},
 
+	drawRoom: function (room) {
+		if (!this.enableHooks) {
+			return;
+		}
+		
+		this.removeHooks();
+
+		this.hooks.push(new Line(room.x*5, room.y*5, room.x*5+room.xsize, room.y*5, 0x84, true));
+		this.hooks.push(new Line(room.x*5+room.xsize, room.y*5, room.x*5+room.xsize, room.y*5+room.ysize, 0x84, true));
+		this.hooks.push(new Line(room.x*5+room.xsize, room.y*5+room.ysize, room.x*5, room.y*5+room.ysize, 0x84, true));
+		this.hooks.push(new Line(room.x*5, room.y*5+room.ysize, room.x*5, room.y*5, 0x84, true));
+	},
+
 	removeHooks: function () {
 		this.hooks = this.hooks.forEach(hook => hook.remove()) || [];
 	},
