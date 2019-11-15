@@ -7,9 +7,12 @@
 (function (module, require) {
 	const myEvents = new (require('Events')), list = [];
 
-	addEventListener('keyup', key => (key = parseInt(key)) && key && list.indexOf(key) > -1 && Messaging.send({Hotkey: {emit: key}}));
+	addEventListener('keyup', key => (key = parseInt(key)) && key && list.indexOf(key) > -1 && myEvents.emit(key));
 
-	(on => myEvents.on = (...args) => list.push(parseInt(args.first())) || on.apply(myEvents, args))(myEvents.on);
+	(on => myEvents.on = (...args) => {
+		list.push(parseInt(args.first()));
+		return on.apply(myEvents, args);
+	})(myEvents.on);
 
 	module.exports = {
 		on: myEvents.on,
