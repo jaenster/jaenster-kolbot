@@ -9,7 +9,7 @@
 	module.exports = function () {
 		this.values = [];
 		this.track = function (checkerFn, callback) {
-			this.values.push({fn: checkerFn, callback: callback, value: checkerFn()});
+			return this.values.push({fn: checkerFn, callback: callback, value: checkerFn()});
 		};
 		this.check = function () {
 			this.values.some(delta => {
