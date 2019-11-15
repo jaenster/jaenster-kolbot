@@ -9,7 +9,7 @@
 	Unit.prototype.clear = function (range, spectype) {
 		let start = [];
 		//ToDo; keep track of the place we are at
-		const getUnits_filted = () => getUnits(1, -1)
+		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
 				ignoreMonster.indexOf(unit.gid) === -1 // Dont attack those we ignore
 				&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
@@ -28,16 +28,15 @@
 			})
 			.sort((a, b) => GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5))
 
-		let units = getUnits_filted(), unit;
 		// If we clear around _me_ we move around, but just clear around where we started
+		let units = getUnits_filtered(), unit;
 		if (me === this) start = [me.x, me.y];
 
-		if (units) for (; (units = getUnits_filted()) && units.length;) {
-			delay(20);
-			if (!(unit = units.first())) break; // shouldn't happen but to be sure
-			for (let done = false; !done && unit.attackable;) {
-				done = !unit.attack();
+		while (units.length) {
+			if (unit = units.shift()) { // shouldn't happen but to be sure
+				while (unit.attack());
 			}
+			units = getUnits_filtered();
 		}
 		return true;
 	};
