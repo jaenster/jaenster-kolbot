@@ -61,11 +61,6 @@
 		const Misc = require('Misc');
 		const Pather = require('Pather');
 
-		if (Loader.fileList.indexOf(script) < 0) {
-			Misc.errorReport("ÿc1Script " + script + " doesn't exist.");
-			return;
-		}
-
 		let scriptModule;
 		try {
 			// trying to require the bot
