@@ -2428,7 +2428,7 @@ let sdk = {
 		NewChar: 15,
 		CharacterSelectWait: 16,
 		LostConnection: 17,
-		splash: 18,
+		Splash: 18,
 		KeyInUse: 19,
 		Difficulty: 20,
 		MainMenuConnecting: 21,

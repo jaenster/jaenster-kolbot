@@ -23,7 +23,7 @@
 
 	if (getScript(currentFile) && getScript(currentFile).name === getScript(true).name) {
 		print('ÿc2Jaensterÿc0 :: Started Debug');
-		include('require.js');
+		include('require.js') && include('common/prototypes.js');
 		let passTrough = {};
 		// Just load this as an thread
 		const Worker = require('Worker');
@@ -63,7 +63,17 @@
 				return true;
 			}; // true to keep looping
 		}).update;
-
+		const hotkeys = [];
+		require('Messaging').on('Debug', data => {
+			if (data.hasOwnProperty('restart') && data.hasOwnProperty('key') && hotkeys.indexOf(data.key) === -1) {
+				hotkeys.push(data.key);
+				require('Hotkey').on(data.key, function () {
+					const script = getScript(data.restart);
+					script.stop();
+					load(data.restart);
+				})
+			}
+		});
 		while (true) {
 			delay(1000); // Just idle
 		}
@@ -83,5 +93,12 @@
 
 		global.print = debug;
 
+		module.exports = {
+			restarter: function (key) {
+				let stack = new Error().stack.match(/[^\r\n]+/g),
+					filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
+				require('Messaging').send({Debug: {restart: filename, key: key}});
+			}
+		}
 	}
 })(this);

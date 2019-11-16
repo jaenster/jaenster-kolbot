@@ -7,6 +7,7 @@
 	const BotNet = require('BotNet');
 	const Message = require('Messaging');
 	const Events = require('Events');
+
 	/** @constructor Channel */
 	function Channel(name) {
 		const myEvent = new Events;
@@ -16,7 +17,7 @@
 		const onEvent = function (data) {
 			// Yeey we actually got some data within the channel
 			Object.keys(data.emit.data).forEach(key => this.emit(key, data.emit.data[key]));
-			this.emit(null,data);
+			this.emit(null, data);
 		};
 
 		// Tell the system to listen for this channel
@@ -58,9 +59,9 @@
 				if ((mapid = me.mapid)) return channel = new Channel(me.mapid) // In case the new map id isnt 0
 			}
 		});
-	}).call(null,me.mapid);
+	}).call(null, me.mapid);
 
 
-	return Channel;
+	module.exports = Channel;
 
 }).call(null, module, require);

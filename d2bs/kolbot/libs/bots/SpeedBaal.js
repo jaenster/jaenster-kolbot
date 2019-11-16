@@ -176,10 +176,9 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 		}
 	};
 
-	const ignoreMonster = [];
 	this.clear = function (wave) {
 		const getUnits_filted = () => getUnits(1, -1)
-			.filter(unit => ignoreMonster.indexOf(unit.gid) === -1 && unit.hp > 0 && unit.attackable && spots.throne.center.distance < 40 && !checkCollision(me, unit, 0x0))
+			.filter(unit => unit.hp > 0 && unit.attackable && spots.throne.center.distance < 40 && !checkCollision(me, unit, 0x0))
 			.filter(
 				unit => unit.x > 15070 && unit.x < 15120 // Between the x coords
 					&& unit.y > 5000 && unit.y < 5075 // And between the y coords
