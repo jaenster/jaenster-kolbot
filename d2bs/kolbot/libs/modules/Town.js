@@ -8,6 +8,7 @@
 	const Config = require('Config');
 	const Packet = require('PacketHelpers');
 	const Misc = require('Misc');
+	const Pather = require('Pather');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -63,7 +64,6 @@
 		if (!me.inTown) {
 			Town.goToTown();
 		}
-		require('Conveniences'); // First time we are in town,
 		// load the promises that look for stuff in town, or reacts on stuff in town
 
 		var i,

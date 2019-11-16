@@ -5,6 +5,7 @@
 */
 let [D2Bot,DataFile,ControlAction,ShitList] = (function() {
 	const Misc = require('Misc');
+	const Pather = require('Pather');
 
 	const D2Bot = {
 		handle: 0,

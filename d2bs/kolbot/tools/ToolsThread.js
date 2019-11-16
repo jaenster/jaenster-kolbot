@@ -129,6 +129,7 @@ function main() {
 		timerLastDrink = [];
 	const Misc = require('Misc');
 	const Town = require('Town');
+	const Pather = require('Pather');
 
 	print("ÿc3Start ToolsThread script");
 	D2Bot.init();

@@ -24,6 +24,7 @@ include("common/Runewords.js");
 
 function main() {
 	D2Bot.init();
+	const Misc = require('Misc');
 
 	CraftingSystem.buildLists();
 	include("bots/KillDclone.js");

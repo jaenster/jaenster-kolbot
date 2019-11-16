@@ -1,4 +1,5 @@
 (function (module, require) {
+	const Pather = require('Pather');
 	const Packet = module.exports = {
 		openMenu: function (unit) {
 			if (unit.type !== 1) {

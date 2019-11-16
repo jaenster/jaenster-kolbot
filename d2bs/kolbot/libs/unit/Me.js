@@ -78,12 +78,14 @@
 	});
 
 	me.journeyToPreset = function (area, unitType, unitId, offX, offY, clearPath, pop) {
+		const Pather = require('Pather');
 		if (me.area !== area) Pather.journeyTo(area);
 
 		let presetUnit = getPresetUnit(area, unitType, unitId);
 		return presetUnit && presetUnit.moveTo(offX, offY, clearPath, pop);
 	};
 	me.useWaypoint = function (targetArea) {
+		const Pather = require('Pather');
 		Pather.useWaypoint(targetArea);
 		return this;
 	};

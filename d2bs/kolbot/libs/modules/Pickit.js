@@ -13,6 +13,8 @@
 		beltSize = Storage.BeltSize(),
 		ignoreLog = [4, 5, 6, 22, 41, 76, 77, 78, 79, 80, 81]; // Ignored item types for item logging
 
+	const Pather = require('Pather');
+
 	const Pickit = {};
 
 	// Returns:

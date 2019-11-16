@@ -273,6 +273,7 @@ MainLoop:
 	},
 
 	inGameCheck: function () {
+		const Misc = require('Misc');
 		var muleObj, tick, info,
 			timeout = 150 * 1000, // Ingame mule timeout
 			status = "muling";

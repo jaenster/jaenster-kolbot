@@ -12,7 +12,6 @@ include("Gambling.js");
 include("CraftingSystem.js");
 
 include("common/Cubing.js");
-include("common/Pather.js");
 
 include("common/Prototypes.js");
 include("common/Runewords.js");
@@ -20,6 +19,9 @@ include("common/Runewords.js");
 function main() {
 	const Config = require('Config');
 	const Town = require('Town');
+	const Misc = require('Misc');
+	const Pather = require('Pather');
+
 	var townCheck = false;
 
 	this.togglePause = function () {

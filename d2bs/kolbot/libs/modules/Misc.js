@@ -5,6 +5,7 @@
  */
 
 (function (module, require) {
+	const Pather = require('Pather');
 	const Config = require('Config');
 
 	const Misc = module.exports = {

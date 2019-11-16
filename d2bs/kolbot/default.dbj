@@ -12,8 +12,6 @@ include("MuleLogger.js");
 include("GameAction.js");
 
 include("common/Cubing.js");
-include("common/Misc.js");
-include("common/Pather.js");
 include("common/Runewords.js");
 
 function main() {
@@ -150,8 +148,12 @@ function main() {
 	if (TorchSystem.keyCheck()) {
 		scriptBroadcast("torch");
 	}
-
-	const Loader = require('Loader').call();
+	const Misc = require('Misc');
+	try {
+		require('Loader').call();
+	} catch(e) {
+		Misc.errorReport(e);
+	}
 
 	if (Config.MinGameTime && getTickCount() - startTime < Config.MinGameTime * 1000) {
 		try {
