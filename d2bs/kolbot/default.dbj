@@ -46,23 +46,12 @@ function main() {
 		}
 	};
 
-	this.copyDataEvent = function (mode, msg) {
-		if (mode === 1638) { // getProfile
-			msg = JSON.parse(msg);
-
-			if (msg.Tag) {
-				GameAction.init(msg.Tag);
-			}
-		}
-	};
-
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
 	const Config = require('Config').call();
 	const Pickit = require('Pickit');
 
 	// Load events
 	addEventListener("scriptmsg", this.scriptEvent);
-	addEventListener("copydata", this.copyDataEvent);
 
 	me.maxgametime = Config.MaxGameTime * 1000;
 	stats = DataFile.getStats();
