@@ -69,7 +69,7 @@
 				hotkeys.push(data.key);
 				require('Hotkey').on(data.key, function () {
 					const script = getScript(data.restart);
-					script.stop();
+					script && script.stop();
 					load(data.restart);
 				})
 			}
