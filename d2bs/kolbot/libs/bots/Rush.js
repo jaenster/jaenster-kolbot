@@ -8,7 +8,7 @@
  */
 
 
-function Rush(Config, Attack, Pickit, Pather, Town) {
+function Rush(Config, Attack, Pickit, Pather, Town, Misc) {
 	const aloneInGame = function () {
 		for (let party = getParty(), acceptFirst; party && party.getNext();) if (party.name !== me.name) return false;
 		return true; // Yep

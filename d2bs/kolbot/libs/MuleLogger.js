@@ -117,9 +117,6 @@ var MuleLogger = {
 
 	// Log kept item stats in the manager.
 	logItem: function (unit, logIlvl) {
-		if (!isIncluded("common/misc.js")) {
-			include("common/misc.js");
-		}
 
 		if (logIlvl === undefined) {
 			logIlvl = this.LogItemLevel;
@@ -144,7 +141,7 @@ var MuleLogger = {
 				}
 			}
 		}
-
+		const Misc = require('Misc');
 		return {
 			itemColor: color,
 			image: code,
@@ -199,7 +196,7 @@ var MuleLogger = {
 		}
 
 		items.sort(itemSort);
-
+		const Misc = require('Misc');
 		for (i = 0; i < items.length; i += 1) {
 			if ((this.LogEquipped || items[i].mode === 0) && (items[i].quality !== 2 || !Misc.skipItem(items[i].classid))) {
 				parsedItem = this.logItem(items[i], logIlvl);

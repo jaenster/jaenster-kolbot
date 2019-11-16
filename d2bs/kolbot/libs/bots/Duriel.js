@@ -4,7 +4,7 @@
  *    @desc        kill Duriel
  */
 
-function Duriel(Config, Attack, Pickit, Pather, Town) {
+function Duriel(Config, Attack, Pickit, Pather, Town, Misc) {
 	this.killDuriel = function () {
 		var i, target;
 

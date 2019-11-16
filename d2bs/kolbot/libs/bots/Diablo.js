@@ -3,7 +3,7 @@
  * @description An improved version of a diablo run.
  */
 (function (module,require) {
-	const Diablo = function (Config, Attack, Pickit, Pather, Town) {
+	const Diablo = function (Config, Attack, Pickit, Pather, Town, Misc) {
 		const Promise = require('Promise'),
 			TownPrecast = require('TownPrecast'),
 			Precast = require('Precast');

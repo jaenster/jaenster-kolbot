@@ -44,14 +44,14 @@ var NodeAction = {
 	// Open chests while pathing
 	popChests: function () {
 		if (!!Pather.config.OpenChests) {
-			Misc.openChests(20);
+			require('Misc').openChests(20);
 		}
 	},
 
 	// Scan shrines while pathing
 	getShrines: function () {
 		if (!!Pather.config.ScanShrines && Pather.config.ScanShrines.length > 0) {
-			Misc.scanShrines();
+			require('Misc').scanShrines();
 		}
 	}
 };
@@ -121,6 +121,7 @@ var Pather = {
 		if (me.dead) { // Abort if dead
 			return false;
 		}
+		const Misc = require('Misc');
 
 		let path, adjustedNode, cleared, useTeleport,
 			node = {x: x, y: y},
@@ -267,6 +268,7 @@ var Pather = {
 	*/
 	walkTo: function (x, y, minDist = me.inTown && 2 || 4) {
 		while (!me.gameReady) delay(3);
+		const Misc = require('Misc');
 
 		// Stamina handler and Charge
 		if (!me.inTown && !me.dead) {
@@ -363,6 +365,7 @@ var Pather = {
 		if (me.inTown) {
 			return false;
 		}
+		const Misc = require('Misc');
 
 		// Regular doors
 		let door = getUnit(2, "door", 0);
@@ -647,6 +650,7 @@ var Pather = {
 	*/
 	useUnit: function (type, id, targetArea) {
 		let unit, preArea = me.area;
+		const Misc = require('Misc');
 
 		for (let i = 0; i < 20; i += 1) {
 			unit = getUnit(type, id);
@@ -710,6 +714,7 @@ var Pather = {
 	useWaypoint: function useWaypoint(targetArea, check) {
 		const CollMap = require('CollMap');
 		const NPC = require('NPC');
+		const Misc = require('Misc');
 		switch (targetArea) { // error handling
 			case typeof targetArea !== "number":
 				throw new Error("useWaypoint: Invalid targetArea parameter");
@@ -927,6 +932,7 @@ var Pather = {
 		if (targetArea && me.area === targetArea) {
 			return true;
 		}
+		const Misc = require('Misc');
 
 		me.cancel();
 
@@ -998,6 +1004,7 @@ var Pather = {
 	*/
 	getPortal: function (targetArea, owner) {
 		var portal = getUnit(2, "portal");
+		const Misc = require('Misc');
 
 		if (portal) {
 			do {
@@ -1142,6 +1149,7 @@ var Pather = {
 		clearPath - clear path
 	*/
 	getWP: function (area, clearPath) {
+		const Misc = require('Misc');
 		var i, j, wp, preset,
 			wpIDs = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539];
 
@@ -1187,6 +1195,7 @@ var Pather = {
 		const TownPrecast = require('TownPrecast');
 		const NPC = require('NPC');
 		const Town = require('Town');
+		const Misc = require('Misc');
 		var i, special, unit, tick, target;
 
 		target = this.plotCourse(area, me.area);

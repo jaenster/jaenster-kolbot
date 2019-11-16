@@ -4,7 +4,7 @@
 *	@desc		kill Icehawk Riftwing
 */
 
-function Icehawk(Config, Attack, Pickit, Pather, Town) {
+function Icehawk(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!Pather.journeyTo(93)) {

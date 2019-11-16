@@ -14,7 +14,6 @@ include("TorchSystem.js");
 include("MuleLogger.js");
 
 include("common/Cubing.js");
-include("common/Misc.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");

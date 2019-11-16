@@ -4,7 +4,7 @@
 *	@desc		clear Abaddon
 */
 
-function Abaddon(Config, Attack, Pickit, Pather, Town) {
+function Abaddon(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(sdk.areas.FrigidHighlands, sdk.unittype.Objects, sdk.units.RedPortal) || !Pather.usePortal(125)) {

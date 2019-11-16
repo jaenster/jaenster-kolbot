@@ -3,7 +3,7 @@
  * @author Jaenster
  */
 
-function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
+function SpeedBaal(Config, Attack, Pickit, Pather, Town, Misc) {
 	const Precast = require('Precast');
 	const TownPrecast = require('TownPrecast');
 	const GameData = require('GameData');

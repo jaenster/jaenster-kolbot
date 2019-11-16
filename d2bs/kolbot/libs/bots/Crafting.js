@@ -7,7 +7,7 @@
 var info,
 	gameRequest = false;
 
-function Crafting(Config, Attack, Pickit, Pather, Town) {
+function Crafting(Config, Attack, Pickit, Pather, Town, Misc) {
 	var i, npcName, num;
 
 	info = CraftingSystem.getInfo();

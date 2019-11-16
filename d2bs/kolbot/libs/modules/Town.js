@@ -7,6 +7,7 @@
 	const NPC = require('NPC');
 	const Config = require('Config');
 	const Packet = require('PacketHelpers');
+	const Misc = require('Misc');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 

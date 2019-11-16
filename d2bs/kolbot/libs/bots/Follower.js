@@ -46,7 +46,7 @@
 *	quit - exit game
 */
 
-function Follower(Config, Attack, Pickit, Pather, Town) {
+function Follower(Config, Attack, Pickit, Pather, Town, Misc) {
 	var i, j, stop, leader, leaderUnit, charClass, piece, skill, result, unit, player, coord,
 		commanders = [Config.Leader],
 		attack = true,

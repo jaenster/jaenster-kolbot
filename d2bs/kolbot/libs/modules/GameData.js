@@ -5,6 +5,7 @@
  */
 (function (module, require) {
 	const Skills = require('Skills');
+	const Misc = require('Misc');
 	const LocaleStringName = require('LocaleStringID').LocaleStringName;
 
 	const MONSTER_INDEX_COUNT = 770;

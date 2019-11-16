@@ -1,4 +1,4 @@
-function ShopBot(Config, Attack, Pickit, Pather, Town) {
+function ShopBot(Config, Attack, Pickit, Pather, Town, Misc) {
 	var i, tickCount,
 		cycles = 0,
 		cyclesText = new Text("Cycles in last minute:", 50, 260, 2, 1),

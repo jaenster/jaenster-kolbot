@@ -4,7 +4,7 @@
 *	@desc		Enchant other players, open cow portal and give waypoints on command
 */
 
-function Enchant(Config, Attack, Pickit, Pather, Town) {
+function Enchant(Config, Attack, Pickit, Pather, Town, Misc) {
 	var command, hostile, nick, spot, tick, s, m,
 		startTime = getTickCount(),
 		shitList = [],

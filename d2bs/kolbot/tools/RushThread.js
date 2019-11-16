@@ -14,7 +14,6 @@ include("CraftingSystem.js");
 include("TorchSystem.js");
 
 include("common/Cubing.js");
-include("common/Misc.js");
 include("common/Pather.js");
 
 include("common/Prototypes.js");
