@@ -97,7 +97,7 @@ function ShopBot(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	this.shopItems = function (npc, menuId) {
 		var i, item, items, bought;
-		if (!Storage.Inventory.CanFit({sizex: 2, sizey: 4}) && AutoMule.getMuleItems().length > 0) {
+		if (!Storage.Inventory.CanFit({sizex: 2, sizey: 4})) {
 			D2Bot.printToConsole("Mule triggered");
 			scriptBroadcast("mule");
 			scriptBroadcast("quit");

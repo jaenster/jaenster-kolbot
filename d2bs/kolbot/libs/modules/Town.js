@@ -616,18 +616,6 @@
 									break;
 								case -1: // unidentified
 									break;
-								case 2: // cubing
-									Misc.itemLogger("Kept", item, "Cubing-Town");
-									Cubing.update();
-
-									break;
-								case 3: // runeword (doesn't trigger normally)
-									break;
-								case 5: // Crafting System
-									Misc.itemLogger("Kept", item, "CraftSys-Town");
-									CraftingSystem.update(item);
-
-									break;
 								default:
 									Misc.itemLogger("Sold", item);
 									item.sell();
@@ -990,16 +978,6 @@
 								Misc.itemLogger("Gambled", newItem);
 								Misc.logItem("Gambled", newItem, result.line);
 								list.push(newItem.gid);
-
-								break;
-							case 2:
-								list.push(newItem.gid);
-								Cubing.update();
-
-								break;
-							case 5: // Crafting System
-								CraftingSystem.update(newItem);
-
 								break;
 							default:
 								Misc.itemLogger("Sold", newItem, "Gambling");
@@ -1208,7 +1186,7 @@
 				break;
 		}
 
-		if (rune && Town.openStash() && Cubing.openCube() && Cubing.emptyCube()) {
+		if (rune && Town.openStash() && me.openCube() && me.emptyCube()) {
 			for (i = 0; i < 100; i += 1) {
 				if (!me.itemoncursor) {
 					if (Storage.Cube.MoveTo(item) && Storage.Cube.MoveTo(rune)) {
@@ -1580,7 +1558,7 @@
 	Town.openStash = function () {
 		var i, tick, stash;
 
-		if (getUIFlag(0x1a) && !Cubing.closeCube()) {
+		if (getUIFlag(0x1a) && !me.closeCube()) {
 			return false;
 		}
 
@@ -1896,10 +1874,7 @@
 				items[i].classid !== 646 && // Scroll of Resistance
 				//
 				(items[i].code !== 529 || !!me.findItem(518, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
-				(items[i].code !== 530 || !!me.findItem(519, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
-				!Cubing.keepItem(items[i]) && // Don't throw cubing ingredients
-				!Runewords.keepItem(items[i]) && // Don't throw runeword ingredients
-				!CraftingSystem.keepItem(items[i]) // Don't throw crafting system ingredients
+				(items[i].code !== 530 || !!me.findItem(519, 0, 3)) // Don't throw scrolls if no tome is found (obsolete code?)
 			) {
 				result = Pickit.checkItem(items[i]).result;
 

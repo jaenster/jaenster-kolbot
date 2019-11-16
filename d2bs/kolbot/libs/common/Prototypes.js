@@ -315,7 +315,7 @@ Unit.prototype.toCursor = function () {
 	}
 
 	if (this.location === 6) {
-		Cubing.openCube();
+		me.openCube();
 	}
 
 	for (i = 0; i < 3; i += 1) {

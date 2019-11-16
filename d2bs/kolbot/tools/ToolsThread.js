@@ -8,17 +8,9 @@ js_strict(true);
 
 include('require.js');
 include("OOG.js");
-include("AutoMule.js");
-include("Gambling.js");
-include("CraftingSystem.js");
-include("TorchSystem.js");
-include("MuleLogger.js");
 
-include("common/Cubing.js");
-include("common/Pather.js");
 
 include("common/Prototypes.js");
-include("common/Runewords.js");
 include("sdk.js ");
 function main() {
 	var Experience = {
@@ -134,9 +126,6 @@ function main() {
 	print("ÿc3Start ToolsThread script");
 	D2Bot.init();
 	Config();
-	CraftingSystem.buildLists();
-	Runewords.init();
-	Cubing.init();
 
 	for (i = 0; i < 5; i += 1) {
 		timerLastDrink[i] = 0;
@@ -468,21 +457,8 @@ function main() {
 
 			break;
 		case 101: // numpad 5
-			if (AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("muleInfo")) {
-				if (AutoMule.getMuleItems().length > 0) {
-					print("ÿc2Mule triggered");
-					scriptBroadcast("mule");
-					this.exit();
-				} else {
-					me.overhead("No items to mule.");
-				}
-			} else {
-				me.overhead("Profile not enabled for muling.");
-			}
-
 			break;
 		case 102: // Numpad 6
-			MuleLogger.logChar();
 			me.overhead("Logged char: " + me.name);
 
 			break;

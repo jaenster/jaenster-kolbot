@@ -8,13 +8,9 @@ js_strict(true);
 
 include('require.js');
 include("OOG.js");
-include("Gambling.js");
-include("CraftingSystem.js");
 
-include("common/Cubing.js");
 
 include("common/Prototypes.js");
-include("common/Runewords.js");
 
 function main() {
 	const Config = require('Config');
@@ -67,9 +63,6 @@ function main() {
 
 	// Init config and attacks
 	D2Bot.init();
-	CraftingSystem.buildLists();
-	Runewords.init();
-	Cubing.init();
 
 	while (true) {
 		if (!me.inTown && (townCheck ||

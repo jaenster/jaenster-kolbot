@@ -307,7 +307,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town, Misc) {
 			return false;
 		}
 
-		if (!Town.openStash() || !Cubing.emptyCube() || !Storage.Cube.MoveTo(leg) || !Storage.Cube.MoveTo(tome) || !Cubing.openCube()) {
+		if (!Town.openStash() || !me.emptyCube() || !Storage.Cube.MoveTo(leg) || !Storage.Cube.MoveTo(tome) || !me.openCube()) {
 			return false;
 		}
 

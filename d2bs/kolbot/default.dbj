@@ -4,15 +4,6 @@ js_strict(true);
 include("require.js");
 include('sdk.js');
 include("OOG.js");
-include("AutoMule.js");
-include("Gambling.js");
-include("CraftingSystem.js");
-include("TorchSystem.js");
-include("MuleLogger.js");
-include("GameAction.js");
-
-include("common/Cubing.js");
-include("common/Runewords.js");
 
 function main() {
 	D2Bot.init(); // Get D2Bot# handle
@@ -41,11 +32,6 @@ function main() {
 		return true;
 	}
 
-	// MuleLogger handler
-	if (MuleLogger.inGameCheck()) {
-		return true;
-	}
-
 	var i, sojPause, stats, anni,
 		sojCounter = 0,
 		startTime = getTickCount();
@@ -61,20 +47,6 @@ function main() {
 	};
 
 	this.copyDataEvent = function (mode, msg) {
-		if (mode === 0 && msg === "mule") { // "Mule Profile" option from D2Bot#
-			if (AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("muleInfo")) {
-				if (AutoMule.getMuleItems().length > 0) {
-					D2Bot.printToConsole("Mule triggered");
-					scriptBroadcast("mule");
-					scriptBroadcast("quit");
-				} else {
-					D2Bot.printToConsole("No items to mule.");
-				}
-			} else {
-				D2Bot.printToConsole("Profile not enabled for muling.");
-			}
-		}
-
 		if (mode === 1638) { // getProfile
 			msg = JSON.parse(msg);
 
@@ -87,31 +59,11 @@ function main() {
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
 	const Config = require('Config').call();
 	const Pickit = require('Pickit');
-	CraftingSystem.buildLists();
 
 	// Load events
 	addEventListener("scriptmsg", this.scriptEvent);
 	addEventListener("copydata", this.copyDataEvent);
 
-	// AutoMule handler
-	if (AutoMule.inGameCheck()) {
-		return true;
-	}
-
-	// TorchSystem handler
-	if (TorchSystem.inGameCheck()) {
-		return true;
-	}
-
-	// Gambling System handler
-	if (Gambling.inGameCheck()) {
-		return true;
-	}
-
-	// Crafting System handler
-	if (CraftingSystem.inGameCheck()) {
-		return true;
-	}
 	me.maxgametime = Config.MaxGameTime * 1000;
 	stats = DataFile.getStats();
 
@@ -144,10 +96,6 @@ function main() {
 
 	me.automap = Config.AutoMap;
 
-	// Next game = drop keys
-	if (TorchSystem.keyCheck()) {
-		scriptBroadcast("torch");
-	}
 	const Misc = require('Misc');
 	try {
 		require('Loader').call();
@@ -216,10 +164,6 @@ function main() {
 
 	if (anni && !Storage.Inventory.IsLocked(anni, Config.Inventory) && AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("torchMuleInfo")) {
 		scriptBroadcast("muleAnni");
-	}
-
-	if (CraftingSystem.checkFullSets()) {
-		scriptBroadcast("crafting");
 	}
 
 	if (TorchSystem.keyCheck()) {

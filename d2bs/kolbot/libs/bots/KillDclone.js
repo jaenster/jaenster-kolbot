@@ -15,9 +15,5 @@ function KillDclone(Config, Attack, Pickit, Pather, Town, Misc) {
 	Attack.kill(333);
 	Pickit.pickItems();
 
-	if (AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("torchMuleInfo")) {
-		scriptBroadcast("muleAnni");
-	}
-
 	return true;
 }

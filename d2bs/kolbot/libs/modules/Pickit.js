@@ -126,12 +126,6 @@
 
 							return false;
 						}
-
-						// Can't make room - trigger automule
-						Misc.itemLogger("No room for", pickList[0]);
-						print("ÿc7Not enough room for " + this.itemColor(pickList[0]) + pickList[0].name);
-
-						needMule = true;
 					}
 
 					// Item can fit - pick it up
@@ -142,12 +136,6 @@
 			}
 
 			pickList.shift();
-		}
-
-		// Quit current game and transfer the items to mule
-		if (needMule && AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("muleInfo") && AutoMule.getMuleItems().length > 0) {
-			scriptBroadcast("mule");
-			scriptBroadcast("quit");
 		}
 
 		return true;
@@ -321,20 +309,6 @@
 					Misc.itemLogger("Kept", item);
 					Misc.logItem("Kept", item, keptLine);
 				}
-
-				// } else if (status === 2) {
-				// 	print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Cubing)");
-				// 	Misc.itemLogger("Kept", item, "Cubing " + me.findItems(item.classid).length);
-				// 	Cubing.update();
-				//
-				// } else if (status === 3) {
-				// 	print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Runewords)");
-				// 	Misc.itemLogger("Kept", item, "Runewords");
-				// 	Runewords.update(stats.classid, gid);
-				//
-				// } else if (status === 5) {// Crafting System
-				// 	print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + ")" + " (Crafting System)");
-				// 	CraftingSystem.update(item);
 			} else if ((module = Pickit.hooks.find(x => x.id === status))) {
 				print("ÿc7Picked for (ÿc0" + module.id + 'ÿc7) - ' + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
 				module.handle(item);
