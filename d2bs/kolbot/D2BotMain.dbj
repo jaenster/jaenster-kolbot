@@ -59,18 +59,20 @@ function main() {
 	const Control = require('Control');
 
 	// Todo; update every second or something the status @ manager
-	const waitFor = (seconds, name, fromTick = getTickCount()) => {
+	const waitFor = (milisec, name, fromTick = getTickCount()) => {
 		if (name) fromTickStatus = fromTick;
 		return new Promise(function (resolve) {
 			status = name;
-			return fromTick + (seconds * 1000) - getTickCount() < 0 && resolve(name);
+			return fromTick + milisec - getTickCount() < 0 && resolve(name);
 		});
 	};
 
+	let runs = DataFile.getStats()['runs'];
 	const setNextGame = function () {
 		// ToDO; write
+		DataFile.updateStats('nextgame', nextGame = HeartBeat.gameInfo.gameName + (++runs % StarterConfig.ResetCount).toString());
+		DataFile.updateStats('runs', runs);
 	};
-	!nextGame && setNextGame();
 
 	LocationEvents.on(sdk.locations.JoinGame, function () {
 		//ToDo; figure out if we want to join a game.
@@ -81,12 +83,13 @@ function main() {
 	});
 
 	// Always join the chat channels
-	LocationEvents.on(sdk.locations.Lobby, () => waitFor(2).then(() => Control.EnterChat.click()));
+	LocationEvents.on(sdk.locations.Lobby, () => waitFor(2e3).then(() => Control.EnterChat.click()));
 
 	// ToDo; figure out the seconds we need to wait
 	LocationEvents.on(sdk.locations.InLine, () => locationTimeout(StarterConfig.WaitInLineTimeout * 1e3, sdk.locations.InLine));
 
 	LocationEvents.on(sdk.locations.LobbyChat, () => {
+		setNextGame();
 
 		// Join the correct channel
 		const currentChannel = getCurrentChannel();
@@ -94,7 +97,7 @@ function main() {
 
 		// ToDo; take care for failed game delays
 		// ToDo; check if player wants to join another player, and if so, wait for the gamename to show up
-		waitFor(StarterConfig.CreateGameDelay).then(() => Control.CreateGameWindow.click()).then(() => waitFor(5, null, getTickCount())
+		waitFor(StarterConfig.CreateGameDelay).then(() => Control.CreateGameWindow.click()).then(() => waitFor(5e3, null, getTickCount())
 			.then(() => getLocation() === sdk.locations.LobbyChat // If still in lobby, the create button is bugged
 				&& Control.JoinGameWindow.click() // Press join game
 				&& Control.CreateGameWindow.click() // Press create Game
@@ -170,7 +173,7 @@ function main() {
 			}
 		}
 	}));
-	const handleError = function (name,printMPQ =false,disableKey = false,switchKeys = true) {
+	const handleError = function (name, printMPQ = false, disableKey = false, switchKeys = true) {
 		D2Bot.updateStatus(name);
 		D2Bot.printToConsole(name + (printMPQ ? HeartBeat.gameInfo.mpq : ''));
 		disableKey && D2Bot.CDKeyDisabled();
@@ -201,20 +204,20 @@ function main() {
 					break;
 				case getLocaleString(5202): // cd key intended for another product
 				case getLocaleString(10915): // lod key intended for another product
-					handleError('Invalid CDKey',true,true,true);
+					handleError('Invalid CDKey', true, true, true);
 					break;
 				case getLocaleString(5199):
-					handleError('Disabled CDKey',true,true,true);
+					handleError('Disabled CDKey', true, true, true);
 					break;
 				case getLocaleString(10913):
-					handleError('Disabled LoD CDKey',true,true,true);
+					handleError('Disabled LoD CDKey', true, true, true);
 					break;
 				case getLocaleString(5347):
 					handleError('Disconnected');
 					Control.ErrorOk.click();
 					return;
 				default:
-					handleError("Login Error - " + string,false,true,true);
+					handleError("Login Error - " + string, false, true, true);
 					break;
 			}
 		}
@@ -224,33 +227,33 @@ function main() {
 	});
 
 	// Unable to connect, cant do much more as wait
-	LocationEvents.on(sdk.locations.UnableToConnect,() => waitFor(StarterConfig.UnableToConnectDelay * 6e4,'Unable to connect').then(Control.UnableToConnectOk.click()));
+	LocationEvents.on(sdk.locations.UnableToConnect, () => waitFor(StarterConfig.UnableToConnectDelay * 6e4, 'Unable to connect').then(Control.UnableToConnectOk.click()));
 
 	// Realm down? Cant do much more as wait
-	LocationEvents.on(sdk.locations.RealmDown,() =>	waitFor(StarterConfig.RealmDownDelay,'realm down').then(() => Control.CharSelectBack.click()));
+	LocationEvents.on(sdk.locations.RealmDown, () => waitFor(StarterConfig.RealmDownDelay, 'realm down').then(() => Control.CharSelectBack.click()));
 
 
 	// For both disconnected / charselect wait we wait 5 seconds, if it isnt gone then, we just press ok (aka cancel)
-	[sdk.locations.Disconnected,sdk.locations.CharacterSelectWait].forEach(key => LocationEvents.on(key, () => waitFor(5).then(getLocation() === key && Control.OkCentered.click())));
+	[sdk.locations.Disconnected, sdk.locations.CharacterSelectWait].forEach(key => LocationEvents.on(key, () => waitFor(5e3).then(getLocation() === key && Control.OkCentered.click())));
 
 	// We lost the connection, lets just press ok
-	LocationEvents.on(sdk.locations.LostConnection,() => Control.OkCentered.click());
+	LocationEvents.on(sdk.locations.LostConnection, () => Control.OkCentered.click());
 
-	LocationEvents.on(sdk.locations.KeyInUse,() => {
+	LocationEvents.on(sdk.locations.KeyInUse, () => {
 		D2Bot.printToConsole(HeartBeat.gameInfo.mpq + " is in use by " + Control.inUseBy.getText(), 6);
 		D2Bot.CDKeyInUse();
 
 		if (HeartBeat.gameInfo.switchKeys) {
-			waitFor(StarterConfig.SwitchKeyDelay*1e3,'Key switch delay').then(() => D2Bot.restart(true));
+			waitFor(StarterConfig.SwitchKeyDelay * 1e3, 'Key switch delay').then(() => D2Bot.restart(true));
 		} else {
-			waitFor(StarterConfig.CDKeyInUseDelay*6e4).then(() => Control.UnableToConnectOk.click());
+			waitFor(StarterConfig.CDKeyInUseDelay * 6e4).then(() => Control.UnableToConnectOk.click());
 		}
 	});
 
 	// Dont wait forever for MainMenuConnecting
-	LocationEvents.on(sdk.locations.MainMenuConnecting,() => waitFor(StarterConfig.ConnectingTimeout * 1e3).then(() => getLocation() === sdk.locations.MainMenuConnecting && Control.cancelWait.click()));
+	LocationEvents.on(sdk.locations.MainMenuConnecting, () => waitFor(StarterConfig.ConnectingTimeout * 1e3).then(() => getLocation() === sdk.locations.MainMenuConnecting && Control.cancelWait.click()));
 
-	LocationEvents.on(sdk.locations.InvalidCDKey,() => {
+	LocationEvents.on(sdk.locations.InvalidCDKey, () => {
 		let string = '';
 		const text = Control.LoginErrorText.getText();
 		if (text) {
@@ -259,32 +262,34 @@ function main() {
 				if (i !== text.length - 1) string += ' ';
 			}
 			if (string === getLocaleString(10914)) {
-				handleError('Cdkey in use by '+Control.inUseBy.getText()+ ' - ',true,false,true);
+				handleError('Cdkey in use by ' + Control.inUseBy.getText() + ' - ', true, false, true);
 			} else {
-				handleError('Check version error ?',false,false,false);
+				handleError('Check version error ?', false, false, false);
 				Control.UnableToConnectOk.click();
 			}
 		}
 	});
 
 	// If it takes x seconds to connect (to the char screen), press back
-	LocationEvents.on(sdk.locations.Connecting,() => waitFor(StarterConfig.ConnectingTimeout*1e3).then(() => getLocation() === sdk.locations.Connecting && Control.CharSelectBack.click()));
+	LocationEvents.on(sdk.locations.Connecting, () => waitFor(StarterConfig.ConnectingTimeout * 1e3).then(() => getLocation() === sdk.locations.Connecting && Control.CharSelectBack.click()));
 
 	// After x seconds of waiting, we waited enough
-	LocationEvents.on(sdk.locations.PleaseWait,() => waitFor(StarterConfig.PleaseWaitTimeout*1e3).then(() => getLocation() === sdk.locations.PleaseWait && Control.OkCentered.click()));
+	LocationEvents.on(sdk.locations.PleaseWait, () => waitFor(StarterConfig.PleaseWaitTimeout * 1e3).then(() => getLocation() === sdk.locations.PleaseWait && Control.OkCentered.click()));
 
-	LocationEvents.on(sdk.locations.GameExists,function() {
+	LocationEvents.on(sdk.locations.GameExists, function () {
 		// We cant create an game that exists. Fail.
 		Control.CreateGameWindow.click(); // next ToDo: wait?
 	});
 
 	// Not sure what it presses, stolen from D2BotLead
-	LocationEvents.on(sdk.locations.Gateway,() => ControlAction.click(6, 436, 538, 96, 32));
+	LocationEvents.on(sdk.locations.Gateway, () => ControlAction.click(6, 436, 538, 96, 32));
 
 	//Todo; What we do in this situation? Assuming we are creating a game
 	//LocationEvents.on(sdk.locations.GameDoesNotExist,() => waitFor());
 
-	LocationEvents.on(sdk.locations.CantConnectTCP,() => Control.OkCentered.click());
+	LocationEvents.on(sdk.locations.CantConnectTCP, () => Control.OkCentered.click());
+
+	LocationEvents.on(sdk.locations.None,() => sendKey(32));
 
 	// do whatever
 	while (true) {
