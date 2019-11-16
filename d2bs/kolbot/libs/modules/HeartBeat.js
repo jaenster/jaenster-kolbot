@@ -13,7 +13,7 @@
 
 	if (thread === 'thread') {
 		Messaging.on('Handle', data => data.hasOwnProperty('request') && Messaging.send({Handle: local}));
-		include('oog.js') && include('common/prototypes.js') && include('polyfill.js');
+		include('oog.js') && include('polyfill.js');
 
 		require('HotKey').on(19, (script = getScript()) => {
 			if (script && !me.ingame) do {

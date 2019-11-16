@@ -8,8 +8,6 @@
 include('require.js');
 include("OOG.js");
 
-include("common/Prototypes.js");
-
 
 // ToDo; looking at the script, it seems to not work with this kolton version. Needs fixing?
 

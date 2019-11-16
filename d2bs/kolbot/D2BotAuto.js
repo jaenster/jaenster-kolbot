@@ -54,7 +54,6 @@ print('ÿc2Jaensterÿc0 :: Started D2BotAuto.js');
 include('require.js');
 include("sdk.js");
 include("OOG.js");
-include("common/prototypes.js");
 let handle, gameInfo;
 function main() {
 	let gameCount, nextGame, lastGameTick = 0;

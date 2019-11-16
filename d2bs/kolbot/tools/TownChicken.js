@@ -10,8 +10,6 @@ include('require.js');
 include("OOG.js");
 
 
-include("common/Prototypes.js");
-
 function main() {
 	const Config = require('Config');
 	const Town = require('Town');

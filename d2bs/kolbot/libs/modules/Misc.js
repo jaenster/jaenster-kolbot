@@ -868,9 +868,6 @@
 				include("oog.js");
 			}
 
-			if (!isIncluded("common/prototypes.js")) {
-				include("common/prototypes.js");
-			}
 
 			var item,
 				unit = getUnit(-1, name);

@@ -154,21 +154,8 @@ function main() {
 		}
 	}
 
-	if (AutoMule.muleCheck()) {
-		scriptBroadcast("mule");
-	}
 
 	const Storage = require('Storage');
-	// Anni handler. Mule Anni if it's in unlocked space and profile is set to mule torch/anni.
-	anni = me.findItem(603, 0, -1, 7);
-
-	if (anni && !Storage.Inventory.IsLocked(anni, Config.Inventory) && AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("torchMuleInfo")) {
-		scriptBroadcast("muleAnni");
-	}
-
-	if (TorchSystem.keyCheck()) {
-		scriptBroadcast("torch");
-	}
 
 	scriptBroadcast("quit");
 

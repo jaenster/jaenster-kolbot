@@ -10,7 +10,6 @@ include('require.js');
 include("OOG.js");
 
 
-include("common/Prototypes.js");
 include("sdk.js ");
 function main() {
 	var Experience = {
