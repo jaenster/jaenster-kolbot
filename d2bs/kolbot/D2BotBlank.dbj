@@ -1,64 +1,22 @@
-// Blank starter used for testin
+/**
+ * @description Blank starter, for testing, Also an template if you want to generate a new D2Bot script
+ * @author Jaenster
+ */
+include('require.js');
+
 function main() {
-	include('require.js');
+	// Take care of the HeartBeat
+	const HeartBeat = require('HeartBeat');
+	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
+
 	include("OOG.js");
-	include("common/misc.js");
+	if (!FileTools.exists("data/" + me.profile + ".json")) DataFile.create();
 
-	var handle,
-		isUp = "no";
+	// If you press R, it restarts the script, for developing very handy
+	require('Debug').restarter(82); // Press R to restart the script
 
-	this.copyDataEvent = function (mode, msg) {
-		var obj;
-
-		switch (msg) {
-		case "Handle":
-			handle = mode;
-
-			break;
-		}
-
-		switch (mode) {
-		case 3: // request game
-			obj = JSON.parse(msg);
-
-			if (me.gameReady) {
-				D2Bot.joinMe(obj.profile, me.gamename.toLowerCase(), "", me.gamepassword.toLowerCase(), isUp);
-			}
-
-			break;
-		case 4:
-			// Heartbeat ping
-			if (msg === "pingreq") {
-				sendCopyData(null, me.windowtitle, 4, "pingrep");
-			}
-
-			break;
-		}
-	};
-
-
-	addEventListener('copydata', this.copyDataEvent);
-
-	while (!handle) {
-		delay(100);
-	}
-
-	DataFile.updateStats("handle", handle);
-	delay(500);
-	D2Bot.init();
-	load("tools/heartbeat.js");
-
-	if (!FileTools.exists("data/" + me.profile + ".json")) {
-		DataFile.create();
-	}
-
+	// do whatever
 	while (true) {
-		if (me.ingame) {
-			isUp = "yes";
-		} else {
-			isUp = "no";
-		}
-
 		delay(1000);
 	}
 }

@@ -3,7 +3,7 @@
  * @author Jaenster
  */
 
-(function (module, require) {
+(function (module, require, thread) {
 	const Messaging = require('Messaging');
 	const local = module.exports = {
 		handle: 0,
@@ -11,7 +11,7 @@
 		crashInfo: {}
 	};
 
-	if (getScript.startAsThread() === 'thread') {
+	if (thread === 'thread') {
 		Messaging.on('Handle', data => data.hasOwnProperty('request') && Messaging.send({Handle: local}));
 		include('oog.js') && include('common/misc.js') && include('common/prototypes.js') && include('polyfill.js');
 
@@ -59,6 +59,9 @@
 		}
 	}
 
+	// if its already loaded, we already have the handle. So lets request the data
+	if(thread === 'loaded') Messaging.send({Handle: {request: true}});
+
 	Messaging.on('Handle', data => Object.keys(local).filter(x => data.hasOwnProperty(x)).forEach(x => local[x] = data[x]));
 
-}).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require);
+}).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require,getScript.startAsThread());

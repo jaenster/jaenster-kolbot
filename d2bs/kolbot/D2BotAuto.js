@@ -218,7 +218,7 @@ function main() {
 		// Press create game
 			.then(() => Control.CreateGameWindow.click()) // Create Game
 			// If after 5 seconds, we are still at LobbyChat, the create button is bugged. Retry
-			.then(() => waitFor(5, null, getTickCount())
+			.then(() => waitFor(5)
 				.then(() => getLocation() === sdk.locations.LobbyChat // If still in lobby, the create button is bugged
 					&& Control.JoinGameWindow.click() // Press join game
 					&& Control.CreateGameWindow.click() // Press create Game
