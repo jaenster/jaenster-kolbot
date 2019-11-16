@@ -55,10 +55,12 @@
 		socket.on('data', function (data) {
 			data.split(String.fromCharCode(13, 10)).forEach(function(line) {
 				this.emit(null,line);
-				const word = line.split(' ').first();
-				switch(word) {
+				const splitter = line.split(' ');
+				const key = line.startsWith(':') ? splitter.length > 1 && splitter[1] : splitter.first();
+
+				switch(key) {
 					case 'PING':
-						socket.send(line.replace('PONG','PING')); // reply on a PING msg
+						socket.send(line.substr(line.indexOf(key)).replace('PING','PONG')); // reply on a PING msg
 						break;
 					case '001':
 						socket.send('JOIN '+this.channel);
