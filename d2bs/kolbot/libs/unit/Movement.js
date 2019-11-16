@@ -134,5 +134,37 @@
 		}
 
 		return false;
-	}
+	};
+
+	// Check if unit is idle
+	Object.defineProperty(Unit.prototype, "idle", {
+		get: function () {
+			if (this.type > 0) {
+				throw new Error("Unit.idle: Must be used with player units.");
+			}
+
+			return (this.mode === 1 || this.mode === 5 || this.mode === 17); // Dead is pretty idle too
+		},
+		enumerable: true
+	});
+
+
+	Object.defineProperty(PresetUnit.prototype, 'unit', {
+		get: function () {
+			return getUnits(this.type, this.id).first();
+		},
+		enumerable: true
+	});
+
+	/**
+	 * Simple functionality to read the distance between you and an unit.
+	 * Example: getUnit(...).distance <-- gives the distance between you and the unit.
+	 */
+	Object.defineProperty(Unit.prototype, 'distance', {
+		get: function() {
+			return getDistance(me,this);
+		},
+		enumerable: true
+	});
+
 })(require);

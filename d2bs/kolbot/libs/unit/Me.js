@@ -157,6 +157,71 @@
 		return false;
 	};
 
+
+
+	me.findItem = function (id, mode, loc, quality) {
+		if (id === undefined) {
+			id = -1;
+		}
+
+		if (mode === undefined) {
+			mode = -1;
+		}
+
+		if (loc === undefined) {
+			loc = -1;
+		}
+
+		if (quality === undefined) {
+			quality = -1;
+		}
+
+		var item = me.getItem(id, mode);
+
+		if (item) {
+			do {
+				if ((loc === -1 || item.location === loc) && (quality === -1 || item.quality === quality)) {
+					return item;
+				}
+			} while (item.getNext());
+		}
+
+		return false;
+	};
+
+	me.findItems = function (id, mode, loc) {
+		if (id === undefined) {
+			id = -1;
+		}
+
+		if (mode === undefined) {
+			mode = -1;
+		}
+
+		if (loc === undefined) {
+			loc = false;
+		}
+
+		var list = [],
+			item = me.getItem(id, mode);
+
+		if (!item) {
+			return false;
+		}
+
+		do {
+			if (loc) {
+				if (item.location === loc) {
+					list.push(copyUnit(item));
+				}
+			} else {
+				list.push(copyUnit(item));
+			}
+		} while (item.getNext());
+
+		return list;
+	};
+
 	me.on = Events.on;
 	me.off = Events.off;
 	me.once = Events.once;
