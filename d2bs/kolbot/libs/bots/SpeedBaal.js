@@ -162,11 +162,11 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 
 	this.afterWave = function (wave) {
 		if (typeof Config.BossTraps !== 'undefined' && Array.isArray(Config.BossTraps) && Config.BossTraps.length) {
-			Config.UseFade && Skill.cast(258); // cast bos
+			Config.UseFade && me.cast(258); // cast bos
 
-			Config.BossTraps.forEach((type, index) => Skill.cast(type, undefined, spots.throne.center.x - (Config.BossTraps.length / 2) + index, spots.throne.center.y - 10));
+			Config.BossTraps.forEach((type, index) => me.cast(type, undefined, spots.throne.center.x - (Config.BossTraps.length / 2) + index, spots.throne.center.y - 10));
 
-			Config.UseFade && Skill.cast(267); // cast fade
+			Config.UseFade && me.cast(267); // cast fade
 		}
 
 		if (this.wave === 3) {
@@ -225,7 +225,7 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 				let unit = getUnit(1, 544);
 				if (unit) {
 					print('cast lower curse on distance on baal');
-					Skill.cast(91, 0, 15166, 5903);
+					me.cast(91, 0, 15166, 5903);
 				}
 				break;
 		}

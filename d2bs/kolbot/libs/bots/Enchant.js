@@ -52,7 +52,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town) {
 						return false;
 					}
 
-					Skill.setSkill(52, 0);
+					me.setSkill(52, 0);
 					sendPacket(1, 0x11, 4, unit.type, 4, unit.gid);
 					delay(500);
 				}
@@ -66,7 +66,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town) {
 		if (unit) {
 			do {
 				if (unit.getParent() && unit.getParent().name === nick) { // merc or any other owned unit
-					Skill.setSkill(52, 0);
+					me.setSkill(52, 0);
 					sendPacket(1, 0x11, 4, unit.type, 4, unit.gid);
 					delay(500);
 				}

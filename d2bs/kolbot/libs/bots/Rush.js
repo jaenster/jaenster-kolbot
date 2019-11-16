@@ -237,7 +237,6 @@ function Rush(Config, Attack, Pickit, Pather, Town) {
 						return true;
 					}
 				}
-				Packet.flash(me.gid);
 				delay(me.ping * 2 + 500);
 				Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
 			}

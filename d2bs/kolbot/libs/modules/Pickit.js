@@ -253,7 +253,7 @@
 				}
 
 				if (stats.useTk && checkCollision(me, item, 0x1)) { // Cant tk trough a wall
-					Skill.cast(43, 0, item);
+					item.cast(43);
 				} else {
 					if (getDistance(me, item) > 6 || checkCollision(me, item, 0x1)) {
 						if (Pather.useTeleport()) {

@@ -529,7 +529,7 @@ function main() {
 						Skill.setSkill(Config.AttackSkill[2], 0);
 
 						for (n = 0; n < amount; n += 1) {
-							Skill.cast(Config.AttackSkill[1], 1);
+							me.cast(Config.AttackSkill[1], 1);
 						}
 
 						break;
@@ -741,7 +741,7 @@ function main() {
 					if (me.getState(121)) {
 						delay(500);
 					} else {
-						Skill.cast(Config.AttackSkill[1], 0, 15093, 5024);
+						me.cast(Config.AttackSkill[1], 0, 15093, 5024);
 					}
 				}
 
@@ -759,12 +759,12 @@ function main() {
 					Skill.setSkill(Config.AttackSkill[4], 0);
 				}
 
-				Skill.cast(Config.AttackSkill[3], 1);
+				me.cast(Config.AttackSkill[3], 1);
 
 				return true;
 			case 5: // Druid
 				if (Config.AttackSkill[3] === 245) {
-					Skill.cast(Config.AttackSkill[3], 0, 15093, 5029);
+					me.cast(Config.AttackSkill[3], 0, 15093, 5029);
 
 					return true;
 				}

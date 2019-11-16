@@ -6,6 +6,7 @@
 (function (module, require) {
 	const NPC = require('NPC');
 	const Config = require('Config');
+	const Packet = require('PacketHelpers');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -515,7 +516,7 @@
 		// Avoid unnecessary NPC visits
 		for (i = 0; i < list.length; i += 1) {
 			// Only unid items or sellable junk (low level) should trigger a NPC visit
-			if ((!list[i].getFlag(0x10) || Config.LowGold > 0) && ([-1, 4].indexOf(Pickit.checkItem(list[i]).result) > -1 || (!list[i].getFlag(0x10) && Item.hasTier(list[i])))) {
+			if ((!list[i].getFlag(0x10) || Config.LowGold > 0) && ([-1, 4].indexOf(Pickit.checkItem(list[i]).result) > -1 || (!list[i].getFlag(0x10)))) {
 				break;
 			}
 		}
@@ -601,14 +602,10 @@
 
 							result = Pickit.checkItem(item);
 
-							if (!Item.autoEquipCheck(item)) {
-								result.result = 0;
-							}
-
 							switch (result.result) {
 								case 1:
 									// Couldn't id autoEquip item. Don't log it.
-									if (result.result === 1 && Config.AutoEquip && !item.getFlag(0x10) && Item.autoEquipCheck(item)) {
+									if (result.result === 1 && Config.AutoEquip && !item.getFlag(0x10)) {
 										break;
 									}
 
@@ -705,10 +702,6 @@
 			for (i = 0; i < unids.length; i += 1) {
 				result = Pickit.checkItem(unids[i]);
 
-				if (!Item.autoEquipCheck(unids[i])) {
-					result = 0;
-				}
-
 				switch (result.result) {
 					case 0:
 						Misc.itemLogger("Dropped", unids[i], "cainID");
@@ -749,7 +742,7 @@
 			result = Pickit.checkItem(item);
 
 			// Force ID for unid items matching autoEquip criteria
-			if (result.result === 1 && !item.getFlag(0x10) && Item.hasTier(item)) {
+			if (result.result === 1 && !item.getFlag(0x10)) {
 				result.result = -1;
 			}
 
@@ -758,10 +751,6 @@
 				delay(me.ping + 1);
 
 				result = Pickit.checkItem(item);
-
-				if (!Item.autoEquipCheck(item)) {
-					result.result = 0;
-				}
 
 				switch (result.result) {
 					case 0:
@@ -904,7 +893,7 @@
 		for (i = 0; i < items.length; i += 1) {
 			result = Pickit.checkItem(items[i]);
 
-			if (result.result === 1 && Item.autoEquipCheck(items[i])) {
+			if (result.result === 1) {
 				try {
 					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
 						Misc.itemLogger("Shopped", items[i]);
@@ -994,10 +983,6 @@
 
 					if (newItem) {
 						result = Pickit.checkItem(newItem);
-
-						if (!Item.autoEquipCheck(newItem)) {
-							result = 0;
-						}
 
 						switch (result.result) {
 							case 1:
@@ -1625,8 +1610,6 @@
 					}
 				}
 			}
-
-			Packet.flash(me.gid);
 		}
 
 		return false;
@@ -1919,10 +1902,6 @@
 			) {
 				result = Pickit.checkItem(items[i]).result;
 
-				if (!Item.autoEquipCheck(items[i])) {
-					result = 0;
-				}
-
 				switch (result) {
 					case 0: // Drop item
 						if ((getUIFlag(0x0C) || getUIFlag(0x08)) && (items[i].getItemCost(1) <= 1 || items[i].itemType === 39)) { // Quest items and such
@@ -2079,8 +2058,6 @@
 			if (Town.moveToSpot(spot)) {
 				return true;
 			}
-
-			Packet.flash(me.gid);
 		}
 
 		return false;

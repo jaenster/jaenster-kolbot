@@ -244,12 +244,7 @@ var Pather = {
 	*/
 	teleportTo: function (x, y, maxRange = 5) {
 		for (let i = 0; i < 3; i += 1) {
-			if (Pather.config.PacketCasting) {
-				me.setSkill(54, 0);
-				Packet.castSkill(0, x, y);
-			} else {
-				me.cast(54, 0, x, y);
-			}
+			me.cast(54, 0, x, y);
 
 			let tick = getTickCount();
 
@@ -812,8 +807,6 @@ var Pather = {
 					this.moveTo(coord.x, coord.y);
 					delay(200 + me.ping);
 
-					Packet.flash(me.gid);
-
 					continue;
 				}
 
@@ -841,8 +834,6 @@ var Pather = {
 				if (i > 1) { // Activate check if we fail direct interact twice
 					check = true;
 				}
-			} else {
-				Packet.flash(me.gid);
 			}
 
 			delay(200 + me.ping);
@@ -992,12 +983,6 @@ var Pather = {
 
 					delay(10);
 				}
-
-				if (i > 1) {
-					Packet.flash(me.gid);
-				}
-			} else {
-				Packet.flash(me.gid);
 			}
 
 			delay(200 + me.ping);
