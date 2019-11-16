@@ -249,7 +249,7 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 	addEventListener('scriptmsg', data => typeof data === 'object' && data.hasOwnProperty('baaltick') && (self.baaltick = data.baaltick));
 
 	// Set the settings
-	config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
+	const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
 	!config.hasOwnProperty('Follower') && (config.Follower = false);
 	!config.hasOwnProperty('OnWaveAttack') && (config.OnWaveAttack = undefined);
 	!config.hasOwnProperty('Leecher') && (config.Leecher = undefined);
@@ -293,11 +293,16 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 				case [sdk.skills.Lightning, sdk.skills.ChainLightning].some(sk => mostUsedSk.indexOf(sk) !== -1):
 					return (this.me = this.lightsorc);
 			}
+			return null;
 		})();
 	};
 
 	me.switchWeapons(0); // make sure you wear gear on FIRST slot
-	[self.toThrone, self.waves, self.baal].some(item => !item());
+	try {
+		[self.toThrone, self.waves, self.baal].some(item => !item());
+	} finally {
+		Delta.destroy();
+	}
 }
 
 (function () {
