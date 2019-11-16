@@ -135,18 +135,18 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 
 	this.waves = function () {
 		do {
-			this.wave = this.checkThrone();
-			this.wave && (this.nextWave = this.wave + 1);
+			self.wave = self.checkThrone();
+			self.wave && (self.nextWave = self.wave + 1);
 
-			if (!this.wave) {
-				this.clear(); // First clear the throne
-				PreAttack.do([0, 23, 105, 557, 558, 571][this.nextWave], 12e3 - (getTickCount() - this.baaltick), spots.throne.center);
+			if (!self.wave) {
+				self.clear(); // First clear the throne
+				PreAttack.do([0, 23, 105, 557, 558, 571][self.nextWave], 12e3 - (getTickCount() - self.baaltick), spots.throne.center);
 			} else {
 
-				print('wave:' + this.wave);
+				print('wave:' + self.wave);
 				// In a wave
-				this.clear(); // First clear the throne
-				this.afterWave();
+				self.clear(); // First clear the throne
+				self.afterWave();
 			}
 
 			delay(10);
@@ -155,7 +155,7 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 			[15091, 5013].distance > 40 && !getUnit(1, sdk.units.BaalSitting) && [15092, 5041].moveTo();
 
 			if (!getUnit(1, sdk.units.BaalSitting)) break;
-		} while (this.wave !== 5 || this.checkThrone());
+		} while (self.wave !== 5 || self.checkThrone());
 
 		return true;
 	};

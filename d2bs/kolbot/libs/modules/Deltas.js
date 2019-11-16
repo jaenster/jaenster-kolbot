@@ -6,7 +6,9 @@
 	const Worker = require('Worker');
 	let instances = 0;
 
+	/** @constructor */
 	module.exports = function () {
+		let active = true;
 		this.values = [];
 		this.track = function (checkerFn, callback) {
 			return this.values.push({fn: checkerFn, callback: callback, value: checkerFn()});
@@ -26,7 +28,9 @@
 			});
 		};
 
-		Worker.runInBackground['__delta' + (instances++)] = () => this.check() || true;
+		this.destroy = () => active = false;
+
+		Worker.runInBackground['__delta' + (instances++)] = () => active && (this.check() || true);
 		return this;
 	};
 
