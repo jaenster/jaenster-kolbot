@@ -8,6 +8,7 @@
 	const GameEvent = require('GameEvent');
 	const Config = require('Config');
 	const Promise = require('Promise');
+	const Misc = require('Misc');
 
 	GameEvent.on('quit', function (name, account) {
 		let wantToQuit = false;

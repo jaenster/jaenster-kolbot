@@ -100,6 +100,7 @@ Object.defineProperty(Unit.prototype, "attacking", {
 // Open NPC menu
 Unit.prototype.openMenu = function (addDelay) {
 	const Config = require('Config');
+	const Packet = require('PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.openMenu(this);
 	}
@@ -152,6 +153,7 @@ Unit.prototype.openMenu = function (addDelay) {
 // mode = "Gamble", "Repair" or "Shop"
 Unit.prototype.startTrade = function (mode) {
 	const Config = require('Config');
+	const Packet = require('PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.startTrade(this, mode);
 	}
@@ -192,6 +194,7 @@ Unit.prototype.startTrade = function (mode) {
 
 Unit.prototype.buy = function (shiftBuy, gamble) {
 	const Config = require('Config');
+	const Packet = require('PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.buyItem(this, shiftBuy, gamble);
 	}
@@ -260,6 +263,7 @@ Object.defineProperty(Unit.prototype, "parentName", {
 // You MUST use a delay after Unit.sell() if using custom scripts. delay(500) works best, dynamic delay is used when identifying/selling (500 - item id time)
 Unit.prototype.sell = function () {
 	const Config = require('Config');
+	const Packet = require('PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.sellItem(this);
 	}
@@ -311,7 +315,7 @@ Unit.prototype.toCursor = function () {
 	}
 
 	if (this.location === 6) {
-		Cubing.openCube();
+		me.openCube();
 	}
 
 	for (i = 0; i < 3; i += 1) {
@@ -1259,8 +1263,8 @@ Unit.prototype.castChargedSkill = function (...args) {
 		if (charge) {
 			// Setting skill on hand
 			const Config = require('Config');
-			if (!Config.PacketCasting || Config.PacketCasting === 1 && skillId !== 54) {
-				return Skill.cast(skillId, 0, x || me.x, y || me.y, this); // Non packet casting
+			if (!Config.PacketCasting || Config.PacketCasting === 1 && skillId !== sdk.skills.Teleport) {
+				return me.cast(skillId, 0, x || me.x, y || me.y, this); // Non packet casting
 			}
 
 			// Packet casting

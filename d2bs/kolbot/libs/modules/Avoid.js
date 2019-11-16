@@ -7,6 +7,7 @@
 (function (module, require) {
 	const Worker = require('Worker');
 	const Config = require('Config');
+	const Pather = require('Pather');
 	const dodgeHP = Math.max(Config.LifeChicken * 1.20, Config.TownHP * 1.20); // 20% above life chicken, or town chicken if set
 	print('AVOID ON ' + dodgeHP + '%');
 	getScript(true).name.toLowerCase() === 'default.dbj' && (Worker.runInBackground.avoid = function () {

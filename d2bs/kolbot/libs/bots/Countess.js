@@ -4,7 +4,7 @@
 *	@desc		kill The Countess and optionally kill Ghosts along the way
 */
 
-function Countess(Config, Attack, Pickit, Pather, Town) {
+function Countess(Config, Attack, Pickit, Pather, Town, Misc) {
 	var i, poi;
 
 	Town();

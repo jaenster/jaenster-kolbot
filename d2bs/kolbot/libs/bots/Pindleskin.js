@@ -4,7 +4,7 @@
  *    @desc        kill Pindleskin and optionally Nihlathak
  */
 
-function Pindleskin(Config, Attack, Pickit, Pather, Town) {
+function Pindleskin(Config, Attack, Pickit, Pather, Town, Misc) {
 	let anya;
 	const Precast = require('Precast');
 

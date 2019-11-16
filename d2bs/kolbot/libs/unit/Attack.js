@@ -81,7 +81,7 @@
 		// In case its called upon an item we own, redirect it to castChargedSkill
 		if (this.type === 4 && Object.keys(sdk.storage).map(x => sdk.storage[x]).indexOf(this.location) !== -1) return this.castChargedSkill(skillId, x, y);
 
-		//return Skill.cast(skillId, hand || Skills.hand[skillId], this);
+		//return me.cast(skillId, hand || Skills.hand[skillId], this);
 		// Some invalid crap
 		switch (true) {
 			case me.inTown && !Skills.town[skillId]: // cant cast this in town
@@ -100,11 +100,11 @@
 		y === undefined && (y = me.y);
 		if (!me.setSkill(skillId, hand, item)) return false;
 
-		if (Config.PacketCasting > 1 || forcePacket) {
+		if (Config.PacketCasting > 1 || forcePacket || (Config.PacketCasting && skillId === sdk.skills.Teleport)) {
 			if (this === me) {
-				Packet.castSkill(hand, x, y);
+				sendPacket(1, (hand === 0) ? 0x0c : 0x05, 2, x, 2, y);
 			} else {
-				Packet.unitCast(hand, this);
+				sendPacket(1, (hand === 0) ? 0x11 : 0x0a, 4, this.type, 4, this.gid);
 			}
 		} else {
 			switch (hand) {

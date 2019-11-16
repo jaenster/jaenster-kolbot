@@ -3,7 +3,7 @@
  * @author Jaenster
  */
 
-module.exports = function (Config, Attack, Pickit, Pather, Town) {
+module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 	const GameData = require('GameData');
 	const Delta = new (require('Deltas'));
 	const Storage = require('Storage');

@@ -4,7 +4,7 @@
 *	@desc		clear Kurast Temples
 */
 
-function KurastTemples(Config, Attack, Pickit, Pather, Town) {
+function KurastTemples(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Pather.useWaypoint(80);
 	require('Precast')()

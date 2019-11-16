@@ -4,7 +4,7 @@
 *	@desc		give or receive Battle Orders buff
 */
 
-module.exports = function (Config, Attack, Pickit, Pather, Town) {
+module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 	this.giveBO = function (list) {
 		var i, unit,
 			failTimer = 60,

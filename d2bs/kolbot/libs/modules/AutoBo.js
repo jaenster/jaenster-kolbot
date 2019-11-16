@@ -7,7 +7,6 @@
 
 
 (function (module, require) {
-
 	// Only do this for the main thread
 	if (getScript(true).name.toLowerCase() !== 'default.dbj') return;
 
@@ -20,6 +19,7 @@
 	const Precast = require('Precast');
 	const Promise = require('Promise');
 	const Town = require('Town');
+	const Pather = require('Pather');
 
 	GameEvent.on('quit', function (name, account) { // Remove member from list
 		const member = Object.keys(Members).indexOf(name);

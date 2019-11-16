@@ -4,7 +4,7 @@
 *	@desc		Enchant other players, open cow portal and give waypoints on command
 */
 
-function Enchant(Config, Attack, Pickit, Pather, Town) {
+function Enchant(Config, Attack, Pickit, Pather, Town, Misc) {
 	var command, hostile, nick, spot, tick, s, m,
 		startTime = getTickCount(),
 		shitList = [],
@@ -52,7 +52,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town) {
 						return false;
 					}
 
-					Skill.setSkill(52, 0);
+					me.setSkill(52, 0);
 					sendPacket(1, 0x11, 4, unit.type, 4, unit.gid);
 					delay(500);
 				}
@@ -66,7 +66,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town) {
 		if (unit) {
 			do {
 				if (unit.getParent() && unit.getParent().name === nick) { // merc or any other owned unit
-					Skill.setSkill(52, 0);
+					me.setSkill(52, 0);
 					sendPacket(1, 0x11, 4, unit.type, 4, unit.gid);
 					delay(500);
 				}
@@ -307,7 +307,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town) {
 			return false;
 		}
 
-		if (!Town.openStash() || !Cubing.emptyCube() || !Storage.Cube.MoveTo(leg) || !Storage.Cube.MoveTo(tome) || !Cubing.openCube()) {
+		if (!Town.openStash() || !me.emptyCube() || !Storage.Cube.MoveTo(leg) || !Storage.Cube.MoveTo(tome) || !me.openCube()) {
 			return false;
 		}
 

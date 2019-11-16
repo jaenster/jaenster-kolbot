@@ -4,7 +4,7 @@
 *	@desc		kill Treehead
 */
 
-function Treehead(Config, Attack, Pickit, Pather, Town) {
+function Treehead(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(me.area, 2, 30, 5, 5)) {

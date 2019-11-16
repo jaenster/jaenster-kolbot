@@ -5,7 +5,7 @@
  *    @changes    (2019.10.06) More beeps when IP found; More often movement when IP found (Anti drop measure); Overhead messages with countdown; Logs to D2BS console
  */
 
-function IPHunter(Config, Attack, Pickit, Pather, Town) {
+function IPHunter(Config, Attack, Pickit, Pather, Town, Misc) {
     let ip = Number(me.gameserverip.split(".")[3]), w;
 
     if (Config.IPHunter.IPList.indexOf(ip) > -1) {

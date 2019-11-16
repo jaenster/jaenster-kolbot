@@ -3,7 +3,6 @@
 *	@author		kolton
 *	@desc		manipulate map collision data
 */
-var CollMap = {};
 
 (function (module, require) {
 	const CollMap = {};

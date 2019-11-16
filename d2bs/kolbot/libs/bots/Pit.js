@@ -4,7 +4,7 @@
 *	@desc		clear Pit
 */
 
-function Pit(Config, Attack, Pickit, Pather, Town) {
+function Pit(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!Pather.journeyTo(12)) {

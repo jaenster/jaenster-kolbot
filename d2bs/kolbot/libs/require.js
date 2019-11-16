@@ -59,7 +59,6 @@ const require = (function (include, isIncluded, print, notify) {
 me.ingame && (function () {
 	// If in game, load all libraries too
 	!isIncluded('sdk.js') && include('sdk.js');
-	!isIncluded('common/Prototypes.js') && include('common/Prototypes.js'); // Ensure prototypes are loaded
 	const fileList = dopen("libs/unit").getFiles();
 	Array.isArray(fileList) && fileList
 		.filter(file => file.endsWith('.js'))

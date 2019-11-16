@@ -50,7 +50,6 @@ include('require.js');
 include("sdk.js");
 getLocation() === sdk.locations.None && sendKey(32); // skip splash screen
 include("OOG.js");
-include("common/misc.js");
 include("common/prototypes.js");
 let handle, gameInfo;
 
