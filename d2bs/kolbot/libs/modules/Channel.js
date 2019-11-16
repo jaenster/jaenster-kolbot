@@ -30,7 +30,6 @@
 			const index = Channel.instances.findIndex(this);
 			if (index > -1) Channel.instances.splice(index, 1);
 			exports.off(name, onEvent);
-			delete this;
 		};
 
 		this.send = data => BotNet.send(me.mapid, data);
@@ -56,7 +55,8 @@
 					return channel;
 				}
 
-				if ((mapid = me.mapid)) return channel = new Channel(me.mapid) // In case the new map id isnt 0
+				if ((mapid = me.mapid)) return channel = new Channel(me.mapid); // In case the new map id isnt 0
+				return null;
 			}
 		});
 	}).call(null, me.mapid);

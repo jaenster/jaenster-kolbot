@@ -33,9 +33,7 @@
 		if (me === this) start = [me.x, me.y];
 
 		while (units.length) {
-			if (unit = units.shift()) { // shouldn't happen but to be sure
-				while (unit.attack());
-			}
+			while ((unit = units.shift()) && unit.attack());
 			units = getUnits_filtered();
 		}
 		return true;
@@ -187,7 +185,7 @@
 			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > 40) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
 					ignoreMonster.push(this.gid);
-					return false;
+					return ;
 				}
 			}
 			if (this.distance > 40) { // Still on high distance?
