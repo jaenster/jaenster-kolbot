@@ -15,7 +15,6 @@ module.exports = function (Config, Attack, Pickit, Pather, Town) {
 		.sort((a, b) => a.effort - b.effort)
 		.map(target => target.area)
 		.some(function (area) {
-			print(area.Index);
 			print('Going to area '+Object.keys(sdk.areas).find(key=>sdk.areas[key]===area.Index));
 			Pather.journeyTo(area.Index);
 			Attack.clearLevel({spectype: 0, quitWhen: () => done});
@@ -28,8 +27,6 @@ module.exports = function (Config, Attack, Pickit, Pather, Town) {
 			.filter(item => item.location === sdk.storage.Inventory || item.location === sdk.storage.Belt),
 	});
 	const wantedPots = Math.floor((Config.BeltColumn.filter(x => x === 'rv').length * Storage.BeltSize() / 2) + .5);
-	print(wantedPots);
-	print(this.revpots.length);
 	let done = this.revpots.length >= wantedPots;
 
 	// Do town crap whenever we are in town
