@@ -4,7 +4,7 @@
  *    @desc        kill Eyeback the Unleashed
  */
 
-function Eyeback(Config, Attack, Pickit, Pather, Town) {
+function Eyeback(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	if (!me.journeyToPreset(111, 1, 784)) {
 		throw new Error("Failed to move to Eyeback the Unleashed");

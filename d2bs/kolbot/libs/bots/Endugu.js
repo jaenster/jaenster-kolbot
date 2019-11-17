@@ -4,7 +4,7 @@
 *	@desc		kill Witch Doctor Endugu
 */
 
-function Endugu(Config, Attack, Pickit, Pather, Town) {
+function Endugu(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	if (!me.journeyToPreset(91, 2, 406)) {
 		throw new Error("Failed to move to Endugu");

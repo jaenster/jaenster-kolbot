@@ -8,7 +8,7 @@
  */
 
 
-function Rush(Config, Attack, Pickit, Pather, Town) {
+function Rush(Config, Attack, Pickit, Pather, Town, Misc) {
 	const aloneInGame = function () {
 		for (let party = getParty(), acceptFirst; party && party.getNext();) if (party.name !== me.name) return false;
 		return true; // Yep
@@ -237,7 +237,6 @@ function Rush(Config, Attack, Pickit, Pather, Town) {
 						return true;
 					}
 				}
-				Packet.flash(me.gid);
 				delay(me.ping * 2 + 500);
 				Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
 			}

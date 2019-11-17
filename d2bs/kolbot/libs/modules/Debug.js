@@ -63,7 +63,17 @@
 				return true;
 			}; // true to keep looping
 		}).update;
-
+		const hotkeys = [];
+		require('Messaging').on('Debug', data => {
+			if (data.hasOwnProperty('restart') && data.hasOwnProperty('key') && hotkeys.indexOf(data.key) === -1) {
+				hotkeys.push(data.key);
+				require('Hotkey').on(data.key, function () {
+					const script = getScript(data.restart);
+					script && script.stop();
+					load(data.restart);
+				})
+			}
+		});
 		while (true) {
 			delay(1000); // Just idle
 		}
@@ -83,5 +93,12 @@
 
 		global.print = debug;
 
+		module.exports = {
+			restarter: function (key) {
+				let stack = new Error().stack.match(/[^\r\n]+/g),
+					filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
+				require('Messaging').send({Debug: {restart: filename, key: key}});
+			}
+		}
 	}
 })(this);

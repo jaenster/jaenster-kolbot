@@ -93,7 +93,7 @@
 				//ToDo: Should have an packet based update for going to town. So, we avoid here a an array.indexof function @ me.inTown.
 
 				const procentHP = 100 / me.hpmax * packet.hp;
-				const procentMP = 100 / me.hpmax * packet.mp;
+				const procentMP = 100 / me.mpmax * packet.mp;
 				const procentHPMerc = getMercHP();
 				const merc = me.getMerc();
 

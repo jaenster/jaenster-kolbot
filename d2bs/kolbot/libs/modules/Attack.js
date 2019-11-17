@@ -5,6 +5,7 @@
 
 (function (module, require) {
 	const CollMap = require('CollMap');
+	const Pather = require('Pather');
 	const Attack = function () {
 
 	};

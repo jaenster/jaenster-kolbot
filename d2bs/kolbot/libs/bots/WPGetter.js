@@ -1,4 +1,4 @@
-function WPGetter(Config, Attack, Pickit, Pather, Town) {
+function WPGetter(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Town.goToTown(1);
 	Pather.getWP(me.area);

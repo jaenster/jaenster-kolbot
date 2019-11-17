@@ -49,39 +49,20 @@ print('ÿc2Jaensterÿc0 :: Started D2BotTcpJoin.dbj');
 include('require.js');
 include("sdk.js");
 include("OOG.js");
-include("common/misc.js");
 include("common/prototypes.js");
-let handle, gameInfo;
 
 function main() {
+	const HeartBeat = require('HeartBeat');
+	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
+
 	const LocationEvents = require('LocationEvents');
 	const Promise = require('Promise');
 	const Worker = require('Worker');
 	const Config = require('Config').call();
 	const Control = require('Control');
 	const Team = require('Team');
-	require('debug');
-	addEventListener('copydata', function (mode, msg) {
-		//print(JSON.stringify({mode: mode, msg: msg}));
-		if (msg === "Handle") {
-			if (!handle) {
-				handle = mode;
-				Worker.push(() => DataFile.updateStats("handle", handle));
-				Worker.push(() => D2Bot.init());
 
-				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
-			}
-			return;
-		}
-		if (mode === 2) {
-			gameInfo = JSON.parse(msg);
-			gameInfo.charName = StarterConfig.LoginChar;
-		}
-		if (mode === 4) {
-			msg === "pingreq" && sendCopyData(null, me.windowtitle, 4, "pingrep");
-		}
-		return;
-	});
+	HeartBeat.gameInfo.charName = StarterConfig.LoginChar;
 
 	// create datafile (needs some refactoring trough)
 	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
@@ -95,9 +76,10 @@ function main() {
 		}
 		return Control.TcpIpHost.click();
 	});
-	LocationEvents.on(sdk.locations.CharSelect, () => ControlAction.loginCharacter(gameInfo));
+
+	LocationEvents.on(sdk.locations.CharSelect, () => ControlAction.loginCharacter(HeartBeat.gameInfo));
 	LocationEvents.on(sdk.locations.Difficulty, function () {
-		switch (gameInfo.difficulty) {
+		switch (HeartBeat.gameInfo.difficulty) {
 			case 'normal':
 				return Control.NormalSP.click();
 			case 'nightmare':
@@ -111,18 +93,6 @@ function main() {
 
 	// error handling
 	LocationEvents.on(sdk.locations.CantConnectTCP, () => Control.OkCentered.click()); // takes us back to TCP window
-
-	while (!handle) delay(10);
-
-	let lastTimer = getTickCount();
-	D2Bot.requestGameInfo();
-	while (!gameInfo) {
-		if (getTickCount() - lastTimer > 500) {
-			lastTimer = getTickCount();
-			D2Bot.requestGameInfo();
-		}
-		delay(10);
-	}
 
 	let PromiseToConnectRunning;
 	Team.on('tcp', function (msg) {
@@ -144,21 +114,19 @@ function main() {
 	});
 
 	let timer = getTickCount() - 3000;
-	StarterConfig.Follower && (Worker.runInBackground.TCP = function () {
+	StarterConfig.Follower && (Worker.runInBackground.TCP = () => {
 		if (me.ingame) return true; // in game, dont need game info
 
 		// Only ask every 3 seconds
 		if ((getTickCount() - timer) < 3000 || (timer = getTickCount()) && false) return true;
 
-		Team.broadcast({
-			tcp: {
-				requestGame: true,
-			}
-		});
+		Team.broadcast({tcp: {requestGame: true}});
 		return true;
 	});
 
+	// Fast forward to main screen
 	getLocation() === sdk.locations.None && sendKey(32);
+
 	while (true) {
 		delay(10);
 	}

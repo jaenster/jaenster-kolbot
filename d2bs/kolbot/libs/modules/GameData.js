@@ -4,6 +4,8 @@
  *    @desc      game data library
  */
 (function (module, require) {
+	const Skills = require('Skills');
+	const Misc = require('Misc');
 	const LocaleStringName = require('LocaleStringID').LocaleStringName;
 
 	const MONSTER_INDEX_COUNT = 770;
@@ -1327,7 +1329,7 @@
 					tmpEffort /= this.dmgModifier(sk | 0, parent || unit);
 
 					// care for mana
-					if (me.mp < Skill.getManaCost(sk)) {
+					if (me.mp < Skills.manaCost[sk]) {
 						tmpEffort *= 5; // More effort in a skill we dont have mana for
 					}
 
@@ -1335,21 +1337,13 @@
 					if (this.skillCooldown(sk | 0)) {
 						tmpEffort *= 5;
 					}
-					switch (true) {
-						case tmpEffort < 1 && eret.effort < 1 // Both is a instant kill
-						&& Skill.getManaCost(sk) < Skill.getManaCost(eret.skill): // but this skill costs less mana
-						case tmpEffort <= eret.effort
-						|| ( // or, both is a instant kill, but this one cost less mana
-							tmpEffort < 1 && eret.effort < 1
-							|| Skill.getManaCost(sk) < Skill.getManaCost(eret.skill)
-						): {
-							eret.effort = tmpEffort;
-							eret.skill = sk | 0;
-							eret.type = skillDamageInfo[eret.skill].type;
-							eret.name = getSkillById(eret.skill);
-							if (all) {
-								allData.unshift(Misc.copy(eret));
-							}
+					if (tmpEffort <= eret.effort) {
+						eret.effort = tmpEffort;
+						eret.skill = sk | 0;
+						eret.type = skillDamageInfo[eret.skill].type;
+						eret.name = getSkillById(eret.skill);
+						if (all) {
+							allData.unshift(Misc.copy(eret));
 						}
 					}
 				}
@@ -1384,7 +1378,6 @@
 			return raritypool ? effortpool / raritypool : 0;
 		},
 		mostUsedSkills: function (force = false) {
-			const Skills = require('Skills');
 			if (!force && me.hasOwnProperty('__cachedMostUsedSkills') && me.__cachedMostUsedSkills) return me.__cachedMostUsedSkills;
 
 			const effort = [], uniqueSkills = [];

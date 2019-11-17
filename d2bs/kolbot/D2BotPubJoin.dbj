@@ -153,7 +153,6 @@ include("automule.js");
 include("gambling.js");
 include("craftingsystem.js");
 include("torchsystem.js");
-include("common/misc.js");
 
 if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
@@ -338,6 +337,7 @@ function randomString(len) {
 
 function main() {
 	debugLog(me.profile);
+	const Misc = require('Misc');
 	addEventListener('copydata', ReceiveCopyData);
 	addEventListener('scriptmsg', ScriptMsgEvent);
 

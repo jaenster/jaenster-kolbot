@@ -8,6 +8,7 @@
 	const Promise = require('Promise');
 	const GameData = require('GameData');
 	const Town = require('Town');
+	const Pather = require('Pather');
 
 	let bestSkills = [];
 	(function () {

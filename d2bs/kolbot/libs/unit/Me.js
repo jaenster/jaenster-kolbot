@@ -7,7 +7,7 @@
 			return true;
 		}
 
-		while(typeof me !== 'object') delay(10);
+		while (typeof me !== 'object') delay(10);
 
 		let originalSlot = this.weaponswitch;
 
@@ -74,18 +74,152 @@
 			get: function () {
 				return '';//ToDo; implement
 			}
+		},
+		cube: {
+			get: function () {
+				return me.getItem(sdk.items.cube);
+			}
 		}
 	});
 
 	me.journeyToPreset = function (area, unitType, unitId, offX, offY, clearPath, pop) {
+		const Pather = require('Pather');
 		if (me.area !== area) Pather.journeyTo(area);
 
 		let presetUnit = getPresetUnit(area, unitType, unitId);
 		return presetUnit && presetUnit.moveTo(offX, offY, clearPath, pop);
 	};
 	me.useWaypoint = function (targetArea) {
+		const Pather = require('Pather');
 		Pather.useWaypoint(targetArea);
 		return this;
+	};
+
+	me.emptyCube = function () {
+		const Storage = require('Storage');
+		const cube = me.cube,
+			items = me.getItems().filter(item => item.location === sdk.storage.Cube);
+
+		if (!cube) return false;
+
+		if (!items.length) return true;
+
+		return !items.some(item => !(Storage.Stash.MoveTo(item) && Storage.Inventory.MoveTo(item)));
+	};
+
+	me.openCube = function () {
+		let i, tick,
+			cube = me.cube;
+
+		if (!cube) return false;
+
+		if (getUIFlag(0x1a)) return true;
+
+		const Town = require('Town');
+		if (cube.location === 7 && !Town.openStash()) return false;
+
+		for (i = 0; i < 3; i += 1) {
+			cube.interact();
+			tick = getTickCount();
+
+			while (getTickCount() - tick < 5000) {
+				if (getUIFlag(0x1a)) {
+					delay(100 + me.ping * 2); // allow UI to initialize
+
+					return true;
+				}
+
+				delay(100);
+			}
+		}
+
+		return false;
+	};
+
+	me.closeCube = function () {
+		let i, tick;
+
+		if (!getUIFlag(0x1a)) return true;
+
+		for (i = 0; i < 5; i++) {
+			me.cancel();
+			tick = getTickCount();
+
+			while (getTickCount() - tick < 3000) {
+				if (!getUIFlag(0x1a)) {
+					delay(250 + me.ping * 2); // allow UI to initialize
+					return true;
+				}
+
+				delay(100);
+			}
+		}
+		return false;
+	};
+
+
+
+	me.findItem = function (id, mode, loc, quality) {
+		if (id === undefined) {
+			id = -1;
+		}
+
+		if (mode === undefined) {
+			mode = -1;
+		}
+
+		if (loc === undefined) {
+			loc = -1;
+		}
+
+		if (quality === undefined) {
+			quality = -1;
+		}
+
+		var item = me.getItem(id, mode);
+
+		if (item) {
+			do {
+				if ((loc === -1 || item.location === loc) && (quality === -1 || item.quality === quality)) {
+					return item;
+				}
+			} while (item.getNext());
+		}
+
+		return false;
+	};
+
+	me.findItems = function (id, mode, loc) {
+		if (id === undefined) {
+			id = -1;
+		}
+
+		if (mode === undefined) {
+			mode = -1;
+		}
+
+		if (loc === undefined) {
+			loc = false;
+		}
+
+		var list = [],
+			item = me.getItem(id, mode);
+
+		if (!item) {
+			return false;
+		}
+
+		do {
+			if (loc) {
+				if (item.location === loc) {
+					list.push(copyUnit(item));
+				}
+			} else {
+				list.push(copyUnit(item));
+			}
+		} while (item.getNext());
+
+		return list;
 	};
 
 	me.on = Events.on;

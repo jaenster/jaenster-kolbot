@@ -56,7 +56,7 @@
 				const biggestPartyId = Party.biggestPartyId();
 				let myPartyId = ((() => (getParty() || {partyid: 0}).partyid))();
 				if (myPartyId) for (let party = getParty(), acceptFirst; party && party.getNext();) party && typeof party === 'object' && (function () {
-					if (!(party.hasOwnProperty('life'))) return true; // Somehow not a party member
+					if (!(party.hasOwnProperty('life'))) return; // Somehow not a party member
 
 					// Deal with inviting
 					( // If no party is formed, or im member of the biggest party
@@ -84,7 +84,7 @@
 							// if acceptFirst isnt set, create it (to cache it, yet generate on demand)
 							!acceptFirst && (acceptFirst = Party.acceptFirst());
 
-							if (acceptFirst !== this.name) return true; // Ignore this acceptation
+							if (acceptFirst !== this.name) return; // Ignore this acceptation
 						}
 
 						clickParty(party, BUTTON_INVITE_ACCEPT_CANCEL);

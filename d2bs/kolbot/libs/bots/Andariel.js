@@ -4,7 +4,7 @@
 *	@desc		kill Andariel
 */
 
-module.exports =  function(Config, Attack, Pickit, Pather, Town) {
+module.exports =  function(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	if (!Pather.journeyTo(sdk.areas.CatacombsLvl4)) {
 		throw Error('Failed to move to Andariel');

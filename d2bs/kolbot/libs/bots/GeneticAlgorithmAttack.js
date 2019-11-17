@@ -7,8 +7,8 @@
 
 
 global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
+	function GeneticAlgorithmAttack(Config, Attack, Pickit, Pather, Town, Misc) {
 
-	function GeneticAlgorithmAttack(Config, Attack, PickIt) {
 		let PresetMonsters = GameData.PresetMonsters;
 		let AreaData = GameData.AreaData;
 		let ping = me.ping;

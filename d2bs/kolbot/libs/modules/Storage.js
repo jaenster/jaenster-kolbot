@@ -4,8 +4,9 @@
  *    @desc        manage inventory, belt, stash, cube
  */
 (function (module, require) {
-	var Container = function (name, width, height, location) {
-		var h, w;
+	const Misc = require('Misc');
+	const Container = function (name, width, height, location) {
+		let h, w;
 
 		this.name = name;
 		this.width = width;

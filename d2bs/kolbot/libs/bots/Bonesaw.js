@@ -4,7 +4,7 @@
 *	@desc		kill Bonesaw Breaker
 */
 
-function Bonesaw(Config, Attack, Pickit, Pather, Town) {
+function Bonesaw(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	if (!me.journeyToPreset(115, 2, 455, 15, 15)) {
 		throw new Error("Failed to move to Bonesaw");

@@ -4,7 +4,7 @@
 *	@desc		clear Tal Rasha's Tombs
 */
 
-function Tombs(Config, Attack, Pickit, Pather, Town) {
+function Tombs(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Pather.journeyTo(46);
 
