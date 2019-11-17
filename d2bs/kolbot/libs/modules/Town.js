@@ -6,6 +6,9 @@
 (function (module, require) {
 	const NPC = require('NPC');
 	const Config = require('Config');
+	const Packet = require('PacketHelpers');
+	const Misc = require('Misc');
+	const Pather = require('Pather');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -61,7 +64,6 @@
 		if (!me.inTown) {
 			Town.goToTown();
 		}
-		require('Conveniences'); // First time we are in town,
 		// load the promises that look for stuff in town, or reacts on stuff in town
 
 		var i,
@@ -515,7 +517,7 @@
 		// Avoid unnecessary NPC visits
 		for (i = 0; i < list.length; i += 1) {
 			// Only unid items or sellable junk (low level) should trigger a NPC visit
-			if ((!list[i].getFlag(0x10) || Config.LowGold > 0) && ([-1, 4].indexOf(Pickit.checkItem(list[i]).result) > -1 || (!list[i].getFlag(0x10) && Item.hasTier(list[i])))) {
+			if ((!list[i].getFlag(0x10) || Config.LowGold > 0) && ([-1, 4].indexOf(Pickit.checkItem(list[i]).result) > -1 || (!list[i].getFlag(0x10)))) {
 				break;
 			}
 		}
@@ -601,14 +603,10 @@
 
 							result = Pickit.checkItem(item);
 
-							if (!Item.autoEquipCheck(item)) {
-								result.result = 0;
-							}
-
 							switch (result.result) {
 								case 1:
 									// Couldn't id autoEquip item. Don't log it.
-									if (result.result === 1 && Config.AutoEquip && !item.getFlag(0x10) && Item.autoEquipCheck(item)) {
+									if (result.result === 1 && Config.AutoEquip && !item.getFlag(0x10)) {
 										break;
 									}
 
@@ -617,18 +615,6 @@
 
 									break;
 								case -1: // unidentified
-									break;
-								case 2: // cubing
-									Misc.itemLogger("Kept", item, "Cubing-Town");
-									Cubing.update();
-
-									break;
-								case 3: // runeword (doesn't trigger normally)
-									break;
-								case 5: // Crafting System
-									Misc.itemLogger("Kept", item, "CraftSys-Town");
-									CraftingSystem.update(item);
-
 									break;
 								default:
 									Misc.itemLogger("Sold", item);
@@ -705,10 +691,6 @@
 			for (i = 0; i < unids.length; i += 1) {
 				result = Pickit.checkItem(unids[i]);
 
-				if (!Item.autoEquipCheck(unids[i])) {
-					result = 0;
-				}
-
 				switch (result.result) {
 					case 0:
 						Misc.itemLogger("Dropped", unids[i], "cainID");
@@ -749,7 +731,7 @@
 			result = Pickit.checkItem(item);
 
 			// Force ID for unid items matching autoEquip criteria
-			if (result.result === 1 && !item.getFlag(0x10) && Item.hasTier(item)) {
+			if (result.result === 1 && !item.getFlag(0x10)) {
 				result.result = -1;
 			}
 
@@ -758,10 +740,6 @@
 				delay(me.ping + 1);
 
 				result = Pickit.checkItem(item);
-
-				if (!Item.autoEquipCheck(item)) {
-					result.result = 0;
-				}
 
 				switch (result.result) {
 					case 0:
@@ -904,7 +882,7 @@
 		for (i = 0; i < items.length; i += 1) {
 			result = Pickit.checkItem(items[i]);
 
-			if (result.result === 1 && Item.autoEquipCheck(items[i])) {
+			if (result.result === 1) {
 				try {
 					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
 						Misc.itemLogger("Shopped", items[i]);
@@ -995,25 +973,11 @@
 					if (newItem) {
 						result = Pickit.checkItem(newItem);
 
-						if (!Item.autoEquipCheck(newItem)) {
-							result = 0;
-						}
-
 						switch (result.result) {
 							case 1:
 								Misc.itemLogger("Gambled", newItem);
 								Misc.logItem("Gambled", newItem, result.line);
 								list.push(newItem.gid);
-
-								break;
-							case 2:
-								list.push(newItem.gid);
-								Cubing.update();
-
-								break;
-							case 5: // Crafting System
-								CraftingSystem.update(newItem);
-
 								break;
 							default:
 								Misc.itemLogger("Sold", newItem, "Gambling");
@@ -1222,7 +1186,7 @@
 				break;
 		}
 
-		if (rune && Town.openStash() && Cubing.openCube() && Cubing.emptyCube()) {
+		if (rune && Town.openStash() && me.openCube() && me.emptyCube()) {
 			for (i = 0; i < 100; i += 1) {
 				if (!me.itemoncursor) {
 					if (Storage.Cube.MoveTo(item) && Storage.Cube.MoveTo(rune)) {
@@ -1594,7 +1558,7 @@
 	Town.openStash = function () {
 		var i, tick, stash;
 
-		if (getUIFlag(0x1a) && !Cubing.closeCube()) {
+		if (getUIFlag(0x1a) && !me.closeCube()) {
 			return false;
 		}
 
@@ -1625,8 +1589,6 @@
 					}
 				}
 			}
-
-			Packet.flash(me.gid);
 		}
 
 		return false;
@@ -1912,16 +1874,9 @@
 				items[i].classid !== 646 && // Scroll of Resistance
 				//
 				(items[i].code !== 529 || !!me.findItem(518, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
-				(items[i].code !== 530 || !!me.findItem(519, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
-				!Cubing.keepItem(items[i]) && // Don't throw cubing ingredients
-				!Runewords.keepItem(items[i]) && // Don't throw runeword ingredients
-				!CraftingSystem.keepItem(items[i]) // Don't throw crafting system ingredients
+				(items[i].code !== 530 || !!me.findItem(519, 0, 3)) // Don't throw scrolls if no tome is found (obsolete code?)
 			) {
 				result = Pickit.checkItem(items[i]).result;
-
-				if (!Item.autoEquipCheck(items[i])) {
-					result = 0;
-				}
 
 				switch (result) {
 					case 0: // Drop item
@@ -2079,8 +2034,6 @@
 			if (Town.moveToSpot(spot)) {
 				return true;
 			}
-
-			Packet.flash(me.gid);
 		}
 
 		return false;

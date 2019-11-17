@@ -4,7 +4,7 @@
  *    @desc        kill Eldritch the Rectifier, optionally kill Shenk the Overseer, Dac Farren and open chest
  */
 
-function Eldritch(Config, Attack, Pickit, Pather, Town) {
+function Eldritch(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Pather.useWaypoint(111);
 	require('Precast').call();

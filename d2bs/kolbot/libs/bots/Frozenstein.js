@@ -4,7 +4,7 @@
 *	@desc		kill Frozensteinand optionally clear Frozen River
 */
 
-function Frozenstein(Config, Attack, Pickit, Pather, Town) {
+function Frozenstein(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	if (!me.journeyToPreset(114, 2, 460, -5, -5)) {
 		throw new Error("Failed to move to Frozenstein");

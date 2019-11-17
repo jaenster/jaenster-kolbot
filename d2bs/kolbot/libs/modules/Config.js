@@ -158,12 +158,6 @@
 	Config.ScanShrines = [];
 	Config.Debug = false;
 
-	Config.AutoMule = {
-		Trigger: [],
-		Force: [],
-		Exclude: []
-	};
-
 	Config.ItemInfo = false;
 	Config.ItemInfoQuality = [];
 
@@ -177,12 +171,9 @@
 	Config.SkipLogging = [];
 	Config.ShowCubingInfo = true;
 
-	Config.Cubing = false;
 	Config.CubeRepair = false;
 	Config.RepairPercent = 40;
 	Config.Recipes = [];
-	Config.MakeRunewords = false;
-	Config.Runewords = [];
 	Config.KeepRunewords = [];
 	Config.Gamble = false;
 	Config.GambleItems = [];

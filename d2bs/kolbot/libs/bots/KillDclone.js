@@ -4,7 +4,7 @@
 *	@desc		Got to Palace Cellar level 3 and kill Diablo Clone.
 */
 
-function KillDclone(Config, Attack, Pickit, Pather, Town) {
+function KillDclone(Config, Attack, Pickit, Pather, Town, Misc) {
 	Pather.useWaypoint(74);
 	require('Precast').call();
 
@@ -14,10 +14,6 @@ function KillDclone(Config, Attack, Pickit, Pather, Town) {
 
 	Attack.kill(333);
 	Pickit.pickItems();
-
-	if (AutoMule.getInfo() && AutoMule.getInfo().hasOwnProperty("torchMuleInfo")) {
-		scriptBroadcast("muleAnni");
-	}
 
 	return true;
 }

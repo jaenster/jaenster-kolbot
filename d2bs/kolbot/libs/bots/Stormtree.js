@@ -4,7 +4,7 @@
 *	@desc		kill Stormtree
 */
 
-function Stormtree(Config, Attack, Pickit, Pather, Town) {
+function Stormtree(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!Pather.journeyTo(78)) {

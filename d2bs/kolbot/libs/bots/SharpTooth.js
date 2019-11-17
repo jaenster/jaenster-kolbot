@@ -4,7 +4,7 @@
  *    @desc        kill Thresh Socket
  */
 
-function SharpTooth(Config, Attack, Pickit, Pather, Town) {
+function SharpTooth(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(111, 1, 790)) {

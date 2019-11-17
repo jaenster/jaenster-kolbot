@@ -4,7 +4,7 @@
 *	@desc		kill Counncil members in Travincal
 */
 
-function Travincal(Config, Attack, Pickit, Pather, Town) {
+function Travincal(Config, Attack, Pickit, Pather, Town, Misc) {
 	var i, orgX, orgY, coords;
 
 	this.buildList = function (checkColl) {
@@ -46,7 +46,7 @@ function Travincal(Config, Attack, Pickit, Pather, Town) {
 			if (i % 4 === 0) {
 				Pather.moveTo(orgX + coords[i], orgY + coords[i + 1]);
 			} else {
-				Skill.cast(143, 0, orgX + coords[i], orgY + coords[i + 1]);
+				me.cast(143, 0, orgX + coords[i], orgY + coords[i + 1]);
 				Attack.clearList(this.buildList(1));
 			}
 		}

@@ -4,7 +4,7 @@
 *	@desc		kill Grand Vizier of Chaos
 */
 
-function Vizier(Config, Attack, Pickit, Pather, Town) {
+function Vizier(Config, Attack, Pickit, Pather, Town, Misc) {
 	const Precast = require('Precast');
 	var i, tick, seal;
 

@@ -4,6 +4,7 @@
  */
 
 (function (module, require) {
+	const Pather = require('Pather');
 	const Town = require('Town');
 	const Config = require('Config');
 	const Skills = require('Skills');

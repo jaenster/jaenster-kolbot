@@ -4,7 +4,7 @@
 *	@desc		kill Hephasto the Armorer
 */
 
-function Hephasto(Config, Attack, Pickit, Pather, Town) {
+function Hephasto(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(107, 2, 376)) {

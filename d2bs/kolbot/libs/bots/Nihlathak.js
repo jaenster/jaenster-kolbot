@@ -4,7 +4,7 @@
  *    @desc        kill Nihlathak
  */
 
-function Nihlathak(Config, Attack, Pickit, Pather, Town) {
+function Nihlathak(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	Town();
 	if (!me.journeyToPreset(124, 2, 462, 0, 0, false, true)) {

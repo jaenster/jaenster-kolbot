@@ -4,7 +4,7 @@
  *    @desc        clear the Moo Moo Farm without killing the Cow King
  */
 
-function Cows(Config, Attack, Pickit, Pather, Town) {
+function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 	this.buildCowRooms = function () {
 		var i, j, room, kingPreset, badRooms, badRooms2,
 			finalRooms = [],
@@ -186,8 +186,8 @@ function Cows(Config, Attack, Pickit, Pather, Town) {
 
 	//ToDo; dont open cube if we already know its empty
 	print('ensure cube is empty');
-	Cubing.openCube();
-	Cubing.emptyCube(); // ensure cube is empty
+	me.openCube();
+	me.emptyCube(); // ensure cube is empty
 	Object.keys(sdk.uiflags).forEach(x => me.cancel());
 	delay(1000);
 	require('Config').PacketShopping = false;
@@ -284,7 +284,7 @@ function Cows(Config, Attack, Pickit, Pather, Town) {
 	sendPacket(1, 0x2A, 4, leg.gid, 4, cube.gid);
 	while (me.itemoncursor) delay(10);
 	print('open cube');
-	Cubing.openCube();
+	me.openCube();
 	delay(500);
 	me.getItems();
 	transmute();

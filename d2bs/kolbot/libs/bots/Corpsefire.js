@@ -4,7 +4,7 @@
  *    @desc        kill Corpsefire and optionally clear Den of Evil
  */
 
-function Corpsefire(Config, Attack, Pickit, Pather, Town) {
+function Corpsefire(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(me.area, 1, 774, 0, 0, false, true)) {

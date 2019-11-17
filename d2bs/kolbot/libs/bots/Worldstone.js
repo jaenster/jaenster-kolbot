@@ -4,7 +4,7 @@
  *    @desc        Clear Worldstone levels
  */
 
-function Worldstone(Config, Attack, Pickit, Pather, Town) {
+function Worldstone(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Pather.journeyTo(129);
 	Attack.clearLevel(Config.ClearType);

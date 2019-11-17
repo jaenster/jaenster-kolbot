@@ -102,7 +102,6 @@ include("OOG.js");
 include("automule.js");
 include("gambling.js");
 include("torchsystem.js");
-include("common/misc.js");
 
 
 var gameStart, handle, ingame, firstLogin, useChat,

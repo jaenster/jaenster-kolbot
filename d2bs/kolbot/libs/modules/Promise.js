@@ -5,6 +5,7 @@
 	 * @author Jaenster
 	 */
 	const Worker = require('Worker');
+	const Misc = require('Misc');
 	/**
 	 *
 	 * @param {function({resolve},{reject}):boolean} callback

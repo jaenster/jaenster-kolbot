@@ -4,7 +4,7 @@
 *	@desc		Clears any area
 */
 
-function ClearAnyArea(Config, Attack, Pickit, Pather, Town) {
+function ClearAnyArea(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	for (let i = 0; i < Config.ClearAnyArea.AreaList.length; i += 1) {
