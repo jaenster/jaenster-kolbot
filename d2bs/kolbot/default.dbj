@@ -14,10 +14,6 @@ function main() {
 		delay(50);
 	}
 
-	if (!getScript("tools/heartbeat.js")) {
-		load("tools/heartbeat.js");
-	}
-
 	if (getScript("d2botmap.dbj")) {
 		load("tools/mapthread.js");
 		load("tools/ToolsThread.js");
