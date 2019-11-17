@@ -36,7 +36,7 @@
  *
  *
  */
-StarterConfig = {
+let StarterConfig = {
 	LoginChar: '', // setup in your config file which char you gonna play with (StarterConfig.LoginChar = 'yourChar';
 	Follower: false, // Create tcp/ip game, or join one
 };
@@ -49,7 +49,6 @@ print('ÿc2Jaensterÿc0 :: Started D2BotTcpJoin.dbj');
 include('require.js');
 include("sdk.js");
 include("OOG.js");
-include("common/prototypes.js");
 
 function main() {
 	const HeartBeat = require('HeartBeat');
