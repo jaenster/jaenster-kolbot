@@ -4,6 +4,7 @@
  */
 
 (function (module, require) {
+	const Town = require('Town');
 	const Config = require('Config');
 	const Skills = require('Skills');
 	const getSkill = skillId => Math.max.apply(Math, Skills.getSkillLevel(skillId));

@@ -96,6 +96,12 @@
 	Control.NightmareSP = new Control(-1, 264, 340, 272, 35);
 	Control.NormalSP = new Control(-1, 264, 297, 272, 35);
 
+	Control.ErrorOk = new Control(6, 335, 412, 128, 35);
+	Control.UnableToConnectOk = new Control(6, 335, 450, 128, 35);
+
+	Control.inUseBy = new Control(4, 158, 310, 485, 40);
+	Control.cancelWait = new Control(6, 330, 416, 128, 35);
+
 	module.exports = Control;
 
 })(module, require);

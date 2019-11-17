@@ -135,18 +135,18 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 
 	this.waves = function () {
 		do {
-			this.wave = this.checkThrone();
-			this.wave && (this.nextWave = this.wave + 1);
+			self.wave = self.checkThrone();
+			self.wave && (self.nextWave = self.wave + 1);
 
-			if (!this.wave) {
-				this.clear(); // First clear the throne
-				PreAttack.do([0, 23, 105, 557, 558, 571][this.nextWave], 12e3 - (getTickCount() - this.baaltick), spots.throne.center);
+			if (!self.wave) {
+				self.clear(); // First clear the throne
+				PreAttack.do([0, 23, 105, 557, 558, 571][self.nextWave], 12e3 - (getTickCount() - self.baaltick), spots.throne.center);
 			} else {
 
-				print('wave:' + this.wave);
+				print('wave:' + self.wave);
 				// In a wave
-				this.clear(); // First clear the throne
-				this.afterWave();
+				self.clear(); // First clear the throne
+				self.afterWave();
 			}
 
 			delay(10);
@@ -155,7 +155,7 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 			[15091, 5013].distance > 40 && !getUnit(1, sdk.units.BaalSitting) && [15092, 5041].moveTo();
 
 			if (!getUnit(1, sdk.units.BaalSitting)) break;
-		} while (this.wave !== 5 || this.checkThrone());
+		} while (self.wave !== 5 || self.checkThrone());
 
 		return true;
 	};
@@ -249,7 +249,7 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 	addEventListener('scriptmsg', data => typeof data === 'object' && data.hasOwnProperty('baaltick') && (self.baaltick = data.baaltick));
 
 	// Set the settings
-	config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
+	const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
 	!config.hasOwnProperty('Follower') && (config.Follower = false);
 	!config.hasOwnProperty('OnWaveAttack') && (config.OnWaveAttack = undefined);
 	!config.hasOwnProperty('Leecher') && (config.Leecher = undefined);
@@ -293,11 +293,16 @@ function SpeedBaal(Config, Attack, Pickit, Pather, Town) {
 				case [sdk.skills.Lightning, sdk.skills.ChainLightning].some(sk => mostUsedSk.indexOf(sk) !== -1):
 					return (this.me = this.lightsorc);
 			}
+			return null;
 		})();
 	};
 
 	me.switchWeapons(0); // make sure you wear gear on FIRST slot
-	[self.toThrone, self.waves, self.baal].some(item => !item());
+	try {
+		[self.toThrone, self.waves, self.baal].some(item => !item());
+	} finally {
+		Delta.destroy();
+	}
 }
 
 (function () {
