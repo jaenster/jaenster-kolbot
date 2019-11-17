@@ -3,7 +3,7 @@
  * @description Smurfing smurf automatic smurf.
  */
 (function (module,require) {
-	const AutoSmurf3 = function (Config, Attack, Pickit, Pather, Town) {
+	const AutoSmurf = function (Config, Attack, Pickit, Pather, Town) {
 		const Promise = require('Promise'),
 			TownPrecast = require('TownPrecast'),
 			Precast = require('Precast'),
@@ -103,5 +103,5 @@
 	}
 
 
-	module.exports = AutoSmurf3;
+	module.exports = AutoSmurf;
 })(typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require );
