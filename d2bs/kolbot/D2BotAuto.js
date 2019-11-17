@@ -109,7 +109,6 @@ function main() {
 		if (typeof data == 'object' && data && data.hasOwnProperty('pass')) {
 			if (data.pass.hasOwnProperty('handle')) {
 				handle = data.pass.handle;
-				D2Bot.init();
 			}
 			print('HERE -- ' + data.pass.hasOwnProperty('gameInfo'));
 			if (data.pass.hasOwnProperty('gameInfo')) {

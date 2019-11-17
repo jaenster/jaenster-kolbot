@@ -6,7 +6,6 @@ include('sdk.js');
 include("OOG.js");
 
 function main() {
-	D2Bot.init(); // Get D2Bot# handle
 	D2Bot.ingame();
 
 	// wait until game is ready
