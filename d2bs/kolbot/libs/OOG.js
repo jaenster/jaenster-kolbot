@@ -6,6 +6,9 @@
 let [D2Bot,DataFile,ControlAction,ShitList] = (function() {
 	const Misc = require('Misc');
 	const Pather = require('Pather');
+	const HeartBeat = require('HeartBeat');
+	const Promise = require('Promise');
+	new Promise(resolve => HeartBeat.handle && resolve()).then(() => D2Bot.handle = HeartBeat.handle);
 
 	const D2Bot = {
 		handle: 0,
