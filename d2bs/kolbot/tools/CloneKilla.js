@@ -12,7 +12,6 @@ include("OOG.js");
 // ToDo; looking at the script, it seems to not work with this kolton version. Needs fixing?
 
 function main() {
-	D2Bot.init();
 	const Misc = require('Misc');
 
 	include("bots/KillDclone.js");

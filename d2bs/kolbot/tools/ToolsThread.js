@@ -123,7 +123,6 @@ function main() {
 	const Pather = require('Pather');
 
 	print("ÿc3Start ToolsThread script");
-	D2Bot.init();
 	Config();
 
 	for (i = 0; i < 5; i += 1) {

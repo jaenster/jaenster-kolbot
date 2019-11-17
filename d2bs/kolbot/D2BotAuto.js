@@ -80,8 +80,6 @@ function main() {
 		print(JSON.stringify({mode: mode, msg: msg}));
 		if (msg === "Handle") {
 			handle = mode;
-			Worker.push(() => DataFile.updateStats("handle", handle));
-			Worker.push(() => D2Bot.init());
 			!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
 
 			return;
