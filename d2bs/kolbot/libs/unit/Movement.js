@@ -134,5 +134,18 @@
 		}
 
 		return false;
-	}
+	};
+
+	// Check if unit is idle
+	Object.defineProperty(Unit.prototype, "idle", {
+		get: function () {
+			if (this.type > 0) {
+				throw new Error("Unit.idle: Must be used with player units.");
+			}
+
+			return (this.mode === 1 || this.mode === 5 || this.mode === 17); // Dead is pretty idle too
+		},
+		enumerable: true
+	});
+
 })(require);

@@ -6,19 +6,12 @@
 let [D2Bot,DataFile,ControlAction,ShitList] = (function() {
 	const Misc = require('Misc');
 	const Pather = require('Pather');
+	const HeartBeat = require('HeartBeat');
+	const Promise = require('Promise');
+	new Promise(resolve => HeartBeat.handle && resolve()).then(() => D2Bot.handle = HeartBeat.handle);
 
 	const D2Bot = {
 		handle: 0,
-
-		init: function () {
-			var handle = DataFile.getStats().handle;
-
-			if (handle) {
-				this.handle = handle;
-			}
-
-			return this.handle;
-		},
 
 		sendMessage: function (handle, mode, msg) {
 			sendCopyData(null, handle, mode, msg);
