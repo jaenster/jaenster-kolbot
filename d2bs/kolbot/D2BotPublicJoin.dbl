@@ -81,7 +81,6 @@ function main() {
 			if (!handle) {
 				handle = mode;
 				Worker.push(() => DataFile.updateStats("handle", handle));
-				Worker.push(() => D2Bot.init());
 
 				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
 			}

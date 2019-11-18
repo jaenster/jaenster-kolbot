@@ -59,9 +59,6 @@ const Development = (function (global) {
 		// Load the config file
 		require('Config').call();
 
-		// init d2bot (get handle)
-		typeof D2Bot === 'object' && D2Bot.hasOwnProperty('init') && typeof D2Bot.init === 'function' && D2Bot.init();
-
 		restart && _print('ÿc2Restarting script: ÿc9' + Config.Development + ' (in development)');
 		const Loader = require('Loader');
 		Loader.runScript(Config.Development);

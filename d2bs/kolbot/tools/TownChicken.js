@@ -60,7 +60,6 @@ function main() {
 		});
 
 	// Init config and attacks
-	D2Bot.init();
 
 	while (true) {
 		if (!me.inTown && (townCheck ||

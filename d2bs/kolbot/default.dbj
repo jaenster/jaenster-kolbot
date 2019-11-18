@@ -6,16 +6,11 @@ include('sdk.js');
 include("OOG.js");
 
 function main() {
-	D2Bot.init(); // Get D2Bot# handle
 	D2Bot.ingame();
 
 	// wait until game is ready
 	while (!me.gameReady) {
 		delay(50);
-	}
-
-	if (!getScript("tools/heartbeat.js")) {
-		load("tools/heartbeat.js");
 	}
 
 	if (getScript("d2botmap.dbj")) {
