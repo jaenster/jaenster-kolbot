@@ -12,7 +12,7 @@ const require = (function (include, isIncluded, print, notify) {
 	let depth = 0;
 	const modules = {};
 	const obj = function require(field, path) {
-		const asNew = this.__proto__.constructor === require && (() => new (Function.prototype.bind.apply(modules[packageName].exports, arguments)));
+		const asNew = this.__proto__.constructor === require && ((...args) => new (Function.prototype.bind.apply(modules[packageName].exports, args)));
 
 		path = path || 'modules/';
 		const packageName = (path + field).replace(/[^a-z0-9]/gi, '_').toLowerCase();
