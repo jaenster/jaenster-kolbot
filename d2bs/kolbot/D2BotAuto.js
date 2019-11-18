@@ -80,8 +80,6 @@ function main() {
 		print(JSON.stringify({mode: mode, msg: msg}));
 		if (msg === "Handle") {
 			handle = mode;
-			Worker.push(() => DataFile.updateStats("handle", handle));
-			Worker.push(() => D2Bot.init());
 			!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
 
 			return;
@@ -111,7 +109,6 @@ function main() {
 		if (typeof data == 'object' && data && data.hasOwnProperty('pass')) {
 			if (data.pass.hasOwnProperty('handle')) {
 				handle = data.pass.handle;
-				D2Bot.init();
 			}
 			print('HERE -- ' + data.pass.hasOwnProperty('gameInfo'));
 			if (data.pass.hasOwnProperty('gameInfo')) {
