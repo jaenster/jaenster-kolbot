@@ -7,9 +7,9 @@
 	let instances = 0;
 
 	/** @constructor */
-	module.exports = function () {
+	module.exports = function (trackers) {
 		let active = true;
-		this.values = [];
+		this.values = (Array.isArray(trackers) && (Array.isArray(trackers.first()) && trackers || [trackers])) || [];
 		this.track = function (checkerFn, callback) {
 			return this.values.push({fn: checkerFn, callback: callback, value: checkerFn()});
 		};

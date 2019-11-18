@@ -48,7 +48,7 @@ const require = (function (include, isIncluded, print, notify) {
 		if (!modules.hasOwnProperty(packageName)) throw Error('unexpected module error -- ' + field);
 
 		// If called as "new", fake an constructor
-		return asNew ? asNew : modules[packageName].exports;
+		return asNew || modules[packageName].exports;
 	};
 	obj.modules = modules;
 	return obj;
