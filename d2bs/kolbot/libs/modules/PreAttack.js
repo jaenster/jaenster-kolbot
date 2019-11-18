@@ -67,7 +67,7 @@
                 });
 
                 // For debugging, show the circle on the map
-                i > 1 && new Line(coords[i - 1].x, coords[i - 1].y, coords[i].x, coords[i].y, 0x84, true);
+                //i > 1 && new Line(coords[i - 1].x, coords[i - 1].y, coords[i].x, coords[i].y, 0x84, true);
             }
 
             // Get all unites
