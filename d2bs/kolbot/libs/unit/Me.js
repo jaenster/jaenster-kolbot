@@ -79,6 +79,39 @@
 			get: function () {
 				return me.getItem(sdk.items.cube);
 			}
+		},
+		staminaDPS: { // stamina drain per second
+			get: function () {
+				var bonusReduction = me.getStat(28);
+				var armorMalusReduction = 0; // TODO:
+				return 25 * Math.max(40 * (1 + armorMalusReduction/10) * (100-bonusReduction) / 100, 1) / 256;
+			}
+		},
+		staminaTimeLeft: { // seconds before I run out of stamina (assuming we are running)
+			get: function () {
+				return me.stamina / me.staminaDPS;
+			}
+		},
+		staminaMaxDuration: { // seconds before I run out of stamina when at max (assuming we are running)
+			get: function () {
+				return me.staminamax / me.staminaDPS;
+			}
+		},
+		highestAct: {
+			get: function () {
+				return [true, me.getQuest(7, 0), me.getQuest(15, 0), me.getQuest(23, 0), me.getQuest(28, 0)]
+					.findIndex(i => !i);
+			}
+		},
+		highestQuestDone: {
+			get: function () {
+				for (var i = sdk.quests.SecretCowLevel; i >= sdk.quests.SpokeToWarriv; i--) {
+					if (me.getQuest(i, 0)) {
+						return i;
+					}
+				}
+				return undefined;
+			}
 		}
 	});
 
@@ -226,4 +259,5 @@
 	me.off = Events.off;
 	me.once = Events.once;
 	me.trigger = Events.trigger;
+	me.emit = Events.emit;
 })();

@@ -176,13 +176,12 @@
 
 		//Druid
 		{
-			skillId: [sdk.skills.SummonSpiritWolf, sdk.skills.SummonGrizzly],
-			minion: 11,
+			skillId: sdk.skills.CycloneArmor
 		},
-		{
-			skillId: sdk.skills.DireWolf,
-			minion: 12,
-		},
+		(function() {
+			const minion = [11,12,15], skills = [sdk.skills.SummonSpiritWolf,sdk.skills.DireWolf,sdk.skills.SummonGrizzly];
+			return skills.map((x,i)=>({skillId:x,lvl:Skills.getSkillLevel(x),minion:minion[i]} )).sort((a,b)=>b.lvl-a.lvl).first();
+		}).call(),
 		{
 			skillId: [sdk.skills.OakSage, sdk.skills.HeartofWolverine, sdk.skills.SpiritofBarbs],
 			//ToDo; make some function that ensure the use of Oak on Hardcore, or anyway give benefit's to the oak skill
@@ -191,10 +190,6 @@
 		{
 			skillId: [sdk.skills.PlaguePoppy, sdk.skills.CycleofLife, sdk.skills.Vines],
 			minion: 14,
-		},
-		{
-			skillId: sdk.skills.SummonGrizzly,
-			minion: 15,
 		},
 		{
 			skillId: sdk.skills.Hurricane,
