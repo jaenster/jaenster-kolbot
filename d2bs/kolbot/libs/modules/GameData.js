@@ -288,6 +288,256 @@
 
 //(AreaData);
 
+	const Potions = {
+		/*
+		Amazon: 0,
+        Sorceress: 1,
+        Necromancer: 2,
+        Paladin: 3,
+        Barbarian: 4,
+        Druid: 5,
+        Assassin: 6
+        */
+		hp: {
+			587: { // minorhealingpotion
+				effect: [45, 30, 30, 45, 60, 30, 45],
+				cost: 30
+			},
+			588: { // lighthealingpotion
+				effect: [90, 60, 60, 90, 120, 60, 90],
+				cost: 67
+			},
+			589: { // healingpotion
+				effect: [150, 100, 100, 150, 200, 100, 150],
+				cost: 112
+			},
+			590: { // greaterhealingpotion
+				effect: [270, 180, 180, 270, 360, 180, 270],
+				cost: 225
+			},
+			591: { // superhealingpotion
+				effect: [480, 320, 320, 480, 640, 320, 480],
+				cost: undefined
+			},
+		},
+		mp: {
+			592: { // minormanapotion
+				effect: [30, 40, 40, 30, 20, 40, 30],
+				cost: 60
+			},
+			593: { // lightmanapotion
+				effect: [60, 80, 80, 60, 40, 80, 60],
+				cost: 135
+			},
+			594: { // manapotion
+				effect: [120, 160, 160, 120, 80, 160, 120],
+				cost: 270
+			},
+			595: { // greatermanapotion
+				effect: [225, 300, 300, 225, 150, 300, 225],
+				cost: 450
+			},
+			596: { // supermanapotion
+				effect: [375, 500, 500, 375, 250, 500, 375],
+				cost: undefined
+			},
+		}
+	};
+
+	const MandatoryQuests = [
+		sdk.quests.SistersToTheSlaughter, // kill Andy
+		sdk.quests.TheHoradricStaff, // make staff
+		sdk.quests.TheArcaneSanctuary, // go to arcane and find portal to tombs
+		sdk.quests.TheSummoner, // kill The Summoner
+		sdk.quests.TheSevenTombs, // kill Duriel
+		sdk.quests.KhalimsWill, // depends, if you have wp to meph not needed
+		sdk.quests.TheBlackenedTemple, // kill Travincal
+		sdk.quests.TheGuardian, // kill Meph
+		sdk.quests.TerrorsEnd, // kill Diablo
+		sdk.quests.RiteOfPassage, // kill Ancients (depends on charlvl)
+		sdk.quests.EveOfDestruction // kill Baal
+	];
+
+	const Quests = [];
+	for (var i = sdk.quests.SpokeToWarriv; i <= sdk.quests.SecretCowLevel; i++) {
+		Quests[i] = {
+			mandatory: MandatoryQuests.indexOf(i) > -1,
+			areas: areasForQuest(i),
+			bosses: bossForQuest(i)
+		}
+	}
+
+	function areasForQuest(q) {
+		switch (q) {
+		case sdk.quests.SpokeToWarriv:
+			return [sdk.areas.RogueEncampment];
+
+		case sdk.quests.DenOfEvil:
+			return [sdk.areas.DenOfEvil];
+
+		case sdk.quests.SistersBurialGrounds:
+			return [sdk.areas.BurialGrounds];
+
+		case sdk.quests.TheSearchForCain:
+			// scroll, stones, trist
+			return [sdk.areas.DarkWood, sdk.areas.StonyField, sdk.areas.Tristram];
+
+		case sdk.quests.ForgottenTower:
+			return [sdk.areas.TowerCellarLvl5];
+
+		case sdk.quests.ToolsOfTheTrade:
+			return [sdk.areas.Barracks];
+
+		case sdk.quests.SistersToTheSlaughter:
+			return [sdk.areas.CatacombsLvl4];
+
+		case sdk.quests.AbleToGotoActII:
+			return [sdk.areas.RogueEncampment];
+
+		case sdk.quests.SpokeToJerhyn:
+			return [sdk.areas.LutGholein];
+
+		case sdk.quests.RadamentsLair:
+			return [sdk.areas.A2SewersLvl3];
+
+		case sdk.quests.TheHoradricStaff:
+			// cube, staff, amu
+			return [sdk.areas.HallsOfDeadLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.ClawViperTempleLvl2];
+
+		case sdk.quests.TheTaintedSun:
+			// amu + speak to Drognan
+			return [sdk.areas.ClawViperTempleLvl2, sdk.areas.LutGholein];
+
+		case sdk.quests.TheArcaneSanctuary:
+			return [sdk.areas.ArcaneSanctuary];
+
+		case sdk.quests.TheSummoner:
+			return [sdk.areas.ArcaneSanctuary];
+
+		case sdk.quests.TheSevenTombs:
+			return [sdk.areas.CanyonOfMagi];
+
+		case sdk.quests.AbleToGotoActIII:
+			return [sdk.areas.LutGholein];
+
+		case sdk.quests.SpokeToHratli:
+			return [sdk.areas.KurastDocktown];
+
+		case sdk.quests.TheGoldenBird:
+			return []; // any, kill an elite and have a chance that it drops golden bird
+
+		case sdk.quests.BladeOfTheOldReligion:
+			return [sdk.areas.FlayerJungle];
+
+		case sdk.quests.KhalimsWill:
+			// eye, brain, heart, flail
+			return [sdk.areas.SpiderCavern, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl2, sdk.areas.Travincal];
+
+		case sdk.quests.LamEsensTome:
+			return [sdk.areas.RuinedTemple];
+
+		case sdk.quests.TheBlackenedTemple:
+			return [sdk.areas.Travincal];
+
+		case sdk.quests.TheGuardian:
+			return [sdk.areas.DuranceOfHateLvl3];
+
+		case sdk.quests.AbleToGotoActIV:
+			// meph red portal
+			return [sdk.areas.DuranceOfHateLvl3];
+
+		case sdk.quests.SpokeToTyrael:
+			return [sdk.areas.PandemoniumFortress];
+
+		case sdk.quests.TheFallenAngel:
+			return [sdk.areas.PlainsOfDespair];
+
+		case sdk.quests.HellsForge:
+			return [sdk.areas.RiverOfFlame];
+
+		case sdk.quests.TerrorsEnd:
+			return [sdk.areas.ChaosSanctuary];
+
+		case sdk.quests.AbleToGotoActV:
+			return [sdk.areas.PandemoniumFortress];
+
+		case sdk.quests.SiegeOnHarrogath:
+			return [sdk.areas.BloodyFoothills];
+
+		case sdk.quests.RescueonMountArreat:
+			return [sdk.areas.FrigidHighlands];
+
+		case sdk.quests.PrisonOfIce:
+			// anya and speak to malah
+			return [sdk.areas.FrozenRiver, sdk.areas.Harrogath];
+
+		case sdk.quests.BetrayalOfHaggorath:
+			return [sdk.areas.NihlathaksTemple];
+
+		case sdk.quests.RiteOfPassage:
+			return [sdk.areas.ArreatSummit];
+
+		case sdk.quests.EveOfDestruction:
+			return [sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber];
+
+		case sdk.quests.SecretCowLevel:
+			// get wirt and open portal
+			return [sdk.areas.Tristram, sdk.areas.RogueEncampment];
+		}
+		return [];
+	}
+
+	function bossForQuest(q) {
+		switch (q) {
+		case sdk.quests.SistersBurialGrounds:
+			return [sdk.monsters.Bloodraven];
+
+		case sdk.quests.ForgottenTower:
+			return [sdk.monsters.TheCountess];
+
+		case sdk.quests.SistersToTheSlaughter:
+			return [sdk.monsters.Andariel];
+
+		case sdk.quests.RadamentsLair:
+			return [sdk.monsters.Radament];
+
+		case sdk.quests.TheSummoner:
+			return [sdk.monsters.Summoner];
+
+		case sdk.quests.TheSevenTombs:
+			return [sdk.monsters.Duriel];
+
+		case sdk.quests.KhalimsWill:
+		case sdk.quests.TheBlackenedTemple:
+			return [sdk.monsters.GelebFlamefinger, sdk.monsters.IsmailVilehand, sdk.monsters.ToorcIcefist];
+
+		case sdk.quests.TheGuardian:
+			return [sdk.monsters.Mephisto];
+
+		case sdk.quests.TheFallenAngel:
+			return [sdk.monsters.Izual];
+
+		case sdk.quests.TerrorsEnd:
+			return [sdk.monsters.Diablo1];
+
+		case sdk.quests.SiegeOnHarrogath:
+			return []; // TODO shenk id ?
+
+		case sdk.quests.BetrayalOfHaggorath:
+			return [sdk.monsters.Nihlathak];
+
+		case sdk.quests.RiteOfPassage:
+			return [sdk.monsters.Ancient1, sdk.monsters.Ancient2, sdk.monsters.Ancient3];
+
+		case sdk.quests.EveOfDestruction:
+			return [sdk.monsters.Crab];
+
+		case sdk.quests.SecretCowLevel:
+			return [sdk.monsters.TheCowKing];
+		}
+		return [];
+	}
+
 	function isAlive(unit) {
 		return Boolean(unit && unit.hp);
 	}
@@ -1352,6 +1602,9 @@
 
 
 			return (me.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
+		},
+		potionEffect: function (potionClassId, charClass = me.classid) {
+			return (Potions.hp[potionClassId] || Potions.mp[potionClassId])[charClass];
 		}
 	};
 
@@ -1363,6 +1616,8 @@
 	GameData.onGround = onGround;
 	GameData.itemTier = itemTier;
 	GameData.PresetMonsters = PresetMonsters;
+	GameData.Potions = Potions;
+	GameData.Quests = Quests;
 
 	module.exports = GameData;
 })(module, require);
