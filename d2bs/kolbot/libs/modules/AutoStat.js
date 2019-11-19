@@ -104,11 +104,11 @@
 		};
 	}
 
-	module.exports.stats = { // Default stats
+	module.exports = { // Default stats
 		strength: [156, 1],
 		dexterity: [0, 0],
 		vitality: [400, 3], // Last but not least
 		energy: [0, 0],
 	};
 
-}).call(null, module, require);
+})(typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require );

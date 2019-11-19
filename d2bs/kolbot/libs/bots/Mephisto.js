@@ -4,7 +4,7 @@
  *    @desc        kill Mephisto
  */
 
-module.exports = function (Config, Attack, Pickit, Pather, Town) {
+module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 	const TownPrecast = require('TownPrecast');
 	this.killMephisto = function () {
 		const meph = getUnit(1, sdk.monsters.Mephisto);

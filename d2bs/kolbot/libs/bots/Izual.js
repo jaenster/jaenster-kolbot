@@ -4,7 +4,7 @@
 *	@desc		kill Izual
 */
 
-function Izual(Config, Attack, Pickit, Pather, Town) {
+function Izual(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(105, 1, 256)) {

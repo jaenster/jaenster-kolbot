@@ -46,7 +46,7 @@
 *	quit - exit game
 */
 
-function Follower(Config, Attack, Pickit, Pather, Town) {
+function Follower(Config, Attack, Pickit, Pather, Town, Misc) {
 	var i, j, stop, leader, leaderUnit, charClass, piece, skill, result, unit, player, coord,
 		commanders = [Config.Leader],
 		attack = true,
@@ -487,10 +487,6 @@ function Follower(Config, Attack, Pickit, Pather, Town) {
 				}
 
 				break;
-			case "flash":
-				Packet.flash(me.gid);
-
-				break;
 			case "aoff":
 			case me.name + " aoff":
 				attack = false;
@@ -841,7 +837,7 @@ WPLoop:
 			break;
 		case "h":
 			if (me.classid === 4) {
-				Skill.cast(130);
+				me.cast(130);
 			}
 
 			break;

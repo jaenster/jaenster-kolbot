@@ -4,7 +4,7 @@
  *    @desc        kill Duriel
  */
 
-function Duriel(Config, Attack, Pickit, Pather, Town) {
+function Duriel(Config, Attack, Pickit, Pather, Town, Misc) {
 	this.killDuriel = function () {
 		var i, target;
 
@@ -67,7 +67,7 @@ function Duriel(Config, Attack, Pickit, Pather, Town) {
 	if (unit) {
 		for (i = 0; i < 3; i += 1) {
 			if (me.area === unit.area) {
-				Skill.cast(43, 0, unit);
+				me.cast(43, 0, unit);
 			}
 
 			if (me.area === 73) {

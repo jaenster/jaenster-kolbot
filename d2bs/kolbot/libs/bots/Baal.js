@@ -4,7 +4,7 @@
  *	@desc		clear Throne of Destruction and kill Baal
  */
 
-function Baal(Config, Attack, Pickit, Pather, Town) {
+function Baal(Config, Attack, Pickit, Pather, Town, Misc) {
 	let portal, tick;
 
 	const PreAttack = require('PreAttack');

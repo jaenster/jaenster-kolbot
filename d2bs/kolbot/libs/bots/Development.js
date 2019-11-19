@@ -22,28 +22,10 @@ const Development = (function (global) {
 	// In case no specific script is given
 	typeof Config.Development !== 'string' && (Config.Development = '');
 
-
-	function debug(what) {
-		what === 'ÿc2Starting script: ÿc9Development' && (what = 'ÿc2Starting script: ÿc9' + Config.Development + ' (in development)');
-		var stackNumber = 1, // exclude this function
-			stack = new Error().stack.match(/[^\r\n]+/g),
-			line = stack[stackNumber].substr(stack[stackNumber].lastIndexOf(':') + 1),
-			functionName = stack[stackNumber].substr(0, stack[stackNumber].indexOf('@')),
-			filename = stack[stackNumber].substr(stack[stackNumber].lastIndexOf('\\') + 1);
-
-		typeof what === 'object' && (what = JSON.stringify(what));
-
-		_print('ÿc:[ÿc5' + filename + 'ÿc:] (ÿc:' + functionName + ':' + line + 'ÿc:):ÿc0 ' + what);
-
-
-	}
-
-	// override the normal print function
-	typeof global._print === 'undefined' && (global._print = print); // store original
-	print !== debug && (print = debug);
+	require('debug');
 
 	// The thread part
-	global.main = function () {
+	if (getScript(true).name.toLowerCase() !== 'default.dbj') global.main = function () {
 		const defaultdbj = getScript('default.dbj');
 		let ready = false, includeList = [], restart = false;
 
@@ -75,35 +57,15 @@ const Development = (function (global) {
 		});
 
 		// Load the config file
-		typeof LoadConfig === 'function' && LoadConfig();
-
-		// Make sure checkInfinity is re-inited
-		typeof Attack === 'object' && Attack.hasOwnProperty('checkInfinity') && typeof Attack.checkInfinity === 'function' && Attack.checkInfinity();
-
-		// init localchat, if loaded
-		typeof LocalChat === 'object' && LocalChat.hasOwnProperty('init') && typeof LocalChat.init === 'function' && LocalChat.init();
-
-		// init pickit, if loaded
-		typeof Pickit === 'object' && Pickit.hasOwnProperty('init') && typeof Pickit.init === 'function' && Pickit.init(true);
-
-		// init d2bot (get handle)
-		typeof D2Bot === 'object' && D2Bot.hasOwnProperty('init') && typeof D2Bot.init === 'function' && D2Bot.init();
+		require('Config').call();
 
 		restart && _print('ÿc2Restarting script: ÿc9' + Config.Development + ' (in development)');
-		try {
-			include('bots/' + Config.Development + '.js') && global[Config.Development]() || print('failed to load ' + Config.Development);
-		} catch (e) {
-			try {
-				Misc.errorReport(e, Config.Development);
-				print('\r\n' + e.stack);
-			} catch (e2) {
-				_print('cant load the file ' + e.message);
-			}
+		const Loader = require('Loader');
+		Loader.runScript(Config.Development);
 
-			// Just idle, incase we will be resetted
-			while (me.ingame) {
-				delay(1000);
-			}
+		// Just idle, in case we will be resetted
+		while (me.ingame) {
+			delay(1000);
 		}
 	};
 
@@ -124,7 +86,7 @@ const Development = (function (global) {
 	function getIncludeList() {
 		/** @type String[] */
 		let files = [],
-			dirs = ['', '/common', '/common/Attacks', '/config', '/config/Builds', '/config/Templates', '/bots'];
+			dirs = ['', '/bots','/unit'];
 
 
 		// open all directories
@@ -137,7 +99,7 @@ const Development = (function (global) {
 		return files;
 	}
 
-	return function (Config, Attack, Pickit, Pather, Town) {
+	return function (Config, Attack, Pickit, Pather, Town, Misc) {
 		let restart = false;
 		if (!Config.Development) throw Error('Nothing to develop'); // Nothing to develop
 		addEventListener('scriptmsg', function (data) {

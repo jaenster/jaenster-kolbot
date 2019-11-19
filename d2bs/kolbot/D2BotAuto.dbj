@@ -54,8 +54,6 @@ print('ÿc2Jaensterÿc0 :: Started D2BotAuto.js');
 include('require.js');
 include("sdk.js");
 include("OOG.js");
-include("common/misc.js");
-include("common/prototypes.js");
 let handle, gameInfo;
 function main() {
 	let gameCount, nextGame, lastGameTick = 0;
@@ -82,8 +80,6 @@ function main() {
 		print(JSON.stringify({mode: mode, msg: msg}));
 		if (msg === "Handle") {
 			handle = mode;
-			Worker.push(() => DataFile.updateStats("handle", handle));
-			Worker.push(() => D2Bot.init());
 			!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
 
 			return;
@@ -113,7 +109,6 @@ function main() {
 		if (typeof data == 'object' && data && data.hasOwnProperty('pass')) {
 			if (data.pass.hasOwnProperty('handle')) {
 				handle = data.pass.handle;
-				D2Bot.init();
 			}
 			print('HERE -- ' + data.pass.hasOwnProperty('gameInfo'));
 			if (data.pass.hasOwnProperty('gameInfo')) {

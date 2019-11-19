@@ -197,7 +197,7 @@ const Merc = (function () {
 								print('Fury!');
 								monsters.sort(Sort.units); // Get the one that the most close to me
 								vault.timer = getTickCount();
-								Skill.cast(35, 0, monsters[0]); // Cast fury
+								me.cast(35, 0, monsters[0]); // Cast fury
 								// Continue with normal attack sequence now
 							}
 						} else {
@@ -218,7 +218,7 @@ const Merc = (function () {
 							checkSkill = 10; // Jab if we cant use lighting
 						}
 
-						return Skill.cast(checkSkill, 1, unit);
+						return me.cast(checkSkill, 1, unit);
 					};
 					break;
 				case 1: // Sorc
@@ -253,7 +253,7 @@ const Merc = (function () {
 					// A necromancer works best if it attacks multiple units, so we gonna ignore mostly the unit flag
 					ClassAttack.doAttack = function (unit) {
 						// recast bone armor if gone
-						!me.getState(14) && Skill.cast(68);
+						!me.getState(14) && me.cast(68);
 
 
 						let corpse = getUnit(1, -1, 12),
@@ -263,7 +263,7 @@ const Merc = (function () {
 							let exploded = false;
 							do {
 								if (getDistance(unit, corpse) <= range && this.checkCorpse(corpse)) {
-									Skill.cast(74, 0, corpse);
+									me.cast(74, 0, corpse);
 									print('Explodeded ' + corpse.name);
 									exploded = true;
 								}
@@ -271,7 +271,7 @@ const Merc = (function () {
 						}
 
 						// If nothing else is left, just attack
-						(id => Skill.cast(Config.AttackSkill[id], 1, unit))(unit.spectype & 0x7 && 1 || 3);
+						(id => me.cast(Config.AttackSkill[id], 1, unit))(unit.spectype & 0x7 && 1 || 3);
 						return false; // move to the next unit
 					};
 					break;

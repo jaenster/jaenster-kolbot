@@ -4,7 +4,7 @@
  *    @desc        Do quests, only most popular ones for now
  */
 
-function Questing(Config, Attack, Pickit, Pather, Town) {
+function Questing(Config, Attack, Pickit, Pather, Town, Misc) {
 	const Precast = require('Precast');
 	const NPC = require('NPC');
 	let i, j,

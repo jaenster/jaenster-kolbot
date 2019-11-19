@@ -45,7 +45,6 @@ print('ÿc2Jaensterÿc0 :: Started D2BotPublicJoin.dbj');
 include('require.js');
 include("sdk.js");
 include("OOG.js");
-include("common/misc.js");
 let handle, gameInfo;
 
 function main() {
@@ -82,7 +81,6 @@ function main() {
 			if (!handle) {
 				handle = mode;
 				Worker.push(() => DataFile.updateStats("handle", handle));
-				Worker.push(() => D2Bot.init());
 
 				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
 			}

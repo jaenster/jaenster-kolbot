@@ -4,7 +4,7 @@
  */
 
 //ToDo; Make this work propperly
-function AutoMagicFind(Config, Attack, Pickit, Pather, Town) {
+function AutoMagicFind(Config, Attack, Pickit, Pather, Town, Misc) {
 	const Promise = require('Promise');
 	const GameData = require('GameData');
 	//const excluded = [0, 133, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, 134, 135, 136, sdk.areas.AncientsWay, sdk.areas.MooMooFarm];

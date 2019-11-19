@@ -23,7 +23,7 @@
 
 	if (getScript(currentFile) && getScript(currentFile).name === getScript(true).name) {
 		print('ÿc2Jaensterÿc0 :: Started Debug');
-		include('require.js') && include('common/prototypes.js');
+		include('require.js');
 		let passTrough = {};
 		// Just load this as an thread
 		const Worker = require('Worker');

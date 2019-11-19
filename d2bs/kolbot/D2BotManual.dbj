@@ -36,7 +36,7 @@
  *
  *
  */
-StarterConfig = {
+let StarterConfig = {
 	LoginChar: '', // setup in your config file which char you gonna play with (StarterConfig.LoginChar = 'yourChar';
 	Follower: false, // Create tcp/ip game, or join one
 };
@@ -50,7 +50,6 @@ include('require.js');
 include("sdk.js");
 getLocation() === sdk.locations.None && sendKey(32); // skip splash screen
 include("OOG.js");
-include("common/misc.js");
 include("common/prototypes.js");
 let handle, gameInfo;
 
@@ -73,7 +72,6 @@ function main() {
 		print('Got handle from debug function');
 		if (data.hasOwnProperty('handle')) {
 			handle = data.handle;
-			D2Bot.init();
 		}
 	});
 

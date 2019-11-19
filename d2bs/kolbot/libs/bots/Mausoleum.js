@@ -4,7 +4,7 @@
 *	@desc		clear Mausoleum
 */
 
-function Mausoleum(Config, Attack, Pickit, Pather, Town) {
+function Mausoleum(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!Pather.journeyTo(17, true)) {

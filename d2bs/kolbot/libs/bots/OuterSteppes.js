@@ -1,4 +1,4 @@
-function OuterSteppes(Config, Attack, Pickit, Pather, Town) {
+function OuterSteppes(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!Pather.journeyTo(104)) {

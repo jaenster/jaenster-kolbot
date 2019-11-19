@@ -4,7 +4,7 @@
  *    @desc        clear Tristram
  */
 
-function Tristram(Config, Attack, Pickit, Pather, Town) {
+function Tristram(Config, Attack, Pickit, Pather, Town, Misc) {
 	let tree, scroll, akara, stones, gibbet;
 
 	if (!me.getQuest(4, 4) && !me.getItem(525)) {

@@ -1,51 +1,4 @@
 
-// https://tc39.github.io/ecma262/#sec-array.prototype.findindex
-if (!Array.prototype.findIndex) {
-	Object.defineProperty(Array.prototype, 'findIndex', {
-		value: function (predicate) {
-			// 1. Let O be ? ToObject(this value).
-			if (this == null) {
-				throw new TypeError('"this" is null or not defined');
-			}
-
-			var o = Object(this);
-
-			// 2. Let len be ? ToLength(? Get(O, "length")).
-			var len = o.length >>> 0;
-
-			// 3. If IsCallable(predicate) is false, throw a TypeError exception.
-			if (typeof predicate !== 'function') {
-				throw new TypeError('predicate must be a function');
-			}
-
-			// 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-			var thisArg = arguments[1];
-
-			// 5. Let k be 0.
-			var k = 0;
-
-			// 6. Repeat, while k < len
-			while (k < len) {
-				// a. Let Pk be ! ToString(k).
-				// b. Let kValue be ? Get(O, Pk).
-				// c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-				// d. If testResult is true, return k.
-				var kValue = o[k];
-				if (predicate.call(thisArg, kValue, k, o)) {
-					return k;
-				}
-				// e. Increase k by 1.
-				k++;
-			}
-
-			// 7. Return -1.
-			return -1;
-		},
-		configurable: true,
-		writable: true
-	});
-}
-
 String.prototype.lcsGraph = function (compareToThis) {
 	if (!this.length || !compareToThis || !compareToThis.length) {
 		return null;
@@ -275,21 +228,31 @@ Array.prototype.compactMap = function (callback) {
 		}
 		return callback(x, i, array);
 	})
-		.filterNull();
-};
-
-Array.prototype.compactMap = function (callback) {
-	return this.map((x, i, array) => {
-		if (x == null) {
-			return null;
-		}
-		return callback(x, i, array);
-	})
-		.filterNull();
+	.filterNull();
 };
 
 Array.prototype.random = function () {
 	return this[Math.floor((Math.random() * this.length))];
+};
+
+Array.prototype.includes = function (e) {
+	return this.indexOf(e) > -1;
+};
+
+Array.prototype.contains = Array.prototype.includes;
+
+Array.prototype.intersection = function (other) {
+	return this.filter(e => other.includes(e))
+};
+
+Array.prototype.difference = function (other) {
+	return this.filter(e => !other.includes(e))
+};
+
+Array.prototype.symmetricDifference = function (other) {
+	return this
+		.filter(e => !other.includes(e))
+		.concat(other.filter(e => !this.includes(e)))
 };
 
 
@@ -298,3 +261,117 @@ Math.randomIntBetween = function (start, end) {
 	let max = Math.floor(end);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+// Shuffle Array
+// http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
+Array.prototype.shuffle = function () {
+	var temp, index,
+		counter = this.length;
+
+	// While there are elements in the array
+	while (counter > 0) {
+		// Pick a random index
+		index = Math.floor(Math.random() * counter);
+
+		// Decrease counter by 1
+		counter -= 1;
+
+		// And swap the last element with it
+		temp = this[counter];
+		this[counter] = this[index];
+		this[index] = temp;
+	}
+
+	return this;
+};
+
+// Trim String
+String.prototype.trim = function () {
+	return this.replace(/^\s+|\s+$/g, "");
+};
+
+// Object.assign polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+if (typeof Object.assign !== 'function') {
+	Object.defineProperty(Object, "assign", {
+		value: function assign (target) {
+			if (target === null) {
+				throw new TypeError('Cannot convert undefined or null to object');
+			}
+
+			var to = Object(target);
+
+			for (var index = 1; index < arguments.length; index++) {
+				var nextSource = arguments[index];
+
+				if (nextSource !== null) {
+					for (var nextKey in nextSource) {
+						if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+							to[nextKey] = nextSource[nextKey];
+						}
+					}
+				}
+			}
+
+			return to;
+		},
+		writable: true,
+		configurable: true
+	});
+}
+
+// Array.find polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+if (!Array.prototype.find) {
+	Object.defineProperty(Array.prototype, 'find', {
+		value: function (predicate) {
+			if (this === null) {
+				throw new TypeError('"this" is null or not defined');
+			}
+
+			var o = Object(this);
+
+			var len = o.length >>> 0;
+
+			if (typeof predicate !== 'function') {
+				throw new TypeError('predicate must be a function');
+			}
+
+			var thisArg = arguments[1];
+
+			var k = 0;
+
+			while (k < len) {
+				var kValue = o[k];
+
+				if (predicate.call(thisArg, kValue, k, o)) {
+					return kValue;
+				}
+
+				k++;
+			}
+
+			return undefined;
+		},
+		configurable: true,
+		writable: true
+	});
+}
+
+/**
+ * @description Return the first element or undefined
+ * @return undefined|*
+ */
+if (!Array.prototype.first) {
+	Array.prototype.first = function () {
+		return this.length > 0 ? this[0] : undefined;
+	};
+}
+
+/**
+ * @description Return the last element or undefined
+ * @return undefined|*
+ */
+if (!Array.prototype.last) {
+	Array.prototype.last = function () {
+		return this.length > 0 ? this[this.length-1] : undefined;
+	};
+}

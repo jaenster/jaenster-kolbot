@@ -4,7 +4,7 @@
 *	@desc		Open chests in configured areas
 */
 
-function ChestMania(Config, Attack, Pickit, Pather, Town) {
+function ChestMania(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	for (let prop in Config.ChestMania) {

@@ -10,33 +10,53 @@
 			Rx = require('Observable'),
 			Graph = require('Graph');
 
-		let promise = new Promise((resolve, reject) => {
-			// TODO: clear path at low level
-			Pather.journeyTo(sdk.areas.DenOfEvil) && resolve() || reject();
-		});
-
-		// just testing Observable module
-		Rx.Observable.fromPromise(promise)
-			.subscribe(x => {
-				// 0xF = skip normal, 0x7 = champions/bosses, 0 = all
-				let graph = new Graph();
-				Graph.depthFirstSearch(graph, (room) => {
-					let adjust = Pather.getNearestWalkable(room.centerX, room.centerY, 20, 5);
-					if (adjust) {
-						Pather.moveTo(adjust[0], adjust[1], 3, true);
-					}
-					else {
-						Pather.moveTo(room.centerX, room.centerY, 3, true);
-					}
-					Attack.clear(room.xsize/2, 0);
-				});
-			},
-			e => {
-				print("error "+e);
-			},
-			() => {
-				print("complete");
+		function doDen() {
+			let promise = new Promise((resolve, reject) => {
+				Pather.journeyTo(sdk.areas.DenOfEvil, true) && resolve() || reject();
 			});
+
+			// just testing Observable module
+			Rx.Observable.fromPromise(promise)
+				.subscribe(x => {
+					// 0xF = skip normal, 0x7 = champions/bosses, 0 = all
+					let graph = new Graph();
+					Graph.depthFirstSearch(graph, (room) => {
+						Pather.moveTo(room.walkableX, room.walkableY, 3, true);
+						Attack.clear(room.xsize/2, 0);
+					});
+				},
+				e => {
+					print("error "+e);
+				},
+				() => {
+					print("complete");
+				});
+		}
+
+		Quests.on(sdk.quests.DenOfEvil, (state) => {
+			print("Den quest update");
+			if (state[0]) { // quest done
+				print("Den quest done");
+				return;
+			}
+			if (!state[1]) { // quest not done
+				print("Doing Den quest");
+				doDen();
+			}
+			else { // all monsters killed, talk to akara
+				if (me.inTown) {
+					me.talkTo(NPC.Akara);
+				}
+				else {
+					var tries = 0;
+					while (!me.inTown && tries < 3) {
+						Pather.journeyTo(sdk.areas.RogueEncampment, true);
+						tries++;
+					}
+					me.talkTo(NPC.Akara);
+				}
+			}
+		});
 	}
 
 	module.exports = Den;

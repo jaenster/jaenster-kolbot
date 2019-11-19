@@ -4,7 +4,7 @@
 *	@desc		kill Radament
 */
 
-function Radament(Config, Attack, Pickit, Pather, Town) {
+function Radament(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 
 	if (!me.journeyToPreset(49, 2, 355)) {

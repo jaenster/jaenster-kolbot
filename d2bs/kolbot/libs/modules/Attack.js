@@ -5,6 +5,7 @@
 
 (function (module, require) {
 	const CollMap = require('CollMap');
+	const Pather = require('Pather');
 	const Attack = function () {
 
 	};
@@ -155,78 +156,14 @@
 		return true;
 	};
 
-	Attack.clearLevelWalk = function (obj) {
-		let room = getRoom(), rooms = [], result, myRoom, currentArea = getArea().id,
-			previousArea,
-			spectype,
-			quitWhen = () => {
-			};
+	Attack.clearLevelWalk = function (spectype) {
+		const Graph = require('Graph');
 
-		const Config = require('Config');
-
-		if (!room) return false;
-
-		if (typeof obj === 'object' && obj) {
-			spectype = obj.hasOwnProperty('spectype') && obj.spectype || 0;
-			quitWhen = obj.hasOwnProperty('quitWhen') && typeof obj.quitWhen === 'function' && obj.quitWhen || quitWhen;
-		}
-		if (typeof obj !== 'object') {
-			spectype = Config.ClearType;
-		}
-
-
-		for (; room.getNext();) rooms.push([room.x * 5 + room.xsize / 2, room.y * 5 + room.ysize / 2]);
-
-		while (rooms.length > 0) {
-			// get the first room + initialize myRoom var
-			!myRoom && (room = getRoom(me.x, me.y));
-
-			if (room) {
-				if (room instanceof Array) { // use previous room to calculate distance
-					myRoom = [room[0], room[1]];
-				} else { // create a new room to calculate distance (first room, done only once)
-					myRoom = [room.x * 5 + room.xsize / 2, room.y * 5 + room.ysize / 2];
-				}
-			}
-
-			rooms.sort((a, b) => {
-				var da = getDistance(myRoom[0], myRoom[1], a[0], a[1]);
-				let adjustA = Pather.getNearestWalkable(a[0], a[1], 20, 3);
-				if (adjustA) {
-					da = getDistance(myRoom[0], myRoom[1], adjustA[0], adjustA[1]);
-					let pathA = getPath(me.area, adjustA[0], adjustA[1], myRoom[0], myRoom[1], 0, Pather.walkDistance);
-					if (pathA.length) {
-						da = pathA.length;
-					}
-				}
-
-				var db = getDistance(myRoom[0], myRoom[1], b[0], b[1]);
-				let adjustB = Pather.getNearestWalkable(b[0], b[1], 20, 3);
-				if (adjustB) {
-					db = getDistance(myRoom[0], myRoom[1], adjustB[0], adjustB[1]);
-					let pathB = getPath(me.area, adjustB[0], adjustB[1], myRoom[0], myRoom[1], 0, Pather.walkDistance);
-					if (pathB.length) {
-						db = pathB.length;
-					}
-				}
-
-				return da - db;
-			});
-			room = rooms.shift();
-
-			result = Pather.getNearestWalkable(room[0], room[1], 20, 3);
-
-			if (result) {
-				Pather.moveTo(result[0], result[1], 3, spectype);
-				previousArea = result;
-				if (typeof quitWhen === 'function' && quitWhen()) return true;
-				if (!me.clear(20, spectype)) break;
-
-			} else if (currentArea !== getArea().id) { // Make sure bot does not get stuck in different area.
-				Pather.moveTo(previousArea[0], previousArea[1], 3, spectype);
-			}
-		}
-		return true;
+		let graph = new Graph();
+		Graph.depthFirstSearch(graph, room => {
+			Pather.moveTo(room.walkableX, room.walkableY, 3, true);
+			Attack.clear(room.xsize, spectype || 0);
+		});
 	};
 
 	Attack.kill = function (classId) {
