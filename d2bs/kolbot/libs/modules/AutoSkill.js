@@ -71,7 +71,7 @@
 	}
 
 
-	module.exports.skills = [// Example config
+	module.exports = [// Example config
 		/*
 
 		// First the skills needed
@@ -93,4 +93,4 @@
 	 */
 	];
 
-}).call(null, module, require);
+})(typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require );
