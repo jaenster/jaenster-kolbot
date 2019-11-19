@@ -162,7 +162,7 @@
 		let graph = new Graph();
 		Graph.depthFirstSearch(graph, room => {
 			Pather.moveTo(room.walkableX, room.walkableY, 3, true);
-			Attack.clear(room.xsize/2, spectype || 0);
+			Attack.clear(room.xsize, spectype || 0);
 		});
 	};
 
