@@ -116,20 +116,27 @@
 	};
 
 	Graph.customSearch = function(graph, explore) {
+		
+	};
+
+	Graph.nearestNeighbourSearch = function(graph, explore) {
 		while (graph.vertices.length) {
 			var currentVertex = graph.vertices.shift();
-			GraphDebug.drawRoom(currentVertex);
 			while (currentVertex) {
 				explore(currentVertex);
 				currentVertex.seen = true;
 				GraphDebug.removeHookForRoom(currentVertex);
-				var neighbors = graph.nearbyVertices(currentVertex)
+				currentVertex = graph.nearbyVertices(currentVertex)
 					.filter(v => !v.seen)
-					.sort((a, b) => currentVertex.walkablePathDistanceTo(a) - currentVertex.walkablePathDistanceTo(b));
-				neighbors.forEach(x => GraphDebug.drawRoom(x));
-				currentVertex = neighbors.first();
+					.sort((a, b) => currentVertex.walkablePathDistanceTo(a) - currentVertex.walkablePathDistanceTo(b))
+					.first();
 			}
+			// if no neihbors is found, get next nearest vertex in graph
 			graph.vertices.filter(v => !v.seen).sort((a, b) => a.walkablePathDistance() - b.walkablePathDistance());
+
+			//TODO: sometimes, the bot leaves a small group of vertices alone, and continues to the biggest part of the graph
+			// this leads the bot to go to this small group at the end and it is not optimal. It should have gone to this small group before finishing all the rest
+			// we need to construct get disconnected parts of graph and go to the nearest smallest part before continuing
 		}
 	};
 
