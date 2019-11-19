@@ -5,6 +5,7 @@
  */
 (function (module, require) {
 	const myEvents = new (require('Events'));
+	const Promise = require('Promise');
 	const exports = {
 		on: myEvents.on,
 		off: myEvents.off,
@@ -15,8 +16,8 @@
 		},
 	};
 	const Message = require('Messaging');
-
-	if (getScript.startAsThread() === 'thread') {
+	const type = getScript.startAsThread();
+	if (type === 'thread') {
 		/** @type Socket */
 		const Socket = require('Socket');
 		const hostname = 'travinc.al';
@@ -31,7 +32,7 @@
 			try {
 				orgSocket();
 				print('Connected to ' + hostname);
-				registeredChannels.forEach(channel=> socket.send({register: channel}));
+				registeredChannels.forEach(channel => socket.send({register: channel}));
 			} catch (e) {
 				// Dont care for a failed connection
 				print('Failed to connect to ' + hostname + ' (' + e.message + ')');
@@ -65,8 +66,8 @@
 				.then(_ => !socket.connected && (lastReconnect = getTickCount()) && socket.connect());
 		});
 
-
 		let mapid = 0;
+		Message.send({BotNet: {up: true}});
 
 		while (true) {
 			delay(10);
@@ -84,22 +85,29 @@
 			}
 		}
 
-	} else {
-		module.exports = exports;
-		Message.on('BotNet', function (data) {
-
-			if (data.hasOwnProperty('emit')) {
-				// Trigger global events
-				myEvents.emit(null, data.emit);
-
-				// Hook specifically on a channel
-				if (data.emit.hasOwnProperty('channel') && data.emit.channel.hasOwnProperty('name') && data.emit.channel.hasOwnProperty('data')) {
-					// Trigger as channel event
-					myEvents.emit(data.emit.channel.name, data.emit.channel.data);
-				}
-			}
-		});
 	}
+
+	if (type === 'started') {
+		// Wait until the bot is up
+		let up = false;
+		Message.on('BotNet', data => up |= data.hasOwnProperty('up') && data.up);
+		while (!up) delay(10);
+	}
+
+	module.exports = exports;
+	Message.on('BotNet', function (data) {
+
+		if (data.hasOwnProperty('emit')) {
+			// Trigger global events
+			myEvents.emit(null, data.emit);
+
+			// Hook specifically on a channel
+			if (data.emit.hasOwnProperty('channel') && data.emit.channel.hasOwnProperty('name') && data.emit.channel.hasOwnProperty('data')) {
+				// Trigger as channel event
+				myEvents.emit(data.emit.channel.name, data.emit.channel.data);
+			}
+		}
+	});
 
 
 }).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require);

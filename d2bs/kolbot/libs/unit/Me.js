@@ -226,4 +226,5 @@
 	me.off = Events.off;
 	me.once = Events.once;
 	me.trigger = Events.trigger;
+	me.emit = Events.emit;
 })();

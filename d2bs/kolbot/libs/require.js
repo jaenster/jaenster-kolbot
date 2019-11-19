@@ -11,15 +11,11 @@ const require = (function (include, isIncluded, print, notify) {
 
 	let depth = 0;
 	const modules = {};
-	const obj = (field, path) => {
+	const obj = function require(field, path) {
+		const asNew = this.__proto__.constructor === require && ((...args) => new (Function.prototype.bind.apply(modules[packageName].exports, args)));
 
 		path = path || 'modules/';
 		const packageName = (path + field).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-		if (modules.hasOwnProperty(packageName)) {
-			//depth && notify && print('ÿc2Jaensterÿc0 ::    - retrieving cached module: ' + path + field);
-			return modules[packageName].exports;
-		}
 
 		if (field.hasOwnProperty('endsWith') && field.endsWith('.json')) { // Simply reads a json file
 			return modules[packageName] = File.open('libs/' + path + field, 0).readAllLines();
@@ -47,10 +43,12 @@ const require = (function (include, isIncluded, print, notify) {
 			delete global['module'];
 
 			global['module'] = old;
-			return modules[packageName].exports;
-
 		}
-		throw Error('unexpected module error -- ' + field);
+
+		if (!modules.hasOwnProperty(packageName)) throw Error('unexpected module error -- ' + field);
+
+		// If called as "new", fake an constructor
+		return asNew || modules[packageName].exports;
 	};
 	obj.modules = modules;
 	return obj;
