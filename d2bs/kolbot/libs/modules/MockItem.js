@@ -64,9 +64,10 @@
 	};
 
 	function MockItem(settings = {}) {
+		const self = this;
 		if (typeof settings !== 'object' && settings) settings = {};
 		settings = Object.assign({}, defaultSettings, settings);
-		Object.keys(settings).forEach(k => this[k] = settings);
+	 	Object.keys(settings).forEach(k => this[k] = settings[k]);
 
 		Object.keys(Unit.prototype).forEach(k => {
 			typeof Unit.prototype === 'function' && (this[k] = (...args) => {
@@ -75,11 +76,18 @@
 		});
 
 		this.getStat = function (...args) {
-			let original = typeof settings.base === 'object' && settings.base.hasOwnProperty('getStat') && settings.base.getStat.apply(settings.base, args) || 0;
+			let original = typeof self.base === 'object' && self.base.hasOwnProperty('getStat') && self.base.getStat.apply(self.base, args) || 0;
+			print(self.base);
+			print('-> '+args.join(','));
+			print(original);
 			return original + (function () {
 				const [id, secondary] = args;
-				if (settings.overrides.stat.hasOwnProperty(id)) {
-					const found = settings.overrides.stat[id].find(data => data.first() === secondary);
+
+				if (self.overrides.stat.hasOwnProperty(id)) {
+					const found = self.overrides.stat[id].find(data => {
+						return data.first() === (secondary || 0);
+					});
+					print(found);
 					if (found) return found.last();
 				}
 				return 0;
@@ -103,6 +111,24 @@
 		settings.overrides.stat[sdk.stats.Levelreq] = [0, 65];
 		return settings;
 	}).call();
+
+	MockItem.fromItem = function (item,settings = {}) {
+		settings = {overrides: {stat: {}}};
+
+		for (let i = 0; i < 1000; i++) {
+			let first = item.getStat(i, 0);
+			for (let y = 0; y < 1000; y++) {
+				const stat = item.getStat(i, y);
+				const stats = [];
+				if (stat && (y === 0 || stat !== first)) stats.push([y,stat]);
+				stats.length && (settings.overrides.stat[i] = stats);
+			}
+		}
+		print(settings);
+
+		return new MockItem(settings);
+	};
+
 
 	Object.keys(MockItem.runewords).forEach(key => {
 		return Object.defineProperty(MockItem.runewords[key], 'newInstance', {
