@@ -450,6 +450,7 @@ let sdk = {
         Head: 1,
         Neck: 2,
         Torso: 3,
+        Armor: 3, // Kept on forgetting Torso, so added armor as an alias
         RightArm: 4,
         LeftArm: 5,
         RingRight: 6,
@@ -798,6 +799,7 @@ let sdk = {
         Lastexp: 29,
         Nextexp: 30,
         Armorclass: 31,
+        Defense: 31,
         ArmorclassVsMissile: 32,
         ArmorclassVsHth: 33,
         NormalDamageReduction: 34,

@@ -24,6 +24,9 @@
 	Config.PickitFiles.push("pots.nip");
 
 
+	// Tell other bots in this world, about your run. So they can join in
+	Config.Advertisement = true;
+
 	// In case you want to override some specific setting,
 
 	// Examples: (including D2BotWhatever files)
