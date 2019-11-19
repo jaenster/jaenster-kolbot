@@ -2486,7 +2486,7 @@ let sdk = {
         HellsForge: 27,
         TerrorsEnd: 26,
         AbleToGotoActV: 28,
-        SeigeonHaggorath: 35,
+        SiegeOnHarrogath: 35,
         RescueonMountArreat: 36,
         PrisonOfIce: 37,
         BetrayalOfHaggorath: 38,
