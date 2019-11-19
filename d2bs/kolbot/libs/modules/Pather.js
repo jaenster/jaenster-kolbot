@@ -1123,22 +1123,7 @@
 			act - the act number to check for access
 		*/
 		accessToAct: function (act) {
-			switch (act) {
-				// Act 1 is always accessible
-				case 1:
-					return true;
-				// For the other acts, check the "Able to go to Act *" quests
-				case 2:
-					return me.getQuest(7, 0) === 1;
-				case 3:
-					return me.getQuest(15, 0) === 1;
-				case 4:
-					return me.getQuest(23, 0) === 1;
-				case 5:
-					return me.getQuest(28, 0) === 1;
-				default:
-					return false;
-			}
+			return me.highestAct >= act;
 		},
 
 		/*
