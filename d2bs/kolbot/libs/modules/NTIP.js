@@ -22,10 +22,12 @@
 	!isIncluded('NtItemAlias') && include("NTItemAlias.dbl"); //ToDo; Refactor to module
 
 	let NTIP = {},
-		stringArray = [];
+		CheckListInfo = [],
+		RuntimeCheckListInfo = [];
 	const Misc = require('Misc');
 
 	NTIP.CheckList = [];
+	NTIP.RuntimeCheckList = [];
 	NTIP.OpenFile = function (filepath, notify) {
 		if (!FileTools.exists(filepath)) {
 			notify && Misc.errorReport("ÿc1NIP file doesn't exist: ÿc0" + filepath);
@@ -53,19 +55,8 @@
 		nipfile.close();
 
 		for (i = 0; i < lines.length; i += 1) {
-			info = {
-				line: i + 1,
-				file: filename,
-				string: lines[i]
-			};
-
-			line = NTIP.ParseLineInt(lines[i], info);
-
-			if (line) {
+			if (NTIP.AddEntry(lines[i], filename, i+1, false, false)) {
 				entries += 1;
-
-				NTIP.CheckList.push(line);
-				stringArray.push(info);
 			}
 		}
 
@@ -74,6 +65,31 @@
 		}
 
 		return true;
+	};
+
+	NTIP.AddEntry = function (entry, filename = "<added at runtime>", line = 0, atRuntime = true, notify = true) {
+		var info = {
+			line: line,
+			file: filename,
+			string: entry
+		};
+
+		var parsed = NTIP.ParseLineInt(entry, info);
+
+		if (parsed) {
+			if (atRuntime) {
+				NTIP.RuntimeCheckList.push(parsed);
+				RuntimeCheckListInfo.push(info);
+			}
+			else {
+				NTIP.CheckList.push(parsed);
+				CheckListInfo.push(info);
+			}
+			notify && print("ÿc4Added pickit entry: ÿc2" + filename);
+			atRuntime && NTIP.RuntimeCheckList.push(parsed);
+			return true;
+		}
+		return false;
 	};
 
 	NTIP.CheckQuantityOwned = function (type, stat) {
@@ -117,13 +133,35 @@
 
 	NTIP.Clear = function () {
 		NTIP.CheckList = [];
-		stringArray = [];
+		CheckListInfo = [];
+		NTIP.ClearRuntime();
+	};
+
+	NTIP.ClearRuntime = function () {
+		NTIP.RuntimeCheckList = [];
+		RuntimeCheckListInfo = [];
+	};
+
+	NTIP.CheckListAt = function (i) {
+		if (i >= NTIP.CheckList.length) {
+			return NTIP.RuntimeCheckList[i%NTIP.CheckList.length];
+		}
+		return NTIP.CheckList[i];
+	};
+
+	NTIP.CheckListInfoAt = function (i) {
+		if (i >= CheckListInfo.length) {
+			return RuntimeCheckListInfo[i%CheckListInfo.length];
+		}
+		return CheckListInfo[i];
 	};
 
 	NTIP.GetTier = function (item) {
 		let i, tier = 0;
 
-		NTIP.CheckList
+		let list = NTIP.CheckList.concat(NTIP.RuntimeCheckList);
+
+		list
 			.filter(check => check.length === 3
 				&& check[2].hasOwnProperty('Tier')
 				&& !isNaN(check[2])
@@ -152,7 +190,7 @@
 			result = 0;
 
 		if (!entryList) {
-			list = NTIP.CheckList;
+			list = NTIP.CheckList.concat(NTIP.RuntimeCheckList);
 		} else {
 			list = entryList;
 		}
@@ -161,6 +199,7 @@
 
 		for (i = 0; i < list.length; i++) {
 			let [type, stat, wanted] = list[i];
+			let info = NTIP.CheckListInfoAt(i);
 
 			try {
 				if (typeof type === 'function') {
@@ -190,7 +229,7 @@
 								result = -1;
 
 								if (verbose) {
-									rval.line = stringArray[i].file + " #" + stringArray[i].line;
+									rval.line = info.file + " #" + info.line;
 								}
 							}
 						} else {
@@ -240,7 +279,7 @@
 						result = -1;
 
 						if (verbose) {
-							rval.line = stringArray[i].file + " #" + stringArray[i].line;
+							rval.line = info.file + " #" + info.line;
 						}
 					}
 				}
@@ -248,9 +287,13 @@
 				showConsole();
 
 				if (!entryList) {
-					Misc.errorReport("ÿc1Pickit error! Line # ÿc2" + stringArray[i].line + " ÿc1Entry: ÿc0" + stringArray[i].string + " (" + stringArray[i].file + ") Error message: " + pickError.message + " Trigger item: " + item.fname.split("\n").reverse().join(" "));
-
-					NTIP.CheckList[i] = ["", "", ""]; // make the bad entry blank
+					Misc.errorReport("ÿc1Pickit error! Line # ÿc2" + info.line + " ÿc1Entry: ÿc0" + info.string + " (" + info.file + ") Error message: " + pickError.message + " Trigger item: " + item.fname.split("\n").reverse().join(" "));
+					if (i >= NTIP.CheckList.length) {
+						NTIP.RuntimeCheckList[i%NTIP.CheckList.length] = ["", "", ""]; // make empty
+					}
+					else {
+						NTIP.CheckList[i] = ["", "", ""];
+					}
 				} else {
 					Misc.errorReport("ÿc1Pickit error in runeword config!");
 				}
@@ -264,7 +307,7 @@
 				case -1:
 					break;
 				case 1:
-					rval.line = stringArray[i].file + " #" + stringArray[i].line;
+					rval.line = info.file + " #" + info.line;
 
 					break;
 				default:
