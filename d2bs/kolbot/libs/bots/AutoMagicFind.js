@@ -77,50 +77,54 @@ function AutoMagicFind(Config, Attack, Pickit, Pather, Town, Misc) {
 
 
 	areas.forEach(obj => {
-		if (obj.isBoss) {
-			print('Going to kill ' + obj.name);
-			let before = me.area;
-			if (!obj.hasOwnProperty('location')) {
-				return; // next
+		try {
+			if (obj.isBoss) {
+				print('Going to kill ' + obj.name);
+				let before = me.area;
+				if (!obj.hasOwnProperty('location')) {
+					return; // next
+				}
+				Pather.journeyTo(obj.area.Index);
+				// Move to the x,y
+				obj.location.hasOwnProperty('x') && obj.location.hasOwnProperty('y') && Pather.moveTo(obj.location.x, obj.location.y);
+				// move to the preset
+				obj.location.hasOwnProperty('preset') && Pather.moveToPreset(obj.location.area, obj.location.preset.hasOwnProperty('type') && obj.location.preset.type || undefined, obj.location.preset.hasOwnProperty('classid') && obj.location.preset.classid || undefined)
+				typeof obj.atArrival === 'function' && obj.atArrival();
+			} else {
+				print('Going to clear ' + obj.area.LocaleString);
+				Pather.journeyTo(obj.area.Index);
 			}
-			Pather.journeyTo(obj.area.Index);
-			// Move to the x,y
-			obj.location.hasOwnProperty('x') && obj.location.hasOwnProperty('y') && Pather.moveTo(obj.location.x, obj.location.y);
-			// move to the preset
-			obj.location.hasOwnProperty('preset') && Pather.moveToPreset(obj.location.area, obj.location.preset.hasOwnProperty('type') && obj.location.preset.type || undefined, obj.location.preset.hasOwnProperty('classid') && obj.location.preset.classid || undefined)
-			typeof obj.atArrival === 'function' && obj.atArrival();
-		} else {
-			print('Going to clear ' + obj.area.LocaleString);
-			Pather.journeyTo(obj.area.Index);
-		}
 
 
-		switch (obj.area.Index) {
-			case sdk.areas.ChaosSanctuary: //If we are in chaos, simply open all seals
-				const star = {x: 7792, y: 5292};
-				new Promise(resolve => star.distance < 40 && resolve()).then(function () {
-					include('bots/Diablo.js');
-					// Once close to the star, just quickly open all seals
-					[sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive,
-						sdk.units.DiabloSealSeizActive, sdk.units.DiabloSealInfectorInActive,
-						sdk.units.DiabloSealInfectorActive].forEach(seal => {
-						Pather.moveToPreset(me.area, 2, seal);
-						SpeedDiablo.openSeal(getUnit(2, seal));
-					});
+			switch (obj.area.Index) {
+				case sdk.areas.ChaosSanctuary: //If we are in chaos, simply open all seals
+					const star = {x: 7792, y: 5292};
+					new Promise(resolve => star.distance < 40 && resolve()).then(function () {
+						include('bots/Diablo.js');
+						// Once close to the star, just quickly open all seals
+						[sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive,
+							sdk.units.DiabloSealSeizActive, sdk.units.DiabloSealInfectorInActive,
+							sdk.units.DiabloSealInfectorActive].forEach(seal => {
+							Pather.moveToPreset(me.area, 2, seal);
+							SpeedDiablo.openSeal(getUnit(2, seal));
+						});
 
-					star.moveTo(); // move to the center again
-				})
+						star.moveTo(); // move to the center again
+					})
 
 
-		}
+			}
 
-		//Pather.journeyTo(area[0].Index);
-		if (obj.isBoss) {
-			print(obj.classid);
-			const unit = getUnits(1, obj.classid).first();
-			unit && unit.kill();
-		} else {
-			Attack.clearLevel(Config.ClearType);
+			//Pather.journeyTo(area[0].Index);
+			if (obj.isBoss) {
+				print(obj.classid);
+				const unit = getUnits(1, obj.classid).first();
+				unit && unit.kill();
+			} else {
+				Attack.clearLevel(Config.ClearType);
+			}
+		} catch(e) {
+			Misc.errorReport(e);
 		}
 	})
 }
