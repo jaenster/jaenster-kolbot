@@ -307,6 +307,7 @@
 				case -1:
 					break;
 				case 1:
+					let info = NTIP.CheckListInfoAt(i);
 					rval.line = info.file + " #" + info.line;
 
 					break;
