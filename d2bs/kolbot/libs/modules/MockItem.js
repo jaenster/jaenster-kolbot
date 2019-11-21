@@ -77,22 +77,27 @@
 		});
 
 		this.getStat = function (...args) {
-			let original = typeof self.base === 'object' && self.base.hasOwnProperty('getStat') && self.base.getStat.apply(self.base, args) || 0;
-
-			return original + settings.socketedWith.reduce((a, c) => a + c.getStat.apply(c, args), 0) + (function () {
-				const [id, secondary] = args;
-
-				if (self.overrides.stat.hasOwnProperty(id)) {
-					const found = self.overrides.stat[id].find(data => {
-						return data.first() === (secondary || 0);
-					});
-					if (found) return found.last();
-				}
+			const [major, minor] = args;
+			const getStat = () => {
+				const found = this.overrides.stat.find(data => data.length > 2 && data[0] === major && data[1] === (minor || 0));
+				if (found) return found[2]; // the value
 				return 0;
-			}).call();
+			};
+			let original = typeof this.base === 'object' && this.base.hasOwnProperty('getStat') && this.base.getStat.apply(this.base, args) || 0;
+			if (major === sdk.stats.Levelreq) {
+				// level requirements = the max counts
+				const max = this.socketedWith.map(a.getStat.apply(a, args));
+				max.push.apply(max, [original, getStat()]);
+				return Math.max.apply(null)
+			}
+
+			const sockets = this.socketedWith.reduce((a, c) => a + c.getStat.apply(c, args), 0);
+			const item = (getStat() || 0);
+			// The rest -> just original + sockets + mocked item
+
+			return original + sockets + item;
 		};
-		this.getItems = function () {
-			print('here');
+		this.getItemsEx = function () {
 			return this.socketedWith;
 		};
 
@@ -117,24 +122,24 @@
 	}).call();
 
 	MockItem.fromItem = function (item, settings = {}) {
-		Object.keys(item).forEach(key => settings[key] = this[key]);
-		settings.socketedWith = item.getItemsEx().map(MockItem.fromItem); // Mock its sockets too
-		settings = {overrides: {stat: {}}};
+		Object.keys(item).forEach(key => settings[key] = item[key]);
+		settings.socketedWith = item.getItemsEx().map(item => MockItem.fromItem(item)) || []; // Mock its sockets too
+		settings.overrides = {
+			stat: item.getStat(-1).reduce((accumulator, stats) => {
+				const [major, minor, value] = stats,
+					socketable = item.getItemsEx().map(item => item.getStat(major, minor)).reduce((a, c) => a + c, 0) || 0;
 
-		for (let i = 0; i < 1000; i++) {
-			let first = item.getStat(i, 0);
-			for (let y = 0; y < 1000; y++) {
-				const stat = item.getStat(i, y);
-
-				const stats = [];
-				if (stat && (y === 0 || stat !== first)) {
-					// Counter the socket effects, as we store them apart as an mocked item
-					const socktableEffect = item.getItemsEx().map(item => item.getStat(i, y)).reduce((a, c) => a + c, 0);
-					stats.push([y, stat - socktableEffect]); // remove the socket effect's from the item
+				let realValue = value;
+				if (major !== sdk.stats.Levelreq) {
+					realValue = value - socketable;
 				}
-				stats.length && (settings.overrides.stat[i] = stats);
-			}
-		}
+
+				if (realValue > 0) { // Only if this stat isn't given by a socketable
+					accumulator.push([major, minor, value]);
+				}
+				return accumulator;
+			}, [])
+		};
 		return new MockItem(settings);
 	};
 
