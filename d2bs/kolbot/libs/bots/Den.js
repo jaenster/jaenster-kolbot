@@ -8,7 +8,8 @@
 			TownPrecast = require('TownPrecast'),
 			Precast = require('Precast'),
 			Rx = require('Observable'),
-			Graph = require('Graph');
+			Graph = require('Graph'),
+			Quests = require('QuestEvents');
 
 		function doDen() {
 			let promise = new Promise((resolve, reject) => {
@@ -57,6 +58,8 @@
 				}
 			}
 		});
+
+		Quests.emit(sdk.quests.DenOfEvil, Quests.states[sdk.quests.DenOfEvil]);
 	}
 
 	module.exports = Den;
