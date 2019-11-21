@@ -18,7 +18,9 @@
 			AutoEquip = require('AutoEquip'),
 			NTIP = require('NTIP'),
 			Delta = new (require('Deltas'));
-		/*
+
+		Delta.track(() => me.area, () => me.area && revealLevel(true));
+		
 		AutoSkill.skills = { // Default stats
 				// First the skills needed
 				// [sdk.skills.Telekinesis, 1],
@@ -69,6 +71,7 @@
 		Delta.track(() => me.charlvl, () => me.emit('lvlup'));
 
 		function updatePickit() {
+			print("updatePickit");
 			for (var potId in GameData.Potions.hp) {
 				var effect = GameData.potionEffect(potId) / me.hpmax * 100;
 				if (effect >= Config.UseHP) {
@@ -83,29 +86,55 @@
 			}
 
 			if (me.staminaMaxDuration < 60) {
-				NTIP.AddEntry("[name] == staminapotion");
+				NTIP.AddEntry("[name] == staminapotion # # [maxquantity] == 2");
 			}
 
 			if (me.gold < 500) {
 				NTIP.AddEntry("[name] == gold");
 			}
-		};*/
+
+			if (!me.findItem(sdk.items.tptome)) {
+				NTIP.AddEntry("[name] == scrolloftownportal # # [maxquantity] == 2");
+			}
+
+			if (!me.findItem(sdk.items.idtome)) {
+				NTIP.AddEntry("[name] == scrollofidentify # # [maxquantity] == 2");
+			}
+		};
 
 		function whatToDo() {
 			var easyAreas = GameData.AreaData.filter(area => GameData.areaEffort(area.Index) < 3);
-			print(easyAreas.length+" areas to farm");
-			print(easyAreas);
+			//print(easyAreas.length+" areas to farm");
+			print("easyAreas : "+easyAreas.map(a => a.Index));
 
-			var questAreas = GameData.Quests.filter(q => q.mandatory).map(q => q.areas).flat();
+			var questsToDo = GameData.Quests
+				.filter(q => !me.getQuest(q.index, 0) && (q.mandatory || q.reward))
+				.map(q => {
+					Object.assign(q, {score: GameData.Quests.questScore(q)});
+					return q;
+				})
+				.sort((a, b) => b.score - a.score);
+			print("questsToDo : "+questsToDo.map(q => q.index));
 
-			/*
-			easyAreas.forEach(a => {
-				Pather.journeyTo(a.Index, true);
-				Attack.clearLevelWalk();
-			});*/
-			Town();
+			var easyQuests = questsToDo
+				.filter(q => q.areas.intersection(easyAreas.map(a => a.Index)).length > 0);
+			print("easyQuests : "+easyQuests.map(q => q.index));
+
+			easyQuests.forEach(q => {
+				q.do();
+				Town();
+			});
+
+			if (easyQuests.length == 0) {
+				// do exp
+				easyAreas.forEach(a => {
+					Pather.journeyTo(a.Index, true);
+					Attack.clearLevelWalk();
+				});
+			}
 		};
 
+		updatePickit();
 		Town();
 		whatToDo();
 
@@ -124,11 +153,11 @@
 
 
 
-
+/*
 
 (function(module,require) {
     // Load all required files
-    //['require.js', 'sdk.js'].forEach(include);
+    ['require.js', 'sdk.js'].forEach(include);
 
     if (getScript.startAsThread() === 'thread') {
         // We are a thread now, so we can load maphack here
@@ -143,7 +172,7 @@
 
 
 
-
+*/
 
 
 
