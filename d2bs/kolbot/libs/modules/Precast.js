@@ -180,6 +180,7 @@
 		},
 		{
 			skillId: () => {
+				const skills = [sdk.skills.Grizzly,sdk.skills.DireWolf];
 				const minion = [11, 12, 15];
 				const data = skills.map((x, i) => ({
 					skillId: x,
