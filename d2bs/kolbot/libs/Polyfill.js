@@ -387,3 +387,28 @@ if (!Array.prototype.last) {
 		return this.length > 0 ? this[this.length-1] : undefined;
 	};
 }
+
+/**
+ * @description Flatten an array with depth parameter.
+ * @see https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Array/flat
+ * @return array
+ */
+if (!Array.prototype.flat) {
+	Object.defineProperty(Array.prototype, 'flat', {
+		value: function flat () {
+			var depth = arguments.length > 0 ? isNaN(arguments[0]) ? 1 : Number(arguments[0]) : 1;
+
+			return depth ? Array.prototype.reduce.call(this, function (acc, cur) {
+				if (Array.isArray(cur)) {
+					acc.push.apply(acc, flat.call(cur, depth - 1));
+				} else {
+					acc.push(cur);
+				}
+
+				return acc;
+			}, []) : Array.prototype.slice.call(this);
+		},
+		configurable: true,
+		writable: true
+	});
+}

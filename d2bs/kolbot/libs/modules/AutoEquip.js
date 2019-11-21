@@ -339,7 +339,7 @@
 				const old = item.equip(bodyLoc);
 
 				// Sometimes it happens the OLD item seems better once we have the new one in place
-				const newTier = old && formula(old.unequiped.first()) || 0;
+				const newTier = old && old.unequiped && formula(old.unequiped.first()) || 0;
 
 				// Was the old item better?
 				if (newTier > tier) return !!old.rollback(); // Rollback and return false
