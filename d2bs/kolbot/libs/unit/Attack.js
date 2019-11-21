@@ -488,7 +488,7 @@
 
 			chargedItems = [];
 
-			this.getItems(-1) // Item must be in inventory, or a charm in inventory
+			this.getItemsEx(-1) // Item must be in inventory, or a charm in inventory
 				.filter(item => item && (item.location === 1 || (item.location === 3 && item.itemType === 82)))
 				.forEach(function (item) {
 					let stats = item.getStat(-2);

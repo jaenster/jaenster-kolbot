@@ -79,7 +79,7 @@
 	NTIP.CheckQuantityOwned = function (type, stat) {
 		var i, item,
 			num = 0,
-			items = me.getItems();
+			items = me.getItemsEx();
 
 		if (!items) {
 			print("I can't find my items!");

@@ -22,7 +22,7 @@ module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 		});
 
 	Object.defineProperty(this, 'revpots', {
-		get: () => me.getItems()
+		get: () => me.getItemsEx()
 			.filter(item => item.classid === 515 || item.classid === 516)
 			.filter(item => item.location === sdk.storage.Inventory || item.location === sdk.storage.Belt),
 	});

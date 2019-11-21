@@ -59,6 +59,7 @@
 		objtype: 0,
 		islocked: 0,
 		getColor: 0,
+		socketedWith: [],
 
 		overrides: {stats: {}},
 	};
@@ -67,7 +68,7 @@
 		const self = this;
 		if (typeof settings !== 'object' && settings) settings = {};
 		settings = Object.assign({}, defaultSettings, settings);
-	 	Object.keys(settings).forEach(k => this[k] = settings[k]);
+		Object.keys(settings).forEach(k => this[k] = settings[k]);
 
 		Object.keys(Unit.prototype).forEach(k => {
 			typeof Unit.prototype === 'function' && (this[k] = (...args) => {
@@ -77,22 +78,25 @@
 
 		this.getStat = function (...args) {
 			let original = typeof self.base === 'object' && self.base.hasOwnProperty('getStat') && self.base.getStat.apply(self.base, args) || 0;
-			print(self.base);
-			print('-> '+args.join(','));
-			print(original);
-			return original + (function () {
+
+			return original + settings.socketedWith.reduce((a, c) => a + c.getStat.apply(c, args), 0) + (function () {
 				const [id, secondary] = args;
 
 				if (self.overrides.stat.hasOwnProperty(id)) {
 					const found = self.overrides.stat[id].find(data => {
 						return data.first() === (secondary || 0);
 					});
-					print(found);
 					if (found) return found.last();
 				}
 				return 0;
 			}).call();
-		}
+		};
+		this.getItems = function () {
+			print('here');
+			return this.socketedWith;
+		};
+
+		this.store = () => JSON.stringify(Object.keys(settings).reduce((a, key) => a[key] = this[key], {}));
 	}
 
 	MockItem.runewords = {};
@@ -112,23 +116,34 @@
 		return settings;
 	}).call();
 
-	MockItem.fromItem = function (item,settings = {}) {
+	MockItem.fromItem = function (item, settings = {}) {
+		Object.keys(item).forEach(key => settings[key] = this[key]);
+		settings.socketedWith = item.getItemsEx().map(MockItem.fromItem); // Mock its sockets too
 		settings = {overrides: {stat: {}}};
 
 		for (let i = 0; i < 1000; i++) {
 			let first = item.getStat(i, 0);
 			for (let y = 0; y < 1000; y++) {
 				const stat = item.getStat(i, y);
+
 				const stats = [];
-				if (stat && (y === 0 || stat !== first)) stats.push([y,stat]);
+				if (stat && (y === 0 || stat !== first)) {
+					// Counter the socket effects, as we store them apart as an mocked item
+					const socktableEffect = item.getItemsEx().map(item => item.getStat(i, y)).reduce((a, c) => a + c, 0);
+					stats.push([y, stat - socktableEffect]); // remove the socket effect's from the item
+				}
 				stats.length && (settings.overrides.stat[i] = stats);
 			}
 		}
-		print(settings);
-
 		return new MockItem(settings);
 	};
 
+	MockItem.fromGear = function () {
+		return me.getItemsEx()
+			.filter(item => item.location === sdk.storage.Equipment
+				|| (item.location === sdk.storage.Inventory))
+			.map(MockItem.fromItem);
+	};
 
 	Object.keys(MockItem.runewords).forEach(key => {
 		return Object.defineProperty(MockItem.runewords[key], 'newInstance', {

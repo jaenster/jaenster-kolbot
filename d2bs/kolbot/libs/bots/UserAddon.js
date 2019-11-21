@@ -110,7 +110,7 @@ function UnitInfo() {
 
 		this.hooks.push(new Text("Classid: ÿc0" + unit.classid, this.x, this.y, 4, 13, 2));
 
-		items = unit.getItems();
+		items = unit.getItemsEx();
 
 		if (items) {
 			this.hooks.push(new Text("Equipped items:", this.x, this.y + 15, 4, 13, 2));
@@ -196,7 +196,7 @@ function UnitInfo() {
 		this.hooks.push(new Text("Item level: ÿc0" + unit.ilvl, this.x, this.y + 30, 4, 13, 2));
 
 		this.cleared = false;
-		this.socketedItems = unit.getItems();
+		this.socketedItems = unit.getItemsEx();
 
 		if (this.socketedItems) {
 			this.hooks.push(new Text("Socketed with:", this.x, this.y + 45, 4, 13, 2));

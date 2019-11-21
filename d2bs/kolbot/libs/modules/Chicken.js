@@ -109,7 +109,7 @@
 
 				// Rev pots, Only every 250 ms. Should be enough
 				if ((procentHP < realValues.UseRejuvHP || procentMP < realValues.UseRejuvMP) && tickRev > 250) {
-					let revPot = me.getItems().filter(filterRevPots).filter(filterItemsWithMe).sort(sortBiggest).first();
+					let revPot = me.getItemsEx().filter(filterRevPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (revPot) {
 						revPot.interact();
 						timers.rev = getTickCount();
@@ -120,7 +120,7 @@
 
 				// Normal pots, Only every 1000 ms. Should be enough
 				if ((procentHP < realValues.UseHP) && tickHP > 1000) {
-					let hp = me.getItems().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
+					let hp = me.getItemsEx().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (hp) {
 						print('ÿc:Drank a ' + hp.name + ' Pot');
 						hp.interact();
@@ -131,7 +131,7 @@
 
 				// Normal pots, Only every 1000 ms. Should be enough
 				if ((procentMP < realValues.UseMP) && tickMP > 1000) {
-					let mp = me.getItems().filter(filterMPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
+					let mp = me.getItemsEx().filter(filterMPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (mp) {
 						print('ÿc:Drank a ' + mp.name + ' Pot');
 						mp.interact();
@@ -142,7 +142,7 @@
 
 				// Take care of our sweet merc (rev pot)
 				if (merc && procentHPMerc < realValues.UseRejuvHP && tickRevMerc > 250) {
-					let revPot = me.getItems().filter(filterRevPots).filter(filterItemsWithMe).sort(sortBiggest).first();
+					let revPot = me.getItemsEx().filter(filterRevPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (revPot) {
 						clickItem(2, revPot);
 						timers.revMerc = getTickCount();
@@ -154,7 +154,7 @@
 
 				// Take care of our sweet merc (hp pot)
 				if (merc && procentHPMerc < realValues.UseHP && tickHPMerc > 250) {
-					let hp = me.getItems().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
+					let hp = me.getItemsEx().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (hp) {
 						print('ÿc:Drank a ' + hp.name + ' Pot');
 						clickItem(2, hp);
