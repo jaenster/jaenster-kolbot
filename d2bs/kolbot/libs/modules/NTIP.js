@@ -85,8 +85,7 @@
 				NTIP.CheckList.push(parsed);
 				CheckListInfo.push(info);
 			}
-			notify && print("ÿc4Added pickit entry: ÿc2" + filename);
-			atRuntime && NTIP.RuntimeCheckList.push(parsed);
+			notify && print("ÿc4Added pickit entry: ÿc2" + filename + " "+entry);
 			return true;
 		}
 		return false;
@@ -108,7 +107,7 @@
 				item = items[i];
 
 				if (typeof type === 'function' && type(item)) {
-					if (typeof type === 'function' && stat(item)) {
+					if (typeof stat === 'function' && stat(item)) {
 						num += 1;
 					}
 				}
@@ -116,7 +115,7 @@
 				item = items[i];
 
 				if (typeof type === 'function' && type(item)) {
-					if (typeof type === 'function' && stat(item)) {
+					if (typeof stat === 'function' && stat(item)) {
 						//if (Config.Inventory[items[i].y][items[i].x] > 0) { // we check only space that is supposed to be free
 						num += 1;
 						//}
@@ -144,14 +143,22 @@
 
 	NTIP.CheckListAt = function (i) {
 		if (i >= NTIP.CheckList.length) {
-			return NTIP.RuntimeCheckList[i%NTIP.CheckList.length];
+			let j = NTIP.CheckList.length > 0 ? i%NTIP.CheckList.length : i;
+			if (j < NTIP.RuntimeCheckList.length) {
+				return NTIP.RuntimeCheckList[j];
+			}
+			return undefined;
 		}
 		return NTIP.CheckList[i];
 	};
 
 	NTIP.CheckListInfoAt = function (i) {
 		if (i >= CheckListInfo.length) {
-			return RuntimeCheckListInfo[i%CheckListInfo.length];
+			let j = CheckListInfo.length > 0 ? i%CheckListInfo.length : i;
+			if (j < RuntimeCheckListInfo.length) {
+				return RuntimeCheckListInfo[j];
+			}
+			return undefined;
 		}
 		return CheckListInfo[i];
 	};
@@ -159,7 +166,8 @@
 	NTIP.GetTier = function (item) {
 		let i, tier = 0;
 
-		let list = NTIP.CheckList.concat(NTIP.RuntimeCheckList);
+		let list = NTIP.CheckList
+		list = list.concat(NTIP.RuntimeCheckList);
 
 		list
 			.filter(check => check.length === 3
@@ -190,7 +198,8 @@
 			result = 0;
 
 		if (!entryList) {
-			list = NTIP.CheckList.concat(NTIP.RuntimeCheckList);
+			list = NTIP.CheckList;
+			list = list.concat(NTIP.RuntimeCheckList);
 		} else {
 			list = entryList;
 		}
@@ -289,7 +298,8 @@
 				if (!entryList) {
 					Misc.errorReport("ÿc1Pickit error! Line # ÿc2" + info.line + " ÿc1Entry: ÿc0" + info.string + " (" + info.file + ") Error message: " + pickError.message + " Trigger item: " + item.fname.split("\n").reverse().join(" "));
 					if (i >= NTIP.CheckList.length) {
-						NTIP.RuntimeCheckList[i%NTIP.CheckList.length] = ["", "", ""]; // make empty
+						let j = NTIP.CheckList.length ? i%NTIP.CheckList.length : i;
+						NTIP.RuntimeCheckList[j] = ["", "", ""]; // make empty
 					}
 					else {
 						NTIP.CheckList[i] = ["", "", ""];
@@ -595,7 +605,7 @@
 		// Compile the line, to 1) remove the eval lines, and 2) increase the speed
 		for (let i = 0; i < 2; i++) {
 			if (p_result[i].length) {
-				p_result[i] = (new Function('return item =>' + p_result[i] + ';')).call(); // generate function out of
+				p_result[i] = (new Function('return item => ' + p_result[i] + ';')).call(); // generate function out of
 			}
 
 		}
