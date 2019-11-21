@@ -80,8 +80,7 @@
 					print("ÿc2Starting script: ÿc9" + script);
 					//scriptBroadcast(JSON.stringify({currScript: script}));
 					Messaging.send(JSON.stringify({currScript: script}));
-
-					let args = [Object.assign(typeof Scripts[script] === 'object' && Scripts[script] || {}, Config), Attack, Pickit, Pather, Town, Misc];
+					let args = [Config, Attack, Pickit, Pather, Town, Misc];
 					if (scriptModule) {
 						scriptModule.apply(scriptModule, args);
 					} else {
