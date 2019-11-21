@@ -344,6 +344,8 @@
 		}
 	};
 
+//(Potions);
+
 	const MandatoryQuests = [
 		sdk.quests.SistersToTheSlaughter, // kill Andy
 		sdk.quests.TheHoradricStaff, // make staff
@@ -358,16 +360,69 @@
 		sdk.quests.EveOfDestruction // kill Baal
 	];
 
+	const RewardedQuests = [
+		sdk.quests.DenOfEvil, // 1 skill + 1 respec
+		sdk.quests.RadamentsLair, // 1 skill
+		sdk.quests.TheGoldenBird, // 20 life
+		sdk.quests.LamEsensTome, // 5 stat pts
+		sdk.quests.TheFallenAngel, // 2 skills
+		sdk.quests.HellsForge, // 1 rune
+		sdk.quests.SiegeOnHarrogath, // 1 socket
+		sdk.quests.PrisonOfIce // 10@ res
+	];
+
 	const Quests = [];
-	for (var i = sdk.quests.SpokeToWarriv; i <= sdk.quests.SecretCowLevel; i++) {
-		Quests[i] = {
-			mandatory: MandatoryQuests.indexOf(i) > -1,
-			areas: areasForQuest(i),
-			bosses: bossForQuest(i)
+	Quests.MandatoryQuests = MandatoryQuests;
+	Quests.RewardedQuests = RewardedQuests;
+
+	Quests.questScore = function(q) {
+		var score = 0;
+		var highestAct = me.highestAct;
+		if (!me.getQuest(q.index, 0) && highestAct >= q.act) {
+			// we did not complete the quest
+			score += q.mandatory ? 2 : 0;
+			score += q.reward ? 2 : 0;
+
+			if (q.mandatory || q.reward) {
+				// the quest is mandatory or reward
+				// the higher the act is, the less this quest is good to do, aka do earliest quest
+				score += q.act > 0 ? 1/q.act : 0;
+				var questEffort = q.areas.reduce((acc, a) => acc+GameData.areaEffort(a), 0);
+				score += questEffort > 0 ? 1/questEffort : 0;
+
+				var bossEffort = q.bosses.reduce((acc, boss) => acc+GameData.monsterEffort(boss, q.areas.last()).effort, 0);
+				score += bossEffort > 0 ? 1/bossEffort : 0;
+				// monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false)
+			}
 		}
+		else if (highestAct < q.act) {
+			// we can not access the quest act
+		}
+		else {
+			// we have done this quest
+		}
+
+
+		return score;
 	}
 
-	function areasForQuest(q) {
+	Quests.actForQuest = function (q) {
+		switch (true) {
+		case (q >= sdk.quests.SpokeToWarriv && q <= sdk.quests.AbleToGotoActII) || q == sdk.quests.SecretCowLevel:
+			return 1;
+		case (q >= sdk.quests.SpokeToJerhyn && q <= sdk.quests.AbleToGotoActIII):
+			return 2;
+		case (q >= sdk.quests.SpokeToHratli && q <= sdk.quests.AbleToGotoActIV):
+			return 3;
+		case (q >= sdk.quests.SpokeToTyrael && q <= sdk.quests.AbleToGotoActV):
+			return 4;
+		case (q >= sdk.quests.SiegeOnHarrogath && q < sdk.quests.SecretCowLevel):
+			return 5;
+		}
+		return undefined;
+	}
+
+	Quests.areasForQuest = function (q) {
 		switch (q) {
 		case sdk.quests.SpokeToWarriv:
 			return [sdk.areas.RogueEncampment];
@@ -415,7 +470,7 @@
 			return [sdk.areas.ArcaneSanctuary];
 
 		case sdk.quests.TheSevenTombs:
-			return [sdk.areas.CanyonOfMagi];
+			return [sdk.areas.DurielsLair];
 
 		case sdk.quests.AbleToGotoActIII:
 			return [sdk.areas.LutGholein];
@@ -487,7 +542,7 @@
 		return [];
 	}
 
-	function bossForQuest(q) {
+	Quests.bossForQuest = function (q) {
 		switch (q) {
 		case sdk.quests.SistersBurialGrounds:
 			return [sdk.monsters.Bloodraven];
@@ -537,6 +592,28 @@
 		}
 		return [];
 	}
+
+	for (var q = sdk.quests.SpokeToWarriv; q <= sdk.quests.SecretCowLevel; q++) {
+		Quests[q] = {
+			index: q,
+			name: Object.keys(sdk.quests).find(x => sdk.quests[x] == q),
+			mandatory: MandatoryQuests.indexOf(q) > -1,
+			reward: RewardedQuests.indexOf(q) > -1,
+			areas: Quests.areasForQuest(q),
+			act: Quests.actForQuest(q),
+			bosses: Quests.bossForQuest(q),
+			do: ((q) => () => require('../bots/Questing').doQuest(q))(q)
+		}
+	}
+
+//(Quests);
+
+
+
+
+
+
+
 
 	function isAlive(unit) {
 		return Boolean(unit && unit.hp);
@@ -1417,7 +1494,7 @@
 		monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false) {
 			let eret = {effort: Infinity, skill: -1, type: "Physical"};
 			let useCooldown = (typeof unit === 'number' ? false : Boolean(me.getState(121))),
-				hp = this.monsterMaxHP(typeof unit.classid === 'number' ? unit.classid : unit, areaID);
+				hp = this.monsterMaxHP(typeof unit === 'number' ? unit : unit.classid, areaID);
 			let conviction = this.getConviction(), ampDmg = this.getAmp(),
 				isUndead = (typeof unit === 'number' ? MonsterData[unit].Undead : MonsterData[unit.classid].Undead);
 			skillDamageInfo = skillDamageInfo || this.allSkillDamage(unit);
@@ -1604,7 +1681,7 @@
 			return (me.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
 		},
 		potionEffect: function (potionClassId, charClass = me.classid) {
-			return (Potions.hp[potionClassId] || Potions.mp[potionClassId])[charClass];
+			return (Potions.hp[potionClassId] || Potions.mp[potionClassId]).effect[charClass];
 		}
 	};
 
