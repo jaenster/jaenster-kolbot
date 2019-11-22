@@ -128,7 +128,7 @@
 				zero && states.push([x, 0, zero]);
 				for (let y = 1; y < 5000; y++) {
 					const second = item.getStat(x, y);
-					second && second !== zero && states.push([x, y, zero]);
+					second && second !== zero && states.push([x, y, second]);
 				}
 			}
 			return states;

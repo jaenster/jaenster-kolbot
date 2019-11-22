@@ -34,27 +34,24 @@
 // soft skills
 			const classType = Skills.class[skillId];
 			const tabType = Skills.tab[skillId];
-			const weaponswitch = this.weaponswitch;
-			const ignoreSlots = [[sdk.body.LeftArmSecondary, sdk.body.RightArmSecondary], [sdk.body.LeftArm, sdk.body.RightArm]][me.weaponswitch];
+			const ignoreSlots = [[sdk.body.LeftArmSecondary, sdk.body.RightArmSecondary], [sdk.body.LeftArm, sdk.body.RightArm]][this.weaponswitch];
 
-			return this.gear.reduce((acc, item) => {
+			let oSkillOrDirect = false;
+			return [this.gear.reduce((acc, item) => {
 				const directSkills = item.getStat(sdk.stats.Singleskill, skillId) || 0;
 				const oSkills = (item.getStat(sdk.stats.Nonclassskill, skillId) || 0);
 				const classSkills = item.getStat(sdk.stats.Addclassskills, this.classid) || 0;
 				const tabSkills = item.getStat(sdk.stats.AddskillTab, tabType) || 0;
 				const allSkills = (item.getStat(sdk.stats.Allskills) || 0);
 				// Check if its on our "other" slot, so we cant calculate its skill
-				if (item.location === sdk.storage.Equipment && ignoreSlots.includes(item.bodylocation)) return acc;
+				if (item.location === sdk.storage.Equipment && ignoreSlots.includes(item.bodylocation)) {
+					return acc;
+				}
 
 				let total = 0;
-				print('------> '+item.fname);
 
 				// If this skillId, is part or our class,
 				if (classType === this.classid) {
-					print('directSkills:'+directSkills);
-					print('classSkills:'+classSkills);
-					print('tabSkills:'+tabSkills);
-
 					// We can use direct skills
 					total += directSkills;
 
@@ -64,8 +61,6 @@
 					// And the tab skills
 					total += tabSkills;
 				}
-				print('oSkills:'+oSkills);
-				print('allSkills:'+allSkills);
 
 				// oskills always work no matter the class
 				total += oSkills;
@@ -73,9 +68,9 @@
 				// And "all skills" work on all ;)
 				total += allSkills;
 
-				print(total);
+				oSkillOrDirect |= (!!directSkills || !!oSkills);
 				return acc + total;
-			}, 0)
+			}, 0),oSkillOrDirect];
 
 		};
 
@@ -94,18 +89,15 @@
 				}
 			}
 
-			print(args);
-			print(this.overrides.skill);
-			print(skillId);
-			const hardskills = (this.overrides.skill.find(skill => {
-				print(skill[0]);
-				print(skill[0] === skillId);
-				return skill[0] === skillId;
-			}) || [skillId, 0])[1];
-			print(hardskills);
-			print(type);
+			const hardskills = (this.overrides.skill.find(skill => skill[0] === skillId) || [skillId, 0])[1];
 			if (!type) return hardskills;
-			if (type === 1) return softSkills(skillId) + hardskills;
+			if (type === 1) {
+				// If we dont own the skill, we cant count the plus skills
+				const [soft,oSkillOrDirect] = softSkills(skillId);
+
+				if (!hardskills && !oSkillOrDirect) return 0;// Nothing gives us the initial + skill
+				return soft + hardskills;
+			}
 		}
 
 
@@ -117,12 +109,12 @@
 		Object.keys(unit).forEach(key => typeof unit[key] !== 'function' && typeof unit[key] !== 'object' && (settings[key] = unit[key]));
 
 		const states = [];
-		for (let x = 0; x < 1000; x++) {
+		for (let x = 0; x < 500; x++) {
 			const zero = me.getStat(x, 0);
 			zero && states.push([x, 0, zero]);
-			for (let y = 1; y < 1000; y++) {
+			for (let y = 1; y < 5000; y++) {
 				const second = me.getStat(x, y);
-				second && second !== zero && states.push([x, y, zero]);
+				second && second !== zero && states.push([x, y, second]);
 			}
 		}
 		const skills = me.getSkill(4).map(data => {
