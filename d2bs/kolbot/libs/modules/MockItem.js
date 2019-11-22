@@ -119,7 +119,22 @@
 	MockItem.fromItem = function (item, settings = {}) {
 		Object.keys(item).forEach(key => settings[key] = item[key]);
 		settings.socketedWith = item.getItemsEx().map(item => MockItem.fromItem(item)) || []; // Mock its sockets too
-		const stats = item.getStat(-1);
+		const runewordsFlags = (function () {
+			if (!item.getFlag(0x4000000)) return undefined;
+
+			const states = [];
+			for (let x = 0; x < 500; x++) {
+				const zero = item.getStat(x, 0);
+				zero && states.push([x, 0, zero]);
+				for (let y = 1; y < 5000; y++) {
+					const second = item.getStat(x, y);
+					second && second !== zero && states.push([x, y, zero]);
+				}
+			}
+			return states;
+
+		}).call();
+		const stats = runewordsFlags || item.getStat(-1); // Doesnt contain runeword properties
 		settings.overrides = {
 			stat: (stats || []).reduce((accumulator, stats) => {
 				const [major, minor, value] = stats,
