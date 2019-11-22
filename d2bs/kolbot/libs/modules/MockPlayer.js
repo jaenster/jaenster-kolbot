@@ -111,7 +111,7 @@
 			.map(type => getBaseStat("skills", skillId, type))
 			.filter(preSkillId => preSkillId !== 0xFFFF && !this.getSkill(preSkillId, 0));
 
-		this.statSkill = skillId => {
+		this.statSkill = (skillId,amount =1) => {
 			// Get the class type
 			if (this.classid !== Skills.class[skillId]) return false; // Wrong class
 
@@ -129,15 +129,14 @@
 			// Do we need a pre-skill first?
 			if (requiredSkills(skillId).length) return false;
 
-			// print('Mock Skilling: ' + getSkillById(skillId));
-			const found = this.overrides.skill.findIndex(([i, h, s]) => i === skillId);
+			let found = this.overrides.skill.findIndex(([i, h, s]) => i === skillId);
 			if (found > -1) {
 				// Already skilled this, so, just add it
 				let [i, h] = this.overrides.skill[found];
-				h++; // add a skill
+				h+=amount; // add a skill
 				this.overrides.skill[found] = [i, h]
 			} else { // We didnt got this skill yet
-				this.overrides.skill.push([skillId, 1])
+				this.overrides.skill.push([skillId, amount])
 			}
 		};
 
@@ -152,7 +151,19 @@
 				return 0;
 			};
 			return items + (getStat() || 0);
-		}
+		};
+
+		// this.getStatEx = (...args) => Unit.prototype.getStatEx.apply(this, args);
+
+		this.getMerc = function () {
+			return this.merc;
+		};
+
+		this.getItemsEx = this.getItems = () => this.gear;
+
+		// Object.keys(Unit.prototype)
+		// 	.filter(key=>typeof this[key] === 'undefined')
+		// 	.forEach(key=> this[key]= (...args) => Unit.prototype[key].apply(this,args));
 	}
 
 
@@ -199,6 +210,8 @@
 			}).filter(x => x[2] && x[2] > 0),
 			skill: skills,
 		};
+		const merc = unit.getMerc();
+		settings.merc = merc && MockPlayer.fromUnit(merc);
 		return new MockPlayer(settings);
 	};
 

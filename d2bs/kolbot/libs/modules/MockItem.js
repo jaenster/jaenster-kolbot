@@ -72,7 +72,6 @@
 	 * @constructor
 	 */
 	function MockItem(settings = {}) {
-		const self = this;
 		if (typeof settings !== 'object' && settings) settings = {};
 		settings = Object.assign({}, defaultSettings, settings);
 		Object.keys(settings).forEach(k => this[k] = settings[k]);
@@ -114,6 +113,10 @@
 		};
 
 		this.store = () => JSON.stringify(Object.keys(settings).reduce((a, key) => a[key] = this[key], {}));
+
+		Object.keys(Unit.prototype)
+			.filter(key=>typeof this[key] === 'undefined')
+			.forEach(key=> this[key]= (...args) => Unit.prototype[key].apply(this,args));
 	}
 
 	MockItem.fromItem = function (item, settings = {}) {
