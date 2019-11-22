@@ -33,7 +33,7 @@ Unit.prototype.equip = function (destLocation = undefined) {
 	}
 
 
-	let currentEquiped = me.getItems(-1).filter(item =>
+	let currentEquiped = me.getItemsEx(-1).filter(item =>
 		destLocation.indexOf(item.bodylocation) !== -1
 		|| ( // Deal with double handed weapons
 
@@ -419,7 +419,7 @@ Object.defineProperty(Unit.prototype, 'itemclass', {
  * @param args
  * @returns Unit[]
  */
-Unit.prototype.getItems = function (...args) {
+Unit.prototype.getItemsEx = function (...args) {
 	let item = this.getItem.apply(this, args), items = [];
 
 	if (item) {

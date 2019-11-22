@@ -94,10 +94,10 @@
 			print('need to watch merc?');
 			getScript(true).name.toLowerCase() === 'default.dbj' && new (require('Promise'))(function (resolve, reject) {
 				const merc = me.getMerc();
-				merc && typeof merc === 'object' && merc.hasOwnProperty('getItems') && resolve();
+				merc && typeof merc === 'object' && merc.hasOwnProperty('getItemsEx') && resolve();
 			})
 				.then(function () {
-					return me.getMerc() && me.getMerc().getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true'));
+					return me.getMerc() && me.getMerc().getItemsEx().filter(item => item.getPrefix(sdk.locale.items.Infinity).length && (Config.MercWatch = true) && print('MercWatch=true'));
 				});
 		}
 

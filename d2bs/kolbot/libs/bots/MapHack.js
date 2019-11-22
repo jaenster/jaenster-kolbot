@@ -614,7 +614,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 
 		if (me.runwalk === 1 && me.stamina / me.staminamax * 100 <= 25) {
 			//{"type":4,"classid":513,"mode":0,"name":"Stamina Potion","act":1,"gid":6,"x":8,"y":1,"hp":0,"hpmax":0,"mp":0,"mpmax":0,"stamina":0,"staminamax":0,"charlvl":0,"owner":0,"ownertype":0,"uniqueid":-1,"code":"vps","prefixes":[],"suffixes":[],"prefixnum":0,"suffixnum":0,"prefixnums":[],"suffixnums":[],"fname":"Stamina Potion","quality":2,"node":1,"location":3,"sizex":1,"sizey":1,"itemType":79,"description":"ÿc0Stamina Potion","bodylocation":0,"ilvl":1,"lvlreq":0,"gfx":0}
-			let pot = me.getItems(-1).filter(i => i.classid === 513 && i.location === 3 || i.location === 2).sort((a, b) => a.location - b.location).first();
+			let pot = me.getItemsEx(-1).filter(i => i.classid === 513 && i.location === 3 || i.location === 2).sort((a, b) => a.location - b.location).first();
 			pot && pot.interact(); // interact with pot (aka click on it)
 
 		}

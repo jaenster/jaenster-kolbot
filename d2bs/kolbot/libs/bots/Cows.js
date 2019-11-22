@@ -124,7 +124,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 		// Create a inverse of an inventory
 		const grid = createArray(buffer.x, 1).map(() => createArray(buffer.y, 1)); // Everything starts with unlocked <-- WARNING
 
-		me.getItems()
+		me.getItemsEx()
 			.filter(item => item.location === buffer.location).forEach(
 			function (item) {
 				for (let extraX = 0; extraX < item.sizex; extraX++) {
@@ -180,7 +180,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 		return spots;
 	};
 	const Storage = require('Storage');
-	const books = me.getItems().filter(x => x.code === "tbk");
+	const books = me.getItemsEx().filter(x => x.code === "tbk");
 	const cube = me.getItem(549);
 	require('Debug');
 
@@ -225,7 +225,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 		for (let i = 0; i < amount + books.length; i++) vendorBook.buy();
 
 		Town.openStash();
-		const newBooks = me.getItems().filter(i => i.code === 'tbk').filter(i => i.location === sdk.storage.Inventory).reverse(); // oldest book last (yeah, tricky shit i know)
+		const newBooks = me.getItemsEx().filter(i => i.code === 'tbk').filter(i => i.location === sdk.storage.Inventory).reverse(); // oldest book last (yeah, tricky shit i know)
 		newBooks.length = amount; // dont move the main book to storage
 
 		// If we didnt start out with a book, there isnt one in the cube it at the moment
@@ -240,7 +240,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 		newBooks.forEach(newBook => Storage.Stash.MoveTo(newBook) && delay(1000));
 	}
 	Town.heal(); // To be sure
-	if (!(leg = me.getItems().filter(x => x.classid === 88).first())) {
+	if (!(leg = me.getItemsEx().filter(x => x.classid === 88).first())) {
 		Pather.journeyTo(sdk.areas.StonyField);
 		Pather.moveToPreset(sdk.areas.StonyField, 1, 737, 0, 0, false, true);
 		let portal;
@@ -270,8 +270,8 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 	}
 	Town.move('stash');
 	Town.openStash();
-	if (books.length > 1 && !me.getItems().filter(x => x.location === sdk.locations.cube).filter(x => x.code === 'tbk').first()) {
-		let tome = me.getItems().filter(x => x.code === "tbk").filter(x => x.location !== sdk.locations.cube).sort((a, b) => b.location - a.location).first();
+	if (books.length > 1 && !me.getItemsEx().filter(x => x.location === sdk.locations.cube).filter(x => x.code === 'tbk').first()) {
+		let tome = me.getItemsEx().filter(x => x.code === "tbk").filter(x => x.location !== sdk.locations.cube).sort((a, b) => b.location - a.location).first();
 		// 2a [DWORD item id] [DWORD cube id]
 		print('tome to cube');
 		tome.toCursor();
@@ -286,7 +286,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 	print('open cube');
 	me.openCube();
 	delay(500);
-	me.getItems();
+	me.getItemsEx();
 	transmute();
 	Object.keys(sdk.uiflags).forEach(x => me.cancel());
 

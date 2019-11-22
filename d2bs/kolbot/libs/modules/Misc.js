@@ -477,7 +477,7 @@
 		getItemSockets: function (unit) {
 			var i, code,
 				sockets = unit.getStat(194),
-				subItems = unit.getItems(),
+				subItems = unit.getItemsEx(),
 				tempArray = [];
 
 			if (subItems) {
