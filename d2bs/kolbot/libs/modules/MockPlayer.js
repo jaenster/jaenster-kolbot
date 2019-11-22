@@ -129,7 +129,7 @@
 			// Do we need a pre-skill first?
 			if (requiredSkills(skillId).length) return false;
 
-			print('Mock Skilling: ' + getSkillById(skillId));
+			// print('Mock Skilling: ' + getSkillById(skillId));
 			const found = this.overrides.skill.findIndex(([i, h, s]) => i === skillId);
 			if (found > -1) {
 				// Already skilled this, so, just add it
@@ -140,6 +140,19 @@
 				this.overrides.skill.push([skillId, 1])
 			}
 		};
+
+		this.getState = () => false; // we dont have any state ever, just for testing purposes
+
+		this.getStat = function (...args) {
+			const items = this.gear.reduce((a, c) => a + (c.getStat.apply(c, args) || 0), 0);
+			const [major, minor] = args;
+			const getStat = () => {
+				const found = this.overrides.stat.find(data => data.length > 2 && data[0] === major && data[1] === (minor || 0));
+				if (found) return found[2]; // the value
+				return 0;
+			};
+			return items + (getStat() || 0);
+		}
 	}
 
 
