@@ -64,6 +64,13 @@
 		overrides: {stats: {}},
 	};
 
+	/**
+	 * @static fromItem
+	 * @static fromGear
+	 *
+	 * @param settings
+	 * @constructor
+	 */
 	function MockItem(settings = {}) {
 		const self = this;
 		if (typeof settings !== 'object' && settings) settings = {};
@@ -104,28 +111,12 @@
 		this.store = () => JSON.stringify(Object.keys(settings).reduce((a, key) => a[key] = this[key], {}));
 	}
 
-	MockItem.runewords = {};
-	MockItem.runewords.Enigma = (function () {
-		const settings = {overrides: {stat: {}}};
-		settings.overrides.stat[sdk.stats.Allskills] = [[0, 2]];
-		settings.overrides.stat[sdk.stats.Fastermovevelocity] = [[0, 45]];
-		settings.overrides.stat[sdk.stats.Nonclassskill] = [[54, 1]];
-		settings.overrides.stat[sdk.stats.Armorclass] = [[0, 775]];
-		settings.overrides.stat[sdk.stats.PerLevelStrength] = [[0, 6]];
-		settings.overrides.stat[sdk.stats.MaxhpPercent] = [[0, 5]];
-		settings.overrides.stat[sdk.stats.Damageresist] = [[0, 8]];
-		settings.overrides.stat[sdk.stats.Healafterkill] = [[0, 14]];
-		settings.overrides.stat[sdk.stats.Damagetomana] = [[0, 15]];
-		settings.overrides.stat[sdk.stats.PerLevelFindMagic] = [[0, 8]];
-		settings.overrides.stat[sdk.stats.Levelreq] = [0, 65];
-		return settings;
-	}).call();
-
 	MockItem.fromItem = function (item, settings = {}) {
 		Object.keys(item).forEach(key => settings[key] = item[key]);
 		settings.socketedWith = item.getItemsEx().map(item => MockItem.fromItem(item)) || []; // Mock its sockets too
+		const stats = item.getStat(-1);
 		settings.overrides = {
-			stat: item.getStat(-1).reduce((accumulator, stats) => {
+			stat: (stats || []).reduce((accumulator, stats) => {
 				const [major, minor, value] = stats,
 					socketable = item.getItemsEx().map(item => item.getStat(major, minor)).reduce((a, c) => a + c, 0) || 0;
 
@@ -146,19 +137,9 @@
 	MockItem.fromGear = function () {
 		return me.getItemsEx()
 			.filter(item => item.location === sdk.storage.Equipment
-				|| (item.location === sdk.storage.Inventory))
-			.map(MockItem.fromItem);
+				|| (item.location === sdk.storage.Inventory && [603, 604, 605].indexOf(item.classid) > -1))
+			.map(x => MockItem.fromItem(x));
 	};
-
-	Object.keys(MockItem.runewords).forEach(key => {
-		return Object.defineProperty(MockItem.runewords[key], 'newInstance', {
-			get: function () {
-				return function () {
-					return MockItem.runewords[key].hasOwnProperty('__cache') && MockItem.runewords[key].__cache || (MockItem.runewords[key].__cache = new MockItem(MockItem.runewords[key]))
-				}
-			}
-		});
-	});
 
 	module.exports = MockItem;
 
