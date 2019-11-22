@@ -70,7 +70,7 @@
 
 				oSkillOrDirect |= (!!directSkills || !!oSkills);
 				return acc + total;
-			}, 0),oSkillOrDirect];
+			}, 0), oSkillOrDirect];
 
 		};
 
@@ -85,22 +85,61 @@
 						break;
 					case 4:// ?
 						//ToDo; fix for items
-						return this.overrides.skill; // just return all the skills the player has
+						const build = [];
+						for (let i = 0; i < 281; i++) {
+							let skillLvl = this.getSkill(i, 1);
+							skillLvl && build.push([i, this.getSkill(i, 0), skillLvl])
+						}
+						return build;
+					default:
+						break; // just return all the skills the player has
 				}
 			}
 
-			const hardskills = (this.overrides.skill.find(skill => skill[0] === skillId) || [skillId, 0])[1];
+			const hardskills = (this.overrides.skill.find(([skill]) => skill === skillId) || [skillId, 0])[1];
 			if (!type) return hardskills;
 			if (type === 1) {
 				// If we dont own the skill, we cant count the plus skills
-				const [soft,oSkillOrDirect] = softSkills(skillId);
+				const [soft, oSkillOrDirect] = softSkills(skillId);
 
 				if (!hardskills && !oSkillOrDirect) return 0;// Nothing gives us the initial + skill
 				return soft + hardskills;
 			}
-		}
+		};
+
+		const requiredSkills = skillId => [sdk.stats.PreviousSkillLeft, sdk.stats.PreviousSkillMiddle, sdk.stats.PreviousSkillRight]
+			.map(type => getBaseStat("skills", skillId, type))
+			.filter(preSkillId => preSkillId !== 0xFFFF && !this.getSkill(preSkillId, 0));
+
+		this.statSkill = skillId => {
+			// Get the class type
+			if (this.classid !== Skills.class[skillId]) return false; // Wrong class
+
+			// Level you need to be, to skill this skill
+			const conversionLevel = getBaseStat("skills", skillId, sdk.stats.ConversionLevel);
 
 
+			// Is our lvl high enough to skill it?
+			if (this.charlvl < conversionLevel) return false;
+
+			// Is it allowed to skill this?
+			// For example, your lvl 30 and want to put a second point in frozen orb. This isnt allowed
+			if ((this.charlvl + 1 - conversionLevel) === this.getSkill(skillId, 0)) return false;
+
+			// Do we need a pre-skill first?
+			if (requiredSkills(skillId).length) return false;
+
+			print('Mock Skilling: ' + getSkillById(skillId));
+			const found = this.overrides.skill.findIndex(([i, h, s]) => i === skillId);
+			if (found > -1) {
+				// Already skilled this, so, just add it
+				let [i, h] = this.overrides.skill[found];
+				h++; // add a skill
+				this.overrides.skill[found] = [i, h]
+			} else { // We didnt got this skill yet
+				this.overrides.skill.push([skillId, 1])
+			}
+		};
 	}
 
 
