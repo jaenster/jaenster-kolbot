@@ -93,7 +93,7 @@
 			let original = typeof this.base === 'object' && this.base.hasOwnProperty('getStat') && this.base.getStat.apply(this.base, args) || 0;
 			if (major === sdk.stats.Levelreq) {
 				// level requirements = the max counts
-				const max = this.socketedWith.map(a.getStat.apply(a, args));
+				const max = this.socketedWith.map(a => a.getStat.apply(a, args));
 				max.push.apply(max, [original, getStat()]);
 				return Math.max.apply(null)
 			}
@@ -106,6 +106,11 @@
 		};
 		this.getItemsEx = function () {
 			return this.socketedWith;
+		};
+
+		// make it work with pickit lines
+		this.getStatEx = function (...args) {
+			return Unit.prototype.getStatEx.apply(this, args);
 		};
 
 		this.store = () => JSON.stringify(Object.keys(settings).reduce((a, key) => a[key] = this[key], {}));
