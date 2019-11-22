@@ -281,7 +281,7 @@
 
 		// Get specific points for the skill, divided by slot
 		ignoreSlots.forEach((ingoreSlots, i) =>
-			slots[i] += me.getItems()
+			slots[i] += me.getItemsEx()
 				.filter(item => item
 					&& item.bodylocation // Only worn items can give + skills to a specific skill
 					&& item.location === sdk.storage.Equipment
@@ -304,7 +304,7 @@
 		// Add + skills, but only if you can cast it on that swap
 		ignoreSlots.forEach((ingoreSlots, i) => {
 			slots[i] && (
-				slots[i] += me.getItems().filter(item => item
+				slots[i] += me.getItemsEx().filter(item => item
 					&& ingoreSlots.indexOf(item.bodylocation) === -1 // Ignore body other slot
 					&& (
 						(

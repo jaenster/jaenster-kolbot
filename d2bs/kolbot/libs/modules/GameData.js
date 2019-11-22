@@ -1482,8 +1482,8 @@
 		getConviction: function () {
 			let merc = me.getMerc(), sl = this.skillLevel(123); // conviction
 			if (( // Either me, or merc is wearing a conviction
-				merc && merc.getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first()
-				|| me.getItems().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first())) {
+				merc && merc.getItemsEx().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first()
+				|| me.getItemsEx().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first())) {
 				sl = 12;
 			}
 			return sl > 0 ? Math.min(150, 30 + (sl - 1) * 5) : 0;

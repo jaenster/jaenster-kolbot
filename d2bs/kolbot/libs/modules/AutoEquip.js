@@ -296,7 +296,7 @@
 				return false;
 			}
 
-			const currentItem = me.getItems()
+			const currentItem = me.getItemsEx()
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 				.first();
 
@@ -325,7 +325,7 @@
 				const tier = formula(item);
 				print('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
 				const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
-				const currentItem = me.getItems()
+				const currentItem = me.getItemsEx()
 					.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 					.first();
 

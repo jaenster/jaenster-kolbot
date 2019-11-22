@@ -1753,7 +1753,7 @@
 
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
-		let scrolls = me.getItems()
+		let scrolls = me.getItemsEx()
 				.filter(i => 
 					i.location === sdk.storage.Inventory &&
 					i.mode === sdk.itemmode.inStorage &&

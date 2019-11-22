@@ -61,8 +61,6 @@ function main() {
 	const Control = require('Control');
 	const Team = require('Team');
 
-	HeartBeat.gameInfo.charName = StarterConfig.LoginChar;
-
 	// create datafile (needs some refactoring trough)
 	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
 
@@ -76,7 +74,10 @@ function main() {
 		return Control.TcpIpHost.click();
 	});
 
-	LocationEvents.on(sdk.locations.CharSelect, () => ControlAction.loginCharacter(HeartBeat.gameInfo));
+	LocationEvents.on(sdk.locations.CharSelect, () => {
+		HeartBeat.gameInfo.charName = StarterConfig.LoginChar;
+		ControlAction.loginCharacter(HeartBeat.gameInfo)
+	});
 	LocationEvents.on(sdk.locations.Difficulty, function () {
 		switch (HeartBeat.gameInfo.difficulty) {
 			case 'normal':

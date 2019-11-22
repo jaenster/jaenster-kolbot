@@ -192,7 +192,7 @@ function main() {
 
 	this.getPotion = function (pottype, type) {
 		var i,
-			items = me.getItems();
+			items = me.getItemsEx();
 
 		if (!items || items.length === 0) {
 			return false;
