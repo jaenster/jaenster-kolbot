@@ -109,10 +109,10 @@
 		Object.keys(unit).forEach(key => typeof unit[key] !== 'function' && typeof unit[key] !== 'object' && (settings[key] = unit[key]));
 
 		const states = [];
-		for (let x = 0; x < 500; x++) {
+		for (let x = 0; x < 358; x++) {
 			const zero = me.getStat(x, 0);
 			zero && states.push([x, 0, zero]);
-			for (let y = 1; y < 5000; y++) {
+			for (let y = 1; y < 281; y++) {
 				const second = me.getStat(x, y);
 				second && second !== zero && states.push([x, y, second]);
 			}

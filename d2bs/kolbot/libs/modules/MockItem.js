@@ -123,10 +123,10 @@
 			if (!item.getFlag(0x4000000)) return undefined;
 
 			const states = [];
-			for (let x = 0; x < 500; x++) {
+			for (let x = 0; x < 358; x++) {
 				const zero = item.getStat(x, 0);
 				zero && states.push([x, 0, zero]);
-				for (let y = 1; y < 5000; y++) {
+				for (let y = 1; y < 281; y++) {
 					const second = item.getStat(x, y);
 					second && second !== zero && states.push([x, y, second]);
 				}
