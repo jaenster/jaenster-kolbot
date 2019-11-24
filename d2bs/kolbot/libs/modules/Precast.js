@@ -21,7 +21,7 @@
 
 			print('Precasting ' + getSkillById(result.skillId) + ' on slot ' + result.slot);
 			if (result.skillId === sdk.skills.Enchant) { // Cast enchant on everyone that is a party member
-				return getUnits(-1).filter(unit=>unit.allies && unit.getState(sdk.states.Enchant)).cast(result.skillId);
+				return getUnits(-1).filter(unit => unit.allies && unit.getState(sdk.states.Enchant)).cast(result.skillId);
 			}
 			return me.cast(result.skillId);
 		});
@@ -56,7 +56,7 @@
 
 			case typeof what.skillId === sdk.skills.Enchant:
 				// If any monster/unit around us is in enchant-less, return true.
-				return !!getUnits(-1).filter(unit=>unit.allies && unit.getState(sdk.states.Enchant)).length;
+				return !!getUnits(-1).filter(unit => unit.allies && unit.getState(sdk.states.Enchant)).length;
 			case typeof what.skillId === 'number' || Array.isArray(what.skillId):
 				// If skillId is an array, it can, for example the frozen armor / chilling armor combo,
 				// we dont need to re-pre-cast it if either state is set. So cast it to an array and loop over it,
@@ -178,10 +178,20 @@
 		{
 			skillId: sdk.skills.CycloneArmor
 		},
-		(function() {
-			const minion = [11,12,15], skills = [sdk.skills.SummonSpiritWolf,sdk.skills.DireWolf,sdk.skills.SummonGrizzly];
-			return skills.map((x,i)=>({skillId:x,lvl:Skills.getSkillLevel(x),minion:minion[i]} )).sort((a,b)=>b.lvl-a.lvl).first();
-		}).call(),
+		{
+			skillId: () => {
+				const skills = [sdk.skills.Grizzly,sdk.skills.DireWolf];
+				const minion = [11, 12, 15];
+				const data = skills.map((x, i) => ({
+					skillId: x,
+					lvl: Skills.getSkillLevel(x),
+					minion: minion[i]
+				})).sort((a, b) => b.lvl - a.lvl).first();
+				this.minion = data.minion;
+				return data.skillId;
+			},
+			minion: undefined,
+		},
 		{
 			skillId: [sdk.skills.OakSage, sdk.skills.HeartofWolverine, sdk.skills.SpiritofBarbs],
 			//ToDo; make some function that ensure the use of Oak on Hardcore, or anyway give benefit's to the oak skill

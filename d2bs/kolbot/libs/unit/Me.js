@@ -131,7 +131,7 @@
 	me.emptyCube = function () {
 		const Storage = require('Storage');
 		const cube = me.cube,
-			items = me.getItems().filter(item => item.location === sdk.storage.Cube);
+			items = me.getItemsEx().filter(item => item.location === sdk.storage.Cube);
 
 		if (!cube) return false;
 

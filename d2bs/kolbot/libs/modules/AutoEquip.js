@@ -296,7 +296,7 @@
 				return false;
 			}
 
-			const currentItem = me.getItems()
+			const currentItem = me.getItemsEx()
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 				.first();
 
@@ -325,7 +325,7 @@
 				const tier = formula(item);
 				print('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
 				const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
-				const currentItem = me.getItems()
+				const currentItem = me.getItemsEx()
 					.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 					.first();
 
@@ -339,7 +339,7 @@
 				const old = item.equip(bodyLoc);
 
 				// Sometimes it happens the OLD item seems better once we have the new one in place
-				const newTier = old && formula(old.unequiped.first()) || 0;
+				const newTier = old && old.unequiped && formula(old.unequiped.first()) || 0;
 
 				// Was the old item better?
 				if (newTier > tier) return !!old.rollback(); // Rollback and return false

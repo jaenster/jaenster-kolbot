@@ -1752,19 +1752,22 @@
 	};
 
 	Town.clearScrolls = function () {
-		var i,
-			items = me.getItems();
+		// drop scrolls, unless it is in pickit
+		let scrolls = me.getItemsEx()
+				.filter(i => 
+					i.location === sdk.storage.Inventory &&
+					i.mode === sdk.itemmode.inStorage &&
+					i.itemType === 22 &&
+					require('Pickit').checkItem(i).result == 0
+				);
 
-		for (i = 0; !!items && i < items.length; i += 1) {
-			if (items[i].location === 3 && items[i].mode === 0 && items[i].itemType === 22) {
-				if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-					print("clearInventory sell " + items[i].name);
-					Misc.itemLogger("Sold", items[i]);
-					items[i].sell();
-				} else {
-					Misc.itemLogger("Dropped", items[i], "clearScrolls");
-					items[i].drop();
-				}
+		for (var i = 0; i < scrolls.length; i += 1) {
+			if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
+				Misc.itemLogger("Sold", scrolls[i]);
+				scrolls[i].sell();
+			} else {
+				Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
+				scrolls[i].drop();
 			}
 		}
 
