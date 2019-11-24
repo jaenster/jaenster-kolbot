@@ -149,18 +149,19 @@
 		entryList = entryList || NTIP.CheckList;
 		const identified = item.getFlag(0x10);
 
-		let wantToIdentify = -1; // gets an index number, if someone wants to id it first
+		let wantToIdentify = false; // gets an index number, if someone wants to id it first
 
 		const result = entryList.findIndex(function (callbacks, index) {
 			const wanted = callbacks.pop(); // remove the last line
 			try {
 				const output = callbacks.every(cb => {
 					const result = !cb || cb(item);
-					if (!identified && !result) {
-						wantToIdentify = index;
-					}
-					return false;
+					if (!identified && !result) wantToIdentify = true;
+					return result || wantToIdentify !== -1;
 				});
+
+				if (wantToIdentify) return true; // want to identify, so lets not loop trough everything
+
 				if (!output) return false; // not an item we want
 
 				if (wanted && wanted.MaxQuantity) {
@@ -199,12 +200,14 @@
 		if (verbose) {
 			const rval = {};
 
-			if (result === -1) {
-				return {result: 0};
-			}
+			if (wantToIdentify) return {result: -1}; // want to ident
 
-			rval.result = 1;
-			rval.line = stringArray[result].file + " #" + stringArray[result].line;
+			if (result === -1) return {result: 0}; // We dont want it.
+
+			if (result > -1) {
+				rval.result = 1;
+				rval.line = stringArray[result].file + " #" + stringArray[result].line;
+			}
 			return rval;
 		}
 
