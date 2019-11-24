@@ -145,140 +145,70 @@
 
 		return tier;
 	};
-
 	NTIP.CheckItem = function (item, entryList, verbose) {
-		var i, list, identified, num,
-			rval = {},
-			result = 0;
+		entryList = entryList || NTIP.CheckList;
+		const identified = item.getFlag(0x10);
 
-		if (!entryList) {
-			list = NTIP.CheckList;
-		} else {
-			list = entryList;
-		}
+		let wantToIdentify = -1; // gets an index number, if someone wants to id it first
 
-		identified = item.getFlag(0x10);
-
-		for (i = 0; i < list.length; i++) {
-			let [type, stat, wanted] = list[i];
-
+		const result = entryList.findIndex(function (callbacks, index) {
+			const wanted = callbacks.pop(); // remove the last line
 			try {
-				if (typeof type === 'function') {
-					if (type(item)) {
-						if (typeof stat === 'function') {
-							if (stat(item)) {
-								if (wanted && wanted.MaxQuantity && !isNaN(wanted.MaxQuantity)) {
-									num = NTIP.CheckQuantityOwned(type, stat);
-
-									if (num < wanted.MaxQuantity) {
-										result = 1;
-
-										break;
-									} else {
-										if (item.getParent() && item.getParent().name === me.name && item.mode === 0 && num === wanted.MaxQuantity) { // attempt at inv fix for maxquantity
-											result = 1;
-
-											break;
-										}
-									}
-								} else {
-									result = 1;
-
-									break;
-								}
-							} else if (!identified && result === 0) {
-								result = -1;
-
-								if (verbose) {
-									rval.line = stringArray[i].file + " #" + stringArray[i].line;
-								}
-							}
-						} else {
-							if (wanted && wanted.MaxQuantity && !isNaN(wanted.MaxQuantity)) {
-								num = NTIP.CheckQuantityOwned(type, null);
-
-								if (num < wanted.MaxQuantity) {
-									result = 1;
-
-									break;
-								} else {
-									if (item.getParent() && item.getParent().name === me.name && item.mode === 0 && num === wanted.MaxQuantity) { // attempt at inv fix for maxquantity
-										result = 1;
-
-										break;
-									}
-								}
-							} else {
-								result = 1;
-
-								break;
-							}
-						}
+				const output = callbacks.every(cb => {
+					const result = !cb || cb(item);
+					if (!identified && !result) {
+						wantToIdentify = index;
 					}
-				} else if (typeof stat === 'function') {
-					if (stat(item)) {
-						if (wanted && wanted.MaxQuantity && !isNaN(wanted.MaxQuantity)) {
-							num = NTIP.CheckQuantityOwned(null, stat);
+					return false;
+				});
+				if (!output) return false; // not an item we want
 
-							if (num < wanted.MaxQuantity) {
-								result = 1;
-
-								break;
-							} else {
-								if (item.getParent() && item.getParent().name === me.name && item.mode === 0 && num === wanted.MaxQuantity) { // attempt at inv fix for maxquantity
-									result = 1;
-
-									break;
-								}
-							}
-						} else {
-							result = 1;
-
-							break;
-						}
-					} else if (!identified && result === 0) {
-						result = -1;
-
-						if (verbose) {
-							rval.line = stringArray[i].file + " #" + stringArray[i].line;
-						}
+				if (wanted && wanted.MaxQuantity) {
+					const num = NTIP.CheckQuantityOwned(type, stat);
+					if (num < wanted.MaxQuantity) {
+						return true;
 					}
+					// attempt at inv fix for maxquantity
+					if (item.getParent() && item.getParent().name === me.name && item.mode === 0 && num === wanted.MaxQuantity) {
+						return true;
+					}
+
+					// Dont want it, already have enough
+					return false;
 				}
+
+				// max quanity doesnt matter, so yeah we want it
+				return true;
+
+
 			} catch (pickError) {
 				showConsole();
 
-				if (!entryList) {
-					Misc.errorReport("ÿc1Pickit error! Line # ÿc2" + stringArray[i].line + " ÿc1Entry: ÿc0" + stringArray[i].string + " (" + stringArray[i].file + ") Error message: " + pickError.message + " Trigger item: " + item.fname.split("\n").reverse().join(" "));
+				if (entryList === NTIP.CheckList) {
+					Misc.errorReport("ÿc1Pickit error! Line # ÿc21" + stringArray[index].line + " ÿc1Entry: ÿc0" + stringArray[index].string + " (" + stringArray[index].file + ") Error message: " + pickError.message + " Trigger item: " + item.fname.split("\n").reverse().join(" "));
 
-					NTIP.CheckList[i] = ["", "", ""]; // make the bad entry blank
+					entryList === NTIP.CheckList && (NTIP.CheckList[index] = ["", "", ""]); // make the bad entry blank
 				} else {
-					Misc.errorReport("ÿc1Pickit error in runeword config!");
+					Misc.errorReport('ÿc1Pickit error!ÿc2 - ÿc0 [' + (callbacks.map(cb => cb.toString()).join(',')) + '] Error message ' + pickError.message + " Trigger item: " + item.fname.split("\n").reverse().join(" "));
 				}
-
-				result = 0;
 			}
-		}
+			return false;
+
+		});
 
 		if (verbose) {
-			switch (result) {
-				case -1:
-					break;
-				case 1:
-					rval.line = stringArray[i].file + " #" + stringArray[i].line;
+			const rval = {};
 
-					break;
-				default:
-					rval.line = null;
-
-					break;
+			if (result === -1) {
+				return {result: 0};
 			}
 
-			rval.result = result;
-
+			rval.result = 1;
+			rval.line = stringArray[result].file + " #" + stringArray[result].line;
 			return rval;
 		}
 
-		return result;
+		return parseInt(result > -1);
 	};
 
 	/**
@@ -286,6 +216,7 @@
 	 */
 	NTIP.IsSyntaxInt = ch => (ch === '!' || ch === '%' || ch === '&' || (ch >= '(' && ch <= '+') || ch === '-' || ch === '/' || (ch >= ':' && ch <= '?') || ch === '|');
 
+	/** @return {boolean} */
 	NTIP.ParseLineInt = function (input, info) {
 		var i, property, p_start, p_end, p_section, p_keyword, p_result, value;
 
@@ -364,9 +295,9 @@
 
 						p_end += 2;
 
-                		break;
-            		case 'skin':
-                		p_result[0] += "item.skinCode";
+						break;
+					case 'skin':
+						p_result[0] += "item.skinCode";
 
 						break;
 					default:
@@ -375,7 +306,7 @@
 						return false;
 				}
 
-				for (p_start = p_end; p_end < p_section[i].length; p_end += 1) {
+				for (p_start = p_end; p_end < p_section[i].length; p_end++) {
 					if (!NTIP.IsSyntaxInt(p_section[i][p_end])) {
 						break;
 					}
@@ -463,7 +394,7 @@
 						case 'suffix':
 							p_result[0] += "\"" + p_keyword + "\")";
 
-                    		break;
+							break;
 						case 'skin':
 							if (NTIPAliasSkin[p_keyword] === undefined) {
 								Misc.errorReport("Unknown skin: " + p_keyword + " File: " + info.file + " Line: " + info.line);
