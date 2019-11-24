@@ -2,7 +2,7 @@ data/*
 images/*
 limedrop/*
 logs/*
-
+!/**/.gitkeep
 .idea
 d2bs/d2bs.log
 d2bs/kolton/data
