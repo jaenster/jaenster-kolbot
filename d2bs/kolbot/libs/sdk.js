@@ -2379,10 +2379,13 @@ let sdk = {
     },
     items: {
         cube: 549,
+        RejuvPotion: 515,
+        FullRejuvPotion: 516,
         tptome: 518,
         idtome: 519,
         StaffofKings: 92,
         KhalimsFlail: 173,
+        Key: 543,
         KhalimsEye: 553,
         KhalimHeart: 554,
         KhalimBrain: 555,
