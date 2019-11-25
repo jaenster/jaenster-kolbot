@@ -33,9 +33,8 @@
 			}
 		}
 
-		// If total gold is less than 10k pick up anything worth 10 gold per
 		// square to sell in town.
-		if (rval.result === 0 && Town.ignoredItemTypes.indexOf(unit.itemType) === -1 && me.gold < Config.LowGold && unit.itemType !== 39) {
+		if (rval.result === 0/* && Town.ignoredItemTypes.indexOf(unit.itemType) === -1*/ && me.lowGold && unit.itemType !== 39) {
 			// Gold doesn't take up room, just pick it up
 			if (unit.classid === 523) {
 				return {
@@ -44,12 +43,10 @@
 				};
 			}
 
-			if (unit.getItemCost(1) / (unit.sizex * unit.sizey) >= 10) {
-				return {
-					result: 4,
-					line: null
-				};
-			}
+			return {
+				result: 4,
+				line: null
+			};
 		}
 
 		return rval;

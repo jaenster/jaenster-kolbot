@@ -865,13 +865,15 @@
 					break;
 				}
 
-				let tpTome = me.findItem("tbk", 0, 3);
+				let tpTome = me.findItem(sdk.items.tptome, sdk.itemmode.inStorage, sdk.storage.Inventory);
+				let tpScroll = me.findItem(sdk.items.tpScroll, sdk.itemmode.inStorage, sdk.storage.Inventory);
+				let tpTool = tpScroll || tpTome;
 
-				if (!tpTome) {
+				if (!tpTool) {
 					throw new Error("makePortal: No TP tomes.");
 				}
 
-				if (!tpTome.getStat(70)) {
+				if (!tpScroll && tpTome.getStat(70)) {
 					throw new Error("makePortal: No scrolls.");
 				}
 
@@ -887,7 +889,7 @@
 					} while (oldPortal.getNext());
 				}
 
-				tpTome.interact();
+				tpTool.interact();
 
 				tick = getTickCount();
 

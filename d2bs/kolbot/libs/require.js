@@ -4,7 +4,9 @@
  */
 
 !isIncluded('polyfill.js') && include('polyfill.js');
-if (typeof global === 'undefined') this['global'] = this; // need a var here as a let would block the scope
+
+// noinspection ThisExpressionReferencesGlobalObjectJS <-- definition of global here
+typeof global === 'undefined' && (this['global'] = this);
 
 global['module'] = {exports: undefined};
 const require = (function (include, isIncluded, print, notify) {
@@ -54,15 +56,6 @@ const require = (function (include, isIncluded, print, notify) {
 	return obj;
 })(include, isIncluded, print, getScript(true).name.toLowerCase().split('').reverse().splice(0, '.dbj'.length).reverse().join('') === '.dbj');
 
-me.ingame && (function () {
-	// If in game, load all libraries too
-	!isIncluded('sdk.js') && include('sdk.js');
-	const fileList = dopen("libs/unit").getFiles();
-	Array.isArray(fileList) && fileList
-		.filter(file => file.endsWith('.js'))
-		.forEach(x => !isIncluded('unit/' + x) && include('unit/' + x));
-}).call();
-
 getScript.startAsThread = function () {
 	let stack = new Error().stack.match(/[^\r\n]+/g),
 		filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\(.*):/)[1];
@@ -78,3 +71,14 @@ getScript.startAsThread = function () {
 
 	return 'loaded';
 };
+
+
+me.ingame && (function () {
+	// If in game, load all libraries too
+	!isIncluded('sdk.js') && include('sdk.js');
+	const fileList = dopen("libs/unit").getFiles();
+	Array.isArray(fileList) && fileList
+		.filter(file => file.endsWith('.js'))
+		.sort(a => a.startsWith('Item.js') ? 0 : 1) // Dirty fix to load Item first
+		.forEach(x => !isIncluded('unit/' + x) && include('unit/' + x));
+}).call();

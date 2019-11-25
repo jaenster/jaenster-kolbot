@@ -59,15 +59,22 @@
 		objtype: 0,
 		islocked: 0,
 		getColor: 0,
+		socketedWith: [],
 
 		overrides: {stats: {}},
 	};
 
+	/**
+	 * @static fromItem
+	 * @static fromGear
+	 *
+	 * @param settings
+	 * @constructor
+	 */
 	function MockItem(settings = {}) {
-		const self = this;
 		if (typeof settings !== 'object' && settings) settings = {};
 		settings = Object.assign({}, defaultSettings, settings);
-	 	Object.keys(settings).forEach(k => this[k] = settings[k]);
+		Object.keys(settings).forEach(k => this[k] = settings[k]);
 
 		Object.keys(Unit.prototype).forEach(k => {
 			typeof Unit.prototype === 'function' && (this[k] = (...args) => {
@@ -76,69 +83,86 @@
 		});
 
 		this.getStat = function (...args) {
-			let original = typeof self.base === 'object' && self.base.hasOwnProperty('getStat') && self.base.getStat.apply(self.base, args) || 0;
-			print(self.base);
-			print('-> '+args.join(','));
-			print(original);
-			return original + (function () {
-				const [id, secondary] = args;
-
-				if (self.overrides.stat.hasOwnProperty(id)) {
-					const found = self.overrides.stat[id].find(data => {
-						return data.first() === (secondary || 0);
-					});
-					print(found);
-					if (found) return found.last();
-				}
+			const [major, minor] = args;
+			const getStat = () => {
+				const found = this.overrides.stat.find(data => data.length > 2 && data[0] === major && data[1] === (minor || 0));
+				if (found) return found[2]; // the value
 				return 0;
-			}).call();
-		}
+			};
+			let original = typeof this.base === 'object' && this.base.hasOwnProperty('getStat') && this.base.getStat.apply(this.base, args) || 0;
+			if (major === sdk.stats.Levelreq) {
+				// level requirements = the max counts
+				const max = this.socketedWith.map(a => a.getStat.apply(a, args));
+				max.push.apply(max, [original, getStat()]);
+				return Math.max.apply(null)
+			}
+
+			const sockets = this.socketedWith.reduce((a, c) => a + c.getStat.apply(c, args), 0);
+			const item = (getStat() || 0);
+			// The rest -> just original + sockets + mocked item
+
+			return original + sockets + item;
+		};
+		this.getItemsEx = function () {
+			return this.socketedWith;
+		};
+
+		// make it work with pickit lines
+		this.getStatEx = function (...args) {
+			return Unit.prototype.getStatEx.apply(this, args);
+		};
+
+		this.store = () => JSON.stringify(Object.keys(settings).reduce((a, key) => a[key] = this[key], {}));
+
+		Object.keys(Unit.prototype)
+			.filter(key=>typeof this[key] === 'undefined')
+			.forEach(key=> this[key]= (...args) => Unit.prototype[key].apply(this,args));
 	}
 
-	MockItem.runewords = {};
-	MockItem.runewords.Enigma = (function () {
-		const settings = {overrides: {stat: {}}};
-		settings.overrides.stat[sdk.stats.Allskills] = [[0, 2]];
-		settings.overrides.stat[sdk.stats.Fastermovevelocity] = [[0, 45]];
-		settings.overrides.stat[sdk.stats.Nonclassskill] = [[54, 1]];
-		settings.overrides.stat[sdk.stats.Armorclass] = [[0, 775]];
-		settings.overrides.stat[sdk.stats.PerLevelStrength] = [[0, 6]];
-		settings.overrides.stat[sdk.stats.MaxhpPercent] = [[0, 5]];
-		settings.overrides.stat[sdk.stats.Damageresist] = [[0, 8]];
-		settings.overrides.stat[sdk.stats.Healafterkill] = [[0, 14]];
-		settings.overrides.stat[sdk.stats.Damagetomana] = [[0, 15]];
-		settings.overrides.stat[sdk.stats.PerLevelFindMagic] = [[0, 8]];
-		settings.overrides.stat[sdk.stats.Levelreq] = [0, 65];
-		return settings;
-	}).call();
+	MockItem.fromItem = function (item, settings = {}) {
+		Object.keys(item).forEach(key => settings[key] = item[key]);
+		settings.socketedWith = item.getItemsEx().map(item => MockItem.fromItem(item)) || []; // Mock its sockets too
+		const runewordsFlags = (function () {
+			if (!item.getFlag(0x4000000)) return undefined;
 
-	MockItem.fromItem = function (item,settings = {}) {
-		settings = {overrides: {stat: {}}};
-
-		for (let i = 0; i < 1000; i++) {
-			let first = item.getStat(i, 0);
-			for (let y = 0; y < 1000; y++) {
-				const stat = item.getStat(i, y);
-				const stats = [];
-				if (stat && (y === 0 || stat !== first)) stats.push([y,stat]);
-				stats.length && (settings.overrides.stat[i] = stats);
+			const states = [];
+			for (let x = 0; x < 358; x++) {
+				const zero = item.getStat(x, 0);
+				zero && states.push([x, 0, zero]);
+				for (let y = 1; y < 281; y++) {
+					const second = item.getStat(x, y);
+					second && second !== zero && states.push([x, y, second]);
+				}
 			}
-		}
-		print(settings);
+			return states;
 
+		}).call();
+		const stats = runewordsFlags || item.getStat(-1); // Doesnt contain runeword properties
+		settings.overrides = {
+			stat: (stats || []).reduce((accumulator, stats) => {
+				const [major, minor, value] = stats,
+					socketable = item.getItemsEx().map(item => item.getStat(major, minor)).reduce((a, c) => a + c, 0) || 0;
+
+				let realValue = value;
+				if (major !== sdk.stats.Levelreq) {
+					realValue = value - socketable;
+				}
+
+				if (realValue > 0) { // Only if this stat isn't given by a socketable
+					accumulator.push([major, minor, value]);
+				}
+				return accumulator;
+			}, [])
+		};
 		return new MockItem(settings);
 	};
 
-
-	Object.keys(MockItem.runewords).forEach(key => {
-		return Object.defineProperty(MockItem.runewords[key], 'newInstance', {
-			get: function () {
-				return function () {
-					return MockItem.runewords[key].hasOwnProperty('__cache') && MockItem.runewords[key].__cache || (MockItem.runewords[key].__cache = new MockItem(MockItem.runewords[key]))
-				}
-			}
-		});
-	});
+	MockItem.fromGear = function () {
+		return me.getItemsEx()
+			.filter(item => item.location === sdk.storage.Equipment
+				|| (item.location === sdk.storage.Inventory && [603, 604, 605].indexOf(item.classid) > -1))
+			.map(x => MockItem.fromItem(x));
+	};
 
 	module.exports = MockItem;
 
