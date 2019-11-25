@@ -91,7 +91,7 @@
 				GraphDebug.drawRoom(vertex);
 			} while(room.getNext());
 		}
-		this.vertices.sort((a, b) => a.distance - b.distance);
+		this.vertices.sort((a, b) => getDistance(me.x, me.y, a.walkableX, a.walkableY) - getDistance(me.x, me.y, b.walkableX, b.walkableY));
 
 		// get the graph vertex from room object
 		this.vertexForRoom = function (room) {
