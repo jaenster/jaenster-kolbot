@@ -517,7 +517,7 @@
 		// Avoid unnecessary NPC visits
 		for (i = 0; i < list.length; i += 1) {
 			// Only unid items or sellable junk (low level) should trigger a NPC visit
-			if ((!list[i].getFlag(0x10) || Config.LowGold > 0) && ([-1, 4].indexOf(Pickit.checkItem(list[i]).result) > -1 || (!list[i].getFlag(0x10)))) {
+			if (!list[i].identified || (me.lowGold && [-1, 4].indexOf(Pickit.checkItem(list[i]).result) > -1)) {
 				break;
 			}
 		}
@@ -1061,24 +1061,14 @@
 
 	Town.checkKeys = function () {
 		const Storage = require('Storage');
-		if (!Config.OpenChests || me.classid === 6 || me.gold < 540 || (!me.getItem("key") && !Storage.Inventory.CanFit({
+		if (!Config.OpenChests || me.classid === 6 || me.gold < 540 || (!me.getItem(sdk.items.key) && !Storage.Inventory.CanFit({
 			sizex: 1,
 			sizey: 1
 		}))) {
 			return 12;
 		}
-
-		var i,
-			count = 0,
-			key = me.findItems(543, 0, 3);
-
-		if (key) {
-			for (i = 0; i < key.length; i += 1) {
-				count += key[i].getStat(70);
-			}
-		}
-
-		return count;
+		return me.findItems(sdk.items.key, sdk.itemmode.inStorage, sdk.storage.Inventory)
+			.reduce((acc, k) => acc+k.getStat(sdk.stats.Quantity), 0);
 	},
 
 		Town.needKeys = function () {
@@ -1715,141 +1705,134 @@
 			delay(100);
 		}
 
-		var item = me.getItem(-1, 2),
-			clearList = [];
+		const Storage = require('Storage');
 
-		if (item) {
-			do {
-				switch (item.itemType) {
-					case 76: // Healing
-						if (Config.BeltColumn[item.x % 4] !== "hp") {
-							clearList.push(copyUnit(item));
+		me.getItemsEx()
+			.filter(i => i.location == sdk.storage.Belt && [sdk.itemtype.hppot, sdk.itemtype.mppot, sdk.itemtype.rvpot].indexOf(i.itemType) > -1 && !i.code.startsWith(Config.BeltColumn[i.x % 4]))
+			.forEach((p, i) => {
+				var countInInventory = me.getItemsEx()
+					.filter(i => i.location == sdk.storage.Inventory && i.itemType == p.itemType)
+					.length;
+				switch(p.itemType) {
+					case sdk.itemtype.hppot:
+						if (countInInventory < Config.HPBuffer) {
+							if (!Storage.Inventory.MoveTo(p)) {
+								print("Unable to move potion to inventory for buffer, drinking");
+								p.interact();
+								delay(200);
+							}
 						}
-
+						else {
+							p.interact();
+							delay(200);
+						}
 						break;
-					case 77: // Mana
-						if (Config.BeltColumn[item.x % 4] !== "mp") {
-							clearList.push(copyUnit(item));
-						}
 
+					case sdk.itemtype.mppot:
+						if (countInInventory < Config.MPBuffer) {
+							if (!Storage.Inventory.MoveTo(p)) {
+								print("Unable to move potion to inventory for buffer, drinking");
+								p.interact();
+								delay(200);
+							}
+						}
+						else {
+							p.interact();
+							delay(200);
+						}
 						break;
-					case 78: // Rejuvenation
-						if (Config.BeltColumn[item.x % 4] !== "rv") {
-							clearList.push(copyUnit(item));
-						}
 
+					case sdk.itemtype.rvpot:
+						if (countInInventory < Config.RejuvBuffer) {
+							if (!Storage.Inventory.MoveTo(p)) {
+								print("Unable to move potion to inventory for buffer, drinking");
+								p.interact();
+								delay(200);
+							}
+						}
+						else {
+							p.interact();
+							delay(200);
+						}
 						break;
 				}
-			} while (item.getNext());
-
-			while (clearList.length > 0) {
-				clearList.shift().interact();
-				delay(200);
-			}
-		}
+			});
 
 		return true;
 	};
 
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
-		let scrolls = me.getItemsEx()
+		me.getItemsEx()
 				.filter(i => 
 					i.location === sdk.storage.Inventory &&
 					i.mode === sdk.itemmode.inStorage &&
-					i.itemType === 22 &&
+					i.itemType === sdk.itemtype.scroll &&
 					require('Pickit').checkItem(i).result == 0
-				);
-
-		for (var i = 0; i < scrolls.length; i += 1) {
-			if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-				Misc.itemLogger("Sold", scrolls[i]);
-				scrolls[i].sell();
-			} else {
-				Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
-				scrolls[i].drop();
-			}
-		}
+				)
+				.forEach(s => {
+					if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
+						Misc.itemLogger("Sold", s);
+						s.sell();
+					} else {
+						Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
+						s.drop();
+					}
+				});
 
 		return true;
 	};
 
 	Town.clearInventory = function () {
-		var i, col, result, item, beltSize,
+		var i, freeSpace, result, beltSize,
 			items = [];
 		const Storage = require('Storage');
 		Town.checkQuestItems(); // only golden bird quest for now
 		const Pickit = require('Pickit');
-		// Return potions to belt
-		item = me.getItem(-1, 0);
 
-		if (item) {
-			do {
-				if (item.location === 3 && [76, 77, 78].indexOf(item.itemType) > -1) {
-					items.push(copyUnit(item));
-				}
-			} while (item.getNext());
 
-			beltSize = Storage.BeltSize();
-			col = Town.checkColumns(beltSize);
+		beltSize = Storage.BeltSize();
+		freeSpace = Town.checkColumns(beltSize);
 
-			// Sort from HP to RV
-			items.sort(function (a, b) {
-				return a.itemType - b.itemType;
-			});
-
-			while (items.length) {
-				item = items.shift();
-
+		// Return potions from inventory to belt
+		me.getItemsEx()
+			.filter(p => p.location == sdk.storage.Inventory && [sdk.itemtype.hppot, sdk.itemtype.mppot, sdk.itemtype.rvpot].indexOf(p.itemType) > -1)
+			.sort((a, b) => a.itemType - b.itemType) // Sort from HP to RV
+			.forEach(p => {
 				for (i = 0; i < 4; i += 1) {
-					if (item.code.indexOf(Config.BeltColumn[i]) > -1 && col[i] > 0) {
-						if (col[i] === beltSize) { // Pick up the potion and put it in belt if the column is empty
-							if (item.toCursor()) {
+					if (p.code.indexOf(Config.BeltColumn[i]) > -1 && freeSpace[i] > 0) {
+						if (freeSpace[i] === beltSize) { // Pick up the potion and put it in belt if the column is empty
+							if (p.toCursor()) {
 								clickItem(0, i, 0, 2);
 							}
 						} else {
-							clickItem(2, item.x, item.y, item.location); // Shift-click potion
+							clickItem(2, p.x, p.y, p.location); // Shift-click potion
 						}
 
 						delay(me.ping + 200);
 
-						col = Town.checkColumns(beltSize);
+						freeSpace = Town.checkColumns(beltSize);
 					}
 				}
-			}
-		}
+			});
 
-		// Cleanup remaining potions
-		item = me.getItem(-1, 0);
-
-		if (item) {
-			items = [
-				[], // array for hp
-				[] // array for mp
-			];
-
-			do {
-				if (item.itemType === 76) {
-					items[0].push(copyUnit(item));
-				}
-
-				if (item.itemType === 77) {
-					items[1].push(copyUnit(item));
-				}
-			} while (item.getNext());
-
-			// Cleanup healing potions
-			while (items[0].length > Config.HPBuffer) {
-				items[0].shift().interact();
+		// Cleanup remaining hp potions
+		me.getItemsEx()
+			.filter((p, i) => p.location == sdk.storage.Inventory && p.itemType == sdk.itemtype.hppot)
+			.filter((_, i) => i >= Config.HPBuffer)
+			.forEach(p => {
+				p.interact();
 				delay(200 + me.ping);
-			}
+			});
 
-			// Cleanup mana potions
-			while (items[1].length > Config.MPBuffer) {
-				items[1].shift().interact();
+		// Cleanup remaining mp potions
+		me.getItemsEx()
+			.filter((p, i) => p.location == sdk.storage.Inventory && p.itemType == sdk.itemtype.mppot)
+			.filter((_, i) => i >= Config.MPBuffer)
+			.forEach(p => {
+				p.interact();
 				delay(200 + me.ping);
-			}
-		}
+			});
 
 		// Any leftover items from a failed ID (crashed game, disconnect etc.)
 		items = Storage.Inventory.Compare(Config.Inventory);

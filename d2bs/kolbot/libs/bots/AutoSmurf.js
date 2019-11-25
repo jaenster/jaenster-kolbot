@@ -83,7 +83,7 @@
 				NTIP.AddEntry("[name] == staminapotion # # [maxquantity] == 2");
 			}
 
-			if (me.gold < 500) {
+			if (me.lowGold) {
 				NTIP.AddEntry("[name] == gold");
 			}
 
