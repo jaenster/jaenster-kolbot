@@ -13,8 +13,6 @@
 	getScript(true).name.toLowerCase() === 'default.dbj' && (Worker.runInBackground.avoid = function () {
 		let merc = me.getMerc();
 		if (dodgeHP > 0 && me.hp < Math.floor(me.hpmax * dodgeHP / 100)) {
-			print('POSSIBLE DODGE');
-			print(Worker.recursiveCheck());
 			let test = getUnit(3);
 			if (test && !(merc && merc.gid === test.owner) && !Worker.recursiveCheck()) {
 				print('DODGING');

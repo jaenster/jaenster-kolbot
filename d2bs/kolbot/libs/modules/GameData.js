@@ -703,7 +703,7 @@
 		},
 		multiplayerModifier: function (count) {
 			if (!count) {
-				let party = getParty(me);
+				let party = getParty(GameData.myReference);
 
 				if (!party) {
 					return 1;
@@ -719,7 +719,7 @@
 			return (count + 1) / 2;
 		},
 		partyModifier: function (playerID) {
-			let party = getParty(me), partyid = -1, level = 0, total = 0;
+			let party = getParty(GameData.myReference), partyid = -1, level = 0, total = 0;
 
 			if (!party) {
 				return 1;
@@ -740,7 +740,7 @@
 			return level / total;
 		},
 		killExp: function (playerID, monsterID, areaID) {
-			let exp = this.monsterExp(monsterID, areaID), party = getParty(me), partyid = -1, level = 0, total = 0,
+			let exp = this.monsterExp(monsterID, areaID), party = getParty(GameData.myReference), partyid = -1, level = 0, total = 0,
 				gamesize = 0;
 
 			if (!party) {
@@ -764,10 +764,10 @@
 			return Math.floor(exp * this.levelModifier(level, this.monsterLevel(monsterID, areaID)) * this.multiplayerModifier(gamesize) * level / total);
 		},
 		baseLevel: function (...skillIDs) {
-			return skillIDs.reduce((total, skillID) => total + me.getSkill(skillID, 0), 0);
+			return skillIDs.reduce((total, skillID) => total + GameData.myReference.getSkill(skillID, 0), 0);
 		},
 		skillLevel: function (...skillIDs) {
-			return skillIDs.reduce((total, skillID) => total + me.getSkill(skillID, 1), 0);
+			return skillIDs.reduce((total, skillID) => total + GameData.myReference.getSkill(skillID, 1), 0);
 		},
 		skillCooldown: function (skillID) {
 			return getBaseStat('Skills', skillID, 'delay') !== -1;
@@ -998,11 +998,11 @@
 			272: true, // inferno
 		},
 		shiftState: function () {
-			if (me.getState(139)) {
+			if (GameData.myReference.getState(139)) {
 				return "wolf";
 			}
 
-			if (me.getState(140)) {
+			if (GameData.myReference.getState(140)) {
 				return "bear";
 			}
 
@@ -1100,7 +1100,7 @@
 							break;
 						}
 
-						if (target.gid !== unit.gid && getDistance(unit, this.novaLike[skillID] ? me : target) <= radius && isEnemy(unit)) {
+						if (target.gid !== unit.gid && getDistance(unit, this.novaLike[skillID] ? GameData.myReference : target) <= radius && isEnemy(unit)) {
 							aps++;
 
 							if (unit.spectype & 0x7) {
@@ -1161,27 +1161,27 @@
 
 			switch (dmg.type) {
 				case "Fire": // fire mastery
-					mastery = 1 + me.getStat(329) / 100;
+					mastery = 1 + GameData.myReference.getStat(329) / 100;
 					dmg.min *= mastery;
 					dmg.max *= mastery;
 					break;
 				case "Lightning": // lightning mastery
-					mastery = 1 + me.getStat(330) / 100;
+					mastery = 1 + GameData.myReference.getStat(330) / 100;
 					dmg.min *= mastery;
 					dmg.max *= mastery;
 					break;
 				case "Cold": // cold mastery
-					mastery = 1 + me.getStat(331) / 100;
+					mastery = 1 + GameData.myReference.getStat(331) / 100;
 					dmg.min *= mastery;
 					dmg.max *= mastery;
 					break;
 				case "Poison": // poison mastery
-					mastery = 1 + me.getStat(332) / 100;
+					mastery = 1 + GameData.myReference.getStat(332) / 100;
 					dmg.min *= mastery;
 					dmg.max *= mastery;
 					break;
 				case "Magic": // magic mastery
-					mastery = 1 + me.getStat(357) / 100;
+					mastery = 1 + GameData.myReference.getStat(357) / 100;
 					dmg.min *= mastery;
 					dmg.max *= mastery;
 					break;
@@ -1325,7 +1325,7 @@
 		allSkillDamage: function (unit) {
 			let skills = {};
 			let self = this;
-			me.getSkill(4).forEach(function (skill) {
+			GameData.myReference.getSkill(4).forEach(function (skill) {
 				if (self.nonDamage.hasOwnProperty(skill[0])) {
 					return false; // Doesnt do damage
 				}
@@ -1480,10 +1480,10 @@
 			return stat ? (unit.getStat ? unit.getStat(stat) : MonsterData[unit][type]) : 0;
 		},
 		getConviction: function () {
-			let merc = me.getMerc(), sl = this.skillLevel(123); // conviction
+			let merc = GameData.myReference.getMerc(), sl = this.skillLevel(123); // conviction
 			if (( // Either me, or merc is wearing a conviction
 				merc && merc.getItemsEx().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first()
-				|| me.getItemsEx().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first())) {
+				|| GameData.myReference.getItemsEx().filter(item => item.getPrefix(sdk.locale.items.Infinity)).first())) {
 				sl = 12;
 			}
 			return sl > 0 ? Math.min(150, 30 + (sl - 1) * 5) : 0;
@@ -1533,7 +1533,7 @@
 
 				if (avgDmg > 0 && (!isUndead || !buffDamageInfo[sk].undeadOnly)) {
 					let resist = this.monsterResist(unit, buffDamageInfo[sk].type);
-					let pierce = me.getStat(this.pierceMap[buffDamageInfo[sk].type]);
+					let pierce = GameData.myReference.getStat(this.pierceMap[buffDamageInfo[sk].type]);
 
 					if (this.convictionEligible[buffDamageInfo[sk].type]) {
 						resist -= (resist >= 100 ? conviction / 5 : conviction);
@@ -1573,7 +1573,7 @@
 
 					if (avgDmg > 0 && (!isUndead || !skillDamageInfo[sk].undeadOnly)) {
 						let resist = this.monsterResist(unit, skillDamageInfo[sk].type);
-						let pierce = me.getStat(this.pierceMap[skillDamageInfo[sk].type]);
+						let pierce = GameData.myReference.getStat(this.pierceMap[skillDamageInfo[sk].type]);
 
 						if (this.convictionEligible[skillDamageInfo[sk].type]) {
 							resist -= (resist >= 100 ? conviction / 5 : conviction);
@@ -1597,7 +1597,7 @@
 					tmpEffort /= this.dmgModifier(sk | 0, parent || unit);
 
 					// care for mana
-					if (me.mp < Skills.manaCost[sk]) {
+					if (GameData.myReference.mp < Skills.manaCost[sk]) {
 						tmpEffort *= 5; // More effort in a skill we dont have mana for
 					}
 
@@ -1639,14 +1639,14 @@
 			let effortpool = 0, raritypool = 0;
 			skills = skills || this.allSkillDamage();
 			AreaData[areaID].forEachMonsterAndMinion((mon, rarity, parent) => {
-				effortpool += rarity * this.monsterExp(mon.Index, areaID) * this.levelModifier(me.charlvl, this.monsterLevel(mon.Index, areaID)) / this.monsterEffort(mon.Index, areaID, skills, parent && parent.Index).effort;
+				effortpool += rarity * this.monsterExp(mon.Index, areaID) * this.levelModifier(GameData.myReference.charlvl, this.monsterLevel(mon.Index, areaID)) / this.monsterEffort(mon.Index, areaID, skills, parent && parent.Index).effort;
 				raritypool += rarity;
 			});
 
 			return raritypool ? effortpool / raritypool : 0;
 		},
 		mostUsedSkills: function (force = false) {
-			if (!force && me.hasOwnProperty('__cachedMostUsedSkills') && me.__cachedMostUsedSkills) return me.__cachedMostUsedSkills;
+			if (!force && GameData.myReference.hasOwnProperty('__cachedMostUsedSkills') && GameData.myReference.__cachedMostUsedSkills) return GameData.myReference.__cachedMostUsedSkills;
 
 			const effort = [], uniqueSkills = [];
 			for (let i = 50; i < 120; i++) {
@@ -1658,7 +1658,7 @@
 
 			effort
 				.filter(e => e !== null && typeof e === 'object' && e.hasOwnProperty('skill'))
-				.filter(x => me.getSkill(x.skill, 0)) // Only skills where we have hard points in
+				.filter(x => GameData.myReference.getSkill(x.skill, 0)) // Only skills where we have hard points in
 				.filter(x => Skills.class[x.skill] < 7) // Needs to be a skill of a class, not my class but a class
 				.map(x =>
 					// Search for this unique skill
@@ -1678,8 +1678,9 @@
 				);
 
 
-			return (me.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
+			return (GameData.myReference.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
 		},
+		myReference: me,
 		potionEffect: function (potionClassId, charClass = me.classid) {
 			return (Potions.hp[potionClassId] || Potions.mp[potionClassId]).effect[charClass];
 		}

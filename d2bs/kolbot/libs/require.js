@@ -4,7 +4,9 @@
  */
 
 !isIncluded('polyfill.js') && include('polyfill.js');
-if (typeof global === 'undefined') this['global'] = this; // need a var here as a let would block the scope
+
+// noinspection ThisExpressionReferencesGlobalObjectJS <-- definition of global here
+typeof global === 'undefined' && (this['global'] = this);
 
 global['module'] = {exports: undefined};
 const require = (function (include, isIncluded, print, notify) {
