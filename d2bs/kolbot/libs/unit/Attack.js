@@ -8,6 +8,26 @@
 
 	Unit.prototype.clear = function (range, spectype) {
 		let start = [];
+		let shamans = [
+			sdk.monsters.FallenShaman,
+			sdk.monsters.CarverShaman2,
+			sdk.monsters.DevilkinShaman2,
+			sdk.monsters.DarkShaman1,
+			sdk.monsters.WarpedShaman,
+			sdk.monsters.CarverShaman,
+			sdk.monsters.DevilkinShaman,
+			sdk.monsters.DarkShaman2
+		];
+		let fallens = [
+			sdk.monsters.Fallen,
+			sdk.monsters.Carver2,
+			sdk.monsters.Devilkin2,
+			sdk.monsters.DarkOne1,
+			sdk.monsters.WarpedFallen,
+			sdk.monsters.Carver1,
+			sdk.monsters.Devilkin,
+			sdk.monsters.DarkOne2
+		];
 		//ToDo; keep track of the place we are at
 		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
@@ -26,14 +46,40 @@
 				if (!spectype || typeof spectype !== 'number') return true; // No spectype =  all monsters
 				return unit.spectype & spectype;
 			})
-			.sort((a, b) => GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5))
+			.sort((a, b) => {
+				// shamans are a mess early game
+				let isShamanA = shamans.indexOf(a.classid) > -1;
+				let isFallenB = fallens.indexOf(b.classid) > -1;
+				if (isShamanA && isFallenB) {
+					// return shaman first
+					return -1;
+				}
+				return GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5)
+			});
 
 		// If we clear around _me_ we move around, but just clear around where we started
 		let units = getUnits_filtered(), unit;
 		if (me === this) start = [me.x, me.y];
 
 		while (units.length) {
-			while ((unit = units.shift()) && unit.attack());
+			while (unit = units.shift()) {
+				if (fallens.indexOf(unit.classid) > -1) {
+					// unit is a fallen, find the shaman
+					let shamansAround = getUnits(sdk.unittype.Monsters)
+						.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && getDistance(unit, u) <= range && u.distance <= range);
+					var shaman;
+					while (shaman = shamansAround.shift()) {
+						print("SHAMAN TO KILL");
+						//print(shaman);
+						shaman.kill();
+						// come back
+						unit.moveTo();
+						shamansAround = getUnits(sdk.unittype.Monsters)
+							.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && getDistance(unit, u) <= range && u.distance <= range);
+					}
+				}
+				unit.kill();
+			}
 			units = getUnits_filtered();
 		}
 		return true;
