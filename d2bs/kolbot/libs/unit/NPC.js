@@ -4,6 +4,8 @@
 Unit.prototype.openMenu = function (addDelay) {
 	const Config = require('Config');
 	const Packet = require('PacketHelpers');
+	const Pather = require('Pather');
+	const Misc = require('Misc');
 	if (Config.PacketShopping) {
 		return Packet.openMenu(this);
 	}
@@ -57,6 +59,7 @@ Unit.prototype.openMenu = function (addDelay) {
 Unit.prototype.startTrade = function (mode) {
 	const Config = require('Config');
 	const Packet = require('PacketHelpers');
+	const Misc = require('Misc');
 	if (Config.PacketShopping) {
 		return Packet.startTrade(this, mode);
 	}
