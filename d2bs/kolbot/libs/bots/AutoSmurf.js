@@ -72,15 +72,9 @@
 
 		function updatePickit() {
 			print("updatePickit");
-			for (var potId in GameData.Potions.hp) {
-				var effect = GameData.potionEffect(potId) / me.hpmax * 100;
-				if (effect >= Config.UseHP) {
-					NTIP.AddEntry("[name] == "+potId);
-				}
-			}
-			for (var potId in GameData.Potions.mp) {
-				var effect = GameData.potionEffect(potId) / me.mpmax * 100;
-				if (effect >= Config.UseMP) {
+			for (var potId in GameData.Potions) {
+				var cost = GameData.Potions[potId].cost;
+				if (cost == undefined || cost > me.gold) {
 					NTIP.AddEntry("[name] == "+potId);
 				}
 			}
