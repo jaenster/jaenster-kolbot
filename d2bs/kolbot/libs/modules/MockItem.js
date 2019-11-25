@@ -72,7 +72,6 @@
 	 * @constructor
 	 */
 	function MockItem(settings = {}) {
-		const self = this;
 		if (typeof settings !== 'object' && settings) settings = {};
 		settings = Object.assign({}, defaultSettings, settings);
 		Object.keys(settings).forEach(k => this[k] = settings[k]);
@@ -114,12 +113,31 @@
 		};
 
 		this.store = () => JSON.stringify(Object.keys(settings).reduce((a, key) => a[key] = this[key], {}));
+
+		Object.keys(Unit.prototype)
+			.filter(key=>typeof this[key] === 'undefined')
+			.forEach(key=> this[key]= (...args) => Unit.prototype[key].apply(this,args));
 	}
 
 	MockItem.fromItem = function (item, settings = {}) {
 		Object.keys(item).forEach(key => settings[key] = item[key]);
 		settings.socketedWith = item.getItemsEx().map(item => MockItem.fromItem(item)) || []; // Mock its sockets too
-		const stats = item.getStat(-1);
+		const runewordsFlags = (function () {
+			if (!item.getFlag(0x4000000)) return undefined;
+
+			const states = [];
+			for (let x = 0; x < 358; x++) {
+				const zero = item.getStat(x, 0);
+				zero && states.push([x, 0, zero]);
+				for (let y = 1; y < 281; y++) {
+					const second = item.getStat(x, y);
+					second && second !== zero && states.push([x, y, second]);
+				}
+			}
+			return states;
+
+		}).call();
+		const stats = runewordsFlags || item.getStat(-1); // Doesnt contain runeword properties
 		settings.overrides = {
 			stat: (stats || []).reduce((accumulator, stats) => {
 				const [major, minor, value] = stats,

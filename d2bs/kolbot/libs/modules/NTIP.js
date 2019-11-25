@@ -551,7 +551,7 @@
 		// Compile the line, to 1) remove the eval lines, and 2) increase the speed
 		for (let i = 0; i < 2; i++) {
 			if (p_result[i].length) {
-				p_result[i] = (new Function('return item =>' + p_result[i] + ';')).call(); // generate function out of
+				p_result[i] = (new Function('return item =>' + p_result[i] + ';')).call(null); // generate function out of
 			}
 
 		}
