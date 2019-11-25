@@ -352,38 +352,42 @@
 			print('identifing');
 			let returnTo = {area: me.area, x: me.x, y: me.y};
 			// We can id right now. So lets
+			const item = getUnits(4, -1, -1, gid).first();
+			if (!item) {
+				return false; // Without an item, we cant id the item
+			}
 
-			// it can be a while ago, got the tome
-			let tome = me.findItem(519, 0, 3); // ToDo Use loose scrolls
-			if (tome) {
-				const item = getUnits(4, -1, -1, gid).first();
-				if (!tome || !item) {
-					return; // Without an tome or item, we cant id the item
-				}
-
-				// send the packet we right click on the tome
-
-				//  3 attempts
-				for (let i = 0, timer = getTickCount();
-					 i < 3 && getCursorType() !== 6;
-					 i++, timer = getTickCount()
-				) {
-					sendPacket(1, 0x27, 4, gid, 4, tome.gid);
-					while (getCursorType() !== 6) {
-						delay(3);
-						if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
-					}
-				}
-			} else { // Dont have a tome
+			let tome = me.findItem(sdk.items.idtome, sdk.itemmode.inStorage, sdk.storage.Inventory);
+			let scroll = me.findItem(sdk.items.idScroll, sdk.itemmode.inStorage, sdk.storage.Inventory);
+			let idTool = scroll || tome; // scroll priority
+			if (!idTool || (tome && tome.getStat(sdk.stats.Quantity) == 0)) { // Dont have a scroll or tome, or is empty
 
 				//ToDo; go to cain if he is closer by and we dont have scrolls & nothing else to identify
 
 				Town.goToTown();
 				// Lets go to town to identify
 				const npc = Town.initNPC("Shop", "identify");
-				const scroll = npc.getItem(sdk.items.idScroll);
-				scroll.buy();
-				tome = scroll;
+				scroll = npc.getItem(sdk.items.idScroll);
+				if (!scroll.buy()) {
+					return false; // cannot buy scroll, cannot id
+				}
+				// buying scroll put it in tome
+				idTool = tome ? tome : scroll;
+			}
+
+
+			// send the packet we right click on the tome or scroll
+
+			//  3 attempts
+			for (let i = 0, timer = getTickCount();
+				 i < 3 && getCursorType() !== 6;
+				 i++, timer = getTickCount()
+			) {
+				sendPacket(1, 0x27, 4, gid, 4, idTool.gid);
+				while (getCursorType() !== 6) {
+					delay(3);
+					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
+				}
 			}
 
 			print('Identified cursor? ' + (getCursorType() === 6));
@@ -393,7 +397,7 @@
 				 i++, timer = getTickCount()
 			) {
 				print('send packet of identifing');
-				getCursorType() === 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
+				getCursorType() === 6 && sendPacket(1, 0x27, 4, gid, 4, idTool.gid);
 				while (!item.identified) {
 					delay(3);
 					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
@@ -413,8 +417,7 @@
 			return !failed;
 		}
 
-		const tome = me.findItem(519, 0, 3);
-		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
+		if (!item.identified && item.location === sdk.storage.Inventory) {
 			const gid = item.gid;
 
 			print('identify?');
