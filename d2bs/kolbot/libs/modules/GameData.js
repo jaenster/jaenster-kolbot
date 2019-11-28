@@ -1164,7 +1164,7 @@
 		getAmp: function () {
 			return this.skillLevel(66) ? 100 : (this.skillLevel(87) ? 50 : 0);
 		},
-		monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false) {
+		monsterEffort: function (unit, areaID, skillDamageInfo = undefined, parent = undefined, preattack = false, all = false) {
 			let eret = {effort: Infinity, skill: -1, type: "Physical"};
 			let useCooldown = (typeof unit === 'number' ? false : Boolean(GameData.myReference.getState(121))),
 				hp = this.monsterMaxHP(typeof unit.classid === 'number' ? unit.classid : unit, areaID);
