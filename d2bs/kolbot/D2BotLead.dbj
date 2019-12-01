@@ -278,7 +278,7 @@ function main() {
 					DataFile.updateStats("ingameTick");
 				}
 
-				D2Bot.updateStatus("Game: " + me.gamename + timer(gameStart));
+				//D2Bot.updateStatus("Game: " + me.gamename + timer(gameStart));
 			}
 
 			delay(1000);

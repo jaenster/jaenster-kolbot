@@ -211,7 +211,7 @@ function main() {
 					DataFile.updateStats("runs", gameCount);
 				}
 
-				D2Bot.updateStatus("Game: " + me.gamename + timer(gameStart));
+				//D2Bot.updateStatus("Game: " + me.gamename + timer(gameStart));
 			}
 
 			delay(1000);
