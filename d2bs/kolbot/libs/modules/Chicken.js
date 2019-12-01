@@ -172,22 +172,6 @@
 
 		const PacketBuilder = require('PacketBuilder');
 		const Worker = require('Worker');
-		// Handle NPC dialogs better
-		addEventListener('gamepacketsent', bytes => bytes && bytes.length > 8 && bytes[0] === 0x2F &&
-			Worker.push(() => {
-
-				// terminate chat / dialog
-				const terminate = (new PacketBuilder).byte(0x30);
-				for (let i = 1; i < bytes.length; i++) terminate.byte(bytes[i]);
-				terminate.send();
-
-				// interact again
-				const interact = (new PacketBuilder()).byte(0x13);
-				for (let i = 1; i < bytes.length; i++) interact.byte(bytes[i]);
-				interact.send();
-
-			}) && false/*dont block the packet*/);
-
 		while (true) delay(1000);
 	}
 

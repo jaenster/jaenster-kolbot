@@ -34,9 +34,12 @@
 				Pickit.LoadFiles(Config.PickitFiles);
 			}
 
-			Config.Party && require('Party');
-
 			if (currentScript === 'default.dbj') {
+				Config.Party && require('Party');
+
+				// Load the InGameStatus stuff
+				require('InGameStatus');
+
 				if (Array.isArray(Config.QuitList) && Config.QuitList.length || (typeof Config.QuitList === 'string' && Config.QuitList.length)) {
 					require('QuitList');
 				}
