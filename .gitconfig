@@ -1,0 +1,2 @@
+[filter "ignore_file"]
+        clean = ./scripts/discard_changes %f
