@@ -1,1 +1,2 @@
-git show :$1
+:; git show :$1; exit $?
+git show %1
