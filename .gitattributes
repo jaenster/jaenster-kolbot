@@ -1,7 +1,0 @@
-data/cdkeys.json filter=ignore_file
-data/profile.json filter=ignore_file
-data/schedules.json filter=ignore_file
-logs/Console.rtf filter=ignore_file
-logs/exceptions.log filter=ignore_file
-logs/keyinfo.log filter=ignore_file
-d2bs/d2bs.ini filter=ignore_file

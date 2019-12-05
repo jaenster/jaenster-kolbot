@@ -1,2 +1,0 @@
-:; git show :$1; exit $?
-git show %1
