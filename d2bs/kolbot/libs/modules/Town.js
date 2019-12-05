@@ -352,6 +352,27 @@
 		return true;
 	};
 
+	// Purchases and drinks potions in town.
+	Town.stackPotions = function(type, amount) {
+        const npc = Town.initNPC("Shop", "buyPotions");
+        for(var i = 0; i < amount; i++){
+			const npcPotion = Town.getPotion(npc, type);
+			print(JSON.stringify(npcPotion));
+			if (npcPotion) {
+				npcPotion.buy(false);
+				const potion = me.getItem(npcPotion.classid);
+				if (potion) {
+					do {
+						if ((potion.mode === 0 && potion.location === 3) || potion.mode === 2) {
+							me.overhead('Drinking potion');
+							potion.interact();
+						}
+					} while (potion.getNext());
+				}
+			}
+        }
+	};
+
 	// Check when to shift-buy potions
 	Town.shiftCheck = function (col, beltSize) {
 		var i, fillType;
@@ -422,6 +443,15 @@
 		if (type === "hp" || type === "mp") {
 			for (i = 5; i > 0; i -= 1) {
 				result = npc.getItem(type + i);
+
+				if (result) {
+					return result;
+				}
+			}
+		}
+		else if ( type === "yps" || type === "vps" || type === "wms") {
+			for (i = 5; i > 0; i -= 1) {
+				result = npc.getItem(type);
 
 				if (result) {
 					return result;

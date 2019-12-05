@@ -6,6 +6,9 @@
 
 module.exports =  function(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
+	if (Config.stackPotions && me.charlvl < 25) {
+		Town.stackPotions('vps', 5); //Stack 5 antidotes
+	}
 	if (!Pather.journeyTo(sdk.areas.CatacombsLvl4)) {
 		throw Error('Failed to move to Andariel');
 	}
