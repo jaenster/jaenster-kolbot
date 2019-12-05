@@ -357,14 +357,13 @@
         const npc = Town.initNPC("Shop", "buyPotions");
         for(var i = 0; i < amount; i++){
 			const npcPotion = Town.getPotion(npc, type);
-			print(JSON.stringify(npcPotion));
 			if (npcPotion) {
 				npcPotion.buy(false);
 				const potion = me.getItem(npcPotion.classid);
 				if (potion) {
 					do {
 						if ((potion.mode === 0 && potion.location === 3) || potion.mode === 2) {
-							me.overhead('Drinking potion');
+							me.overhead('Stacking potion');
 							potion.interact();
 						}
 					} while (potion.getNext());
