@@ -354,22 +354,27 @@
 
 	// Purchases and drinks potions in town.
 	Town.stackPotions = function(type, amount) {
-        const npc = Town.initNPC("Shop", "buyPotions");
-        for(var i = 0; i < amount; i++){
+		if (!amount) amount = 4; // TODO: Calculate monster effort and correlate it to the number of potions to stack.
+		if (me.gold < amount * 25) {
+			print('stackPotions: Not enough gold for ' + amount + ' potions');
+			return false;
+		}
+		const npc = Town.initNPC("Shop", "buyPotions");
+		for (var i = 0; i < amount; i++) {
 			const npcPotion = Town.getPotion(npc, type);
 			if (npcPotion) {
 				npcPotion.buy(false);
-				const potion = me.getItem(npcPotion.classid);
-				if (potion) {
-					do {
-						if ((potion.mode === 0 && potion.location === 3) || potion.mode === 2) {
-							me.overhead('Stacking potion');
-							potion.interact();
-						}
-					} while (potion.getNext());
-				}
 			}
-        }
+		}
+		me.getItems(npcPotion.classid)
+			.filter(potion => (potion.classid == npcPotion.classid && (potion.mode === sdk.itemmode.inBelt || potion.location === sdk.storage.Inventory)))
+			.every((potion, index) => {
+				if (index >= amount) return false; // Only drink n (amount) potions.
+				me.overhead('Stacking potion (' + (index + 1) + '/' + amount + ')');
+				potion.interact();
+				return true;
+			});
+		return true;
 	};
 
 	// Check when to shift-buy potions
