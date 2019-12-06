@@ -343,12 +343,30 @@
 		515: { // normal rv
 			effect: [35, 35, 35, 35, 35, 35, 35],
 			cost: undefined,
-			duration: 0.04 // instant refill (1 frame time)
+			duration: 0.04, // instant refill (1 frame time)
+			recipe: [
+				[
+					589, 589, 589,
+					594, 594, 594,
+					item => item.itemType === 91 /*chipped gem*/
+				]
+			]
 		},
 		516: { // full rv
 			effect: [100, 100, 100, 100, 100, 100, 100],
 			cost: undefined,
-			duration: 0.04 // instant refill (1 frame time)
+			duration: 0.04, // instant refill (1 frame time)
+			recipe: [ // Not doing anything with this, but. We can in the future
+				// Recipe is either an classid, or an function that returns true on the correct item
+				[
+					515, 515, 515 // 3 normal rv's
+				],
+				[	// 3 normal hp pots & 3 normal mp pots & a gem
+					589, 589, 589,
+					594, 594, 594,
+					item => item.itemType === 93 /*std gem*/
+				],
+			]
 		}
 	};
 
@@ -383,7 +401,7 @@
 	Quests.MandatoryQuests = MandatoryQuests;
 	Quests.RewardedQuests = RewardedQuests;
 
-	Quests.questScore = function(q) {
+	Quests.questScore = function (q) {
 		var score = 0;
 		var highestAct = me.highestAct;
 		if (!me.getQuest(q.index, 0) && highestAct >= q.act) {
@@ -394,19 +412,17 @@
 			if (q.mandatory || q.reward) {
 				// the quest is mandatory or reward
 				// the higher the act is, the less this quest is good to do, aka do earliest quest
-				score += q.act > 0 ? 1/q.act : 0;
-				var questEffort = q.areas.reduce((acc, a) => acc+GameData.areaEffort(a), 0);
-				score += questEffort > 0 ? 1/questEffort : 0;
+				score += q.act > 0 ? 1 / q.act : 0;
+				var questEffort = q.areas.reduce((acc, a) => acc + GameData.areaEffort(a), 0);
+				score += questEffort > 0 ? 1 / questEffort : 0;
 
-				var bossEffort = q.bosses.reduce((acc, boss) => acc+GameData.monsterEffort(boss, q.areas.last()).effort, 0);
-				score += bossEffort > 0 ? 1/bossEffort : 0;
+				var bossEffort = q.bosses.reduce((acc, boss) => acc + GameData.monsterEffort(boss, q.areas.last()).effort, 0);
+				score += bossEffort > 0 ? 1 / bossEffort : 0;
 				// monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false)
 			}
-		}
-		else if (highestAct < q.act) {
+		} else if (highestAct < q.act) {
 			// we can not access the quest act
-		}
-		else {
+		} else {
 			// we have done this quest
 		}
 
@@ -416,187 +432,187 @@
 
 	Quests.actForQuest = function (q) {
 		switch (true) {
-		case (q >= sdk.quests.SpokeToWarriv && q <= sdk.quests.AbleToGotoActII) || q == sdk.quests.SecretCowLevel:
-			return 1;
-		case (q >= sdk.quests.SpokeToJerhyn && q <= sdk.quests.AbleToGotoActIII):
-			return 2;
-		case (q >= sdk.quests.SpokeToHratli && q <= sdk.quests.AbleToGotoActIV):
-			return 3;
-		case (q >= sdk.quests.SpokeToTyrael && q <= sdk.quests.AbleToGotoActV):
-			return 4;
-		case (q >= sdk.quests.SiegeOnHarrogath && q < sdk.quests.SecretCowLevel):
-			return 5;
+			case (q >= sdk.quests.SpokeToWarriv && q <= sdk.quests.AbleToGotoActII) || q == sdk.quests.SecretCowLevel:
+				return 1;
+			case (q >= sdk.quests.SpokeToJerhyn && q <= sdk.quests.AbleToGotoActIII):
+				return 2;
+			case (q >= sdk.quests.SpokeToHratli && q <= sdk.quests.AbleToGotoActIV):
+				return 3;
+			case (q >= sdk.quests.SpokeToTyrael && q <= sdk.quests.AbleToGotoActV):
+				return 4;
+			case (q >= sdk.quests.SiegeOnHarrogath && q < sdk.quests.SecretCowLevel):
+				return 5;
 		}
 		return undefined;
 	}
 
 	Quests.areasForQuest = function (q) {
 		switch (q) {
-		case sdk.quests.SpokeToWarriv:
-			return [sdk.areas.RogueEncampment];
+			case sdk.quests.SpokeToWarriv:
+				return [sdk.areas.RogueEncampment];
 
-		case sdk.quests.DenOfEvil:
-			return [sdk.areas.DenOfEvil];
+			case sdk.quests.DenOfEvil:
+				return [sdk.areas.DenOfEvil];
 
-		case sdk.quests.SistersBurialGrounds:
-			return [sdk.areas.BurialGrounds];
+			case sdk.quests.SistersBurialGrounds:
+				return [sdk.areas.BurialGrounds];
 
-		case sdk.quests.TheSearchForCain:
-			// scroll, stones, trist
-			return [sdk.areas.DarkWood, sdk.areas.StonyField, sdk.areas.Tristram];
+			case sdk.quests.TheSearchForCain:
+				// scroll, stones, trist
+				return [sdk.areas.DarkWood, sdk.areas.StonyField, sdk.areas.Tristram];
 
-		case sdk.quests.ForgottenTower:
-			return [sdk.areas.TowerCellarLvl5];
+			case sdk.quests.ForgottenTower:
+				return [sdk.areas.TowerCellarLvl5];
 
-		case sdk.quests.ToolsOfTheTrade:
-			return [sdk.areas.Barracks];
+			case sdk.quests.ToolsOfTheTrade:
+				return [sdk.areas.Barracks];
 
-		case sdk.quests.SistersToTheSlaughter:
-			return [sdk.areas.CatacombsLvl4];
+			case sdk.quests.SistersToTheSlaughter:
+				return [sdk.areas.CatacombsLvl4];
 
-		case sdk.quests.AbleToGotoActII:
-			return [sdk.areas.RogueEncampment];
+			case sdk.quests.AbleToGotoActII:
+				return [sdk.areas.RogueEncampment];
 
-		case sdk.quests.SpokeToJerhyn:
-			return [sdk.areas.LutGholein];
+			case sdk.quests.SpokeToJerhyn:
+				return [sdk.areas.LutGholein];
 
-		case sdk.quests.RadamentsLair:
-			return [sdk.areas.A2SewersLvl3];
+			case sdk.quests.RadamentsLair:
+				return [sdk.areas.A2SewersLvl3];
 
-		case sdk.quests.TheHoradricStaff:
-			// cube, staff, amu
-			return [sdk.areas.HallsOfDeadLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.ClawViperTempleLvl2];
+			case sdk.quests.TheHoradricStaff:
+				// cube, staff, amu
+				return [sdk.areas.HallsOfDeadLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.ClawViperTempleLvl2];
 
-		case sdk.quests.TheTaintedSun:
-			// amu + speak to Drognan
-			return [sdk.areas.ClawViperTempleLvl2, sdk.areas.LutGholein];
+			case sdk.quests.TheTaintedSun:
+				// amu + speak to Drognan
+				return [sdk.areas.ClawViperTempleLvl2, sdk.areas.LutGholein];
 
-		case sdk.quests.TheArcaneSanctuary:
-			return [sdk.areas.ArcaneSanctuary];
+			case sdk.quests.TheArcaneSanctuary:
+				return [sdk.areas.ArcaneSanctuary];
 
-		case sdk.quests.TheSummoner:
-			return [sdk.areas.ArcaneSanctuary];
+			case sdk.quests.TheSummoner:
+				return [sdk.areas.ArcaneSanctuary];
 
-		case sdk.quests.TheSevenTombs:
-			return [sdk.areas.DurielsLair];
+			case sdk.quests.TheSevenTombs:
+				return [sdk.areas.DurielsLair];
 
-		case sdk.quests.AbleToGotoActIII:
-			return [sdk.areas.LutGholein];
+			case sdk.quests.AbleToGotoActIII:
+				return [sdk.areas.LutGholein];
 
-		case sdk.quests.SpokeToHratli:
-			return [sdk.areas.KurastDocktown];
+			case sdk.quests.SpokeToHratli:
+				return [sdk.areas.KurastDocktown];
 
-		case sdk.quests.TheGoldenBird:
-			return []; // any, kill an elite and have a chance that it drops golden bird
+			case sdk.quests.TheGoldenBird:
+				return []; // any, kill an elite and have a chance that it drops golden bird
 
-		case sdk.quests.BladeOfTheOldReligion:
-			return [sdk.areas.FlayerJungle];
+			case sdk.quests.BladeOfTheOldReligion:
+				return [sdk.areas.FlayerJungle];
 
-		case sdk.quests.KhalimsWill:
-			// eye, brain, heart, flail
-			return [sdk.areas.SpiderCavern, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl2, sdk.areas.Travincal];
+			case sdk.quests.KhalimsWill:
+				// eye, brain, heart, flail
+				return [sdk.areas.SpiderCavern, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl2, sdk.areas.Travincal];
 
-		case sdk.quests.LamEsensTome:
-			return [sdk.areas.RuinedTemple];
+			case sdk.quests.LamEsensTome:
+				return [sdk.areas.RuinedTemple];
 
-		case sdk.quests.TheBlackenedTemple:
-			return [sdk.areas.Travincal];
+			case sdk.quests.TheBlackenedTemple:
+				return [sdk.areas.Travincal];
 
-		case sdk.quests.TheGuardian:
-			return [sdk.areas.DuranceOfHateLvl3];
+			case sdk.quests.TheGuardian:
+				return [sdk.areas.DuranceOfHateLvl3];
 
-		case sdk.quests.AbleToGotoActIV:
-			// meph red portal
-			return [sdk.areas.DuranceOfHateLvl3];
+			case sdk.quests.AbleToGotoActIV:
+				// meph red portal
+				return [sdk.areas.DuranceOfHateLvl3];
 
-		case sdk.quests.SpokeToTyrael:
-			return [sdk.areas.PandemoniumFortress];
+			case sdk.quests.SpokeToTyrael:
+				return [sdk.areas.PandemoniumFortress];
 
-		case sdk.quests.TheFallenAngel:
-			return [sdk.areas.PlainsOfDespair];
+			case sdk.quests.TheFallenAngel:
+				return [sdk.areas.PlainsOfDespair];
 
-		case sdk.quests.HellsForge:
-			return [sdk.areas.RiverOfFlame];
+			case sdk.quests.HellsForge:
+				return [sdk.areas.RiverOfFlame];
 
-		case sdk.quests.TerrorsEnd:
-			return [sdk.areas.ChaosSanctuary];
+			case sdk.quests.TerrorsEnd:
+				return [sdk.areas.ChaosSanctuary];
 
-		case sdk.quests.AbleToGotoActV:
-			return [sdk.areas.PandemoniumFortress];
+			case sdk.quests.AbleToGotoActV:
+				return [sdk.areas.PandemoniumFortress];
 
-		case sdk.quests.SiegeOnHarrogath:
-			return [sdk.areas.BloodyFoothills];
+			case sdk.quests.SiegeOnHarrogath:
+				return [sdk.areas.BloodyFoothills];
 
-		case sdk.quests.RescueonMountArreat:
-			return [sdk.areas.FrigidHighlands];
+			case sdk.quests.RescueonMountArreat:
+				return [sdk.areas.FrigidHighlands];
 
-		case sdk.quests.PrisonOfIce:
-			// anya and speak to malah
-			return [sdk.areas.FrozenRiver, sdk.areas.Harrogath];
+			case sdk.quests.PrisonOfIce:
+				// anya and speak to malah
+				return [sdk.areas.FrozenRiver, sdk.areas.Harrogath];
 
-		case sdk.quests.BetrayalOfHaggorath:
-			return [sdk.areas.NihlathaksTemple];
+			case sdk.quests.BetrayalOfHaggorath:
+				return [sdk.areas.NihlathaksTemple];
 
-		case sdk.quests.RiteOfPassage:
-			return [sdk.areas.ArreatSummit];
+			case sdk.quests.RiteOfPassage:
+				return [sdk.areas.ArreatSummit];
 
-		case sdk.quests.EveOfDestruction:
-			return [sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber];
+			case sdk.quests.EveOfDestruction:
+				return [sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber];
 
-		case sdk.quests.SecretCowLevel:
-			// get wirt and open portal
-			return [sdk.areas.Tristram, sdk.areas.RogueEncampment];
+			case sdk.quests.SecretCowLevel:
+				// get wirt and open portal
+				return [sdk.areas.Tristram, sdk.areas.RogueEncampment];
 		}
 		return [];
 	}
 
 	Quests.bossForQuest = function (q) {
 		switch (q) {
-		case sdk.quests.SistersBurialGrounds:
-			return [sdk.monsters.Bloodraven];
+			case sdk.quests.SistersBurialGrounds:
+				return [sdk.monsters.Bloodraven];
 
-		case sdk.quests.ForgottenTower:
-			return [sdk.monsters.TheCountess];
+			case sdk.quests.ForgottenTower:
+				return [sdk.monsters.TheCountess];
 
-		case sdk.quests.SistersToTheSlaughter:
-			return [sdk.monsters.Andariel];
+			case sdk.quests.SistersToTheSlaughter:
+				return [sdk.monsters.Andariel];
 
-		case sdk.quests.RadamentsLair:
-			return [sdk.monsters.Radament];
+			case sdk.quests.RadamentsLair:
+				return [sdk.monsters.Radament];
 
-		case sdk.quests.TheSummoner:
-			return [sdk.monsters.Summoner];
+			case sdk.quests.TheSummoner:
+				return [sdk.monsters.Summoner];
 
-		case sdk.quests.TheSevenTombs:
-			return [sdk.monsters.Duriel];
+			case sdk.quests.TheSevenTombs:
+				return [sdk.monsters.Duriel];
 
-		case sdk.quests.KhalimsWill:
-		case sdk.quests.TheBlackenedTemple:
-			return [sdk.monsters.GelebFlamefinger, sdk.monsters.IsmailVilehand, sdk.monsters.ToorcIcefist];
+			case sdk.quests.KhalimsWill:
+			case sdk.quests.TheBlackenedTemple:
+				return [sdk.monsters.GelebFlamefinger, sdk.monsters.IsmailVilehand, sdk.monsters.ToorcIcefist];
 
-		case sdk.quests.TheGuardian:
-			return [sdk.monsters.Mephisto];
+			case sdk.quests.TheGuardian:
+				return [sdk.monsters.Mephisto];
 
-		case sdk.quests.TheFallenAngel:
-			return [sdk.monsters.Izual];
+			case sdk.quests.TheFallenAngel:
+				return [sdk.monsters.Izual];
 
-		case sdk.quests.TerrorsEnd:
-			return [sdk.monsters.Diablo1];
+			case sdk.quests.TerrorsEnd:
+				return [sdk.monsters.Diablo1];
 
-		case sdk.quests.SiegeOnHarrogath:
-			return []; // TODO shenk id ?
+			case sdk.quests.SiegeOnHarrogath:
+				return []; // TODO shenk id ?
 
-		case sdk.quests.BetrayalOfHaggorath:
-			return [sdk.monsters.Nihlathak];
+			case sdk.quests.BetrayalOfHaggorath:
+				return [sdk.monsters.Nihlathak];
 
-		case sdk.quests.RiteOfPassage:
-			return [sdk.monsters.Ancient1, sdk.monsters.Ancient2, sdk.monsters.Ancient3];
+			case sdk.quests.RiteOfPassage:
+				return [sdk.monsters.Ancient1, sdk.monsters.Ancient2, sdk.monsters.Ancient3];
 
-		case sdk.quests.EveOfDestruction:
-			return [sdk.monsters.Crab];
+			case sdk.quests.EveOfDestruction:
+				return [sdk.monsters.Crab];
 
-		case sdk.quests.SecretCowLevel:
-			return [sdk.monsters.TheCowKing];
+			case sdk.quests.SecretCowLevel:
+				return [sdk.monsters.TheCowKing];
 		}
 		return [];
 	}
@@ -748,7 +764,8 @@
 			return level / total;
 		},
 		killExp: function (playerID, monsterID, areaID) {
-			let exp = this.monsterExp(monsterID, areaID), party = getParty(GameData.myReference), partyid = -1, level = 0, total = 0,
+			let exp = this.monsterExp(monsterID, areaID), party = getParty(GameData.myReference), partyid = -1,
+				level = 0, total = 0,
 				gamesize = 0;
 
 			if (!party) {
@@ -1700,7 +1717,7 @@
 			if (!effect) {
 				return 0;
 			}
-			return [515, 516].indexOf(potionClassId) > -1 ? GameData.myReference.hpmax/effect*100 : effect;
+			return [515, 516].indexOf(potionClassId) > -1 ? GameData.myReference.hpmax / effect * 100 : effect;
 		},
 
 		// returns the amount of life or mana (as absolute value, not percent) a potion gives
@@ -1712,7 +1729,7 @@
 			}
 			let duration = potion.duration;
 			if (duration) {
-				return effect/duration;
+				return effect / duration;
 			}
 			return 0;
 		},
@@ -1720,11 +1737,11 @@
 		// Returns the number of frames needed to cast a given skill at a given FCR for a given char.
 		castingFrames: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
 			// https://diablo.fandom.com/wiki/Faster_Cast_Rate
-			let effectiveFCR = Math.min(75, (fcr*120 / (fcr+120)) | 0);
+			let effectiveFCR = Math.min(75, (fcr * 120 / (fcr + 120)) | 0);
 			let isLightning = skillId == sdk.skills.Lightning || skillId == sdk.skills.ChainLightning;
 			let baseCastRate = [20, isLightning ? 19 : 14, 16, 16, 14, 15, 17][charClass];
 			if (isLightning) {
-				return Math.round(256*baseCastRate / (256*(100+effectiveFCR)/100));
+				return Math.round(256 * baseCastRate / (256 * (100 + effectiveFCR) / 100));
 			}
 
 			let animationSpeed = {
@@ -1733,12 +1750,12 @@
 				wolf: 229,
 				bear: 228
 			}[charClass == sdk.charclass.Druid ? this.shiftState() : "normal"];
-			return Math.ceil(256*baseCastRate / Math.floor(animationSpeed*(100+effectiveFCR)/100)) - 1;
+			return Math.ceil(256 * baseCastRate / Math.floor(animationSpeed * (100 + effectiveFCR) / 100)) - 1;
 		},
 
 		// Returns the duration in seconds needed to cast a given skill at a given FCR for a given char.
 		castingDuration: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
-			return this.castingFrames(skillId, fcr, charClass)/25;
+			return this.castingFrames(skillId, fcr, charClass) / 25;
 		}
 	};
 
