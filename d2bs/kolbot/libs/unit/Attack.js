@@ -7,7 +7,7 @@
 	const ignoreMonster = [];
 
 	Unit.prototype.clear = function (range, spectype,once=false) {
-		let start = [];
+		let start = [],startArea = me.area;
 		//ToDo; keep track of the place we are at
 		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
@@ -35,7 +35,7 @@
 		while (units.length) {
 			while ((unit = units.shift()) && unit.attack()) ;
 			units = getUnits_filtered();
-			if (once) return true;
+			if (once || startArea !== me.area) return true;
 		}
 		return true;
 	};

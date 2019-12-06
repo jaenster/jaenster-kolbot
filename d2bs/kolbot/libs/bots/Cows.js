@@ -124,12 +124,14 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	// Aslong we cant use the portal, we attack a bit
 	/** @type Unit */
+	let time = 0;
 	while (me.area !== sdk.areas.Tristram) {
 		let portal = Pather.getPortal(sdk.areas.Tristram);
+		time++;
 		if (portal) {
+			!!(time % 2) && me.area !== sdk.areas.Tristram && portal.clear(5, 0x00, true);
 			portal.moveTo();
 			portal.interact();
-			me.area !== sdk.areas.Tristram && portal.clear(5, 0x00, true)
 		} else {
 			delay(4);
 		}
@@ -183,7 +185,9 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 
 
 	const Promise = require('Promise');
-	new Promise(resolve => {
+	let done = false;
+	new Promise((resolve,reject) => {
+		if (done) reject(); // Done with cows so done looking for king
 		const king = getUnits(sdk.unittype.Monsters) // Get all monsters
 			.filter(x => x.name === getLocaleString(sdk.locale.monsters.TheCowKing)) // get those named cow king
 			.first(); // get the first
@@ -193,12 +197,15 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 		}
 	}).then(king => {
 		Town.goToTown();
+		print('King in the neighbourhood, aborting');
 		throw new Error('King found, aborting');
+	}).catch(() => {
+		print('Stop looking for king, as we stopped running cows')
 	});
 
 
 	require('Precast')();
 	this.clearCowLevel();
 
-	return true;
+	return done = true;
 }
