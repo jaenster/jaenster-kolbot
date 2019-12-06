@@ -961,6 +961,8 @@ NTIPAliasStat["plusskillbattlecry"] = [97,146];
 NTIPAliasStat["plusskillwerewolf"] = [97,223];
 NTIPAliasStat["plusskillshapeshifting"] = [97,224];	NTIPAliasStat["plusskilllycanthropy"] = [97,224];
 NTIPAliasStat["plusskillsummonspiritwolf"] = [97,227];
+NTIPAliasStat["skillcarrionvine"] = [107,231];
+NTIPAliasStat["skillfissure"] = [107,234];
 
 NTIPAliasStat["state"] = 98;
 NTIPAliasStat["itemfastergethitrate"] = 99;	NTIPAliasStat["fhr"] = 99;
