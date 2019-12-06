@@ -288,64 +288,340 @@
 
 //(AreaData);
 
-// FCRData
-	let amaFCRBreakpoints = {0: 19, 7: 18, 14: 17, 22: 16, 32: 15, 48: 14, 68: 13, 99: 12, 152: 11};
-	var amaFCRFrames = new Array(255);
-	for (var i in amaFCRBreakpoints) {
-		amaFCRFrames.fill(amaFCRBreakpoints[i], i);
-	}
 
-	let assaFCRBreakpoints = {0: 16, 8: 15, 16: 14, 27: 13, 42: 12, 65: 11, 102: 10, 174: 9};
-	var assaFCRFrames = new Array(255);
-	for (var i in assaFCRBreakpoints) {
-		assaFCRFrames.fill(assaFCRBreakpoints[i], i);
-	}
-
-	let barbFCRBreakpoints = {0: 13, 9: 12, 20: 11, 37: 10, 63: 9, 105: 8, 200: 7};
-	var barbFCRFrames = new Array(255);
-	for (var i in barbFCRBreakpoints) {
-		barbFCRFrames.fill(barbFCRBreakpoints[i], i);
-	}
-
-	let druidFCRBreakpoints = {
-		"human": {0: 18, 4: 17, 10: 16, 19: 15, 30: 14, 46: 13, 68: 12, 99: 11, 163: 10},
-		"bear": {0: 16, 7: 15, 15: 14, 26: 13, 40: 12, 63: 11, 99: 10, 163: 9},
-		"wolf": {0: 16, 6: 15, 14: 14, 26: 13, 40: 12, 60: 11, 95: 10, 157: 9}
+	const Potions = {
+		587: { // minorhealingpotion
+			effect: [45, 30, 30, 45, 60, 30, 45],
+			cost: 30,
+			duration: 7.68
+		},
+		588: { // lighthealingpotion
+			effect: [90, 60, 60, 90, 120, 60, 90],
+			cost: 67,
+			duration: 6.4
+		},
+		589: { // healingpotion
+			effect: [150, 100, 100, 150, 200, 100, 150],
+			cost: 112,
+			duration: 6.84
+		},
+		590: { // greaterhealingpotion
+			effect: [270, 180, 180, 270, 360, 180, 270],
+			cost: 225,
+			duration: 7.68
+		},
+		591: { // superhealingpotion
+			effect: [480, 320, 320, 480, 640, 320, 480],
+			cost: undefined,
+			duration: 10.24
+		},
+		592: { // minormanapotion
+			effect: [30, 40, 40, 30, 20, 40, 30],
+			cost: 60,
+			duration: 5.12
+		},
+		593: { // lightmanapotion
+			effect: [60, 80, 80, 60, 40, 80, 60],
+			cost: 135,
+			duration: 5.12
+		},
+		594: { // manapotion
+			effect: [120, 160, 160, 120, 80, 160, 120],
+			cost: 270,
+			duration: 5.12
+		},
+		595: { // greatermanapotion
+			effect: [225, 300, 300, 225, 150, 300, 225],
+			cost: 450,
+			duration: 5.12
+		},
+		596: { // supermanapotion
+			effect: [375, 500, 500, 375, 250, 500, 375],
+			cost: undefined,
+			duration: 5.12
+		},
+		515: { // normal rv
+			effect: [35, 35, 35, 35, 35, 35, 35],
+			cost: undefined,
+			duration: 0.04 // instant refill (1 frame time)
+		},
+		516: { // full rv
+			effect: [100, 100, 100, 100, 100, 100, 100],
+			cost: undefined,
+			duration: 0.04 // instant refill (1 frame time)
+		}
 	};
-	var druidFCRFrames = {
-		"human": new Array(255),
-		"bear": new Array(255),
-		"wolf": new Array(255)
+
+//(Potions);
+
+	const MandatoryQuests = [
+		sdk.quests.SistersToTheSlaughter, // kill Andy
+		sdk.quests.TheHoradricStaff, // make staff
+		sdk.quests.TheArcaneSanctuary, // go to arcane and find portal to tombs
+		sdk.quests.TheSummoner, // kill The Summoner
+		sdk.quests.TheSevenTombs, // kill Duriel
+		sdk.quests.KhalimsWill, // depends, if you have wp to meph not needed
+		sdk.quests.TheBlackenedTemple, // kill Travincal
+		sdk.quests.TheGuardian, // kill Meph
+		sdk.quests.TerrorsEnd, // kill Diablo
+		sdk.quests.RiteOfPassage, // kill Ancients (depends on charlvl)
+		sdk.quests.EveOfDestruction // kill Baal
+	];
+
+	const RewardedQuests = [
+		sdk.quests.DenOfEvil, // 1 skill + 1 respec
+		sdk.quests.RadamentsLair, // 1 skill
+		sdk.quests.TheGoldenBird, // 20 life
+		sdk.quests.LamEsensTome, // 5 stat pts
+		sdk.quests.TheFallenAngel, // 2 skills
+		sdk.quests.HellsForge, // 1 rune
+		sdk.quests.SiegeOnHarrogath, // 1 socket
+		sdk.quests.PrisonOfIce // 10@ res
+	];
+
+	const Quests = [];
+	Quests.MandatoryQuests = MandatoryQuests;
+	Quests.RewardedQuests = RewardedQuests;
+
+	Quests.questScore = function(q) {
+		var score = 0;
+		var highestAct = me.highestAct;
+		if (!me.getQuest(q.index, 0) && highestAct >= q.act) {
+			// we did not complete the quest
+			score += q.mandatory ? 2 : 0;
+			score += q.reward ? 2 : 0;
+
+			if (q.mandatory || q.reward) {
+				// the quest is mandatory or reward
+				// the higher the act is, the less this quest is good to do, aka do earliest quest
+				score += q.act > 0 ? 1/q.act : 0;
+				var questEffort = q.areas.reduce((acc, a) => acc+GameData.areaEffort(a), 0);
+				score += questEffort > 0 ? 1/questEffort : 0;
+
+				var bossEffort = q.bosses.reduce((acc, boss) => acc+GameData.monsterEffort(boss, q.areas.last()).effort, 0);
+				score += bossEffort > 0 ? 1/bossEffort : 0;
+				// monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false)
+			}
+		}
+		else if (highestAct < q.act) {
+			// we can not access the quest act
+		}
+		else {
+			// we have done this quest
+		}
+
+
+		return score;
 	}
-	for (var i in druidFCRBreakpoints) {
-		for (var j in druidFCRBreakpoints[i]) {
-			druidFCRFrames[i].fill(druidFCRBreakpoints[i][j], j);
+
+	Quests.actForQuest = function (q) {
+		switch (true) {
+		case (q >= sdk.quests.SpokeToWarriv && q <= sdk.quests.AbleToGotoActII) || q == sdk.quests.SecretCowLevel:
+			return 1;
+		case (q >= sdk.quests.SpokeToJerhyn && q <= sdk.quests.AbleToGotoActIII):
+			return 2;
+		case (q >= sdk.quests.SpokeToHratli && q <= sdk.quests.AbleToGotoActIV):
+			return 3;
+		case (q >= sdk.quests.SpokeToTyrael && q <= sdk.quests.AbleToGotoActV):
+			return 4;
+		case (q >= sdk.quests.SiegeOnHarrogath && q < sdk.quests.SecretCowLevel):
+			return 5;
+		}
+		return undefined;
+	}
+
+	Quests.areasForQuest = function (q) {
+		switch (q) {
+		case sdk.quests.SpokeToWarriv:
+			return [sdk.areas.RogueEncampment];
+
+		case sdk.quests.DenOfEvil:
+			return [sdk.areas.DenOfEvil];
+
+		case sdk.quests.SistersBurialGrounds:
+			return [sdk.areas.BurialGrounds];
+
+		case sdk.quests.TheSearchForCain:
+			// scroll, stones, trist
+			return [sdk.areas.DarkWood, sdk.areas.StonyField, sdk.areas.Tristram];
+
+		case sdk.quests.ForgottenTower:
+			return [sdk.areas.TowerCellarLvl5];
+
+		case sdk.quests.ToolsOfTheTrade:
+			return [sdk.areas.Barracks];
+
+		case sdk.quests.SistersToTheSlaughter:
+			return [sdk.areas.CatacombsLvl4];
+
+		case sdk.quests.AbleToGotoActII:
+			return [sdk.areas.RogueEncampment];
+
+		case sdk.quests.SpokeToJerhyn:
+			return [sdk.areas.LutGholein];
+
+		case sdk.quests.RadamentsLair:
+			return [sdk.areas.A2SewersLvl3];
+
+		case sdk.quests.TheHoradricStaff:
+			// cube, staff, amu
+			return [sdk.areas.HallsOfDeadLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.ClawViperTempleLvl2];
+
+		case sdk.quests.TheTaintedSun:
+			// amu + speak to Drognan
+			return [sdk.areas.ClawViperTempleLvl2, sdk.areas.LutGholein];
+
+		case sdk.quests.TheArcaneSanctuary:
+			return [sdk.areas.ArcaneSanctuary];
+
+		case sdk.quests.TheSummoner:
+			return [sdk.areas.ArcaneSanctuary];
+
+		case sdk.quests.TheSevenTombs:
+			return [sdk.areas.DurielsLair];
+
+		case sdk.quests.AbleToGotoActIII:
+			return [sdk.areas.LutGholein];
+
+		case sdk.quests.SpokeToHratli:
+			return [sdk.areas.KurastDocktown];
+
+		case sdk.quests.TheGoldenBird:
+			return []; // any, kill an elite and have a chance that it drops golden bird
+
+		case sdk.quests.BladeOfTheOldReligion:
+			return [sdk.areas.FlayerJungle];
+
+		case sdk.quests.KhalimsWill:
+			// eye, brain, heart, flail
+			return [sdk.areas.SpiderCavern, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl2, sdk.areas.Travincal];
+
+		case sdk.quests.LamEsensTome:
+			return [sdk.areas.RuinedTemple];
+
+		case sdk.quests.TheBlackenedTemple:
+			return [sdk.areas.Travincal];
+
+		case sdk.quests.TheGuardian:
+			return [sdk.areas.DuranceOfHateLvl3];
+
+		case sdk.quests.AbleToGotoActIV:
+			// meph red portal
+			return [sdk.areas.DuranceOfHateLvl3];
+
+		case sdk.quests.SpokeToTyrael:
+			return [sdk.areas.PandemoniumFortress];
+
+		case sdk.quests.TheFallenAngel:
+			return [sdk.areas.PlainsOfDespair];
+
+		case sdk.quests.HellsForge:
+			return [sdk.areas.RiverOfFlame];
+
+		case sdk.quests.TerrorsEnd:
+			return [sdk.areas.ChaosSanctuary];
+
+		case sdk.quests.AbleToGotoActV:
+			return [sdk.areas.PandemoniumFortress];
+
+		case sdk.quests.SiegeOnHarrogath:
+			return [sdk.areas.BloodyFoothills];
+
+		case sdk.quests.RescueonMountArreat:
+			return [sdk.areas.FrigidHighlands];
+
+		case sdk.quests.PrisonOfIce:
+			// anya and speak to malah
+			return [sdk.areas.FrozenRiver, sdk.areas.Harrogath];
+
+		case sdk.quests.BetrayalOfHaggorath:
+			return [sdk.areas.NihlathaksTemple];
+
+		case sdk.quests.RiteOfPassage:
+			return [sdk.areas.ArreatSummit];
+
+		case sdk.quests.EveOfDestruction:
+			return [sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber];
+
+		case sdk.quests.SecretCowLevel:
+			// get wirt and open portal
+			return [sdk.areas.Tristram, sdk.areas.RogueEncampment];
+		}
+		return [];
+	}
+
+	Quests.bossForQuest = function (q) {
+		switch (q) {
+		case sdk.quests.SistersBurialGrounds:
+			return [sdk.monsters.Bloodraven];
+
+		case sdk.quests.ForgottenTower:
+			return [sdk.monsters.TheCountess];
+
+		case sdk.quests.SistersToTheSlaughter:
+			return [sdk.monsters.Andariel];
+
+		case sdk.quests.RadamentsLair:
+			return [sdk.monsters.Radament];
+
+		case sdk.quests.TheSummoner:
+			return [sdk.monsters.Summoner];
+
+		case sdk.quests.TheSevenTombs:
+			return [sdk.monsters.Duriel];
+
+		case sdk.quests.KhalimsWill:
+		case sdk.quests.TheBlackenedTemple:
+			return [sdk.monsters.GelebFlamefinger, sdk.monsters.IsmailVilehand, sdk.monsters.ToorcIcefist];
+
+		case sdk.quests.TheGuardian:
+			return [sdk.monsters.Mephisto];
+
+		case sdk.quests.TheFallenAngel:
+			return [sdk.monsters.Izual];
+
+		case sdk.quests.TerrorsEnd:
+			return [sdk.monsters.Diablo1];
+
+		case sdk.quests.SiegeOnHarrogath:
+			return []; // TODO shenk id ?
+
+		case sdk.quests.BetrayalOfHaggorath:
+			return [sdk.monsters.Nihlathak];
+
+		case sdk.quests.RiteOfPassage:
+			return [sdk.monsters.Ancient1, sdk.monsters.Ancient2, sdk.monsters.Ancient3];
+
+		case sdk.quests.EveOfDestruction:
+			return [sdk.monsters.Crab];
+
+		case sdk.quests.SecretCowLevel:
+			return [sdk.monsters.TheCowKing];
+		}
+		return [];
+	}
+
+	for (var q = sdk.quests.SpokeToWarriv; q <= sdk.quests.SecretCowLevel; q++) {
+		Quests[q] = {
+			index: q,
+			name: Object.keys(sdk.quests).find(x => sdk.quests[x] == q),
+			mandatory: MandatoryQuests.indexOf(q) > -1,
+			reward: RewardedQuests.indexOf(q) > -1,
+			areas: Quests.areasForQuest(q),
+			act: Quests.actForQuest(q),
+			bosses: Quests.bossForQuest(q),
+			do: ((q) => () => require('../bots/Questing').doQuest(q))(q)
 		}
 	}
 
-	let necroFCRBreakpoints = {0: 15, 9: 14, 18: 13, 30: 12, 48: 11, 75: 10, 125: 9};
-	var necroFCRFrames = new Array(255);
-	for (var i in necroFCRBreakpoints) {
-		necroFCRFrames.fill(necroFCRBreakpoints[i], i);
-	}
-	//TODO: vampire form, trang oul set
+//(Quests);
 
-	let palaFCRBreakpoints = {0: 15, 9: 14, 18: 13, 30: 12, 48: 11, 75: 10, 125: 9};
-	var palaFCRFrames = new Array(255);
-	for (var i in palaFCRBreakpoints) {
-		palaFCRFrames.fill(palaFCRBreakpoints[i], i);
-	}
 
-	let sorcFCRBreakpoints = {0: 13, 9: 12, 20: 11, 37: 10, 63: 9, 105: 8, 200: 7};
-	var sorcFCRFrames = new Array(255);
-	for (var i in sorcFCRBreakpoints) {
-		sorcFCRFrames.fill(sorcFCRBreakpoints[i], i);
-	}
-	//TODO: lightning and chain lightning
 
-	const FCRBreakPoints = [amaFCRFrames, sorcFCRFrames, necroFCRFrames, palaFCRFrames, barbFCRFrames, druidFCRFrames, assaFCRFrames];
 
-// FCRData
+
+
+
 
 	function isAlive(unit) {
 		return Boolean(unit && unit.hp);
@@ -1225,8 +1501,8 @@
 		},
 		monsterEffort: function (unit, areaID, skillDamageInfo = undefined, parent = undefined, preattack = false, all = false) {
 			let eret = {effort: Infinity, skill: -1, type: "Physical"};
-			let useCooldown = (typeof unit === 'number' ? false : Boolean(GameData.myReference.getState(121))),
-				hp = this.monsterMaxHP(typeof unit.classid === 'number' ? unit.classid : unit, areaID);
+			let useCooldown = (typeof unit === 'number' ? false : Boolean(me.getState(121))),
+				hp = this.monsterMaxHP(typeof unit === 'number' ? unit : unit.classid, areaID);
 			let conviction = this.getConviction(), ampDmg = this.getAmp(),
 				isUndead = (typeof unit === 'number' ? MonsterData[unit].Undead : MonsterData[unit.classid].Undead);
 			skillDamageInfo = skillDamageInfo || this.allSkillDamage(unit);
@@ -1414,12 +1690,55 @@
 		},
 		myReference: me,
 
-		FCRFrames: function (fcr, classid) {
-			if (classid == sdk.charclass.Druid) {
-				let state = this.shiftState();
-				return FCRBreakPoints[classid][state][fcr];
+		// returns the amount of life or mana (as absolute value, not percent) a potion gives
+		potionEffect: function (potionClassId, charClass = GameData.myReference.classid) {
+			let potion = Potions[potionClassId];
+			if (!potion) {
+				return 0;
 			}
-			return FCRBreakPoints[classid][fcr];
+			let effect = potion.effect[charClass] || 0;
+			if (!effect) {
+				return 0;
+			}
+			return [515, 516].indexOf(potionClassId) > -1 ? GameData.myReference.hpmax/effect*100 : effect;
+		},
+
+		// returns the amount of life or mana (as absolute value, not percent) a potion gives
+		potionEffectPerSecond: function (potionClassId, charClass = GameData.myReference.classid) {
+			let effect = this.potionEffect(potionClassId, charClass);
+			let potion = Potions[potionClassId];
+			if (!potion) {
+				return 0;
+			}
+			let duration = potion.duration;
+			if (duration) {
+				return effect/duration;
+			}
+			return 0;
+		},
+
+		// Returns the number of frames needed to cast a given skill at a given FCR for a given char.
+		castingFrames: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+			// https://diablo.fandom.com/wiki/Faster_Cast_Rate
+			let effectiveFCR = Math.min(75, (fcr*120 / (fcr+120)) | 0);
+			let isLightning = skillId == sdk.skills.Lightning || skillId == sdk.skills.ChainLightning;
+			let baseCastRate = [20, isLightning ? 19 : 14, 16, 16, 14, 15, 17][charClass];
+			if (isLightning) {
+				return Math.round(256*baseCastRate / (256*(100+effectiveFCR)/100));
+			}
+
+			let animationSpeed = {
+				normal: 256,
+				human: 208,
+				wolf: 229,
+				bear: 228
+			}[charClass == sdk.charclass.Druid ? this.shiftState() : "normal"];
+			return Math.ceil(256*baseCastRate / Math.floor(animationSpeed*(100+eFCR)/100)) - 1;
+		},
+
+		// Returns the duration in seconds needed to cast a given skill at a given FCR for a given char.
+		castingDuration: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+			return this.castingFrames(skillId, fcr, charClass)/25;
 		}
 	};
 
@@ -1431,6 +1750,8 @@
 	GameData.onGround = onGround;
 	GameData.itemTier = itemTier;
 	GameData.PresetMonsters = PresetMonsters;
+	GameData.Potions = Potions;
+	GameData.Quests = Quests;
 
 	module.exports = GameData;
 })(module, require);
