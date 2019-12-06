@@ -129,7 +129,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 		let portal = Pather.getPortal(sdk.areas.Tristram);
 		time++;
 		if (portal) {
-			!!(time % 2) && me.area !== sdk.areas.Tristram && portal.clear(5, 0x00, true);
+			!(time % 5) && me.area !== sdk.areas.Tristram && portal.clear(5, 0x00, true);
 			portal.moveTo();
 			portal.interact();
 			delay(40); // give it some time to "click" on it
@@ -149,7 +149,8 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 	const wirt = getUnit(2, 268);
 
 	for (let i = 0, leg,gid; i < 8; i += 1) {
-		wirt.interact();
+		me.getSkill(sdk.skills.Telekinesis) && wirt.cast(sdk.skills.Telekinesis);
+		Misc.click(0, 0, wirt);
 		delay(500);
 		if ((leg = getUnit(4, 88))) {
 			gid = leg.gid;
