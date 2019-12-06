@@ -176,7 +176,7 @@
 		const GameData = require('GameData');
 
 		//ToDo; Deal with ias, if it is an melee attack
-		delay(GameData.castingDuration(skillId));
+		delay(GameData.castingDuration(skillId)*1000);
 
 		ensureState();
 		return this;
