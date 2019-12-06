@@ -870,11 +870,13 @@
 				let tpTool = tpScroll || tpTome;
 
 				if (!tpTool) {
-					throw new Error("makePortal: No TP tomes.");
+					throw new Error("makePortal: No tome, no scrolls.");
+					//TODO: use old portal if any
 				}
 
-				if (!tpScroll && tpTome.getStat(70)) {
-					throw new Error("makePortal: No scrolls.");
+				if (!tpScroll && tpTome && tpTome.getStat(sdk.stats.Quantity) == 0) {
+					throw new Error("makePortal: No scrolls in tome.");
+					//TODO: use old portal if any
 				}
 
 				oldPortal = getUnit(2, "portal");
