@@ -1569,7 +1569,7 @@
 		const Storage = require('Storage');
 		var i,
 			items = Storage.Inventory.Compare(Config.Inventory)
-				.filter(i => ignoredItemTypes.indexOf(i.itemtype) >= 0);
+				.filter(i => ignoredItemTypes.indexOf(i.itemType) >= 0);
 
 		for (i = 0; i < items.length; i += 1) {
 			if (Storage.Stash.CanFit(items[i])) {
