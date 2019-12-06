@@ -360,7 +360,7 @@
 			return false;
 		}
 		const npc = Town.initNPC("Shop", "buyPotions");
-		for (var i = 0; i < amount; i++) {
+		for (let i = 0; i < amount; i++) {
 			const npcPotion = Town.getPotion(npc, type);
 			if (npcPotion) {
 				npcPotion.buy(false);
