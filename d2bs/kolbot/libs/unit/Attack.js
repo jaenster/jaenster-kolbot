@@ -33,7 +33,7 @@
 		if (me === this) start = [me.x, me.y];
 
 		while (units.length) {
-			while ((unit = units.shift()) && unit.attack());
+			while ((unit = units.shift()) && unit.attack()) ;
 			units = getUnits_filtered();
 		}
 		return true;
@@ -99,6 +99,21 @@
 		x === undefined && (x = me.x);
 		y === undefined && (y = me.y);
 		if (!me.setSkill(skillId, hand, item)) return false;
+		const ensureState = () => {
+			if (Skills.isTimed[skillId]) { // account for lag, state 121 doesn't kick in immediately
+				for (i = 0; i < 10; i += 1) {
+					if ([4, 9].indexOf(me.mode) > -1) {
+						break;
+					}
+
+					if (me.getState(121)) {
+						break;
+					}
+
+					delay(10);
+				}
+			}
+		};
 
 		if (Config.PacketCasting > 1 || forcePacket || (Config.PacketCasting && skillId === sdk.skills.Teleport)) {
 			if (this === me) {
@@ -106,74 +121,64 @@
 			} else {
 				sendPacket(1, (hand === 0) ? 0x11 : 0x0a, 4, this.type, 4, this.gid);
 			}
-		} else {
-			switch (hand) {
-				case 0: // Right hand + No Shift
-					clickType = 3;
-					shift = 0;
+			ensureState();
+			return this;
+		}
 
-					break;
-				case 1: // Left hand + Shift
-					clickType = 0;
-					shift = 1;
+		switch (hand) {
+			case 0: // Right hand + No Shift
+				clickType = 3;
+				shift = 0;
 
-					break;
-				case 2: // Left hand + No Shift
-					clickType = 0;
-					shift = 0;
+				break;
+			case 1: // Left hand + Shift
+				clickType = 0;
+				shift = 1;
 
-					break;
-				case 3: // Right hand + Shift
-					clickType = 3;
-					shift = 1;
+				break;
+			case 2: // Left hand + No Shift
+				clickType = 0;
+				shift = 0;
 
-					break;
-			}
+				break;
+			case 3: // Right hand + Shift
+				clickType = 3;
+				shift = 1;
 
-			MainLoop:
-				for (n = 0; n < 3; n += 1) {
-					if (this !== me) {
-						clickMap(clickType, shift, this);
-					} else {
-						clickMap(clickType, shift, x, y);
+				break;
+		}
+
+		MainLoop:
+			for (n = 0; n < 3; n += 1) {
+				if (this !== me) {
+					clickMap(clickType, shift, this);
+				} else {
+					clickMap(clickType, shift, x, y);
+				}
+
+				delay(20);
+
+				if (this !== me) {
+					clickMap(clickType + 2, shift, this);
+				} else {
+					clickMap(clickType + 2, shift, x, y);
+				}
+
+				for (i = 0; i < 8; i += 1) {
+					if (me.attacking) {
+						break MainLoop;
 					}
 
 					delay(20);
-
-					if (this !== me) {
-						clickMap(clickType + 2, shift, this);
-					} else {
-						clickMap(clickType + 2, shift, x, y);
-					}
-
-					for (i = 0; i < 8; i += 1) {
-						if (me.attacking) {
-							break MainLoop;
-						}
-
-						delay(20);
-					}
 				}
-
-			while (me.attacking) {
-				delay(10);
 			}
-		}
 
-		if (Skills.isTimed[skillId]) { // account for lag, state 121 doesn't kick in immediately
-			for (i = 0; i < 10; i += 1) {
-				if ([4, 9].indexOf(me.mode) > -1) {
-					break;
-				}
+		const GameData = require('GameData');
 
-				if (me.getState(121)) {
-					break;
-				}
+		//ToDo; Deal with ias, if it is an melee attack
+		delay(GameData.castingDuration(skillId));
 
-				delay(10);
-			}
-		}
-
+		ensureState();
 		return this;
 	};
 	const Town = require('Town');
@@ -185,7 +190,7 @@
 			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > 40) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
 					ignoreMonster.push(this.gid);
-					return ;
+					return;
 				}
 			}
 			if (this.distance > 40) { // Still on high distance?
@@ -410,7 +415,7 @@
 
 	Object.defineProperty(Unit.prototype, 'allies', {
 		get: function () {
-			return ([sdk.unittype.Player,sdk.unittype.Monsters].indexOf(this.type)+1 && this.partied);
+			return ([sdk.unittype.Player, sdk.unittype.Monsters].indexOf(this.type) + 1 && this.partied);
 		}
 	});
 
