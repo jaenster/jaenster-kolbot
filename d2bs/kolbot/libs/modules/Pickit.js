@@ -103,11 +103,10 @@
 						if (this.canMakeRoom()) {
 							print("ÿc7Trying to make room for " + this.itemColor(pickList[0]) + pickList[0].name);
 
-							if (Config.FieldID) {
+							if (Config.FieldID && Town.fieldID()) {
 								// We id in the field
-								Town.fieldID();
 								continue; // Re do the loop
-							} else {
+							} else { // if fieldID disabled or failed, try by town
 
 								// Go to town and do town chores
 								if (Town.visitTown()) {
@@ -143,8 +142,10 @@
 		if (!Config.MakeRoom) {
 			return false;
 		}
+		const Town = require('Town');
 		var i,
-			items = Storage.Inventory.Compare(Config.Inventory);
+			items = Storage.Inventory.Compare(Config.Inventory)
+				.filter(i => Town.ignoredItemTypes.indexOf(i.itemType) == -1);
 
 		if (items) {
 			for (i = 0; i < items.length; i += 1) {
