@@ -352,6 +352,31 @@
 		return true;
 	};
 
+	// Purchases and drinks potions in town.
+	Town.stackPotions = function(type, amount) {
+		if (!amount) amount = 4; // TODO: Calculate monster effort and correlate it to the number of potions to stack.
+		if (me.gold < amount * 25) {
+			print('stackPotions: Not enough gold for ' + amount + ' potions');
+			return false;
+		}
+		const npc = Town.initNPC("Shop", "buyPotions");
+		for (let i = 0; i < amount; i++) {
+			const npcPotion = Town.getPotion(npc, type);
+			if (npcPotion) {
+				npcPotion.buy(false);
+			}
+		}
+		me.getItems(npcPotion.classid)
+			.filter(potion => (potion.classid == npcPotion.classid && (potion.mode === sdk.itemmode.inBelt || potion.location === sdk.storage.Inventory)))
+			.every((potion, index) => {
+				if (index >= amount) return false; // Only drink n (amount) potions.
+				me.overhead('Stacking potion (' + (index + 1) + '/' + amount + ')');
+				potion.interact();
+				return true;
+			});
+		return true;
+	};
+
 	// Check when to shift-buy potions
 	Town.shiftCheck = function (col, beltSize) {
 		var i, fillType;
@@ -422,6 +447,15 @@
 		if (type === "hp" || type === "mp") {
 			for (i = 5; i > 0; i -= 1) {
 				result = npc.getItem(type + i);
+
+				if (result) {
+					return result;
+				}
+			}
+		}
+		else if ( type === "yps" || type === "vps" || type === "wms") {
+			for (i = 5; i > 0; i -= 1) {
+				result = npc.getItem(type);
 
 				if (result) {
 					return result;
@@ -1534,7 +1568,8 @@
 		}
 		const Storage = require('Storage');
 		var i,
-			items = Storage.Inventory.Compare(Config.Inventory);
+			items = Storage.Inventory.Compare(Config.Inventory)
+				.filter(i => ignoredItemTypes.indexOf(i.itemtype) >= 0);
 
 		for (i = 0; i < items.length; i += 1) {
 			if (Storage.Stash.CanFit(items[i])) {
@@ -1876,6 +1911,7 @@
 							Misc.itemLogger("Sold", items[i]);
 							items[i].sell();
 						} else {
+							print("clearInventory drop " + items[i].name);
 							Misc.itemLogger("Dropped", items[i], "clearInventory");
 							items[i].drop();
 						}
