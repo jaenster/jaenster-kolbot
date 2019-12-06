@@ -1733,7 +1733,7 @@
 				wolf: 229,
 				bear: 228
 			}[charClass == sdk.charclass.Druid ? this.shiftState() : "normal"];
-			return Math.ceil(256*baseCastRate / Math.floor(animationSpeed*(100+eFCR)/100)) - 1;
+			return Math.ceil(256*baseCastRate / Math.floor(animationSpeed*(100+effectiveFCR)/100)) - 1;
 		},
 
 		// Returns the duration in seconds needed to cast a given skill at a given FCR for a given char.
