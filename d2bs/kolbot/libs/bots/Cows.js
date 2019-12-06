@@ -132,6 +132,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 			!!(time % 2) && me.area !== sdk.areas.Tristram && portal.clear(5, 0x00, true);
 			portal.moveTo();
 			portal.interact();
+			delay(40); // give it some time to "click" on it
 		} else {
 			delay(4);
 		}
