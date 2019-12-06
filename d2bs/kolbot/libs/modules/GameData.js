@@ -288,6 +288,65 @@
 
 //(AreaData);
 
+// FCRData
+	let amaFCRBreakpoints = {0: 19, 7: 18, 14: 17, 22: 16, 32: 15, 48: 14, 68: 13, 99: 12, 152: 11};
+	var amaFCRFrames = new Array(255);
+	for (var i in amaFCRBreakpoints) {
+		amaFCRFrames.fill(amaFCRBreakpoints[i], i);
+	}
+
+	let assaFCRBreakpoints = {0: 16, 8: 15, 16: 14, 27: 13, 42: 12, 65: 11, 102: 10, 174: 9};
+	var assaFCRFrames = new Array(255);
+	for (var i in assaFCRBreakpoints) {
+		assaFCRFrames.fill(assaFCRBreakpoints[i], i);
+	}
+
+	let barbFCRBreakpoints = {0: 13, 9: 12, 20: 11, 37: 10, 63: 9, 105: 8, 200: 7};
+	var barbFCRFrames = new Array(255);
+	for (var i in barbFCRBreakpoints) {
+		barbFCRFrames.fill(barbFCRBreakpoints[i], i);
+	}
+
+	let druidFCRBreakpoints = {
+		"human": {0: 18, 4: 17, 10: 16, 19: 15, 30: 14, 46: 13, 68: 12, 99: 11, 163: 10},
+		"bear": {0: 16, 7: 15, 15: 14, 26: 13, 40: 12, 63: 11, 99: 10, 163: 9},
+		"wolf": {0: 16, 6: 15, 14: 14, 26: 13, 40: 12, 60: 11, 95: 10, 157: 9}
+	};
+	var druidFCRFrames = {
+		"human": new Array(255),
+		"bear": new Array(255),
+		"wolf": new Array(255)
+	}
+	for (var i in druidFCRBreakpoints) {
+		for (var j in druidFCRBreakpoints[i]) {
+			druidFCRFrames[i].fill(druidFCRBreakpoints[i][j], j);
+		}
+	}
+
+	let necroFCRBreakpoints = {0: 15, 9: 14, 18: 13, 30: 12, 48: 11, 75: 10, 125: 9};
+	var necroFCRFrames = new Array(255);
+	for (var i in necroFCRBreakpoints) {
+		necroFCRFrames.fill(necroFCRBreakpoints[i], i);
+	}
+	//TODO: vampire form, trang oul set
+
+	let palaFCRBreakpoints = {0: 15, 9: 14, 18: 13, 30: 12, 48: 11, 75: 10, 125: 9};
+	var palaFCRFrames = new Array(255);
+	for (var i in palaFCRBreakpoints) {
+		palaFCRFrames.fill(palaFCRBreakpoints[i], i);
+	}
+
+	let sorcFCRBreakpoints = {0: 13, 9: 12, 20: 11, 37: 10, 63: 9, 105: 8, 200: 7};
+	var sorcFCRFrames = new Array(255);
+	for (var i in sorcFCRBreakpoints) {
+		sorcFCRFrames.fill(sorcFCRBreakpoints[i], i);
+	}
+	//TODO: lightning and chain lightning
+
+	const FCRBreakPoints = [amaFCRFrames, sorcFCRFrames, necroFCRFrames, palaFCRFrames, barbFCRFrames, druidFCRFrames, assaFCRFrames];
+
+// FCRData
+
 	function isAlive(unit) {
 		return Boolean(unit && unit.hp);
 	}
@@ -1354,6 +1413,14 @@
 			return (GameData.myReference.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
 		},
 		myReference: me,
+
+		FCRFrames: function (fcr, classid) {
+			if (classid == sdk.charclass.Druid) {
+				let state = this.shiftState();
+				return FCRBreakPoints[classid][state][fcr];
+			}
+			return FCRBreakPoints[classid][fcr];
+		}
 	};
 
 // Export data
