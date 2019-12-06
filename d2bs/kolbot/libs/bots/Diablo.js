@@ -2,8 +2,10 @@
  * @author Jaenster
  * @description An improved version of a diablo run.
  */
-(function (module,require) {
-	const Diablo = function (Config, Attack, Pickit, Pather, Town, Misc) {
+(function (module, require) {
+	const Misc = require('Misc');
+	const Pather = require('Pather');
+	const Diablo = function (Config, Attack, Pickit, _, Town) {
 		const Promise = require('Promise'),
 			TownPrecast = require('TownPrecast'),
 			Precast = require('Precast');
@@ -216,4 +218,4 @@
 
 
 	module.exports = Diablo;
-})(typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require );
+})(typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require);
