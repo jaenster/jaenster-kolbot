@@ -1,6 +1,6 @@
 /**
  *    @filename    Cows.js
- *    @author        kolton, jaenster
+ *    @author       jaenster
  *    @desc        clear the Moo Moo Farm without killing the Cow King
  */
 
@@ -75,6 +75,7 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 
 		return true;
 	};
+
 	let leg, tome;
 
 	{ // error handeling
@@ -101,199 +102,85 @@ function Cows(Config, Attack, Pickit, Pather, Town, Misc) {
 
 				break;
 		}
-	}
 
-	const buffers = [{
-		location: sdk.storage.Stash,
-		buffer: [],
-		y: me.gametype === 0 ? 4 : 8,
-		x: 10,
-	}, {
-		location: sdk.storage.Inventory,
-		buffer: [],
-		y: 4,
-		x: 10,
-	}];
-
-	const createArray = function (amount, defaultVal) {
-		const arr = [];
-		while (arr.length < amount + 1) arr.push(defaultVal);
-		return arr;
-	};
-	const resetBuffers = () => buffers.forEach(buffer => {
-		// Create a inverse of an inventory
-		const grid = createArray(buffer.x, 1).map(() => createArray(buffer.y, 1)); // Everything starts with unlocked <-- WARNING
-
-		me.getItemsEx()
-			.filter(item => item.location === buffer.location).forEach(
-			function (item) {
-				for (let extraX = 0; extraX < item.sizex; extraX++) {
-					for (let extraY = 0; extraY < item.sizey; extraY++) {
-						// Note that the y is what we call x, and y is in opposite order in the game
-						grid[item.x + extraX][item.y + extraY] = 0; // This slot is locked
-					}
-				}
-			});
-
-		let flipped = grid.map((col, i) => grid.map(row => row.hasOwnProperty(i) && row[i]));
-		flipped.length = buffer.y; // fix the length
-		flipped.forEach((e, i) => buffer.buffer[i] = e);
-
-	});
-	resetBuffers();
-
-	const canFitTome = function (buffer) {
-		//Make sure it's a valid item
-		if (!this || !(this instanceof Unit) || this.type !== sdk.unittype.Item) {
-			return false;
-		}
-		let x, y, nx, ny, spots = 0;
-
-		//Loop buffer looking for spot to place this.
-		for (y = 0; y < buffer.x; y += 1) {
-			for (x = 0; x < buffer.y; x += 1) {
-				//Check if there is something in this spot.
-				if (buffer.buffer[x][y] > 0) continue;
-
-				if ((() => {
-					//Loop the this size to make sure we can fit it.
-					for (nx = 0; nx < 2; nx += 1) {
-						for (ny = 0; ny < 2; ny += 1) {
-							if (buffer.buffer[x + nx][y + ny]) {
-								return true;
-							}
-						}
-					}
-					return false;
-				}).call()) {
-					continue; // not a valid spot
-				}
-				for (nx = 0; nx < 2; nx += 1) {
-					for (ny = 0; ny < 2; ny += 1) {
-						buffer.buffer[x + nx][y + ny] = 1; // Locked from now on
-					}
-				}
-				spots++;
+		// get cube if needed
+		if (!me.cube) {
+			me.journeyToPreset(sdk.areas.HallsOfDeadLvl3, 2, 354, 0, 0, false, false);
+			const chest = getUnit(2, 354);
+			Misc.openChest(chest);
+			let cube, tick = getTickCount();
+			while (!(cube = getUnit(4, 549))) {
+				delay(3);
+				if (getTickCount() - tick > 1e3) break;
 			}
-		}
-
-		return spots;
-	};
-	const Storage = require('Storage');
-	const books = me.getItemsEx().filter(x => x.code === "tbk");
-	const cube = me.getItem(549);
-	require('Debug');
-
-	//ToDo; dont open cube if we already know its empty
-	print('ensure cube is empty');
-	me.openCube();
-	me.emptyCube(); // ensure cube is empty
-	Object.keys(sdk.uiflags).forEach(x => me.cancel());
-	delay(1000);
-	require('Config').PacketShopping = false;
-	if (books.length < 2) {
-		let hadBook = books.length;
-		// Buy books
-		Town.goToTown(3); // its easier to buy books in act 3, and move to stash.
-
-		print('have a book? put it in in cube');
-		Town.openStash();
-		delay(1000);
-		// we have 1 tome..
-		if (hadBook) {
-			books[0].toCursor();
-			sendPacket(1, 0x2A, 4, books[0].gid, 4, cube.gid); // move tome we have to cube
-		}
-
-		const Ormus = Town.initNPC("Shop");
-		if (!Ormus) throw Error('failed to open shop');
-
-		delay(500); // wait for items to appear
-		let vendorBook = Ormus.getItem("tbk");
-
-		// Calculate how much vendor books fit in inventory
-		const buyMax = Math.min.apply(Math, buffers.map(buff => canFitTome.apply(vendorBook, [buff])));
-
-		const amount = Math.min(buyMax, 3);
-		print(amount);
-
-		// Since we are here anyway
-		Town.buyPotions();
-		Town.buyKeys();
-		Town.identify();
-
-		for (let i = 0; i < amount + books.length; i++) vendorBook.buy();
-
-		Town.openStash();
-		const newBooks = me.getItemsEx().filter(i => i.code === 'tbk').filter(i => i.location === sdk.storage.Inventory).reverse(); // oldest book last (yeah, tricky shit i know)
-		newBooks.length = amount; // dont move the main book to storage
-
-		// If we didnt start out with a book, there isnt one in the cube it at the moment
-		if (!hadBook) {
-			let first = newBooks.shift().gid;
-			first.toCursor();
-			sendPacket(1, 0x2A, 4, first, 4, cube.gid);
-		}
-
-
-		// move new books to stash
-		newBooks.forEach(newBook => Storage.Stash.MoveTo(newBook) && delay(1000));
-	}
-	Town.heal(); // To be sure
-	if (!(leg = me.getItemsEx().filter(x => x.classid === 88).first())) {
-		Pather.journeyTo(sdk.areas.StonyField);
-		Pather.moveToPreset(sdk.areas.StonyField, 1, 737, 0, 0, false, true);
-		let portal;
-		for (let i = 0; i < 300 && !(portal = Pather.getPortal(38)); i += 1) delay(10);
-		Pather.usePortal(null, null, portal);
-		Pather.moveTo(25048, 5177);
-
-		// If we dont have a leg, get it
-		let wirt = getUnit(2, 268);
-
-		for (let i = 0; i < 40; i += 1) {
-			wirt.interact();
-			delay(10);
-
-			leg = getUnit(4, 88);
-
-			if (leg) {
-				let gid = leg.gid;
-
-				Pickit.pickItem(leg);
-				Town.goToTown();
-
-				leg = me.getItem(-1, -1, gid);
-				break;
-			}
+			if (!cube) throw Error('Failed to fetch cube');
+			Pickit.pickItem(cube);
 		}
 	}
-	Town.move('stash');
-	Town.openStash();
-	if (books.length > 1 && !me.getItemsEx().filter(x => x.location === sdk.locations.cube).filter(x => x.code === 'tbk').first()) {
-		let tome = me.getItemsEx().filter(x => x.code === "tbk").filter(x => x.location !== sdk.locations.cube).sort((a, b) => b.location - a.location).first();
-		// 2a [DWORD item id] [DWORD cube id]
-		print('tome to cube');
-		tome.toCursor();
-		sendPacket(1, 0x2A, 4, tome.gid, 4, cube.gid);
-		while (me.itemoncursor) delay(10);
+
+	Town(); // Shop, buy crap
+
+	me.journeyToPreset(sdk.areas.StonyField, 1, 737/*what is this ?*/, 0, 0, false, true);
+
+	// Aslong we cant use the portal, we attack a bit
+	/** @type Unit */
+	while (me.area !== sdk.areas.Tristram) {
+		let portal = Pather.getPortal(sdk.areas.Tristram);
+		if (portal) {
+			portal.moveTo();
+			portal.interact();
+			me.area !== sdk.areas.Tristram && portal.clear(5, 0x00, true)
+		} else {
+			delay(4);
+		}
 	}
-	// put leg in cube
-	print('put leg in cube');
-	leg.toCursor();
-	sendPacket(1, 0x2A, 4, leg.gid, 4, cube.gid);
-	while (me.itemoncursor) delay(10);
-	print('open cube');
-	me.openCube();
-	delay(500);
-	me.getItemsEx();
-	transmute();
-	Object.keys(sdk.uiflags).forEach(x => me.cancel());
 
+	if (me.area !== sdk.areas.Tristram) {
+		throw new Error('Failed to move to Tristram');
+	}
 
-	Pather.usePortal(39);
+	// Move to leg
+	Pather.moveTo(25048, 5177);
 
-	let cowDone = false;
+	// get the stupid leg
+	const wirt = getUnit(2, 268);
+
+	for (let i = 0, leg,gid; i < 8; i += 1) {
+		wirt.interact();
+		delay(500);
+		if ((leg = getUnit(4, 88))) {
+			gid = leg.gid;
+			Pickit.pickItem(leg);
+			break;
+		}
+	}
+
+	Town.goToTown();
+	Town.openStash(); // still in stash
+
+	//Todo; deal with an non empty cube
+	clickItemAndWait(0,me.getItem(88));
+	clickItemAndWait(0,me.cube); // While having the leg in our hands, click on the cube
+
+	// got tome?
+	clickItemAndWait(0,me.getItem(518));
+	clickItemAndWait(0, me.cube);
+
+	// We have nothing in our hands, so we can right click on the cube
+	clickItemAndWait(1, me.cube);
+	while(!getUIFlag(sdk.uiflags.Cube)) delay(1);
+
+	transmute(); // We got the magic in it
+
+	// close everything we have open
+	while([sdk.uiflags.Cube,sdk.uiflags.Stash,sdk.uiflags.Iventory].filter(i=>getUIFlag(i)).map(i=>me.cancel()).length) delay(3);
+
+	// Buy another tome.
+	Town();
+
+	Town.moveToSpot('stash');
+	Pather.usePortal(sdk.areas.MooMooFarm);
+
 
 	const Promise = require('Promise');
 	new Promise(resolve => {
