@@ -6,6 +6,9 @@
 
 module.exports =  function(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
+	if (me.getStat(sdk.stats.Poisonresist) < 75) {
+		Town.stackPotions('yps');
+	}
 	if (!Pather.journeyTo(sdk.areas.CatacombsLvl4)) {
 		throw Error('Failed to move to Andariel');
 	}

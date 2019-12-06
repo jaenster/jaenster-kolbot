@@ -2612,3 +2612,10 @@ sdk.skillTabs = {
 	},
 };
 
+// Add sdk to global scope
+module.exports = sdk; // in case it gets loaded as an module
+if (true === false) {
+    global['sdk'] = sdk;
+    /** @type Unit */
+    me = {};
+} // Tricking my ide here ;)
