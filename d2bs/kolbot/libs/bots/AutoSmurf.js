@@ -17,7 +17,19 @@
 			GameData = require('GameData'),
 			AutoEquip = require('AutoEquip'),
 			NTIP = require('NTIP'),
+			Worker = require('Worker'),
 			Delta = new (require('Deltas'));
+
+		Worker.runInBackground.stamina = function () {
+			if (typeof me === 'undefined' || me.dead) return true; // happens when we are dead
+
+			if (me.stamina / me.staminamax <= 0.15) {
+				let pot = me.getItemsEx(-1).filter(i => i.classid === 513 && i.location === sdk.storage.Belt || i.location === sdk.storage.Inventory).sort((a, b) => a.location - b.location).first();
+				pot && pot.interact(); // interact with pot (aka click on it)
+				delay(500);
+			}
+			return true;
+		};
 
 		Delta.track(() => me.area, () => me.area && revealLevel(true));
 		

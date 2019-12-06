@@ -10,15 +10,15 @@
 	let GraphDebug = {
 		hooks: [],
 
-		drawRoom: function (room) {
+		drawRoom: function (room, color = 0x84) {
 			if (this.hooks.findIndex(h => h.room.x == room.x && h.room.y == room.y) >= 0) {
 				return;
 			}
 			var lines = [
-				new Line(room.x*5, room.y*5, room.x*5+room.xsize, room.y*5, 0x84, true),
-				new Line(room.x*5+room.xsize, room.y*5, room.x*5+room.xsize, room.y*5+room.ysize, 0x84, true),
-				new Line(room.x*5+room.xsize, room.y*5+room.ysize, room.x*5, room.y*5+room.ysize, 0x84, true),
-				new Line(room.x*5, room.y*5+room.ysize, room.x*5, room.y*5, 0x84, true),
+				new Line(room.x*5, room.y*5, room.x*5+room.xsize, room.y*5, color, true),
+				new Line(room.x*5+room.xsize, room.y*5, room.x*5+room.xsize, room.y*5+room.ysize, color, true),
+				new Line(room.x*5+room.xsize, room.y*5+room.ysize, room.x*5, room.y*5+room.ysize, color, true),
+				new Line(room.x*5, room.y*5+room.ysize, room.x*5, room.y*5, color, true),
 			];
 			this.hooks.push({room: room, lines: lines});
 		},
@@ -71,7 +71,11 @@
 		};
 
 		this.walkablePathDistanceTo = function(other) {
-			return this.walkablePathTo(other).reduce((acc, v, i, arr) => {
+			let path = this.walkablePathTo(other);
+			if (!path.length) {
+				return Infinity;
+			}
+			return path.reduce((acc, v, i, arr) => {
 				let prev = i ? arr[i-1] : v;
 				return acc + Math.sqrt((prev.x-v.x)*(prev.x-v.x) + (prev.y-v.y)*(prev.y-v.y));
 			}, 0);
@@ -88,7 +92,6 @@
 			do {
 				let vertex = new Vertex(room);
 				this.vertices.push(vertex);
-				GraphDebug.drawRoom(vertex);
 			} while(room.getNext());
 		}
 		this.vertices.sort((a, b) => getDistance(me.x, me.y, a.walkableX, a.walkableY) - getDistance(me.x, me.y, b.walkableX, b.walkableY));
@@ -123,13 +126,18 @@
 		while (graph.vertices.length) {
 			var currentVertex = graph.vertices.shift();
 			while (currentVertex) {
+				GraphDebug.removeHookForRoom(currentVertex);
+				GraphDebug.drawRoom(currentVertex);
 				explore(currentVertex);
 				currentVertex.seen = true;
 				GraphDebug.removeHookForRoom(currentVertex);
-				currentVertex = graph.nearbyVertices(currentVertex)
+				var nearbies = graph.nearbyVertices(currentVertex)
 					.filter(v => !v.seen)
-					.sort((a, b) => currentVertex.walkablePathDistanceTo(a) - currentVertex.walkablePathDistanceTo(b))
-					.first();
+					.sort((a, b) => currentVertex.walkablePathDistanceTo(a) - currentVertex.walkablePathDistanceTo(b));
+				nearbies.forEach(n => {
+					GraphDebug.drawRoom(n, 0x50);
+				});
+				currentVertex = nearbies.first();
 			}
 			// if no neihbors is found, get next nearest vertex in graph
 			graph.vertices.filter(v => !v.seen).sort((a, b) => a.walkablePathDistance() - b.walkablePathDistance());

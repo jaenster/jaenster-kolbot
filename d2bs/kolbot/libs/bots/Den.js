@@ -21,7 +21,8 @@
 				Graph.nearestNeighbourSearch(graph, (room) => {
 					Pather.moveTo(room.walkableX, room.walkableY, 3, true);
 					// 0xF = skip normal, 0x7 = champions/bosses, 0 = all
-					Attack.clear(room.xsize*1.4142, 0);
+					Attack.clear(room.xsize, 0);
+					Pather.moveTo(room.walkableX, room.walkableY, 3, true);
 				});
 			}
 		}
@@ -49,6 +50,10 @@
 		});
 
 		Quests.emit(sdk.quests.DenOfEvil, Quests.states[sdk.quests.DenOfEvil]);
+		while (!questDone) {
+			delay(50);
+		}
+		return true;
 	}
 
 	module.exports = Den;

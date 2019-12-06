@@ -1534,7 +1534,8 @@
 		}
 		const Storage = require('Storage');
 		var i,
-			items = Storage.Inventory.Compare(Config.Inventory);
+			items = Storage.Inventory.Compare(Config.Inventory)
+				.filter(i => ignoredItemTypes.indexOf(i.itemtype) >= 0);
 
 		for (i = 0; i < items.length; i += 1) {
 			if (Storage.Stash.CanFit(items[i])) {
@@ -1876,6 +1877,7 @@
 							Misc.itemLogger("Sold", items[i]);
 							items[i].sell();
 						} else {
+							print("clearInventory drop " + items[i].name);
 							Misc.itemLogger("Dropped", items[i], "clearInventory");
 							items[i].drop();
 						}
