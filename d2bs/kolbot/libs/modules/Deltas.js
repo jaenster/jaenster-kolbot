@@ -6,7 +6,8 @@
 	const Worker = require('Worker');
 	let instances = 0;
 
-	/** @constructor */
+	/** @constructor
+	 * @class Delta */
 	module.exports = function (trackers) {
 		let active = true;
 		this.values = (Array.isArray(trackers) && (Array.isArray(trackers.first()) && trackers || [trackers])) || [];

@@ -217,10 +217,12 @@ if (!Array.from) {
 	}());
 }
 
+// Filter null or undefined objects in array
 Array.prototype.filterNull = function () {
 	return this.filter(x => x);
 };
 
+// Map the objects with the callback function and filter null values after mapping.
 Array.prototype.compactMap = function (callback) {
 	return this.map((x, i, array) => {
 		if (x == null) {
@@ -231,6 +233,7 @@ Array.prototype.compactMap = function (callback) {
 	.filterNull();
 };
 
+// Returns a random object in array
 Array.prototype.random = function () {
 	return this[Math.floor((Math.random() * this.length))];
 };
@@ -256,6 +259,7 @@ Array.prototype.symmetricDifference = function (other) {
 };
 
 
+// Returns a random integer between start and end included.
 Math.randomIntBetween = function (start, end) {
 	let min = Math.ceil(start);
 	let max = Math.floor(end);
@@ -355,6 +359,14 @@ if (!Array.prototype.find) {
 		writable: true
 	});
 }
+
+// Fill an array with the same value from start to end indexes.
+Array.prototype.fill = function(value, start = 0, end = undefined) {
+	var stop = end || this.length;
+	for (var i = start; i < stop; i++) {
+		this[i] = value;
+	}
+};
 
 /**
  * @description Return the first element or undefined
