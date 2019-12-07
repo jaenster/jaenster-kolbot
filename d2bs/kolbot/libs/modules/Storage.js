@@ -5,6 +5,7 @@
  */
 (function (module, require) {
 	const Misc = require('Misc');
+	const Town = require('Town');
 	const Container = function (name, width, height, location) {
 		let h, w;
 
@@ -152,7 +153,7 @@
 		 */
 		this.MoveTo = function (item) {
 			var nPos, nDelay, cItem, cube;
-			const Town = require('Town');
+
 
 			try {
 				//Can we even fit it in here?

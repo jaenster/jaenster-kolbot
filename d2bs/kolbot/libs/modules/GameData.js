@@ -21,28 +21,7 @@
 		['nmon1', 'nmon2', 'nmon3', 'nmon4', 'nmon5', 'nmon6', 'nmon7', 'nmon8', 'nmon9', 'nmon10'],
 	][me.diff && 1]; // mon is for normal, nmon is for nm/hell, umon is specific to picking champion/uniques in normal
 
-	var Experience = {
-		totalExp: [0, 0, 500, 1500, 3750, 7875, 14175, 22680, 32886, 44396, 57715, 72144, 90180, 112725, 140906, 176132, 220165, 275207, 344008, 430010, 537513, 671891, 839864, 1049830, 1312287, 1640359, 2050449, 2563061, 3203826, 3902260, 4663553, 5493363, 6397855, 7383752, 8458379, 9629723, 10906488, 12298162, 13815086, 15468534, 17270791, 19235252, 21376515, 23710491, 26254525, 29027522, 32050088, 35344686, 38935798, 42850109, 47116709, 51767302, 56836449, 62361819, 68384473, 74949165, 82104680, 89904191, 98405658, 107672256, 117772849, 128782495, 140783010, 153863570, 168121381, 183662396, 200602101, 219066380, 239192444, 261129853, 285041630, 311105466, 339515048, 370481492, 404234916, 441026148, 481128591, 524840254, 572485967, 624419793, 681027665, 742730244, 809986056, 883294891, 963201521, 1050299747, 1145236814, 1248718217, 1361512946, 1484459201, 1618470619, 1764543065, 1923762030, 2097310703, 2286478756, 2492671933, 2717422497, 2962400612, 3229426756, 3520485254, 0, 0],
-		nextExp: [0, 500, 1000, 2250, 4125, 6300, 8505, 10206, 11510, 13319, 14429, 18036, 22545, 28181, 35226, 44033, 55042, 68801, 86002, 107503, 134378, 167973, 209966, 262457, 328072, 410090, 512612, 640765, 698434, 761293, 829810, 904492, 985897, 1074627, 1171344, 1276765, 1391674, 1516924, 1653448, 1802257, 1964461, 2141263, 2333976, 2544034, 2772997, 3022566, 3294598, 3591112, 3914311, 4266600, 4650593, 5069147, 5525370, 6022654, 6564692, 7155515, 7799511, 8501467, 9266598, 10100593, 11009646, 12000515, 13080560, 14257811, 15541015, 16939705, 18464279, 20126064, 21937409, 23911777, 26063836, 28409582, 30966444, 33753424, 36791232, 40102443, 43711663, 47645713, 51933826, 56607872, 61702579, 67255812, 73308835, 79906630, 87098226, 94937067, 103481403, 112794729, 122946255, 134011418, 146072446, 159218965, 173548673, 189168053, 206193177, 224750564, 244978115, 267026144, 291058498, 0, 0],
-		expCurve: [13, 16, 110, 159, 207, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 225, 174, 92, 38, 5],
-		expPenalty: [1024, 976, 928, 880, 832, 784, 736, 688, 640, 592, 544, 496, 448, 400, 352, 304, 256, 192, 144, 108, 81, 61, 46, 35, 26, 20, 15, 11, 8, 6, 5],
-		monsterExp: [
-			[1, 1, 1], [30, 78, 117], [40, 104, 156], [50, 131, 197], [60, 156, 234], [70, 182, 273], [80, 207, 311], [90, 234, 351], [100, 260, 390], [110, 285, 428], [120, 312, 468],
-			[130, 338, 507], [140, 363, 545], [154, 401, 602], [169, 440, 660], [186, 482, 723], [205, 533, 800], [225, 584, 876], [248, 644, 966], [273, 708, 1062], [300, 779, 1169],
-			[330, 857, 1286], [363, 942, 1413], [399, 1035, 1553], [439, 1139, 1709], [470, 1220, 1830], [503, 1305, 1958], [538, 1397, 2096], [576, 1494, 2241], [616, 1598, 2397],
-			[659, 1709, 2564], [706, 1832, 2748], [755, 1958, 2937], [808, 2097, 3146], [864, 2241, 3362], [925, 2399, 3599], [990, 2568, 3852], [1059, 2745, 4118], [1133, 2939, 4409],
-			[1212, 3144, 4716], [1297, 3365, 5048], [1388, 3600, 5400], [1485, 3852, 5778], [1589, 4121, 6182], [1693, 4409, 6614], [1797, 4718, 7077], [1901, 5051, 7577],
-			[2005, 5402, 8103], [2109, 5783, 8675], [2213, 6186, 9279], [2317, 6618, 9927], [2421, 7080, 10620], [2525, 7506, 11259], [2629, 7956, 11934], [2733, 8435, 12653],
-			[2837, 8942, 13413], [2941, 9477, 14216], [3045, 10044, 15066], [3149, 10647, 15971], [3253, 11286, 16929], [3357, 11964, 17946], [3461, 12680, 19020],
-			[3565, 13442, 20163], [3669, 14249, 21374], [3773, 15104, 22656], [3877, 16010, 24015], [3981, 16916, 25374], [4085, 17822, 26733], [4189, 18728, 28092],
-			[4293, 19634, 29451], [4397, 20540, 30810], [4501, 21446, 32169], [4605, 22352, 33528], [4709, 23258, 34887], [4813, 24164, 36246], [4917, 25070, 37605],
-			[5021, 25976, 38964], [5125, 26882, 40323], [5229, 27788, 41682], [5333, 28694, 43041], [5437, 29600, 44400], [5541, 30506, 45759], [5645, 31412, 47118],
-			[5749, 32318, 48477], [5853, 33224, 49836], [5957, 34130, 51195], [6061, 35036, 52554], [6165, 35942, 53913], [6269, 36848, 55272], [6373, 37754, 56631],
-			[6477, 38660, 57990], [6581, 39566, 59349], [6685, 40472, 60708], [6789, 41378, 62067], [6893, 42284, 63426], [6997, 43190, 64785], [7101, 44096, 66144],
-			[7205, 45002, 67503], [7309, 45908, 68862], [7413, 46814, 70221], [7517, 47720, 71580], [7621, 48626, 72939], [7725, 49532, 74298], [7829, 50438, 75657],
-			[7933, 51344, 77016], [8037, 52250, 78375], [8141, 53156, 79734], [8245, 54062, 81093], [8349, 54968, 82452], [8453, 55874, 83811], [160000, 160000, 160000]
-		]
-	};
+	let Experience = require('Experience');
 
 	/**
 	 *  MonsterData[classID]
@@ -288,6 +267,351 @@
 
 //(AreaData);
 
+
+	const Potions = {
+		587: { // minorhealingpotion
+			effect: [45, 30, 30, 45, 60, 30, 45],
+			cost: 30,
+			duration: 7.68
+		},
+		588: { // lighthealingpotion
+			effect: [90, 60, 60, 90, 120, 60, 90],
+			cost: 67,
+			duration: 6.4
+		},
+		589: { // healingpotion
+			effect: [150, 100, 100, 150, 200, 100, 150],
+			cost: 112,
+			duration: 6.84
+		},
+		590: { // greaterhealingpotion
+			effect: [270, 180, 180, 270, 360, 180, 270],
+			cost: 225,
+			duration: 7.68
+		},
+		591: { // superhealingpotion
+			effect: [480, 320, 320, 480, 640, 320, 480],
+			cost: undefined,
+			duration: 10.24
+		},
+		592: { // minormanapotion
+			effect: [30, 40, 40, 30, 20, 40, 30],
+			cost: 60,
+			duration: 5.12
+		},
+		593: { // lightmanapotion
+			effect: [60, 80, 80, 60, 40, 80, 60],
+			cost: 135,
+			duration: 5.12
+		},
+		594: { // manapotion
+			effect: [120, 160, 160, 120, 80, 160, 120],
+			cost: 270,
+			duration: 5.12
+		},
+		595: { // greatermanapotion
+			effect: [225, 300, 300, 225, 150, 300, 225],
+			cost: 450,
+			duration: 5.12
+		},
+		596: { // supermanapotion
+			effect: [375, 500, 500, 375, 250, 500, 375],
+			cost: undefined,
+			duration: 5.12
+		},
+		515: { // normal rv
+			effect: [35, 35, 35, 35, 35, 35, 35],
+			cost: undefined,
+			duration: 0.04, // instant refill (1 frame time)
+			recipe: [
+				[
+					589, 589, 589,
+					594, 594, 594,
+					item => item.itemType === 91 /*chipped gem*/
+				]
+			]
+		},
+		516: { // full rv
+			effect: [100, 100, 100, 100, 100, 100, 100],
+			cost: undefined,
+			duration: 0.04, // instant refill (1 frame time)
+			recipe: [ // Not doing anything with this, but. We can in the future
+				// Recipe is either an classid, or an function that returns true on the correct item
+				[
+					515, 515, 515 // 3 normal rv's
+				],
+				[	// 3 normal hp pots & 3 normal mp pots & a gem
+					589, 589, 589,
+					594, 594, 594,
+					item => item.itemType === 93 /*std gem*/
+				],
+			]
+		}
+	};
+
+//(Potions);
+
+	const MandatoryQuests = [
+		sdk.quests.SistersToTheSlaughter, // kill Andy
+		sdk.quests.TheHoradricStaff, // make staff
+		sdk.quests.TheArcaneSanctuary, // go to arcane and find portal to tombs
+		sdk.quests.TheSummoner, // kill The Summoner
+		sdk.quests.TheSevenTombs, // kill Duriel
+		sdk.quests.KhalimsWill, // depends, if you have wp to meph not needed
+		sdk.quests.TheBlackenedTemple, // kill Travincal
+		sdk.quests.TheGuardian, // kill Meph
+		sdk.quests.TerrorsEnd, // kill Diablo
+		sdk.quests.RiteOfPassage, // kill Ancients (depends on charlvl)
+		sdk.quests.EveOfDestruction // kill Baal
+	];
+
+	const RewardedQuests = [
+		sdk.quests.DenOfEvil, // 1 skill + 1 respec
+		sdk.quests.RadamentsLair, // 1 skill
+		sdk.quests.TheGoldenBird, // 20 life
+		sdk.quests.LamEsensTome, // 5 stat pts
+		sdk.quests.TheFallenAngel, // 2 skills
+		sdk.quests.HellsForge, // 1 rune
+		sdk.quests.SiegeOnHarrogath, // 1 socket
+		sdk.quests.PrisonOfIce // 10@ res
+	];
+
+	const Quests = [];
+	Quests.MandatoryQuests = MandatoryQuests;
+	Quests.RewardedQuests = RewardedQuests;
+
+	Quests.questScore = function (q) {
+		var score = 0;
+		var highestAct = me.highestAct;
+		if (!me.getQuest(q.index, 0) && highestAct >= q.act) {
+			// we did not complete the quest
+			score += q.mandatory ? 2 : 0;
+			score += q.reward ? 2 : 0;
+
+			if (q.mandatory || q.reward) {
+				// the quest is mandatory or reward
+				// the higher the act is, the less this quest is good to do, aka do earliest quest
+				score += q.act > 0 ? 1 / q.act : 0;
+				var questEffort = q.areas.reduce((acc, a) => acc + GameData.areaEffort(a), 0);
+				score += questEffort > 0 ? 1 / questEffort : 0;
+
+				var bossEffort = q.bosses.reduce((acc, boss) => acc + GameData.monsterEffort(boss, q.areas.last()).effort, 0);
+				score += bossEffort > 0 ? 1 / bossEffort : 0;
+				// monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false)
+			}
+		} else if (highestAct < q.act) {
+			// we can not access the quest act
+		} else {
+			// we have done this quest
+		}
+
+
+		return score;
+	}
+
+	Quests.actForQuest = function (q) {
+		switch (true) {
+			case (q >= sdk.quests.SpokeToWarriv && q <= sdk.quests.AbleToGotoActII) || q == sdk.quests.SecretCowLevel:
+				return 1;
+			case (q >= sdk.quests.SpokeToJerhyn && q <= sdk.quests.AbleToGotoActIII):
+				return 2;
+			case (q >= sdk.quests.SpokeToHratli && q <= sdk.quests.AbleToGotoActIV):
+				return 3;
+			case (q >= sdk.quests.SpokeToTyrael && q <= sdk.quests.AbleToGotoActV):
+				return 4;
+			case (q >= sdk.quests.SiegeOnHarrogath && q < sdk.quests.SecretCowLevel):
+				return 5;
+		}
+		return undefined;
+	}
+
+	Quests.areasForQuest = function (q) {
+		switch (q) {
+			case sdk.quests.SpokeToWarriv:
+				return [sdk.areas.RogueEncampment];
+
+			case sdk.quests.DenOfEvil:
+				return [sdk.areas.DenOfEvil];
+
+			case sdk.quests.SistersBurialGrounds:
+				return [sdk.areas.BurialGrounds];
+
+			case sdk.quests.TheSearchForCain:
+				// scroll, stones, trist
+				return [sdk.areas.DarkWood, sdk.areas.StonyField, sdk.areas.Tristram];
+
+			case sdk.quests.ForgottenTower:
+				return [sdk.areas.TowerCellarLvl5];
+
+			case sdk.quests.ToolsOfTheTrade:
+				return [sdk.areas.Barracks];
+
+			case sdk.quests.SistersToTheSlaughter:
+				return [sdk.areas.CatacombsLvl4];
+
+			case sdk.quests.AbleToGotoActII:
+				return [sdk.areas.RogueEncampment];
+
+			case sdk.quests.SpokeToJerhyn:
+				return [sdk.areas.LutGholein];
+
+			case sdk.quests.RadamentsLair:
+				return [sdk.areas.A2SewersLvl3];
+
+			case sdk.quests.TheHoradricStaff:
+				// cube, staff, amu
+				return [sdk.areas.HallsOfDeadLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.ClawViperTempleLvl2];
+
+			case sdk.quests.TheTaintedSun:
+				// amu + speak to Drognan
+				return [sdk.areas.ClawViperTempleLvl2, sdk.areas.LutGholein];
+
+			case sdk.quests.TheArcaneSanctuary:
+				return [sdk.areas.ArcaneSanctuary];
+
+			case sdk.quests.TheSummoner:
+				return [sdk.areas.ArcaneSanctuary];
+
+			case sdk.quests.TheSevenTombs:
+				return [sdk.areas.DurielsLair];
+
+			case sdk.quests.AbleToGotoActIII:
+				return [sdk.areas.LutGholein];
+
+			case sdk.quests.SpokeToHratli:
+				return [sdk.areas.KurastDocktown];
+
+			case sdk.quests.TheGoldenBird:
+				return []; // any, kill an elite and have a chance that it drops golden bird
+
+			case sdk.quests.BladeOfTheOldReligion:
+				return [sdk.areas.FlayerJungle];
+
+			case sdk.quests.KhalimsWill:
+				// eye, brain, heart, flail
+				return [sdk.areas.SpiderCavern, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl2, sdk.areas.Travincal];
+
+			case sdk.quests.LamEsensTome:
+				return [sdk.areas.RuinedTemple];
+
+			case sdk.quests.TheBlackenedTemple:
+				return [sdk.areas.Travincal];
+
+			case sdk.quests.TheGuardian:
+				return [sdk.areas.DuranceOfHateLvl3];
+
+			case sdk.quests.AbleToGotoActIV:
+				// meph red portal
+				return [sdk.areas.DuranceOfHateLvl3];
+
+			case sdk.quests.SpokeToTyrael:
+				return [sdk.areas.PandemoniumFortress];
+
+			case sdk.quests.TheFallenAngel:
+				return [sdk.areas.PlainsOfDespair];
+
+			case sdk.quests.HellsForge:
+				return [sdk.areas.RiverOfFlame];
+
+			case sdk.quests.TerrorsEnd:
+				return [sdk.areas.ChaosSanctuary];
+
+			case sdk.quests.AbleToGotoActV:
+				return [sdk.areas.PandemoniumFortress];
+
+			case sdk.quests.SiegeOnHarrogath:
+				return [sdk.areas.BloodyFoothills];
+
+			case sdk.quests.RescueonMountArreat:
+				return [sdk.areas.FrigidHighlands];
+
+			case sdk.quests.PrisonOfIce:
+				// anya and speak to malah
+				return [sdk.areas.FrozenRiver, sdk.areas.Harrogath];
+
+			case sdk.quests.BetrayalOfHaggorath:
+				return [sdk.areas.NihlathaksTemple];
+
+			case sdk.quests.RiteOfPassage:
+				return [sdk.areas.ArreatSummit];
+
+			case sdk.quests.EveOfDestruction:
+				return [sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber];
+
+			case sdk.quests.SecretCowLevel:
+				// get wirt and open portal
+				return [sdk.areas.Tristram, sdk.areas.RogueEncampment];
+		}
+		return [];
+	}
+
+	Quests.bossForQuest = function (q) {
+		switch (q) {
+			case sdk.quests.SistersBurialGrounds:
+				return [sdk.monsters.Bloodraven];
+
+			case sdk.quests.ForgottenTower:
+				return [sdk.monsters.TheCountess];
+
+			case sdk.quests.SistersToTheSlaughter:
+				return [sdk.monsters.Andariel];
+
+			case sdk.quests.RadamentsLair:
+				return [sdk.monsters.Radament];
+
+			case sdk.quests.TheSummoner:
+				return [sdk.monsters.Summoner];
+
+			case sdk.quests.TheSevenTombs:
+				return [sdk.monsters.Duriel];
+
+			case sdk.quests.KhalimsWill:
+			case sdk.quests.TheBlackenedTemple:
+				return [sdk.monsters.GelebFlamefinger, sdk.monsters.IsmailVilehand, sdk.monsters.ToorcIcefist];
+
+			case sdk.quests.TheGuardian:
+				return [sdk.monsters.Mephisto];
+
+			case sdk.quests.TheFallenAngel:
+				return [sdk.monsters.Izual];
+
+			case sdk.quests.TerrorsEnd:
+				return [sdk.monsters.Diablo1];
+
+			case sdk.quests.SiegeOnHarrogath:
+				return []; // TODO shenk id ?
+
+			case sdk.quests.BetrayalOfHaggorath:
+				return [sdk.monsters.Nihlathak];
+
+			case sdk.quests.RiteOfPassage:
+				return [sdk.monsters.Ancient1, sdk.monsters.Ancient2, sdk.monsters.Ancient3];
+
+			case sdk.quests.EveOfDestruction:
+				return [sdk.monsters.Crab];
+
+			case sdk.quests.SecretCowLevel:
+				return [sdk.monsters.TheCowKing];
+		}
+		return [];
+	}
+
+	for (var q = sdk.quests.SpokeToWarriv; q <= sdk.quests.SecretCowLevel; q++) {
+		Quests[q] = {
+			index: q,
+			name: Object.keys(sdk.quests).find(x => sdk.quests[x] == q),
+			mandatory: MandatoryQuests.indexOf(q) > -1,
+			reward: RewardedQuests.indexOf(q) > -1,
+			areas: Quests.areasForQuest(q),
+			act: Quests.actForQuest(q),
+			bosses: Quests.bossForQuest(q),
+			do: ((q) => () => require('../bots/Questing').doQuest(q))(q)
+		}
+	}
+
+//(Quests);
+
+
 	function isAlive(unit) {
 		return Boolean(unit && unit.hp);
 	}
@@ -413,7 +737,8 @@
 			return level / total;
 		},
 		killExp: function (playerID, monsterID, areaID) {
-			let exp = this.monsterExp(monsterID, areaID), party = getParty(GameData.myReference), partyid = -1, level = 0, total = 0,
+			let exp = this.monsterExp(monsterID, areaID), party = getParty(GameData.myReference), partyid = -1,
+				level = 0, total = 0,
 				gamesize = 0;
 
 			if (!party) {
@@ -1166,8 +1491,8 @@
 		},
 		monsterEffort: function (unit, areaID, skillDamageInfo = undefined, parent = undefined, preattack = false, all = false) {
 			let eret = {effort: Infinity, skill: -1, type: "Physical"};
-			let useCooldown = (typeof unit === 'number' ? false : Boolean(GameData.myReference.getState(121))),
-				hp = this.monsterMaxHP(typeof unit.classid === 'number' ? unit.classid : unit, areaID);
+			let useCooldown = (typeof unit === 'number' ? false : Boolean(me.getState(121))),
+				hp = this.monsterMaxHP(typeof unit === 'number' ? unit : unit.classid, areaID);
 			let conviction = this.getConviction(), ampDmg = this.getAmp(),
 				isUndead = (typeof unit === 'number' ? MonsterData[unit].Undead : MonsterData[unit.classid].Undead);
 			skillDamageInfo = skillDamageInfo || this.allSkillDamage(unit);
@@ -1354,6 +1679,57 @@
 			return (GameData.myReference.__cachedMostUsedSkills = uniqueSkills.sort((a, b) => b.used - a.used));
 		},
 		myReference: me,
+
+		// returns the amount of life or mana (as absolute value, not percent) a potion gives
+		potionEffect: function (potionClassId, charClass = GameData.myReference.classid) {
+			let potion = Potions[potionClassId];
+			if (!potion) {
+				return 0;
+			}
+			let effect = potion.effect[charClass] || 0;
+			if (!effect) {
+				return 0;
+			}
+			return [515, 516].indexOf(potionClassId) > -1 ? GameData.myReference.hpmax / effect * 100 : effect;
+		},
+
+		// returns the amount of life or mana (as absolute value, not percent) a potion gives
+		potionEffectPerSecond: function (potionClassId, charClass = GameData.myReference.classid) {
+			let effect = this.potionEffect(potionClassId, charClass);
+			let potion = Potions[potionClassId];
+			if (!potion) {
+				return 0;
+			}
+			let duration = potion.duration;
+			if (duration) {
+				return effect / duration;
+			}
+			return 0;
+		},
+
+		// Returns the number of frames needed to cast a given skill at a given FCR for a given char.
+		castingFrames: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+			// https://diablo.fandom.com/wiki/Faster_Cast_Rate
+			let effectiveFCR = Math.min(75, (fcr * 120 / (fcr + 120)) | 0);
+			let isLightning = skillId === sdk.skills.Lightning || skillId === sdk.skills.ChainLightning;
+			let baseCastRate = [20, isLightning ? 19 : 14, 16, 16, 14, 15, 17][charClass];
+			if (isLightning) {
+				return Math.round(256 * baseCastRate / (256 * (100 + effectiveFCR) / 100));
+			}
+
+			let animationSpeed = {
+				normal: 256,
+				human: 208,
+				wolf: 229,
+				bear: 228
+			}[charClass === sdk.charclass.Druid ? this.shiftState() : "normal"];
+			return Math.ceil(256 * baseCastRate / Math.floor(animationSpeed * (100 + effectiveFCR) / 100)) - 1;
+		},
+
+		// Returns the duration in seconds needed to cast a given skill at a given FCR for a given char.
+		castingDuration: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+			return this.castingFrames(skillId, fcr, charClass) / 25;
+		}
 	};
 
 // Export data
@@ -1364,6 +1740,8 @@
 	GameData.onGround = onGround;
 	GameData.itemTier = itemTier;
 	GameData.PresetMonsters = PresetMonsters;
+	GameData.Potions = Potions;
+	GameData.Quests = Quests;
 
 	module.exports = GameData;
 })(module, require);

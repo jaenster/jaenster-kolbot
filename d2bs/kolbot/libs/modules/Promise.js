@@ -28,17 +28,17 @@
 			}, resolve = function (result) {
 				self.value = result;
 				self.stopped = true;
-				typeof self._after !== 'undefined' && self._after.forEach(function (callback) {
+				typeof self._after !== 'undefined' && self._after.forEach(Worker.push(function (callback) {
 					return callback(result);
-				});
-				final();
+				}));
+				Worker.push(final);
 			},
 			reject = function (e) {
 				self.stopped = true;
-				typeof self._catchers !== 'undefined' && (self._catchers.forEach(function (callback) {
+				typeof self._catchers !== 'undefined' && self._catchers.forEach(Worker.push(function (callback) {
 					return callback(e);
 				}) || true) || Misc.errorReport(e || (new Error));
-				final();
+				Worker.push(final);
 			};
 
 

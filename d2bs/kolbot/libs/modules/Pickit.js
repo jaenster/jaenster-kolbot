@@ -312,8 +312,7 @@
 			} else if ((module = Pickit.hooks.find(x => x.id === status))) {
 				print("ÿc7Picked for (ÿc0" + module.id + 'ÿc7) - ' + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
 				module.handle(item);
-			}
-			{
+			} else {
 				print("ÿc7Picked up " + stats.color + stats.name + " ÿc0(ilvl " + stats.ilvl + (keptLine ? ") (" + keptLine + ")" : ")"));
 
 			}

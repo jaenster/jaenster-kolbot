@@ -22,6 +22,8 @@ Unit.prototype.openMenu = function (addDelay) {
 
 	var i, tick;
 
+	const Pather = require('Pather');
+	const Misc = require('Misc');
 	for (i = 0; i < 5; i += 1) {
 		if (getDistance(me, this) > 4) {
 			Pather.moveToUnit(this);
@@ -68,6 +70,7 @@ Unit.prototype.startTrade = function (mode) {
 	if (getUIFlag(0x0C)) {
 		return true;
 	}
+	const Misc = require('Misc');
 
 	var i, tick,
 		menuId = mode === "Gamble" ? 0x0D46 : mode === "Repair" ? 0x0D06 : 0x0D44;
