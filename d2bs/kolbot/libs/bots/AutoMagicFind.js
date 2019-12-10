@@ -50,6 +50,7 @@ function AutoMagicFind(Config, Attack, Pickit, Pather, Town, Misc) {
 	areas.sort(me.diff < 2 ? ((a, b) => b.effort - a.effort) : ((a, b) => a.effort - b.effort));
 
 	// Calculate which areas are calculates as extremely hard
+	print('['+areas.map(x => x.effort).join(',')+']');
 	const notHardAreas = areas.map(x => x.effort).filterHighDistance();
 	// Remove areas that are extremely hard
 	areas = areas.filter(obj => {
