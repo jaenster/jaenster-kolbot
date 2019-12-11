@@ -150,5 +150,36 @@
 		)
 	};
 
+	AutoConfig.MiscPickit = function () {
+		const GameData = require('GameData');
+		const NTIP = require('NTIP');
+		for (var potId in GameData.Potions) {
+			// keep potions you can't buy
+			var cost = GameData.Potions[potId].cost;
+			if (cost == undefined || cost > me.gold) {
+				NTIP.AddEntry("[name] == "+potId);
+			}
+		}
+
+		if (me.staminaMaxDuration < 60) {
+			// keep 2 stamina potions for running long enough
+			NTIP.AddEntry("[name] == staminapotion # # [maxquantity] == 2");
+		}
+
+		if (me.lowGold) {
+			NTIP.AddEntry("[name] == gold");
+		}
+
+		if (!me.findItem(sdk.items.tptome)) {
+			// keep 2 tp scrolls if you don't have tp tome
+			NTIP.AddEntry("[name] == scrolloftownportal # # [maxquantity] == 2");
+		}
+
+		if (!me.findItem(sdk.items.idtome)) {
+			// keep 2 id scrolls if you don't have id tome
+			NTIP.AddEntry("[name] == scrollofidentify # # [maxquantity] == 2");
+		}
+	};
+
 	module.exports = AutoConfig;
 })(module, require);

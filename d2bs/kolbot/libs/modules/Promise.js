@@ -30,18 +30,19 @@
 			resolve = function (result) {
 				self.value = result;
 				self.stopped = true;
-				typeof self._after !== 'undefined' && self._after.forEach(function (callback) {
+				typeof self._after !== 'undefined' && self._after.forEach(callback => Worker.push(function () {
 					return callback(result);
-				});
-				final();
+				}));
+				Worker.push(final);
 			},
 			
 			reject = function (e) {
 				self.stopped = true;
-				typeof self._catchers !== 'undefined' && (self._catchers.forEach(function (callback) {
+				typeof self._catchers !== 'undefined' && self._catchers.forEach(callback => Worker.push(function () {
 					return callback(e);
-				}) || true) || Misc.errorReport(e || (new Error));
-				final();
+				}));
+				if (!Array.isArray(self._catchers) || !self._catchers.length) Misc.errorReport(e || (new Error));
+				Worker.push(final);
 			};
 
 

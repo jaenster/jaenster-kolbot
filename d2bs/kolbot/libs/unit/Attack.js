@@ -6,8 +6,9 @@
 	const Pickit = require('Pickit');
 	const ignoreMonster = [];
 
-	Unit.prototype.clear = function (range, spectype) {
-		let start = [];
+	Unit.prototype.clear = function (range, spectype, walk = false, once = false) {
+		const Pather = require('Pather');
+		let start = [], startArea = me.area;
 		let shamans = [
 			sdk.monsters.FallenShaman,
 			sdk.monsters.CarverShaman2,
@@ -28,6 +29,11 @@
 			sdk.monsters.Devilkin,
 			sdk.monsters.DarkOne2
 		];
+
+		const clearDistance = (x, y, xx, yy) => {
+			return walk ? Pather.walkPathDistance(x, y, xx, yy) : getDistance(x, y, xx, yy);
+		};
+
 		//ToDo; keep track of the place we are at
 		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
@@ -37,8 +43,8 @@
 				&& unit.area === me.area
 				&& (
 					start.length // If start has a length
-						? getDistance(start[0], start[1], unit.x, unit.y) <= range // If it has a range smaller as from the start point (when using me.clear)
-						: getDistance(this, unit) <= range // if "me" move, the object doesnt move. So, check distance of object
+						? clearDistance(start[0], start[1], unit.x, unit.y) <= range // If it has a range smaller as from the start point (when using me.clear)
+						: clearDistance(this.x, this.y, unit.x, unit.y) <= range // if "me" move, the object doesnt move. So, check distance of object
 				)
 				&& !checkCollision(me, unit, 0x0)
 			)
@@ -81,10 +87,10 @@
 				unit.kill();
 			}
 			units = getUnits_filtered();
+			if (once || startArea !== me.area) return true;
 		}
 		return true;
 	};
-
 	Unit.prototype.__defineGetter__('attackable', function () {
 		if (this.type === 0 && this.mode !== 17 && this.mode !== 0) { //ToDo: build in here a check if player is hostiled
 			return true;
@@ -145,96 +151,100 @@
 		x === undefined && (x = me.x);
 		y === undefined && (y = me.y);
 		if (!me.setSkill(skillId, hand, item)) return false;
+		const ensureState = () => {
+			if (Skills.isTimed[skillId]) { // account for lag, state 121 doesn't kick in immediately
+				for (i = 0; i < 10; i += 1) {
+					if ([4, 9].indexOf(me.mode) > -1) {
+						break;
+					}
 
+					if (me.getState(121)) {
+						break;
+					}
+
+					delay(10);
+				}
+			}
+		};
+		const GameData = require('GameData');
 		if (Config.PacketCasting > 1 || forcePacket || (Config.PacketCasting && skillId === sdk.skills.Teleport)) {
 			if (this === me) {
 				sendPacket(1, (hand === 0) ? 0x0c : 0x05, 2, x, 2, y);
 			} else {
 				sendPacket(1, (hand === 0) ? 0x11 : 0x0a, 4, this.type, 4, this.gid);
 			}
-		} else {
-			switch (hand) {
-				case 0: // Right hand + No Shift
-					clickType = 3;
-					shift = 0;
+			ensureState();
+			delay(GameData.castingDuration(skillId)*1000);
+			return this;
+		}
 
-					break;
-				case 1: // Left hand + Shift
-					clickType = 0;
-					shift = 1;
+		switch (hand) {
+			case 0: // Right hand + No Shift
+				clickType = 3;
+				shift = 0;
 
-					break;
-				case 2: // Left hand + No Shift
-					clickType = 0;
-					shift = 0;
+				break;
+			case 1: // Left hand + Shift
+				clickType = 0;
+				shift = 1;
 
-					break;
-				case 3: // Right hand + Shift
-					clickType = 3;
-					shift = 1;
+				break;
+			case 2: // Left hand + No Shift
+				clickType = 0;
+				shift = 0;
 
-					break;
+				break;
+			case 3: // Right hand + Shift
+				clickType = 3;
+				shift = 1;
+
+				break;
+		}
+
+		MainLoop:
+		for (n = 0; n < 3; n += 1) {
+			if (this !== me) {
+				clickMap(clickType, shift, this);
+			} else {
+				clickMap(clickType, shift, x, y);
 			}
 
-			MainLoop:
-				for (n = 0; n < 3; n += 1) {
-					if (this !== me) {
-						clickMap(clickType, shift, this);
-					} else {
-						clickMap(clickType, shift, x, y);
-					}
+			delay(20);
 
-					delay(20);
+			if (this !== me) {
+				clickMap(clickType + 2, shift, this);
+			} else {
+				clickMap(clickType + 2, shift, x, y);
+			}
 
-					if (this !== me) {
-						clickMap(clickType + 2, shift, this);
-					} else {
-						clickMap(clickType + 2, shift, x, y);
-					}
-
-					for (i = 0; i < 8; i += 1) {
-						if (me.attacking) {
-							break MainLoop;
-						}
-
-						delay(20);
-					}
+			for (i = 0; i < 8; i += 1) {
+				if (me.attacking) {
+					break MainLoop;
 				}
 
-			while (me.attacking) {
-				delay(10);
+				delay(20);
 			}
 		}
 
-		if (Skills.isTimed[skillId]) { // account for lag, state 121 doesn't kick in immediately
-			for (i = 0; i < 10; i += 1) {
-				if ([4, 9].indexOf(me.mode) > -1) {
-					break;
-				}
+		//ToDo; Deal with ias, if it is an melee attack
+		delay(GameData.castingDuration(skillId)*1000);
 
-				if (me.getState(121)) {
-					break;
-				}
-
-				delay(10);
-			}
-		}
-
+		ensureState();
 		return this;
 	};
 	const Town = require('Town');
 	let check = getTickCount();
-	Unit.prototype.attack = function () {
+	Unit.prototype.attack = function (maxDistance = 40) {
 		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);
 		let populatedAttack = monsterEffort.find(x => Skills.manaCost[x.skill] < me.mp);
 		const move = (sk = populatedAttack.skill) => {
-			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > 40) {
+			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > maxDistance) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
 					ignoreMonster.push(this.gid);
-					return ;
+					return;
 				}
 			}
-			if (this.distance > 40) { // Still on high distance?
+			if (this.distance > maxDistance) { // Still on high distance?
 				ignoreMonster.push(this.gid);
 			}
 		};
@@ -275,7 +285,7 @@
 						if (unit.getState(61)) return; //ToDo; fix here something less specific as lower res curse
 
 						// Move to position if needed
-						if ((getDistance(me, unit) > 40 || checkCollision(me, unit, 0x4))) {
+						if ((getDistance(me, unit) > maxDistance || checkCollision(me, unit, 0x4))) {
 							// We cant reach the monster, as it is too far away.
 							// However we might can cast something close by.
 							spot = unit.bestSpot(60); // get the best spot
@@ -397,10 +407,10 @@
 		return val;
 	};
 
-	Unit.prototype.kill = function () {
+	Unit.prototype.kill = function (maxDistance = 40) {
 		print('Killing ' + this.name);
 		let counter = 1;
-		while (counter < 3000 && counter++ && this.attackable) if (!this.attack()) break;
+		while (counter < 3000 && counter++ && this.attackable) if (!this.attack(maxDistance)) break;
 		this.attackable && ignoreMonster.push(this.gid);
 	};
 
@@ -456,7 +466,7 @@
 
 	Object.defineProperty(Unit.prototype, 'allies', {
 		get: function () {
-			return ([sdk.unittype.Player,sdk.unittype.Monsters].indexOf(this.type)+1 && this.partied);
+			return ([sdk.unittype.Player, sdk.unittype.Monsters].indexOf(this.type) + 1 && this.partied);
 		}
 	});
 

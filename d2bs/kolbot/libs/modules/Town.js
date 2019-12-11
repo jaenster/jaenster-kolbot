@@ -746,7 +746,7 @@
 	};
 
 	Town.fieldID = function () { // not exactly a town function but whateva
-		var list, tome, item, result;
+		var list, item, result;
 
 		list = Town.getUnids();
 		const Pickit = require('Pickit');
@@ -754,9 +754,11 @@
 			return false;
 		}
 
-		tome = me.findItem(519, 0, 3);
-
-		if (!tome || tome.getStat(70) < list.length) {
+		let tome = me.findItem(sdk.items.idtome, sdk.itemmode.inStorage, sdk.storage.Inventory);
+		let scrolls = me.getItemsEx()
+			.filter(i => i.classid == sdk.items.idScroll && i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory);
+		let quantity = scrolls.length + (tome ? tome.getStat(sdk.stats.Quantity) : 0);
+		if (quantity < list.length) { // Dont have enough scrolls
 			return false;
 		}
 
@@ -770,7 +772,8 @@
 			}
 
 			if (result.result === -1) { // unid item that should be identified
-				Town.identifyItem(item, tome);
+				let tool = scrolls.shift() || tome;
+				Town.identifyItem(item, tool);
 				delay(me.ping + 1);
 
 				result = Pickit.checkItem(item);
@@ -1569,7 +1572,7 @@
 		const Storage = require('Storage');
 		var i,
 			items = Storage.Inventory.Compare(Config.Inventory)
-				.filter(i => ignoredItemTypes.indexOf(i.itemtype) >= 0);
+				.filter(i => ignoredItemTypes.indexOf(i.itemType) == -1);
 
 		for (i = 0; i < items.length; i += 1) {
 			if (Storage.Stash.CanFit(items[i])) {
@@ -1798,22 +1801,23 @@
 
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
+		//TODO place scrolls in tome if enough room
 		me.getItemsEx()
-				.filter(i => 
-					i.location === sdk.storage.Inventory &&
-					i.mode === sdk.itemmode.inStorage &&
-					i.itemType === sdk.itemtype.scroll &&
-					require('Pickit').checkItem(i).result == 0
-				)
-				.forEach(s => {
-					if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-						Misc.itemLogger("Sold", s);
-						s.sell();
-					} else {
-						Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
-						s.drop();
-					}
-				});
+			.filter(i => 
+				i.location === sdk.storage.Inventory &&
+				i.mode === sdk.itemmode.inStorage &&
+				i.itemType === sdk.itemtype.scroll &&
+				require('Pickit').checkItem(i).result == 0
+			)
+			.forEach(s => {
+				if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
+					Misc.itemLogger("Sold", s);
+					s.sell();
+				} else {
+					Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
+					s.drop();
+				}
+			});
 
 		return true;
 	};
@@ -1825,6 +1829,8 @@
 		Town.checkQuestItems(); // only golden bird quest for now
 		const Pickit = require('Pickit');
 
+		me.cancel();
+		delay(200);
 
 		beltSize = Storage.BeltSize();
 		freeSpace = Town.checkColumns(beltSize);

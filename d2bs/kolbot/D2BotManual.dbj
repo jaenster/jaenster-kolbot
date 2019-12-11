@@ -50,10 +50,10 @@ include('require.js');
 include("sdk.js");
 getLocation() === sdk.locations.None && sendKey(32); // skip splash screen
 include("OOG.js");
-include("common/prototypes.js");
-let handle, gameInfo;
+const HeartBeat = require('HeartBeat');
 
 function main() {
+	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
 	let lastGame = {
 		name: '',
 		pass: '',
@@ -64,50 +64,7 @@ function main() {
 	const LocationEvents = require('LocationEvents'),
 		Promise = require('Promise'),
 		Worker = require('Worker'),
-		Control = require('Control'),
-		Messaging = require('Messaging'),
-		Team = require('Team');
-
-	Messaging.on('pass', function (data) {
-		print('Got handle from debug function');
-		if (data.hasOwnProperty('handle')) {
-			handle = data.handle;
-		}
-	});
-
-	addEventListener('copydata', function (mode, msg) {
-		//print(JSON.stringify({mode: mode, msg: msg}));
-		if (msg === "Handle") {
-			if (!handle) {
-				handle = mode;
-				DataFile.updateStats("handle", handle);
-				D2Bot.init();
-
-				!getScript('tools/heartbeat.js') && Worker.push(() => load("tools/heartbeat.js"));
-			}
-			return;
-		}
-		if (mode === 2) {
-			gameInfo = JSON.parse(msg);
-			gameInfo.charName = StarterConfig.LoginChar;
-		}
-		if (mode === 4) msg === "pingreq" && sendCopyData(null, me.windowtitle, 4, "pingrep");
-		return;
-	});
-
-	// create datafile (needs some refactoring trough)
-	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
-	while (!handle) delay(10);
-
-	let lastTimer = getTickCount();
-	D2Bot.requestGameInfo();
-	while (!gameInfo) {
-		if (getTickCount() - lastTimer > 500) {
-			lastTimer = getTickCount();
-			D2Bot.requestGameInfo();
-		}
-		delay(10);
-	}
+		Control = require('Control');
 
 	LocationEvents.on(sdk.locations.JoinGame, () => {
 		Control.JoinGameName.setText(lastGame.name);

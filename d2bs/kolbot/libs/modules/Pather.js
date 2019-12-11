@@ -870,11 +870,13 @@
 				let tpTool = tpScroll || tpTome;
 
 				if (!tpTool) {
-					throw new Error("makePortal: No TP tomes.");
+					throw new Error("makePortal: No tome, no scrolls.");
+					//TODO: use old portal if any
 				}
 
-				if (!tpScroll && tpTome.getStat(70)) {
-					throw new Error("makePortal: No scrolls.");
+				if (!tpScroll && tpTome && tpTome.getStat(sdk.stats.Quantity) == 0) {
+					throw new Error("makePortal: No scrolls in tome.");
+					//TODO: use old portal if any
 				}
 
 				oldPortal = getUnit(2, "portal");
@@ -1395,6 +1397,21 @@
 			}
 
 			return true;
+		},
+
+		walkDistanceTo: function (x, y) {
+			return walkPathDistance(me.x, me.y, x, y);
+		},
+
+		walkPathDistance: function (x, y, xx, yy) {
+			let path = getPath(me.area, x, y, xx, yy, 0, this.walkDistance);
+			if (path.length == 0) {
+				return Infinity;
+			}
+			return path.reduce((acc, v, i, arr) => {
+				let prev = i ? arr[i-1] : v;
+				return acc + Math.sqrt((prev.x-v.x)*(prev.x-v.x) + (prev.y-v.y)*(prev.y-v.y));
+			}, 0);
 		},
 
 		/*

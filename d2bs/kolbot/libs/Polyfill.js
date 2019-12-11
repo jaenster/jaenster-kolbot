@@ -66,16 +66,18 @@ Array.prototype.isEqual = function (t) {
 	return this.map((x, i) => t.hasOwnProperty(i) && x === t[i]).reduce((a, c) => c & a, true);
 };
 
-Array.prototype.filterHighDistance = function () {
+Array.prototype.filterHighDistance = function (step=0) {
+	if (step > 10) return this; // If we took 10 steps, give up
 	const distances = this.map(
 		(x, i) => this
 			.filter((_, index) => index !== i) // Not this element
 			.map(y => Math.abs(y - this[i])).reduce((a, c) => c + a || 0, 0) / (this.length - 1) // Avg of distance to others
 	);
 	const distancesAvg = distances.reduce((a, c) => c + a || 0, 0) / this.length;
-	if (distancesAvg > 30) {
-		return this.filter((x, i) => distances[i] < distancesAvg * 0.75);
-	}
+
+	// Recursion until only viable areas are in the list
+	if (distancesAvg > 30) 	return this.filter((x, i) => distances[i] < distancesAvg * 0.75 || this[i] < distancesAvg).filterHighDistance(step++);
+
 	return this; // Everything is relatively the same
 };
 
