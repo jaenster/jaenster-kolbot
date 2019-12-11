@@ -24,6 +24,8 @@
 		return new Observable(subscribe);
 	};
 
+	Observable.empty = Observable.create(observer => observer.complete());
+
 	Observable.fromPromise = (promise) => {
 		return Observable.create(observer => {
 			promise
@@ -44,6 +46,21 @@
 		});
 	};
 
+	Observable.defer = (factory) => {
+		return Observable.create(observer => {
+			let input;
+			try {
+				input = factory();
+			}
+			catch (err) {
+				observer.error(err);
+				return undefined;
+			}
+			const source = input || Observable.empty;
+			return source.subscribe(observer);
+		});
+	};
+
 	Observable.prototype.map = (transformation) => {
 		const stream = this;
 
@@ -56,6 +73,67 @@
 
 			return subscription.unsubscribe;
 		});
+	};
+
+	Observable.prototype.do = function (next, error, complete) {
+		const stream = this;
+
+		return Observable.create(observer => {
+			const subscription = stream.subscribe(
+				v => {
+					next(v);
+					observer.next(v);
+				},
+				e => {
+					error(e);
+					observer.error(e);
+				},
+				() => {
+					complete();
+					observer.complete();
+				}
+			);
+			return subscription.unsubscribe;
+		});
+	};
+
+	Observable.prototype.concat = function (other) {
+		const stream = this;
+
+		return Observable.create(observer => {
+			let currentSubscription;
+			let done = false;
+
+			function switchTo (observable) {
+				currentSubscription = observable.subscribe(
+					observer.next,
+					observer.error,
+					() => {
+						if (typeof currentSubscription === 'undefined') {
+							setTimeout(() => currentSubscription.unsubscribe(), 1);
+						}
+						else {
+							currentSubscription.unsubscribe();
+						}
+						if (!done) {
+							done = true;
+							switchTo(other);
+						}
+						else {
+							observer.complete();
+						}
+					}
+				);
+			}
+
+			switchTo(stream);
+
+			return currentSubscription.unsubscribe;
+		});
+	};
+
+	Observable.prototype.doOnSubscribe = function (onSubscribe) {
+		return Observable.empty.do(null, null, onSubscribe).concat(this);
 	};
 
 
@@ -108,12 +186,17 @@
 	function Subject(subscribe) {
 		Observable.call(this, subscribe);
 
+		this.__onSubscribe = undefined;
+
 		this.observers = [];
 
 		this.subscribe = (next, error, complete) => {
 			const observer = new Observer({next: next, error: error, complete: complete});
 			this.observers.push(observer);
 			observer._unsubscribe = this._subscribe(observer);
+			if (typeof this.__onSubscribe === 'function') {
+				this.__onSubscribe();
+			}
 			return new Subscription(observer.unsubscribe);
 		};
 
@@ -143,6 +226,11 @@
 
 	Subject.create = (subscribe) => {
 		return new Subject(subscribe);
+	};
+
+	Subject.prototype.doOnSubscribe = (onSubscribe) => {
+		this.__onSubscribe = onSubscribe;
+		return this;
 	};
 
 	var Rx = {
