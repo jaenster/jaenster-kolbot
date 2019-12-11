@@ -1801,22 +1801,23 @@
 
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
+		//TODO place scrolls in tome if enough room
 		me.getItemsEx()
-				.filter(i => 
-					i.location === sdk.storage.Inventory &&
-					i.mode === sdk.itemmode.inStorage &&
-					i.itemType === sdk.itemtype.scroll &&
-					require('Pickit').checkItem(i).result == 0
-				)
-				.forEach(s => {
-					if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-						Misc.itemLogger("Sold", s);
-						s.sell();
-					} else {
-						Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
-						s.drop();
-					}
-				});
+			.filter(i => 
+				i.location === sdk.storage.Inventory &&
+				i.mode === sdk.itemmode.inStorage &&
+				i.itemType === sdk.itemtype.scroll &&
+				require('Pickit').checkItem(i).result == 0
+			)
+			.forEach(s => {
+				if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
+					Misc.itemLogger("Sold", s);
+					s.sell();
+				} else {
+					Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
+					s.drop();
+				}
+			});
 
 		return true;
 	};
