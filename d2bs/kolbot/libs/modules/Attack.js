@@ -10,8 +10,8 @@
 
 	};
 
-	Attack.clear = function (range) {
-		return me.clear.apply(me, [range]);
+	Attack.clear = function (range, spectype, walk = false) {
+		return me.clear.apply(me, [range, spectype, walk]);
 	};
 
 	Attack.checkMonster = function (monster) {
