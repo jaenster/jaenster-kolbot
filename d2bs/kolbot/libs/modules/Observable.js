@@ -109,10 +109,7 @@
 					observer.next,
 					observer.error,
 					() => {
-						if (typeof currentSubscription === 'undefined') {
-							setTimeout(() => currentSubscription.unsubscribe(), 1);
-						}
-						else {
+						if (typeof currentSubscription !== 'undefined') {
 							currentSubscription.unsubscribe();
 						}
 						if (!done) {
