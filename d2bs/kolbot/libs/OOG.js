@@ -8,7 +8,9 @@ let [D2Bot,DataFile,ControlAction,ShitList] = (function() {
 	const Pather = require('Pather');
 	const HeartBeat = require('HeartBeat');
 	const Promise = require('Promise');
-	new Promise(resolve => HeartBeat.handle && resolve()).then(() => D2Bot.handle = HeartBeat.handle);
+
+	// In case we are within the HeartBeat thread, we get here while its being required. Bugs out the require.js
+	HeartBeat && new Promise(resolve => HeartBeat.handle && resolve()).then(() => D2Bot.handle = HeartBeat.handle);
 
 	const D2Bot = {
 		handle: 0,

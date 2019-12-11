@@ -6,8 +6,8 @@
 	const Pickit = require('Pickit');
 	const ignoreMonster = [];
 
-	Unit.prototype.clear = function (range, spectype) {
-		let start = [];
+	Unit.prototype.clear = function (range, spectype,once=false) {
+		let start = [],startArea = me.area;
 		let shamans = [
 			sdk.monsters.FallenShaman,
 			sdk.monsters.CarverShaman2,
@@ -81,10 +81,10 @@
 				unit.kill();
 			}
 			units = getUnits_filtered();
+			if (once || startArea !== me.area) return true;
 		}
 		return true;
 	};
-
 	Unit.prototype.__defineGetter__('attackable', function () {
 		if (this.type === 0 && this.mode !== 17 && this.mode !== 0) { //ToDo: build in here a check if player is hostiled
 			return true;
@@ -160,7 +160,7 @@
 				}
 			}
 		};
-
+		const GameData = require('GameData');
 		if (Config.PacketCasting > 1 || forcePacket || (Config.PacketCasting && skillId === sdk.skills.Teleport)) {
 			if (this === me) {
 				sendPacket(1, (hand === 0) ? 0x0c : 0x05, 2, x, 2, y);
@@ -168,6 +168,7 @@
 				sendPacket(1, (hand === 0) ? 0x11 : 0x0a, 4, this.type, 4, this.gid);
 			}
 			ensureState();
+			delay(GameData.castingDuration(skillId)*1000);
 			return this;
 		}
 
@@ -195,31 +196,29 @@
 		}
 
 		MainLoop:
-			for (n = 0; n < 3; n += 1) {
-				if (this !== me) {
-					clickMap(clickType, shift, this);
-				} else {
-					clickMap(clickType, shift, x, y);
+		for (n = 0; n < 3; n += 1) {
+			if (this !== me) {
+				clickMap(clickType, shift, this);
+			} else {
+				clickMap(clickType, shift, x, y);
+			}
+
+			delay(20);
+
+			if (this !== me) {
+				clickMap(clickType + 2, shift, this);
+			} else {
+				clickMap(clickType + 2, shift, x, y);
+			}
+
+			for (i = 0; i < 8; i += 1) {
+				if (me.attacking) {
+					break MainLoop;
 				}
 
 				delay(20);
-
-				if (this !== me) {
-					clickMap(clickType + 2, shift, this);
-				} else {
-					clickMap(clickType + 2, shift, x, y);
-				}
-
-				for (i = 0; i < 8; i += 1) {
-					if (me.attacking) {
-						break MainLoop;
-					}
-
-					delay(20);
-				}
 			}
-
-		const GameData = require('GameData');
+		}
 
 		//ToDo; Deal with ias, if it is an melee attack
 		delay(GameData.castingDuration(skillId)*1000);

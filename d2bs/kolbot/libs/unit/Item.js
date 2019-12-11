@@ -179,6 +179,7 @@ Unit.prototype.sell = function () {
 };
 
 Unit.prototype.toCursor = function () {
+	const Town = require('Town');
 	if (this.type !== 4) {
 		throw new Error("Unit.toCursor: Must be used with items.");
 	}
@@ -190,7 +191,6 @@ Unit.prototype.toCursor = function () {
 	let i, tick;
 
 	if (this.location === 7) {
-		const Town = require('NPC');
 		Town.openStash();
 	}
 

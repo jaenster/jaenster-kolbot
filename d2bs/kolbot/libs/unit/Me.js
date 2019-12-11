@@ -180,8 +180,7 @@
 		const Pather = require('Pather');
 		if (me.area !== area) Pather.journeyTo(area);
 
-		let presetUnit = getPresetUnit(area, unitType, unitId);
-		return presetUnit && presetUnit.moveTo(offX, offY, clearPath, pop);
+		return Pather.moveToPreset(area, unitType, unitId, offX, offY, clearPath, pop);
 	};
 	me.useWaypoint = function (targetArea) {
 		const Pather = require('Pather');

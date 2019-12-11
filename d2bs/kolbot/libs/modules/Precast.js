@@ -21,7 +21,7 @@
 
 			print('Precasting ' + getSkillById(result.skillId) + ' on slot ' + result.slot);
 			if (result.skillId === sdk.skills.Enchant) { // Cast enchant on everyone that is a party member
-				return getUnits(-1).filter(unit => unit.allies && unit.getState(sdk.states.Enchant)).cast(result.skillId);
+				return getUnits(-1).filter(unit => unit.allies && unit.getState(sdk.states.Enchant)).forEach(unit=> unit.cast(result.skillId));
 			}
 			return me.cast(result.skillId);
 		});
