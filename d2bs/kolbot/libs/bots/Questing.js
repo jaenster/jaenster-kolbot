@@ -25,7 +25,26 @@
 		},
 
 		DenOfEvil: function () {
-			return require("../bots/Den")(Config, Attack, Pickit, Pather, Town);
+			const Den = require("../bots/Den");
+			Den.observeQuest().subscribe(
+				(state) => {
+					print("Den state :");
+					print(state);
+					if (!state[0] && !state[1]) {
+						Den.clearDen();
+					}
+					else if (!state[1]) {
+						Den.talkToAkara();
+					}
+				},
+				(error) => {
+					print("Den error");
+					print(error);
+				},
+				() => {
+					print("Den quest done");
+				}
+			);
 		},
 
 		/*SistersBurialGrounds: function () {
@@ -424,7 +443,7 @@
 			}
 
 			if (!Questing.checkQuest(quest.index, 0)) {
-				var r = 0, success = false;
+				/*var r = 0, success = false;
 				do {
 					try {
 						print("Trying to do quest "+debugName+" - attempt #"+(r+1));
@@ -439,6 +458,8 @@
 					print("ÿc1Unable to complete quest "+debugName);
 					return false;
 				}
+				return true;*/
+				Questing[quest.name]();
 				return true;
 			}
 			else {
