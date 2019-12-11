@@ -1399,6 +1399,21 @@
 			return true;
 		},
 
+		walkDistanceTo: function (x, y) {
+			return walkPathDistance(me.x, me.y, x, y);
+		},
+
+		walkPathDistance: function (x, y, xx, yy) {
+			let path = getPath(me.area, x, y, xx, yy, 0, this.walkDistance);
+			if (path.length == 0) {
+				return Infinity;
+			}
+			return path.reduce((acc, v, i, arr) => {
+				let prev = i ? arr[i-1] : v;
+				return acc + Math.sqrt((prev.x-v.x)*(prev.x-v.x) + (prev.y-v.y)*(prev.y-v.y));
+			}, 0);
+		},
+
 		/*
 			Pather.getAreaName(area);
 			area - id of the area to get the name for
