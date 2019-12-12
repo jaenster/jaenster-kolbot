@@ -1289,7 +1289,7 @@
 					if (!(unit instanceof Unit)) {
 						break;
 					}
-					let staticCap = [50, 50, 60][me.diff];
+					let staticCap = [0, 33, 50][me.diff];
 					if (staticCap > percentLeft) {
 						break;
 					}
