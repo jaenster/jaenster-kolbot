@@ -1286,30 +1286,48 @@
 					break;
 
 				case sdk.skills.StaticField:
-					if (unit instanceof Unit) {
-						let staticCap = [50, 50, 60][me.diff], //ToDo; fill in actual numbers
-							[monsterId, areaId] = [unit.classid, unit.area],
-							percentLeft = (unit.hp * 100 / unit.hpmax);
-
-						if (staticCap > percentLeft) {
-							dmg.min = 0;
-							dmg.max = 0;
-						} else {
-							let maxReal = this.monsterMaxHP(monsterId, areaId, unit.charlvl - this.monsterLevel(monsterId, areaId)),
-								hpReal = maxReal / 100 * percentLeft,
-								potencialDmg = (maxReal / 100 * percentLeft) * .25,
-								ceiling = hpReal - (maxReal * ((100 - staticCap) / 100)); //ToDo; fix this propperly, as it is bugged now
-
-							// let presist = this.monsterResist(unit, "Lightning");
-							// presist = Math.max(-100, Math.min(100, presist));
-							// potencialDmg += potencialDmg * (100 - presist) / 100;
-
-							let avgDmg = Math.max(Math.min(potencialDmg, ceiling), 0);
-							dmg.min = avgDmg;
-							dmg.max = avgDmg;
-						}
-
+					if (!(unit instanceof Unit)) {
+						break;
 					}
+					let staticCap = [50, 50, 60][me.diff];
+					if (staticCap > percentLeft) {
+						break;
+					}
+
+					const [monsterId, areaId] = [unit.classid, unit.area],
+						percentLeft = (unit.hp * 100 / unit.hpmax);
+
+					const maxReal = this.monsterMaxHP(monsterId, areaId, unit.charlvl - this.monsterLevel(monsterId, areaId)),
+						hpReal = maxReal / 100 * percentLeft,
+						potencialDmg = (hpReal / 100 * percentLeft) * .25;
+
+					let tmpDmg = (maxReal / 100 * percentLeft) * (0.25);
+
+					// We do need to calculate the extra damage, or less damage due to resistance
+					let resist = this.monsterResist(unit, 'Lightning');
+					let pierce = GameData.myReference.getStat(this.pierceMap['Lightning']);
+
+					let conviction = this.getConviction();
+					resist -= (resist >= 100 ? conviction / 5 : conviction);
+
+					if (resist < 100) {
+						resist = Math.max(-100, resist - pierce);
+					} else {
+						resist = 100;
+					}
+					tmpDmg = potencialDmg * ((100 - resist) / 100);
+					const percentageDamage = 100 / maxReal * tmpDmg;
+
+					let avgDmg = tmpDmg;
+					let overCap = percentLeft - staticCap - percentageDamage;
+					if (overCap < 0) {
+						let maxDmgPercentage = percentageDamage - Math.abs(overCap);
+						avgDmg = maxReal / 100 * maxDmgPercentage;
+					}
+					avgDmg = avgDmg > 0 && avgDmg || 0;
+					//print('Static will chop off -> ' + (100 / maxReal * avgDmg) + '%');
+					dmg.min = avgDmg;
+					dmg.max = avgDmg;
 					break;
 			}
 
@@ -1529,7 +1547,7 @@
 					tmpDmg += avgPDmg * (100 - presist) / 100;
 				}
 
-				if (avgDmg > 0 && (!isUndead || !buffDamageInfo[sk].undeadOnly)) {
+				if (avgDmg > 0 && (!isUndead || !buffDamageInfo[sk].undeadOnly) && sk !== sdk.skills.StaticField) {
 					let resist = this.monsterResist(unit, buffDamageInfo[sk].type);
 					let pierce = GameData.myReference.getStat(this.pierceMap[buffDamageInfo[sk].type]);
 
