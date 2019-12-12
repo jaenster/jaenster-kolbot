@@ -1307,6 +1307,7 @@
 					let pierce = GameData.myReference.getStat(this.pierceMap['Lightning']);
 
 					let conviction = this.getConviction();
+					// if (conviction && !unit.getState(sdk.states.Conviction)) conviction = 0; //ToDo; enable when fixed telestomp
 					resist -= (resist >= 100 ? conviction / 5 : conviction);
 
 					if (resist < 100) {
@@ -1514,6 +1515,7 @@
 				isUndead = (typeof unit === 'number' ? MonsterData[unit].Undead : MonsterData[unit.classid].Undead);
 			skillDamageInfo = skillDamageInfo || this.allSkillDamage(unit);
 			const allData = [];
+			// if (conviction && unit instanceof Unit && !unit.getState(sdk.states.Conviction)) conviction = 0; //ToDo; enable when fixed telestomp
 
 			let buffDmg = [], buffDamageInfo = {}, newSkillDamageInfo = {};
 
