@@ -1290,12 +1290,11 @@
 						break;
 					}
 					let staticCap = [0, 33, 50][me.diff];
+					const [monsterId, areaId] = [unit.classid, unit.area],
+						percentLeft = (unit.hp * 100 / unit.hpmax);
 					if (staticCap > percentLeft) {
 						break;
 					}
-
-					const [monsterId, areaId] = [unit.classid, unit.area],
-						percentLeft = (unit.hp * 100 / unit.hpmax);
 
 					const maxReal = this.monsterMaxHP(monsterId, areaId, unit.charlvl - this.monsterLevel(monsterId, areaId)),
 						hpReal = maxReal / 100 * percentLeft,
