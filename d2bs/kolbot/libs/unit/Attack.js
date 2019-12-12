@@ -26,15 +26,14 @@
 				if (!spectype || typeof spectype !== 'number') return true; // No spectype =  all monsters
 				return unit.spectype & spectype;
 			})
-			.sort((a, b) => GameData.monsterEffort(a, a.area).effort - GameData.monsterEffort(b, b.area).effort - ((b.distance - a.distance) / 5))
+			.sort((a, b) => a.distance - b.distance);
 
 		// If we clear around _me_ we move around, but just clear around where we started
-		let units = getUnits_filtered(), unit;
+		let units;
 		if (me === this) start = [me.x, me.y];
 
-		while (units.length) {
-			while ((unit = units.shift()) && unit.attack()) ;
-			units = getUnits_filtered();
+		while ((units = getUnits_filtered()).length) {
+			units.shift().attack() ;
 			if (once || startArea !== me.area) return true;
 		}
 		return true;
