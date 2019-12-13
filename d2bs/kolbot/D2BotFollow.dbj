@@ -167,7 +167,6 @@ function timer(tick) {
 function main() {
 	debugLog(me.profile);
 	addEventListener('copydata', ReceiveCopyData);
-	addEventListener('scriptmsg', ScriptMsgEvent);
 
 	while (!HeartBeat.handle) {
 		delay(100);
