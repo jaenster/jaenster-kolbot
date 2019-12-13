@@ -3,6 +3,7 @@
     module.exports = new function () {
         const GameData = require('GameData');
         const Skills = require('Skills');
+        const Precast = require('Precast');
         /**
          * @description
          * @param monster
@@ -17,6 +18,7 @@
                 sdk.skills[i] === result.skill && (skillName = i);
             }
 
+            Precast();
             const mySpot = self.calculateBestSpot(spot, Skills.range[result.skill]);
 
             mySpot && mySpot.moveTo();

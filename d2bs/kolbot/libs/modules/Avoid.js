@@ -8,11 +8,12 @@
 	const Worker = require('Worker');
 	const Config = require('Config');
 	const Pather = require('Pather');
-	const dodgeHP = Math.max(Config.LifeChicken * 1.20, Config.TownHP * 1.20); // 20% above life chicken, or town chicken if set
-	print('AVOID ON ' + dodgeHP + '%');
+	module.exports = {
+		dodgeHP: Math.max(Config.LifeChicken * 1.20, Config.TownHP * 1.20)
+	}; // 20% above life chicken, or town chicken if set
 	getScript(true).name.toLowerCase() === 'default.dbj' && (Worker.runInBackground.avoid = function () {
 		let merc = me.getMerc();
-		if (dodgeHP > 0 && me.hp < Math.floor(me.hpmax * dodgeHP / 100)) {
+		if (module.exports.dodgeHP > 0 && me.hp < Math.floor(me.hpmax * module.exports.dodgeHP / 100)) {
 			let test = getUnit(3);
 			if (test && !(merc && merc.gid === test.owner) && !Worker.recursiveCheck()) {
 				print('DODGING');

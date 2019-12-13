@@ -48,17 +48,21 @@ module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 		Pather.moveTo(17566, 8069);
 		delay(500);
 
-		let skillChoice = GameData.monsterEffort(meph, sdk.areas.DuranceOfHateLvl3);
-
 		// Move away more
 		Pather.moveTo(17584, 8082);
-		if (skillChoice.skill === sdk.skills.StaticField) {
-			Pather.teleportTo(17584, 8080); // my merc can attack meph, we want him near me
+
+		while(true) {
+			let skillChoice = GameData.monsterEffort(meph, sdk.areas.DuranceOfHateLvl3);
+			if (skillChoice.skill !== sdk.skills.StaticField) {
+				break;
+			}
 			while (meph.distance/3*2 > Skills.range[sdk.skills.StaticField]) {
 				delay(30);
 			}
-			[0,0,0,0,0].forEach(() => me.cast(sdk.skills.StaticField));
+			meph.attack();
 		}
+		Pather.teleportTo(17584, 8080); // my merc can attack meph, we want him near me
+
 		while (meph.distance > 20) delay(3);
 
 		//Relay

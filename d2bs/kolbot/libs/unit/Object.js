@@ -25,7 +25,10 @@
         },
         moveTo: {
             get: function() {
-                return () => Pather.moveTo.apply(Pather, coords.apply(this))
+                return typeof this.____moveTo__cb === 'function' && this.____moveTo__cb || (() =>  Pather.moveTo.apply(Pather, coords.apply(this)));
+            },
+            set: function(cb) {
+              this.____moveTo__cb = cb;
             },
             enumerable:false,
         },
