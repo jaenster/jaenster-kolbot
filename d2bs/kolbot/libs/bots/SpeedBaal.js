@@ -31,6 +31,12 @@
 		case 'loaded':
 		case 'started':
 			const SpeedBaal = function (Config, Attack, Pickit, Pather, Town, Misc) {
+				// Enforce the fact we have settings
+				const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
+				if (!config.hasOwnProperty('Follower')) config.Follower = false;
+				if (!config.hasOwnProperty('Leecher')) config.Leecher = undefined;
+				if (!config.hasOwnProperty('Diablo')) config.Diablo = {};
+
 				const Precast = require('Precast');
 				const TownPrecast = require('TownPrecast');
 				const GameData = require('GameData');
@@ -78,7 +84,7 @@
 						}
 					};
 
-				this.toThrone = function () {
+				const toThrone = function () {
 					Town();
 					Config.FieldID && Town.fieldID();
 
@@ -128,7 +134,7 @@
 
 					// Wait for the portal
 					for (let i = 0, delayI = 10; i < 30 * (1000 / delayI); i += 1) {
-						if (config.Leecher && self.safe && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
+						if (config.Leecher && teamData.safe && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
 						if (!config.Leecher && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
 
 						delay(delayI);
@@ -151,7 +157,7 @@
 					return monster ? waves[waveMonsters.indexOf(monster.classid)] : 0;
 				};
 
-				this.waves = function () {
+				const waves = function () {
 					do {
 						self.wave = self.checkThrone();
 						self.wave && (self.nextWave = self.wave + 1);
@@ -214,7 +220,7 @@
 					return true;
 				};
 
-				this.baal = function () {
+				const killBaal = function () {
 					if ([sdk.areas.WorldstoneChamber, sdk.areas.ThroneOfDestruction].indexOf(me.area) === -1) {
 						// ToDo; magic to go to throne/WorldstoneChamber
 					}
@@ -255,13 +261,6 @@
 					delay(rand(1000, 2000));
 					return true;
 				};
-
-				// Set the settings
-				const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
-				!config.hasOwnProperty('Follower') && (config.Follower = false);
-				!config.hasOwnProperty('OnWaveAttack') && (config.OnWaveAttack = undefined);
-				!config.hasOwnProperty('Leecher') && (config.Leecher = undefined);
-				!config.hasOwnProperty('Diablo') && (config.Diablo = {});
 
 				const build = new function () {
 					this.me = 0;
@@ -305,8 +304,7 @@
 					})();
 				};
 
-				me.switchWeapons(0); // make sure you wear gear on FIRST slot
-				[self.toThrone, self.waves, self.baal].some(item => !item());
+				[toThrone, waves, killBaal].some(item => !item());
 			};
 			module.exports = function (...args) {
 				try {
