@@ -31,6 +31,7 @@
 		case 'loaded':
 		case 'started':
 			const SpeedBaal = function (Config, Attack, Pickit, Pather, Town, Misc) {
+				require('FastQuit');
 				// Enforce the fact we have settings
 				const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
 				if (!config.hasOwnProperty('Follower')) config.Follower = false;
@@ -41,11 +42,12 @@
 				if (!config.hasOwnProperty('DiabloClearer')) config.DiabloClearer = false;
 				if (!config.hasOwnProperty('DiabloKiller')) config.DiabloKiller = false;
 
+				Object.keys(config).forEach(key=> print('Config.SpeedDiablo.'+key+' = '+config[key]));
+
 				const Precast = require('Precast');
 				const TownPrecast = require('TownPrecast');
 				const GameData = require('GameData');
 				const PreAttack = require('PreAttack');
-				const Event = new require('Events');
 				const Team = require('Team');
 				const Promise = require('Promise');
 
@@ -65,7 +67,8 @@
 				if (config.ShrineTaker && !config.ShrineFinder) {
 					Delta.track(() => teamData.shrineUp, (o, n) => {
 						// In case dia is being cleared, but not ready yet, we wait until dia is ready
-						if (Team.diaClearing && !data.diaTick && config.DiabloKiller) {
+						print(teamData.diaClearing+','+data.diaTick+','+config.DiabloKiller);
+						if (teamData.diaClearing && !data.diaTick && config.DiabloKiller) {
 							return new Promise(resolve => data.diaTick && resolve())
 								.then(() => shrine.take(n));
 
@@ -81,7 +84,10 @@
 				}
 
 
-				Team.on('SpeedBaal', data => Object.keys(data).forEach(key => teamData[key] = data[key]));
+				Team.on('SpeedBaal', data => Object.keys(data).forEach(key => {
+					print('Team: '+key+' -> '+data[key]);
+					teamData[key] = data[key]
+				}));
 				Team.on('SpeedBaalShrineAreas', data => shrineAreas.push(data)); // Store which areas are being searched for a shrine
 
 				const tyrealAct5 = function () {
@@ -99,7 +105,7 @@
 							Misc.useMenu(0x58D2); // Travel to Harrogath
 						}
 					}
-				}
+				};
 				/**
 				 * @param x
 				 * @param y
@@ -312,11 +318,9 @@
 							Team.broadcastInGame({SpeedBaalShrineAreas: {area: area,}});
 							return Misc.getShrinesInArea(area, 15, config.ShrineTaker/*If we take the shrine, we just take it*/);
 						}), me.area];
-						print('Succesfully found a shrine? --> ' + success + ',' + !teamData.shrineUp + ',' + !config.ShrineTaker);
-						if (success && !teamData.shrineUp && !config.ShrineTaker) {
-							print('Tell team we found the magical shrine');
-							Team.broadcastInGame({SpeedBaal: {shrineUp: area}});
-						}
+
+						// If succesfull and we dont take an shrine, tell the team about this area
+						if (success && !teamData.shrineUp && !config.ShrineTaker) Team.broadcastInGame({SpeedBaal: {shrineUp: area}});
 						Pather.makePortal();
 						Pather.getWP(me.area, false, true);
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress);
@@ -355,7 +359,7 @@
 				};
 				const Diablo = {
 					clear: () => {
-						Team.broadcastInGame({SpeedBaal: {DiaClearing: true}});
+						Team.broadcastInGame({SpeedBaal: {diaClearing: true}});
 						const Diablo = require('../bots/Diablo');
 						Config.Diablo.killDiablo = false; // Dont pwn diablo
 						Config.Diablo.Fast = true; // Do the waves quickly
