@@ -19,7 +19,7 @@
 		on: myEvents.on,
 		off: myEvents.off,
 		once: myEvents.once,
-		send: function (who, what, mode) {
+		send: function (who, what, mode = defaultCopyDataMode) {
 			what.profile = me.windowtitle;
 			return sendCopyData(null, who, mode || defaultCopyDataMode, JSON.stringify(what));
 		},
@@ -39,6 +39,7 @@
 	if (getScript(true).name.toLowerCase() === thisFile.toLowerCase()) {
 		print('ÿc2Jaensterÿc0 :: Team thread started');
 
+		require('debug');
 		Messaging.on('Team', data => {
 			return typeof data === 'object' && data && data.hasOwnProperty('call') && Team[data.call].apply(Team, data.hasOwnProperty('args') && data.args || []);
 		});
@@ -46,39 +47,43 @@
 		Worker.runInBackground.copydata = (new function () {
 			const workBench = [];
 			const updateOtherProfiles = function () {
-				const fileList = dopen("data/").getFiles();
-				fileList && fileList.forEach(function (filename) {
-					let obj, profile = filename.split("").reverse().splice(5).reverse().join(''); // strip the last 5 chars (.json) = 5 chars
-
-
-					if (profile === me.windowtitle || !filename.endsWith('.json')) return;
-
-					let newcontent = FileTools.readText(filename);
-					if (!newcontent) return; // no content
-
-					try { // try to convert to an object
-						obj = JSON.parse(newcontent);
-					} catch (e) {
-						return;
-					}
-
-					let other;
-					for (let i = 0, tmp; i < others.length; i++) {
-						tmp = others[i];
-						if (tmp.hasOwnProperty('profile') && tmp.profile === profile) {
-							other = tmp;
-							break;
-						}
-					}
-
-					if (!other) {
-						others.push(obj);
-						other = others[others.length - 1];
-					}
-
-					other.profile = profile;
-					Object.keys(content).map(key => other[key] = content[key]);
-				})
+				// const fileList = dopen("data/").getFiles();
+				// fileList && fileList.forEach(function (filename) {
+				// 	let newContent,obj, profile = filename.split("").reverse().splice(5).reverse().join(''); // strip the last 5 chars (.json) = 5 chars
+				//
+				//
+				// 	if (profile === me.windowtitle || !filename.endsWith('.json')) return;
+				// 	try {
+				// 		 newContent = FileTools.readText('data/'+filename);
+				// 		if (!newContent) return; // no content
+				// 	} catch(e) {
+				// 		print('Can\'t read: `' +'data/'+filename+'`');
+				// 	}
+				//
+				//
+				// 	try { // try to convert to an object
+				// 		obj = JSON.parse(newContent);
+				// 	} catch (e) {
+				// 		return;
+				// 	}
+				//
+				// 	let other;
+				// 	for (let i = 0, tmp; i < others.length; i++) {
+				// 		tmp = others[i];
+				// 		if (tmp.hasOwnProperty('profile') && tmp.profile === profile) {
+				// 			other = tmp;
+				// 			break;
+				// 		}
+				// 	}
+				//
+				// 	if (!other) {
+				// 		others.push(obj);
+				// 		other = others[others.length - 1];
+				// 	}
+				//
+				// 	other.profile = profile;
+				// 	Object.keys(content).map(key => other[key] = content[key]);
+				// })
 			};
 			addEventListener('copydata', (mode, data) => workBench.push({mode: mode, data: data}));
 

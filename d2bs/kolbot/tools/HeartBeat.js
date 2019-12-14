@@ -47,6 +47,8 @@ function main() {
 		args: []
 	});
 
+	//ToDo; check if we are in game and default isnt running anymore, if so quit game
+
 	while (true) {
 		//print("ÿc1Heart beat " + this.handle);
 		sendCopyData(null, handle, 0xbbbb, data);
