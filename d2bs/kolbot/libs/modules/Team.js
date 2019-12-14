@@ -47,49 +47,49 @@
 		Worker.runInBackground.copydata = (new function () {
 			const workBench = [];
 			const updateOtherProfiles = function () {
-				// const fileList = dopen("data/").getFiles();
-				// fileList && fileList.forEach(function (filename) {
-				// 	let newContent,obj, profile = filename.split("").reverse().splice(5).reverse().join(''); // strip the last 5 chars (.json) = 5 chars
-				//
-				//
-				// 	if (profile === me.windowtitle || !filename.endsWith('.json')) return;
-				// 	try {
-				// 		 newContent = FileTools.readText('data/'+filename);
-				// 		if (!newContent) return; // no content
-				// 	} catch(e) {
-				// 		print('Can\'t read: `' +'data/'+filename+'`');
-				// 	}
-				//
-				//
-				// 	try { // try to convert to an object
-				// 		obj = JSON.parse(newContent);
-				// 	} catch (e) {
-				// 		return;
-				// 	}
-				//
-				// 	let other;
-				// 	for (let i = 0, tmp; i < others.length; i++) {
-				// 		tmp = others[i];
-				// 		if (tmp.hasOwnProperty('profile') && tmp.profile === profile) {
-				// 			other = tmp;
-				// 			break;
-				// 		}
-				// 	}
-				//
-				// 	if (!other) {
-				// 		others.push(obj);
-				// 		other = others[others.length - 1];
-				// 	}
-				//
-				// 	other.profile = profile;
-				// 	Object.keys(content).map(key => other[key] = content[key]);
-				// })
+				const fileList = dopen("data/").getFiles();
+				fileList && fileList.forEach(function (filename) {
+					let newContent, obj, profile = filename.split("").reverse().splice(5).reverse().join(''); // strip the last 5 chars (.json) = 5 chars
+
+
+					if (profile === me.windowtitle || !filename.endsWith('.json')) return;
+					try {
+						newContent = FileTools.readText('data/' + filename);
+						if (!newContent) return; // no content
+					} catch (e) {
+						print('Can\'t read: `' + 'data/' + filename + '`');
+					}
+
+
+					try { // try to convert to an object
+						obj = JSON.parse(newContent);
+					} catch (e) {
+						return;
+					}
+
+					let other;
+					for (let i = 0, tmp; i < others.length; i++) {
+						tmp = others[i];
+						if (tmp.hasOwnProperty('profile') && tmp.profile === profile) {
+							other = tmp;
+							break;
+						}
+					}
+
+					if (!other) {
+						others.push(obj);
+						other = others[others.length - 1];
+					}
+
+					other.profile = profile;
+					Object.keys(obj).map(key => other[key] = obj[key]);
+				})
 			};
 			addEventListener('copydata', (mode, data) => workBench.push({mode: mode, data: data}));
 
-			let timer = getTickCount() - 3000; // start with 3 seconds off
+			let timer = getTickCount() - Math.round((Math.random() * 2500)+1000); // start with 3 seconds off
 			this.update = function () {
-				if (!((getTickCount() - timer) < 3000)) { // only ever 3 seconds update the entire team
+				if (!((getTickCount() - timer) < 3500)) { // only ever 3 seconds update the entire team
 					timer = getTickCount();
 					updateOtherProfiles();
 				}
