@@ -30,7 +30,7 @@
             switch (true) {
                 case result.skill === sdk.skills.BlessedHammer:
                     doAttack = (estimated < 5e3);
-                    doAttack && me.setSkill(sdk.skills.Concentration, 1);
+                    doAttack && me.setSkill(sdk.skills.Concentration, 0);
                     break;
                 case result.skill === sdk.skills.Blizzard:
                     break;

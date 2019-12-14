@@ -7,7 +7,7 @@
 	const Delta = new (require('Deltas'));
 	switch (getScript.startAsThread()) {
 		case 'thread':
-			let tick, oldtick, diaReady = false;
+			let tick, oldtick, diaTick;
 			tick = oldtick = 0;
 
 			addEventListener('gamepacket', bytes => bytes
@@ -18,12 +18,12 @@
 						&& (tick = getTickCount())
 					) || (
 						bytes[0] === 0x89 // All seals and monsters done
-						&& (diaReady = true)
+						&& (diaTick = getTickCount())
 					)
 				) && false);
 
 			Delta.track(() => tick, () => Messaging.send({SpeedBaal: {baalTick: tick}}) || print('Baal laughed'));
-			Delta.track(() => diaReady, () => Messaging.send({SpeedBaal: {diaReady: diaReady}}) || print('Dia ready'));
+			Delta.track(() => diaTick, () => Messaging.send({SpeedBaal: {diaTick: diaTick}}) || print('Dia ready'));
 
 			//ToDo stop once baal is finished
 			while (me.ingame) delay(1000); // Just idle
@@ -38,6 +38,8 @@
 				if (!config.hasOwnProperty('ShrineTaker')) config.ShrineTaker = false;
 				if (!config.hasOwnProperty('Leecher')) config.Leecher = undefined;
 				if (!config.hasOwnProperty('Diablo')) config.Diablo = {};
+				if (!config.hasOwnProperty('DiabloClearer')) config.DiabloClearer = false;
+				if (!config.hasOwnProperty('DiabloKiller')) config.DiabloKiller = false;
 
 				const Precast = require('Precast');
 				const TownPrecast = require('TownPrecast');
@@ -45,24 +47,36 @@
 				const PreAttack = require('PreAttack');
 				const Event = new require('Events');
 				const Team = require('Team');
+				const Promise = require('Promise');
 
 				// Data we get from the thread
-				const data = {baalTick: 0, diaReady: false,};
-				const teamData = {safe: false, shrineUp: false};
+				const data = {baalTick: 0, diaTick: 0};
+				const teamData = {safe: false, shrineUp: false, diaClearing: false};
 				const shrineAreas = [];
 
 				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => {
-					print(key+' -> '+obj[key]);
+					print(key + ' -> ' + obj[key]);
 					data[key] = obj[key]
 				}));
 				Delta.track(() => data.baalTick, () => print('Baal laughed'));
-				Delta.track(() => diaReady, () => diaReady && print('Diablo ready'));
+				Delta.track(() => diaTick, () => diaTick && print('Diablo ready'));
 				Delta.track(() => data.baalTick, () => this.nextWave === 1 && Team.broadcastInGame({SpeedBaal: {safe: true}}));
 
 				if (config.ShrineTaker && !config.ShrineFinder) {
-					Delta.track(() => teamData.shrineUp, (o,n) => {
-						print('TAKING A SHRINE? -> '+n);
-						n && shrine.take(n)
+					Delta.track(() => teamData.shrineUp, (o, n) => {
+						// In case dia is being cleared, but not ready yet, we wait until dia is ready
+						if (Team.diaClearing && !data.diaTick && config.DiabloKiller) {
+							return new Promise(resolve => data.diaTick && resolve())
+								.then(() => shrine.take(n));
+
+						}
+						return n && shrine.take(n)
+					});
+				}
+
+				if (config.DiabloKiller) {
+					Delta.track(() => data.diaTick,() => {
+
 					});
 				}
 
@@ -152,8 +166,9 @@
 					// If still not in town act 5, go to it and move to portal spot
 					Town.goToTown(5) && Town.move("portalspot");
 
-					// Wait for the portal
+					// Wait for the portal (30 seconds)
 					for (let i = 0, delayI = 10; i < 30 * (1000 / delayI); i += 1) {
+						print('Taking portal');
 						if (config.Leecher && teamData.safe && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
 						if (!config.Leecher && Pather.usePortal(sdk.areas.ThroneOfDestruction, null)) break;
 
@@ -291,43 +306,65 @@
 						let searchAreas = [sdk.areas.ColdPlains, sdk.areas.StonyField, sdk.areas.DarkWood, sdk.areas.BlackMarsh, sdk.areas.JailLvl1, sdk.areas.CatacombsLvl2].shuffle();
 						const [success, area] = [searchAreas.some(area => {
 							if (teamData.shrineUp) return false; // shrine already found by an bot
-							Pather.getWP(me.area,false,true);
+							Pather.getWP(me.area, false, true);
 							Pather.useWaypoint(area);
 							// let the rest know where im searching
 							Team.broadcastInGame({SpeedBaalShrineAreas: {area: area,}});
 							return Misc.getShrinesInArea(area, 15, config.ShrineTaker/*If we take the shrine, we just take it*/);
 						}), me.area];
-						print('Succesfully found a shrine? --> '+success+','+!teamData.shrineUp+','+!config.ShrineTaker);
+						print('Succesfully found a shrine? --> ' + success + ',' + !teamData.shrineUp + ',' + !config.ShrineTaker);
 						if (success && !teamData.shrineUp && !config.ShrineTaker) {
 							print('Tell team we found the magical shrine');
 							Team.broadcastInGame({SpeedBaal: {shrineUp: area}});
 						}
 						Pather.makePortal();
-						Pather.getWP(me.area,false,true);
+						Pather.getWP(me.area, false, true);
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress);
 						tyrealAct5();
 					},
 
 					take: function (area) {
-						const [preArea,inTown,preTown] = [area,me.inTown,sdk.areas.townOf(me.area)];
+						const [preArea, inTown, preTown] = [me.area, me.inTown, sdk.areas.townOf(me.area)];
 
-						print('here');
 						//ToDo; do not get it during a wave;
 						Town.goToTown(sdk.areas.townOf(area));
 						Town.move('portalspot');
-						Pather.usePortal(area,null);
+						Pather.usePortal(area, null);
 						let shrine = getUnits(2, "shrine").filter(shrine => shrine.mode === 0 && shrine.distance <= 20 && shrine.objtype === sdk.shrines.Experience).first();
 						shrine && Misc.getShrine(shrine);
-
 
 						Pather.getWP(me.area); // move to waypoint (as portal delay takes long)
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress); // move to act 4.
 
-						//ToDo; if diaReady pwn dia.
+						if (data.diaTick) {
+							Pather.usePortal(sdk.areas.ChaosSanctuary);
+							let diablo;
+							while (!(diablo = getUnit(1, sdk.monsters.Diablo1))) {
+								//ToDo; Writer some decent preattack for here
+								delay(10);
+								PreAttack.do(sdk.monsters.Diablo1, 15e3 - (getTickCount() - data.diaTick), {x: 7792, y: 5292});
+							}
+
+							Attack.kill(sdk.monsters.Diablo1);
+						}
+
 						preTown === 5 && tyrealAct5(); // use tyreal to go to act 5
 						// If i wasnt in town, go to previous area
-						!inTown && Town.move('portalspot') && Pather.usePortal(preArea);
+						!inTown && Town.move('portalspot') && Pather.usePortal(preArea, null);
 					},
+				};
+				const Diablo = {
+					clear: () => {
+						Team.broadcastInGame({SpeedBaal: {DiaClearing: true}});
+						const Diablo = require('../bots/Diablo');
+						Config.Diablo.killDiablo = false; // Dont pwn diablo
+						Config.Diablo.Fast = true; // Do the waves quickly
+						Config.Diablo.Entrance = false;
+						Diablo(Config, Attack, Pickit, Pather, Town, Misc); // Do diablo
+					},
+					take: () => {
+
+					}
 				};
 				const build = new function () {
 					this.me = 0;
@@ -371,6 +408,7 @@
 					})();
 				};
 				if (config.ShrineFinder) shrine.find();
+				if (config.DiabloClearer) Diablo.clear();
 				[toThrone, waves, killBaal].some(item => !item());
 			};
 			module.exports = function (...args) {
