@@ -34,6 +34,8 @@
 				// Enforce the fact we have settings
 				const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
 				if (!config.hasOwnProperty('Follower')) config.Follower = false;
+				if (!config.hasOwnProperty('ShrineFinder')) config.ShrineFinder = false;
+				if (!config.hasOwnProperty('ShrineTaker')) config.ShrineTaker = false;
 				if (!config.hasOwnProperty('Leecher')) config.Leecher = undefined;
 				if (!config.hasOwnProperty('Diablo')) config.Diablo = {};
 
@@ -46,14 +48,34 @@
 
 				// Data we get from the thread
 				const data = {baalTick: 0, diaReady: false,};
-				const teamData = {safe: false,};
+				const teamData = {safe: false, shrineUp: false};
+				const shrineAreas = [];
 
 				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => data[key] = obj[key]));
 				Delta.track(() => data.baalTick, () => print('Baal laughed'));
 				Delta.track(() => diaReady, () => diaReady && print('Diablo ready'));
 				Delta.track(() => data.baalTick, () => this.nextWave === 1 && Team.broadcastInGame({SpeedBaal: {safe: true}}));
-				Team.on('SpeedBaal', data => Object.keys(data).forEach(key => teamData[key] = data[key]));
 
+				!config.ShrineTaker && config.ShrineFinder && Delta.track(() => teamData.shrineUp, _ => _ && shrine.take(_));
+				Team.on('SpeedBaal', data => Object.keys(data).forEach(key => teamData[key] = data[key]));
+				Team.on('SpeedBaalShrineAreas', data => shrineAreas.push(data)); // Store which areas are being searched for a shrine
+
+				const tyrealAct5 = function () {
+					Town.goToTown(4);
+					// in case we are in act 4.
+					Town.move("tyrael");
+					if (getUnit(2, sdk.units.RedPortalToAct5)) { // a red portal present?
+						Pather.useUnit(2, sdk.units.RedPortalToAct5, sdk.areas.Harrogath);
+					} else {
+						let tyrael = getUnit(1, "tyrael");
+
+						if (!tyrael || !tyrael.openMenu()) {
+							Town.goToTown(5); // Looks like we failed, lets go to act 5 by wp
+						} else {
+							Misc.useMenu(0x58D2); // Travel to Harrogath
+						}
+					}
+				}
 				/**
 				 * @param x
 				 * @param y
@@ -114,19 +136,7 @@
 					me.area < sdk.areas.PandemoniumFortress && Town.goToTown(4); // Go to act 4.
 
 					if (me.area === sdk.areas.PandemoniumFortress) {
-						// in case we are in act 4.
-						Town.move("tyrael");
-						if (getUnit(2, sdk.units.RedPortalToAct5)) { // a red portal present?
-							Pather.useUnit(2, sdk.units.RedPortalToAct5, sdk.areas.Harrogath);
-						} else {
-							let tyrael = getUnit(1, "tyrael");
-
-							if (!tyrael || !tyrael.openMenu()) {
-								Town.goToTown(5); // Looks like we failed, lets go to act 5 by wp
-							} else {
-								Misc.useMenu(0x58D2); // Travel to Harrogath
-							}
-						}
+						tyrealAct5();
 					}
 
 					// If still not in town act 5, go to it and move to portal spot
@@ -146,7 +156,6 @@
 				this.wave = 0;
 				this.nextWave = 1;
 				this.safe = false;
-
 
 				this.checkThrone = function () {
 					let waveMonsters = [23, 62, 105, 381, 557, 558, 571], waves = [1, 1, 2, 2, 3, 4, 5],
@@ -262,6 +271,44 @@
 					return true;
 				};
 
+				const shrine = {
+					find: function () {
+						// First randomly go bo
+						Precast.outTown(); // This also gives a bit of time for all the chars to be in game (to avoid issues with starting at the same area of boing)
+						//Pather.useWaypoint(sdk.areas.RogueEncampment); // go to act after doing
+
+						// only area's with this wp
+						let searchAreas = [sdk.areas.ColdPlains, sdk.areas.StonyField, sdk.areas.DarkWood, sdk.areas.BlackMarsh, sdk.areas.JailLvl1, sdk.areas.CatacombsLvl2].shuffle();
+						const [success, area] = [searchAreas.some(area => {
+							if (teamData.shrineUp) return false; // shrine already found by an bot
+							Pather.getWP(me.area);
+							Pather.useWaypoint(area);
+							// let the rest know where im searching
+							Team.broadcastInGame({SpeedBaalShrineAreas: {area: area,}});
+							return Misc.getShrinesInArea(area, 15, config.ShrineTaker/*If we take the shrine, we just take it*/);
+						}), me.area];
+						success && !teamData.shrineUp && !config.ShrineTaker && Team.broadcastInGame({SpeedBaal: {ShrineUp: area}});
+						Pather.makePortal();
+						Pather.getWP(me.area);
+						Pather.useWaypoint(sdk.areas.PandemoniumFortress);
+						tyrealAct5();
+					},
+
+					take: function (area) {
+						const [prearea, prex, prey] = [prearea, prex, prey];
+
+						//ToDo; do not get it during a wave;
+						Town.goToTown(sdk.areas.town[area]);
+						Town.moveToSpot('portal');
+						Pather.usePortal(area);
+						Pather.getWP(me.area); // move to waypoint (as portal delay takes long)
+						Pather.useWaypoint(sdk.areas.PandemoniumFortress); // move to act 4.
+						//ToDo; if diaReady pwn dia.
+
+						sdk.areas.town[prearea] === 5 && tyrealAct5(); // use tyreal to go to act 5
+						Town.moveToSpot('portal') && Pather.usePortal(prearea);
+					},
+				};
 				const build = new function () {
 					this.me = 0;
 					this.warcry = 1;
@@ -303,7 +350,7 @@
 						return null;
 					})();
 				};
-
+				if (config.ShrineFinder) shrine.find();
 				[toThrone, waves, killBaal].some(item => !item());
 			};
 			module.exports = function (...args) {
