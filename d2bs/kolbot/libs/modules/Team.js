@@ -19,7 +19,7 @@
 		on: myEvents.on,
 		off: myEvents.off,
 		once: myEvents.once,
-		send: function (who, what, mode) {
+		send: function (who, what, mode = defaultCopyDataMode) {
 			what.profile = me.windowtitle;
 			return sendCopyData(null, who, mode || defaultCopyDataMode, JSON.stringify(what));
 		},
@@ -39,6 +39,7 @@
 	if (getScript(true).name.toLowerCase() === thisFile.toLowerCase()) {
 		print('ÿc2Jaensterÿc0 :: Team thread started');
 
+		require('debug');
 		Messaging.on('Team', data => {
 			return typeof data === 'object' && data && data.hasOwnProperty('call') && Team[data.call].apply(Team, data.hasOwnProperty('args') && data.args || []);
 		});
@@ -48,16 +49,20 @@
 			const updateOtherProfiles = function () {
 				const fileList = dopen("data/").getFiles();
 				fileList && fileList.forEach(function (filename) {
-					let obj, profile = filename.split("").reverse().splice(5).reverse().join(''); // strip the last 5 chars (.json) = 5 chars
+					let newContent, obj, profile = filename.split("").reverse().splice(5).reverse().join(''); // strip the last 5 chars (.json) = 5 chars
 
 
 					if (profile === me.windowtitle || !filename.endsWith('.json')) return;
+					try {
+						newContent = FileTools.readText('data/' + filename);
+						if (!newContent) return; // no content
+					} catch (e) {
+						print('Can\'t read: `' + 'data/' + filename + '`');
+					}
 
-					let newcontent = FileTools.readText(filename);
-					if (!newcontent) return; // no content
 
 					try { // try to convert to an object
-						obj = JSON.parse(newcontent);
+						obj = JSON.parse(newContent);
 					} catch (e) {
 						return;
 					}
@@ -77,14 +82,14 @@
 					}
 
 					other.profile = profile;
-					Object.keys(content).map(key => other[key] = content[key]);
+					Object.keys(obj).map(key => other[key] = obj[key]);
 				})
 			};
 			addEventListener('copydata', (mode, data) => workBench.push({mode: mode, data: data}));
 
-			let timer = getTickCount() - 3000; // start with 3 seconds off
+			let timer = getTickCount() - Math.round((Math.random() * 2500)+1000); // start with 3 seconds off
 			this.update = function () {
-				if (!((getTickCount() - timer) < 3000)) { // only ever 3 seconds update the entire team
+				if (!((getTickCount() - timer) < 3500)) { // only ever 3 seconds update the entire team
 					timer = getTickCount();
 					updateOtherProfiles();
 				}

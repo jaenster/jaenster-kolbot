@@ -86,8 +86,7 @@
 
 	AutoConfig.Merc = function () {
 		Config.UseMerc = !!me.mercrevivecost; // If a merc costs anything, im pretty sure you want one
-		Config.MercWatch = ([0, 1, 6].indexOf(me.classid));
-
+		Config.MercWatch = ([0, 1, 6].indexOf(me.classid)); // Amazons / sorcs / assasins watch themth
 		if (Config.UseMerc) {
 			// Create a promise, once we can read a merc resolve with the merc object
 			// Once we have the merc, determin if it has Infinity, ifso, we definitely want to resurrect the merc during battle
