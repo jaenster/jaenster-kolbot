@@ -46,17 +46,6 @@
 				const Delta = new (require('Deltas'));
 
 				const self = this,
-					getUnits = (...args) => {
-						let units = [], unit = getUnit.apply(undefined, args);
-
-						if (unit instanceof Unit) {
-							do {
-								unit && units.push(copyUnit(unit));
-							} while (unit.getNext());
-						}
-
-						return units;
-					},
 					/**
 					 * @param x
 					 * @param y
