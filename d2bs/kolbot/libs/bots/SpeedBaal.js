@@ -3,11 +3,11 @@
  * @author Jaenster
  */
 (function (module, require) {
-	// const Messaging = require('Messaging');
-	// const Delta = new require('Deltas');
+	const Messaging = require('Messaging');
+	const Delta = new (require('Deltas'));
 	switch (getScript.startAsThread()) {
 		case 'thread':
-			let tick, oldtick, diaReady;
+			let tick, oldtick, diaReady = false;
 			tick = oldtick = 0;
 
 			addEventListener('gamepacket', bytes => bytes
@@ -16,42 +16,44 @@
 					(
 						bytes[0] === 0xA4 // baal laughs
 						&& (tick = getTickCount())
-					) //|| (
-					// 	bytes[0] === 0x89 // All seals and monsters done
-					// 	&& (diaReady = true)
-					// )
+					) || (
+						bytes[0] === 0x89 // All seals and monsters done
+						&& (diaReady = true)
+					)
 				) && false);
 
+			Delta.track(() => tick, () => Messaging.send({SpeedBaal: {baalTick: tick}}) || print('Baal laughed'));
+			Delta.track(() => diaReady, () => Messaging.send({SpeedBaal: {diaReady: diaReady}}) || print('Dia ready'));
 
-			while (me.ingame) {
-				delay(1000); // Just idle
-				if (tick !== oldtick) {
-					print('Baal laughed');
-					oldtick = tick;
-					delay(1000); // wait a while thanks to the magic of d2bs
-					scriptBroadcast({
-						baaltick: tick,
-					});
-				}
-			}
+			//ToDo stop once baal is finished
+			while (me.ingame) delay(1000); // Just idle
 			break;
 		case 'loaded':
 		case 'started':
-			module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
+			const SpeedBaal = function (Config, Attack, Pickit, Pather, Town, Misc) {
 				const Precast = require('Precast');
 				const TownPrecast = require('TownPrecast');
 				const GameData = require('GameData');
 				const PreAttack = require('PreAttack');
-				const inGameChannel = require('Channel').inGame;
-				const Delta = new (require('Deltas'));
+				const Event = new require('Events');
+				const Team = require('Team');
 
-				const self = this,
-					/**
-					 * @param x
-					 * @param y
-					 * @constructor
-					 */
-					Spot = function (x, y) {
+				// Data we get from the thread
+				const data = {baalTick: 0, diaReady: false,};
+				const teamData = {safe: false,};
+
+				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => data[key] = obj[key]));
+				Delta.track(() => data.baalTick, () => print('Baal laughed'));
+				Delta.track(() => diaReady, () => diaReady && print('Diablo ready'));
+				Delta.track(() => data.baalTick, () => this.nextWave === 1 && Team.broadcastInGame({SpeedBaal: {safe: true}}));
+				Team.on('SpeedBaal', data => Object.keys(data).forEach(key => teamData[key] = data[key]));
+
+				/**
+				 * @param x
+				 * @param y
+				 * @constructor
+				 */
+				const Spot = function (x, y) {
 						this.x = x;
 						this.y = y;
 
@@ -62,6 +64,7 @@
 							}
 						});
 					},
+					self = this,
 					spots = {
 						throne: {
 							tp: new Spot(15083, 5035),
@@ -136,16 +139,8 @@
 
 				this.wave = 0;
 				this.nextWave = 1;
-				this.baaltick = 0;
 				this.safe = false;
 
-				inGameChannel.on('SpeedBaal', function (data) {
-					if (data.hasOwnProperty('safe')) {
-						self.safe = data.safe;
-					}
-				});
-
-				Delta.track(() => this.baaltick, () => this.nextWave === 1 && inGameChannel.send({SpeedBaal: {safe: true}}));
 
 				this.checkThrone = function () {
 					let waveMonsters = [23, 62, 105, 381, 557, 558, 571], waves = [1, 1, 2, 2, 3, 4, 5],
@@ -163,7 +158,7 @@
 
 						if (!self.wave) {
 							self.clear(); // First clear the throne
-							PreAttack.do([0, 23, 105, 557, 558, 571][self.nextWave], 12e3 - (getTickCount() - self.baaltick), spots.throne.center);
+							PreAttack.do([0, 23, 105, 557, 558, 571][self.nextWave], 12e3 - (getTickCount() - data.baalTick), spots.throne.center);
 						} else {
 
 							print('wave:' + self.wave);
@@ -261,16 +256,6 @@
 					return true;
 				};
 
-
-				if (!Array.prototype.first) {
-					Array.prototype.first = function () {
-						return this.length > 0 && this[0] || undefined;
-					};
-				}
-
-
-				addEventListener('scriptmsg', data => typeof data === 'object' && data.hasOwnProperty('baaltick') && (self.baaltick = data.baaltick));
-
 				// Set the settings
 				const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
 				!config.hasOwnProperty('Follower') && (config.Follower = false);
@@ -321,11 +306,14 @@
 				};
 
 				me.switchWeapons(0); // make sure you wear gear on FIRST slot
+				[self.toThrone, self.waves, self.baal].some(item => !item());
+			};
+			module.exports = function (...args) {
 				try {
-					[self.toThrone, self.waves, self.baal].some(item => !item());
+					SpeedBaal.apply(this, args)
 				} finally {
 					Delta.destroy();
 				}
-			};
+			}
 	}
 }).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require);
