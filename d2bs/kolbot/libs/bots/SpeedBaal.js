@@ -51,12 +51,22 @@
 				const teamData = {safe: false, shrineUp: false};
 				const shrineAreas = [];
 
-				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => data[key] = obj[key]));
+				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => {
+					print(key+' -> '+obj[key]);
+					data[key] = obj[key]
+				}));
 				Delta.track(() => data.baalTick, () => print('Baal laughed'));
 				Delta.track(() => diaReady, () => diaReady && print('Diablo ready'));
 				Delta.track(() => data.baalTick, () => this.nextWave === 1 && Team.broadcastInGame({SpeedBaal: {safe: true}}));
 
-				!config.ShrineTaker && config.ShrineFinder && Delta.track(() => teamData.shrineUp, _ => _ && shrine.take(_));
+				if (config.ShrineTaker && !config.ShrineFinder) {
+					Delta.track(() => teamData.shrineUp, (o,n) => {
+						print('TAKING A SHRINE? -> '+n);
+						n && shrine.take(n)
+					});
+				}
+
+
 				Team.on('SpeedBaal', data => Object.keys(data).forEach(key => teamData[key] = data[key]));
 				Team.on('SpeedBaalShrineAreas', data => shrineAreas.push(data)); // Store which areas are being searched for a shrine
 
@@ -126,8 +136,8 @@
 						return me.area === sdk.areas.ThroneOfDestruction;
 					}
 
-					// Precast in town, or go bo outside of town and return to act 4
-					if (!(TownPrecast.can && TownPrecast())) {
+					// Precast in town, or go bo outside of town and return to act 4, If we need to precast =)
+					if (!(TownPrecast.can && TownPrecast()) && Precast.skills.length) {
 						Precast.outTown();
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress);
 					}
@@ -281,32 +291,42 @@
 						let searchAreas = [sdk.areas.ColdPlains, sdk.areas.StonyField, sdk.areas.DarkWood, sdk.areas.BlackMarsh, sdk.areas.JailLvl1, sdk.areas.CatacombsLvl2].shuffle();
 						const [success, area] = [searchAreas.some(area => {
 							if (teamData.shrineUp) return false; // shrine already found by an bot
-							Pather.getWP(me.area);
+							Pather.getWP(me.area,false,true);
 							Pather.useWaypoint(area);
 							// let the rest know where im searching
 							Team.broadcastInGame({SpeedBaalShrineAreas: {area: area,}});
 							return Misc.getShrinesInArea(area, 15, config.ShrineTaker/*If we take the shrine, we just take it*/);
 						}), me.area];
-						success && !teamData.shrineUp && !config.ShrineTaker && Team.broadcastInGame({SpeedBaal: {ShrineUp: area}});
+						print('Succesfully found a shrine? --> '+success+','+!teamData.shrineUp+','+!config.ShrineTaker);
+						if (success && !teamData.shrineUp && !config.ShrineTaker) {
+							print('Tell team we found the magical shrine');
+							Team.broadcastInGame({SpeedBaal: {shrineUp: area}});
+						}
 						Pather.makePortal();
-						Pather.getWP(me.area);
+						Pather.getWP(me.area,false,true);
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress);
 						tyrealAct5();
 					},
 
 					take: function (area) {
-						const [prearea, prex, prey] = [prearea, prex, prey];
+						const [preArea,inTown,preTown] = [area,me.inTown,sdk.areas.townOf(me.area)];
 
+						print('here');
 						//ToDo; do not get it during a wave;
-						Town.goToTown(sdk.areas.town[area]);
-						Town.moveToSpot('portal');
-						Pather.usePortal(area);
+						Town.goToTown(sdk.areas.townOf(area));
+						Town.move('portalspot');
+						Pather.usePortal(area,null);
+						let shrine = getUnits(2, "shrine").filter(shrine => shrine.mode === 0 && shrine.distance <= 20 && shrine.objtype === sdk.shrines.Experience).first();
+						shrine && Misc.getShrine(shrine);
+
+
 						Pather.getWP(me.area); // move to waypoint (as portal delay takes long)
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress); // move to act 4.
-						//ToDo; if diaReady pwn dia.
 
-						sdk.areas.town[prearea] === 5 && tyrealAct5(); // use tyreal to go to act 5
-						Town.moveToSpot('portal') && Pather.usePortal(prearea);
+						//ToDo; if diaReady pwn dia.
+						preTown === 5 && tyrealAct5(); // use tyreal to go to act 5
+						// If i wasnt in town, go to previous area
+						!inTown && Town.move('portalspot') && Pather.usePortal(preArea);
 					},
 				};
 				const build = new function () {
