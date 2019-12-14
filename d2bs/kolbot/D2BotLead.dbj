@@ -233,11 +233,10 @@ function main() {
 	const Team = require('Team');
 	require('Config')();
 	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
-
 	Team.on('RequestGame', data => data.reply({
 			Follow: {
 				gameInfo: {
-					gameName: me.ingame && me.gamename.toLowerCase() || HeartBeat.gameInfo && HeartBeat.gameInfo.gameName && HeartBeat.gameInfo.gameName,
+					gameName: me.ingame && me.gamename.toLowerCase() || HeartBeat.gameInfo && HeartBeat.gameInfo.gameName && HeartBeat.gameInfo.gameName+gameCount,
 					gamePass: me.ingame && me.gamepassword.toLowerCase() || HeartBeat.gameInfo && HeartBeat.gameInfo.gamePass && HeartBeat.gameInfo.gamePass,
 					up: me.ingame,
 				}
