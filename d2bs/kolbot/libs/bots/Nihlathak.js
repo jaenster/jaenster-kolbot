@@ -4,7 +4,7 @@
  *    @desc        kill Nihlathak
  */
 
-function Nihlathak(Config, Attack, Pickit, Pather, Town, Misc) {
+module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 
 	Town();
 	if (!me.journeyToPreset(124, 2, 462, 0, 0, false, true)) {
@@ -20,4 +20,4 @@ function Nihlathak(Config, Attack, Pickit, Pather, Town, Misc) {
 	delay(250); // takes a sec to load lol
 	Attack.kill(526); // Nihlathak
 	Pickit.pickItems();
-}
+};

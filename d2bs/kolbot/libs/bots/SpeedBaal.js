@@ -40,6 +40,7 @@
 				if (!config.hasOwnProperty('Leecher')) config.Leecher = undefined;
 				if (!config.hasOwnProperty('DiabloClearer')) config.DiabloClearer = false;
 				if (!config.hasOwnProperty('DiabloKiller')) config.DiabloKiller = false;
+				if (!config.hasOwnProperty('Nihlathak')) config.Nihlathak = false;
 
 				Object.keys(config).forEach(key=> print('Config.SpeedDiablo.'+key+' = '+config[key]));
 
@@ -49,6 +50,7 @@
 				const PreAttack = require('PreAttack');
 				const Team = require('Team');
 				const Promise = require('Promise');
+				const Party = require('Party');
 
 				// Data we get from the thread
 				const data = {baalTick: 0, diaTick: 0};
@@ -88,6 +90,10 @@
 					teamData[key] = data[key]
 				}));
 				Team.on('SpeedBaalShrineAreas', data => shrineAreas.push(data)); // Store which areas are being searched for a shrine
+				Team.on('SpeedBaalInviteMe',data => {
+					print('quick invite: '+data.who);
+					data.hasOwnProperty('who') && Party.invite(data.who)
+				});
 
 				const tyrealAct5 = function () {
 					Town.goToTown(4);
@@ -311,7 +317,7 @@
 						let searchAreas = [sdk.areas.ColdPlains, sdk.areas.StonyField, sdk.areas.DarkWood, sdk.areas.BlackMarsh, sdk.areas.JailLvl1, sdk.areas.CatacombsLvl2].shuffle();
 						const [success, area] = [searchAreas.some(area => {
 							if (teamData.shrineUp) return false; // shrine already found by an bot
-							Pather.getWP(me.area, false, true);
+							Pather.getWP(me.area, false, false);
 							Pather.useWaypoint(area);
 							// let the rest know where im searching
 							Team.broadcastInGame({SpeedBaalShrineAreas: {area: area,}});
@@ -321,7 +327,7 @@
 						// If succesfull and we dont take an shrine, tell the team about this area
 						if (success && !teamData.shrineUp && !config.ShrineTaker) Team.broadcastInGame({SpeedBaal: {shrineUp: area}});
 						Pather.makePortal();
-						Pather.getWP(me.area, false, true);
+						Pather.getWP(me.area, false, false);
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress);
 						tyrealAct5();
 					},
@@ -340,21 +346,9 @@
 						let shrine = getUnits(2, "shrine").filter(shrine => shrine.mode === 0 && shrine.distance <= 20 && shrine.objtype === sdk.shrines.Experience).first();
 						shrine && Misc.getShrine(shrine);
 
-						Pather.getWP(me.area); // move to waypoint (as portal delay takes long)
-						Pather.useWaypoint(sdk.areas.PandemoniumFortress); // move to act 4.
+						Pather.getWP(me.area,false,false); // move to waypoint (as portal delay takes long)
 
-						if (data.diaTick) {
-							Pather.usePortal(sdk.areas.ChaosSanctuary,null);
-							let diablo;
-							while (!(diablo = getUnit(1, sdk.monsters.Diablo1))) {
-								//ToDo; Writer some decent preattack for here
-								delay(10);
-								PreAttack.do(sdk.monsters.Diablo1, 15e3 - (getTickCount() - data.diaTick), {x: 7792, y: 5292});
-							}
-
-							Attack.kill(sdk.monsters.Diablo1);
-							Pather.usePortal(sdk.areas.PandemoniumFortress,null);
-						}
+						Diablo.take(); // in case we need
 
 						preTown === 5 && tyrealAct5(); // use tyreal to go to act 5
 						// If i wasnt in town, go to previous area
@@ -371,9 +365,38 @@
 						Diablo(Config, Attack, Pickit, Pather, Town, Misc); // Do diablo
 					},
 					take: () => {
+						if (data.diaTick) {
+							Pather.useWaypoint(sdk.areas.PandemoniumFortress); // move to act 4.
+							Pather.usePortal(sdk.areas.ChaosSanctuary,null);
+							let diablo;
+							while (!(diablo = getUnit(1, sdk.monsters.Diablo1))) {
+								//ToDo; Writer some decent preattack for here
+								delay(10);
+								PreAttack.do(sdk.monsters.Diablo1, 15e3 - (getTickCount() - data.diaTick), {x: 7792, y: 5292});
+							}
 
+							Attack.kill(sdk.monsters.Diablo1);
+							Pather.usePortal(sdk.areas.PandemoniumFortress,null);
+						}
 					}
 				};
+				if (config.Nihlathak) {
+					try {
+						print('Starting Nihlathak');
+						require('../bots/Nihlathak')(Config, Attack, Pickit, Pather, Town, Misc);
+						Town.goToTown();
+
+						let party = Party.getFirstPartyMember(); // Hostile the first person of team
+						if (party) { // Get a party object
+							clickParty(party, 1); // hostile
+							Party.timer = 500; // reset tick to party (so it instantly parties again)
+							Team.broadcastInGame({SpeedBaalInviteMe: {who: me.charname}});
+						}
+
+					} catch(e) {
+						Misc.errorReport(e)
+					}
+				}
 				const build = new function () {
 					this.me = 0;
 					this.warcry = 1;
