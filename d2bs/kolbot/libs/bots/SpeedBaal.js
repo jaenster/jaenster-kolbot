@@ -333,7 +333,11 @@
 						//ToDo; do not get it during a wave;
 						Town.goToTown(sdk.areas.townOf(area));
 						Town.move('portalspot');
-						Pather.usePortal(area, null);
+						delay(500);
+						while(me.area !== area && Pather.getPortal(area, null)) {
+							Pather.usePortal(area, null);
+						}
+
 						let shrine = getUnits(2, "shrine").filter(shrine => shrine.mode === 0 && shrine.distance <= 20 && shrine.objtype === sdk.shrines.Experience).first();
 						shrine && Misc.getShrine(shrine);
 
@@ -341,7 +345,7 @@
 						Pather.useWaypoint(sdk.areas.PandemoniumFortress); // move to act 4.
 
 						if (data.diaTick) {
-							Pather.usePortal(sdk.areas.ChaosSanctuary);
+							Pather.usePortal(sdk.areas.ChaosSanctuary,null);
 							let diablo;
 							while (!(diablo = getUnit(1, sdk.monsters.Diablo1))) {
 								//ToDo; Writer some decent preattack for here
@@ -350,6 +354,7 @@
 							}
 
 							Attack.kill(sdk.monsters.Diablo1);
+							Pather.usePortal(sdk.areas.PandemoniumFortress,null);
 						}
 
 						preTown === 5 && tyrealAct5(); // use tyreal to go to act 5
