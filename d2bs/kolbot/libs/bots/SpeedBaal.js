@@ -18,6 +18,7 @@
 						&& (tick = getTickCount())
 					) || (
 						bytes[0] === 0x89 // All seals and monsters done
+						&& bytes[1] !== 0x13 // Game event of Baal dead, is not a Dia tick
 						&& (diaTick = getTickCount())
 					)
 				) && false);
