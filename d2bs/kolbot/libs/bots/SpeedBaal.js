@@ -58,10 +58,7 @@
 				const teamData = {safe: false, shrineUp: false, diaClearing: false};
 				const shrineAreas = [];
 
-				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => {
-					print(key + ' -> ' + obj[key]);
-					data[key] = obj[key]
-				}));
+				Messaging.on('SpeedBaal', obj => Object.keys(obj).forEach(key => data[key] = obj[key]));
 				Delta.track(() => data.baalTick, () => print('Baal laughed'));
 				Delta.track(() => diaTick, () => diaTick && print('Diablo ready'));
 				Delta.track(() => data.baalTick, () => this.nextWave === 1 && Team.broadcastInGame({SpeedBaal: {safe: true}}));
