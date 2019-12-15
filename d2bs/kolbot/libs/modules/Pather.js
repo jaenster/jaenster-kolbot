@@ -913,8 +913,6 @@
 
 						delay(10);
 					}
-
-				Packet.flash(me.gid);
 			}
 
 			return false;
