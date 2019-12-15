@@ -347,6 +347,7 @@
 		Fast: false,
 		Follower: false,
 		Entrance: true,
+		killDiablo: true,
 	};
 
 	Config.SpeedBaal = {
