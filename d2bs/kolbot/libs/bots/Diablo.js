@@ -114,10 +114,11 @@
 			Pather.useWaypoint(107);
 			Precast();
 		} else {
+			Town();
 			// town precast if possible, or go bo
 			!TownPrecast() && Precast.outTown();
 
-			Town();
+
 			Town.goToTown(4); // make sure we really are in act 4
 			Town.move("portalspot");
 			print('wait for portal');
