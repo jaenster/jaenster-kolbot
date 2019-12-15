@@ -38,7 +38,6 @@
 				if (!config.hasOwnProperty('ShrineFinder')) config.ShrineFinder = false;
 				if (!config.hasOwnProperty('ShrineTaker')) config.ShrineTaker = false;
 				if (!config.hasOwnProperty('Leecher')) config.Leecher = undefined;
-				if (!config.hasOwnProperty('Diablo')) config.Diablo = {};
 				if (!config.hasOwnProperty('DiabloClearer')) config.DiabloClearer = false;
 				if (!config.hasOwnProperty('DiabloKiller')) config.DiabloKiller = false;
 
@@ -429,3 +428,6 @@
 			}
 	}
 }).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require);
+
+
+
