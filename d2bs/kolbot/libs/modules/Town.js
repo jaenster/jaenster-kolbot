@@ -542,7 +542,8 @@
 		const Pickit = require('Pickit');
 		Town.cainID();
 		const Storage = require('Storage');
-		list = Storage.Inventory.Compare(Config.Inventory);
+		list = Storage.Inventory.Compare(Config.Inventory)
+				.filter(i => ignoredItemTypes.indexOf(i.itemType) === -1);
 
 		if (!list) {
 			return false;
