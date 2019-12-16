@@ -109,7 +109,8 @@
 					observer.next,
 					observer.error,
 					() => {
-						if (typeof currentSubscription !== 'undefined') {
+						if (currentSubscription) {
+							// if complete callback has already been called, currentSubscription will be undefined
 							currentSubscription.unsubscribe();
 						}
 						if (!done) {
