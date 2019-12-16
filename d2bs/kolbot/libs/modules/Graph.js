@@ -60,7 +60,11 @@
 		};
 
 		this.walkablePathDistance = function() {
-			return this.walkablePath().reduce((acc, v, i, arr) => {
+			let path = this.walkablePath();
+			if (!path.length) {
+				return Infinity;
+			}
+			return path.reduce((acc, v, i, arr) => {
 				let prev = i ? arr[i-1] : v;
 				return acc + Math.sqrt((prev.x-v.x)*(prev.x-v.x) + (prev.y-v.y)*(prev.y-v.y));
 			}, 0);
@@ -123,29 +127,28 @@
 	};
 
 	Graph.nearestNeighbourSearch = function(graph, explore) {
-		while (graph.vertices.length) {
-			var currentVertex = graph.vertices.shift();
-			while (currentVertex) {
-				GraphDebug.removeHookForRoom(currentVertex);
-				GraphDebug.drawRoom(currentVertex);
-				explore(currentVertex);
-				currentVertex.seen = true;
-				GraphDebug.removeHookForRoom(currentVertex);
-				var nearbies = graph.nearbyVertices(currentVertex)
-					.filter(v => !v.seen)
-					.sort((a, b) => currentVertex.walkablePathDistanceTo(a) - currentVertex.walkablePathDistanceTo(b));
-				nearbies.forEach(n => {
-					GraphDebug.drawRoom(n, 0x50);
-				});
-				currentVertex = nearbies.first();
-			}
-			// if no neihbors is found, get next nearest vertex in graph
-			graph.vertices.filter(v => !v.seen).sort((a, b) => a.walkablePathDistance() - b.walkablePathDistance());
-
-			//TODO: sometimes, the bot leaves a small group of vertices alone, and continues to the biggest part of the graph
-			// this leads the bot to go to this small group at the end and it is not optimal. It should have gone to this small group before finishing all the rest
-			// we need to construct get disconnected parts of graph and go to the nearest smallest part before continuing
+		var currentVertex = graph.vertices.filter(v => !v.seen).first();
+		while (currentVertex) {
+			GraphDebug.removeHookForRoom(currentVertex);
+			GraphDebug.drawRoom(currentVertex);
+			explore(currentVertex);
+			// currentVertex.seen = true; // not working when it comes from neabies array, it should be referenced from graph.vertices array
+			graph.vertices.find(v => v == currentVertex).seen = true;
+			GraphDebug.removeHookForRoom(currentVertex);
+			var nearbies = graph.nearbyVertices(currentVertex)
+				.filter(v => !v.seen)
+				.sort((a, b) => currentVertex.walkablePathDistanceTo(a) - currentVertex.walkablePathDistanceTo(b));
+			nearbies.forEach(n => {
+				GraphDebug.drawRoom(n, 0x50);
+			});
+			currentVertex = nearbies.first() ||
+				// if no neihbors is found, get next nearest vertex in graph
+				graph.vertices.filter(v => !v.seen).sort((a, b) => a.walkablePathDistance() - b.walkablePathDistance()).first();
 		}
+
+		//TODO: sometimes, the bot leaves a small group of vertices alone, and continues to the biggest part of the graph
+		// this leads the bot to go to this small group at the end and it is not optimal. It should have gone to this small group before finishing all the rest
+		// we need to construct get disconnected parts of graph and go to the nearest smallest part before continuing
 	};
 
 	// DFS implementation
