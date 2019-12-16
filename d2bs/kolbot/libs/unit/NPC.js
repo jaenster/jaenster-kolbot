@@ -99,6 +99,8 @@ Unit.prototype.startTrade = function (mode) {
 };
 
 Unit.prototype.buy = function (shiftBuy, gamble) {
+	const Config = require('Config');
+	const Packet = require('PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.buyItem(this, shiftBuy, gamble);
 	}
