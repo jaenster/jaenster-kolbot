@@ -70,18 +70,14 @@
 		while (units.length) {
 			while (unit = units.shift()) {
 				if (fallens.indexOf(unit.classid) > -1) {
-					// unit is a fallen, find the shaman
+					// unit is a fallen, find the shaman, not too far from me, not too far from fallen
 					let shamansAround = getUnits(sdk.unittype.Monsters)
-						.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && getDistance(unit, u) <= range && u.distance <= range);
+						.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && clearDistance(unit.x, unit.y, u.x, u.y) <= range);
 					var shaman;
 					while (shaman = shamansAround.shift()) {
-						print("SHAMAN TO KILL");
-						//print(shaman);
 						shaman.kill();
-						// come back
-						unit.moveTo();
 						shamansAround = getUnits(sdk.unittype.Monsters)
-							.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && getDistance(unit, u) <= range && u.distance <= range);
+							.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && clearDistance(unit.x, unit.y, u.x, u.y) <= range);
 					}
 				}
 				unit.kill();
