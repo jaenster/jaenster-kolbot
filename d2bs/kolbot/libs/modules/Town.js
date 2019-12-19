@@ -1901,8 +1901,8 @@
 				items[i].classid !== 644 && // Malah's Potion
 				items[i].classid !== 646 && // Scroll of Resistance
 				//
-				(items[i].code !== 529 || !!me.findItem(518, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
-				(items[i].code !== 530 || !!me.findItem(519, 0, 3)) // Don't throw scrolls if no tome is found (obsolete code?)
+				(items[i].classid !== sdk.items.tpScroll || !!me.findItem(sdk.items.tptome, 0, 3)) && // Don't throw scrolls if no tome is found
+				(items[i].classid !== sdk.items.idScroll || !!me.findItem(sdk.items.idtome, 0, 3)) // Don't throw scrolls if no tome is found
 			) {
 				result = Pickit.checkItem(items[i]).result;
 
@@ -2094,7 +2094,7 @@
 			//print("moveToSpot: " + spot + " from " + me.x + ", " + me.y);
 
 			if (getDistance(me, townSpot[i], townSpot[i + 1]) > 2) {
-				Pather.moveTo(townSpot[i], townSpot[i + 1], 3, false, true);
+				Pather.moveTo(townSpot[i], townSpot[i + 1]);
 			}
 
 			switch (spot) {
@@ -2135,16 +2135,18 @@
 		return false;
 	};
 
-	Town.goToTown = function (act, wpmenu) {
+	Town.goToTown = function (act, wpmenu = false, throws = true) {
 		var towns = [1, 40, 75, 103, 109];
 
 		if (!me.inTown) {
 			if (!Pather.makePortal()) {
-				throw new Error("Town.goToTown: Failed to make TP");
+				if (throws) throw new Error("Town.goToTown: Failed to make TP");
+				return false;
 			}
 
 			if (!Pather.usePortal(null, me.name)) {
-				throw new Error("Town.goToTown: Failed to take TP");
+				if (throws) throw new Error("Town.goToTown: Failed to take TP");
+				return false;
 			}
 		}
 
@@ -2153,14 +2155,16 @@
 		}
 
 		if (act < 1 || act > 5) {
-			throw new Error("Town.goToTown: Invalid act");
+			if (throws) throw new Error("Town.goToTown: Invalid act");
+			return false;
 		}
 
 		if (act !== me.act) {
 			try {
 				Pather.useWaypoint(towns[act - 1], wpmenu);
 			} catch (WPError) {
-				throw new Error("Town.goToTown: Failed use WP");
+				if (throws) throw new Error("Town.goToTown: Failed use WP");
+				return false;
 			}
 		}
 
