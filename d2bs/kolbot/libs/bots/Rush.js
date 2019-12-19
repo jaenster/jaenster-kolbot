@@ -44,7 +44,7 @@
 					.first(),
 			},
 			isLeader: {get: () => this.leader === me.charname && Object.keys(TeamData).length > 1},
-			highestRushQ: {get: () => sequence.map(_=>_).reverse().find(q => me.getQuest(q, 0)) || 0},
+			highestRushQ: {get: () => sequence.map(_ => _).reverse().find(q => me.getQuest(q, 0)) || 0},
 			safe: {
 				get: () => safePortalArea,
 				set: () => Team.broadcastInGame({Rush: {safe: me.area}}),
@@ -79,7 +79,10 @@
 
 			if (data.hasOwnProperty('doQuest')) questWorkBench.push(data.doQuest);
 
-			if (data.hasOwnProperty('safe')) safePortalArea = data.safe;
+			if (data.hasOwnProperty('safe')) {
+				print('Area safe: ' + safePortalArea);
+				safePortalArea = data.safe;
+			}
 
 			if (data.hasOwnProperty('done')) doneArea = data.done;
 		});
@@ -96,6 +99,29 @@
 			if (inQuest) throw Error('In quest');
 		});
 
+		const getQuestItem = function (classId, chestId) {
+			let tick = getTickCount();
+
+			if (me.getItem(classId)) {
+				return true;
+			}
+
+			if (me.inTown) return false;
+
+			let chest = getUnit(2, chestId);
+
+			if (!chest) {
+				return false;
+			}
+
+			Misc.openChest(chest);
+			let item;
+			while (!(item = getUnit(4, classId)) && getTickCount() - tick < 1000) delay(30);
+
+			if (!item) return false;
+			return Pickit.pickItem(item) && delay(1000);
+		};
+
 		// Fields of me to track
 		['highestAct', 'highestQuestDone'].forEach(key => Delta.track(() => me[key], (o, n) => TeamData[me.charname][key] = n || 0));
 
@@ -105,21 +131,21 @@
 		const WaitOnLeadersPortal = (area) => {
 			print('Waiting for portal of leader');
 			Town.goToTown(sdk.areas.townOf(area)).move('portalspot');
-			while(me.area !== area) {
-				while(this.safe !== area) delay(100);
-				print('Taking portal! -> '+this.leader+' -> '+area);
-				let portal = getUnits(2,'portal').filter(portal => portal.objtype === area).first();
+			while (me.area !== area) {
+				while (this.safe !== area) delay(100);
+				// print('Taking portal! -> ' + this.leader + ' -> ' + area);
+				let portal = getUnits(2, 'portal').filter(portal => portal.objtype === area).first();
 				portal && portal.click();
 			}
 			return me.area === area
 		};
 		const WaitOnDone = (area = me.area) => {
 			print('Wait until done');
-			while(area !== doneArea) delay(100);
-			!me.inTown && Pather.usePortal(null,this.leader);
+			while (area !== doneArea) delay(100);
+			!me.inTown && Pather.usePortal(null, this.leader);
 		};
 
-		const talkTo = function (name,cancel = false) { // Credit to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
+		const talkTo = function (name, cancel = false) { // Credit to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
 			let npc, i;
 
 			!me.inTown && Town.goToTown();
@@ -152,7 +178,7 @@
 					andy.kill();
 					this.done = true;
 					Pather.moveTo(x, y);
-					Pather.usePortal(null,me.charname); // take my portal back to town
+					Pather.usePortal(null, me.charname); // take my portal back to town
 				},
 				follower: function (leader) {
 					print('Doing andy!');
@@ -162,7 +188,7 @@
 				},
 			},
 			AbleToGotoActII: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 					talkTo('Warriv');
@@ -170,85 +196,113 @@
 				},
 			},
 			TheTaintedSun: {
-				leader: function () {
+				leader: () => {
+					Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
+					Pather.moveTo(15049, 14051);
+					this.safe = true;
+					this.done = true;
+					Pather.makePortal(true);
 				},
 				follower: function (leader) {
+					Town.move('drognan'); // To prepair to be talking with drogan
+					while (TeamData[leader].area !== sdk.areas.ClawViperTempleLvl2) delay(10);
+					talkTo('drognan');
+					WaitOnLeadersPortal(sdk.areas.ClawViperTempleLvl2);
+					getQuestItem(521, 149); // ToDo; make sdk for this
+					WaitOnDone(sdk.areas.ClawViperTempleLvl2);
+					talkTo('cain');
 				},
 			},
 			TheHoradricStaff: {
-				leader: function () {
+				leader: () => {
+					Pather.journeyTo(sdk.areas.MaggotLairLvl3);
+					Pather.moveToPreset(me.area, 2, 356);
+					let portal = Pather.makePortal();
+					me.clear(30);
+					portal.moveTo();
+					let chest = getUnit(2, 356);
+					// Open chest already
+					if (chest && !chest.mode) me.getSkill(sdk.skills.Telekinesis, 1) && chest.cast(sdk.skills.Telekinesis) || Misc.openChest(chest);
+					this.safe = true;
+					this.done = true;
+					Pather.usePortal(undefined, undefined, portal);
 				},
 				follower: function (leader) {
+					WaitOnLeadersPortal(sdk.areas.MaggotLairLvl3);
+					getQuestItem(92, 356); // ToDo; make sdk for this
+					WaitOnDone(sdk.areas.MaggotLairLvl3);
+					talkTo('Cain');
+					Town.move('stash');
 				},
 			},
 			TheArcaneSanctuary: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			TheSummoner: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			TheSevenTombs: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			AbleToGotoActIII: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			TheBlackenedTemple: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			TheGuardian: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			AbleToGotoActIV: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			TerrorsEnd: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			AbleToGotoActV: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			PrisonOfIce: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			RiteOfPassage: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
 			},
 			EveOfDestruction: {
-				leader: function () {
+				leader: () => {
 				},
 				follower: function (leader) {
 				},
@@ -261,7 +315,7 @@
 			if (!this.isLeader) return false;
 			const lastQ = Math.min.apply(null, Object.keys(TeamData).map(key => TeamData[key].highestQuestDone || 0));
 			// So lets find next q
-			let nextQuestIndex = sequence.findIndex(e => lastQ === e)+1;
+			let nextQuestIndex = sequence.findIndex(e => lastQ === e) + 1;
 			if (sequence.hasOwnProperty(nextQuestIndex) && currentQuest !== sequence[nextQuestIndex]) {
 				currentQuest = sequence[nextQuestIndex];
 			}
@@ -269,7 +323,7 @@
 		}, (o, n) => n && Team.broadcastInGame({Rush: {doQuest: currentQuest}}));
 
 		// For debug purposes
-		Delta.track(() => JSON.stringify(TeamData),() => print(TeamData));
+		// Delta.track(() => JSON.stringify(TeamData), () => print(TeamData));
 
 		const currentQuestName = () => Object.keys(sdk.quests).find(key => sdk.quests[key] === currentQuest);
 		while (true) {
@@ -295,8 +349,7 @@
 			print('Next quest!');
 
 		}
-
-	}
+	};
 	module.exports = rush;
 
 
