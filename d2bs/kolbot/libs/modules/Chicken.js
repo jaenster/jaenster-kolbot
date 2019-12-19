@@ -10,7 +10,7 @@
 	const Config = require('Config');
 	const GameData = require('GameData');
 	const hookOn = ['HealHP', 'HealMP', 'HealStatus', 'LifeChicken', 'ManaChicken', 'MercChicken', 'TownHP', 'TownMP', 'UseHP', 'UseRejuvHP', 'UseMP', 'UseRejuvMP', 'UseMercHP', 'UseMercRejuv', 'QuitWhenDead'];
-
+	const realValues = hookOn.reduce((a, c) => {
 		if (Config.hasOwnProperty(c)) {
 			a[c] = Config[c]; // copy the value
 			delete Config[c]; // remove it from the config
