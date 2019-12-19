@@ -15,6 +15,7 @@
 			Precast = require('Precast'),
 			Rx = require('Observable'),
 			Graph = require('Graph'),
+			NPC = require('NPC'),
 			Quests = require('QuestEvents');
 
 	Den.observeQuest = () => {
@@ -36,7 +37,7 @@
 		return observable;
 	};
 
-	Den.clearDen = () => {
+	Den.clear = () => {
 		Pather.journeyTo(sdk.areas.DenOfEvil, true);
 		let graph = new Graph();
 		Graph.nearestNeighbourSearch(graph, (room) => {
@@ -49,10 +50,21 @@
 	};
 
 	Den.talkToAkara = () => {
-		if (!Town.goToTown(1)) {
-			Pather.journeyTo(sdk.areas.RogueEncampment, true);
+		var inTown = false;
+		try {
+			inTown = Town.goToTown(1);
+			if (!inTown) {
+				inTown = Pather.journeyTo(sdk.areas.RogueEncampment, true);
+			}
 		}
-		me.talkTo(NPC.Akara);
+		catch (e) {
+			print(e);
+			inTown = Pather.journeyTo(sdk.areas.RogueEncampment, true);
+		}
+		if (inTown) {
+			return me.talkTo(NPC.Akara);
+		}
+		return false;
 	};
 
 	module.exports = Den;
