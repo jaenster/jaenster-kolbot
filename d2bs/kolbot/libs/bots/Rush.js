@@ -39,12 +39,12 @@
 		Object.defineProperties(this, {
 			leader: {
 				get: () => Object.keys(TeamData)
-					.filter(key => TeamData[key].hasOwnProperty('highestQuestDone')) /* Filter out those that dont know which q is highest*/
-					.sort((a, b) => TeamData[b].highestQuestDone || 0 - TeamData[a].highestQuestDone || 0) /* sort on highest q done*/
+					.filter(key => TeamData[key].hasOwnProperty('highestRushQ')) /* Filter out those that dont know which q is highest*/
+					.sort((a, b) => (TeamData[b].highestRushQ || 0) - (TeamData[a].highestRushQ || 0)) /* sort on highest q done*/
 					.first(),
 			},
 			isLeader: {get: () => this.leader === me.charname && Object.keys(TeamData).length > 1},
-			highestRushQ: {get: () => sequence.find(q => me.getQuest(q, 0)) || 0},
+			highestRushQ: {get: () => sequence.map(_=>_).reverse().find(q => me.getQuest(q, 0)) || 0},
 			safe: {
 				get: () => safePortalArea,
 				set: () => Team.broadcastInGame({Rush: {safe: me.area}}),
@@ -89,7 +89,7 @@
 		let currentQuest = '';
 		let inQuest = false;
 		Delta.track(() => JSON.stringify(TeamData[me.charname]), () => Team.broadcastInGame(myData())); // If something changes in my data, send it to the rest
-		Delta.track(() => me.area, (o, n) => TeamData[me.charname] = n); // Let the team know where i'm at
+		Delta.track(() => me.area, (o, n) => TeamData[me.charname].area = me.area); // Let the team know where i'm at
 		Delta.track(() => questWorkBench.length, () => {
 			if (!questWorkBench.length) return;
 			currentQuest = questWorkBench.shift();
@@ -108,7 +108,8 @@
 			while(me.area !== area) {
 				while(this.safe !== area) delay(100);
 				print('Taking portal! -> '+this.leader+' -> '+area);
-				Pather.usePortal(area,this.leader);
+				let portal = getUnits(2,'portal').filter(portal => portal.objtype === area).first();
+				portal && portal.click();
 			}
 			return me.area === area
 		};
@@ -118,7 +119,7 @@
 			!me.inTown && Pather.usePortal(null,this.leader);
 		};
 
-		const talkTo = function (name) { // Credit to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
+		const talkTo = function (name,cancel = false) { // Credit to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
 			let npc, i;
 
 			!me.inTown && Town.goToTown();
@@ -127,7 +128,7 @@
 				Town.move(name === "jerhyn" ? "palace" : name);
 				npc = getUnit(1, name === "cain" ? "deckard cain" : name);
 				if (npc && npc.openMenu()) {
-					me.cancel();
+					cancel && me.cancel();
 					return true;
 				}
 				Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
@@ -164,6 +165,8 @@
 				leader: function () {
 				},
 				follower: function (leader) {
+					talkTo('Warriv');
+					Misc.useMenu(sdk.menu.GoEast);
 				},
 			},
 			TheTaintedSun: {
@@ -258,13 +261,15 @@
 			if (!this.isLeader) return false;
 			const lastQ = Math.min.apply(null, Object.keys(TeamData).map(key => TeamData[key].highestQuestDone || 0));
 			// So lets find next q
-			let nextQuestIndex = (sequence.findIndex(e => lastQ === e) || -1) + 1;
+			let nextQuestIndex = sequence.findIndex(e => lastQ === e)+1;
 			if (sequence.hasOwnProperty(nextQuestIndex) && currentQuest !== sequence[nextQuestIndex]) {
 				currentQuest = sequence[nextQuestIndex];
-				print('Next quest = ' + currentQuest);
 			}
 			return currentQuest;
 		}, (o, n) => n && Team.broadcastInGame({Rush: {doQuest: currentQuest}}));
+
+		// For debug purposes
+		Delta.track(() => JSON.stringify(TeamData),() => print(TeamData));
 
 		const currentQuestName = () => Object.keys(sdk.quests).find(key => sdk.quests[key] === currentQuest);
 		while (true) {
