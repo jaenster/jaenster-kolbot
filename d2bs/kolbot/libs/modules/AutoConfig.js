@@ -41,14 +41,14 @@
 
 	AutoConfig.Chicken = function () {
 		require('Chicken'); // Load the chicken
-		Config.HealHP = 50;
-		Config.HealMP = 50;
+		Config.HealHP = 90;
+		Config.HealMP = 90;
 		Config.HealStatus = false;
 		Config.UseMerc = true;
 		Config.AvoidDolls = ([0, 1, 2, 6].indexOf(me.classid)); // Avoid dolls in case your a Ama / Sorc / Necro or Assa
 
 		// Chicken settings
-		Config.LifeChicken = 35; // Exit game if life is less or equal to designated percent.
+		Config.LifeChicken = 0; // Exit game if life is less or equal to designated percent.
 		Config.ManaChicken = 0; // Exit game if mana is less or equal to designated percent.
 		Config.MercChicken = 0; // Exit game if merc's life is less or equal to designated percent.
 		Config.TownHP = 0; // Go to town if life is under designated percent.
@@ -61,10 +61,10 @@
 		Config.UseRejuvHP = 45;
 		Config.UseMP = 30;
 		Config.UseRejuvMP = Math.max.apply(Math, Skills.getSkillLevel(sdk.skills.EnergyShield)) > 1 ? 25 : 0; // Only use a Rejuv pot for mana in case we have an es
-		Config.UseMercHP = 75;
+		Config.UseMercHP = 40;
 		Config.UseMercRejuv = 20;
-		Config.HPBuffer = 0;
-		Config.MPBuffer = 0;
+		Config.HPBuffer = 3;//(10/me.charlvl*Math.sqrt(me.charlvl)) | 0;
+		Config.MPBuffer = 3;//(5/me.charlvl*Math.sqrt(me.charlvl)) | 0;
 		Config.RejuvBuffer = Math.min(me.isWeak ? 6 : 3, Math.max(0, Math.floor(emptyInventorySlots() - 12 / 2))); // If space allows it, keep 3 Rejuv's in inventory or 6 in the case we are weak
 	};
 
