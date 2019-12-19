@@ -32,7 +32,7 @@
 		},
 
 		removeHooks: function () {
-			this.hooks.forEach(hook => hook.line.remove());
+			this.hooks.forEach(hook => hook.lines.forEach(l => l.remove()));
 			this.hooks = [];
 		},
 	};
