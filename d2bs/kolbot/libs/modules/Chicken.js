@@ -4,19 +4,13 @@
  */
 
 
-(function (global) {
-	const thisFile = 'libs\\modules\\Chicken.js';
-
-	const others = [];
-	getScript(true).name.toLowerCase() === thisFile.toLowerCase() && include('require.js'); // load the require.js
-	!getScript(thisFile) && load(thisFile); // load thread, if not loaded yet
-
+(function (module, require, thread) {
 	const Messaging = require('Messaging');
 
 	const Config = require('Config');
 	const GameData = require('GameData');
-	const hookOn = ['HealHP', 'HealMP', 'HealStatus', 'LifeChicken', 'ManaChicken', 'MercChicken', 'TownHP', 'TownMP', 'UseHP', 'UseRejuvHP', 'UseMP', 'UseRejuvMP', 'UseMercHP', 'UseMercRejuv',];
-	const realValues = hookOn.reduce((a, c) => {
+	const hookOn = ['HealHP', 'HealMP', 'HealStatus', 'LifeChicken', 'ManaChicken', 'MercChicken', 'TownHP', 'TownMP', 'UseHP', 'UseRejuvHP', 'UseMP', 'UseRejuvMP', 'UseMercHP', 'UseMercRejuv', 'QuitWhenDead'];
+
 		if (Config.hasOwnProperty(c)) {
 			a[c] = Config[c]; // copy the value
 			delete Config[c]; // remove it from the config
@@ -38,12 +32,7 @@
 		})
 	});
 
-	// Once the thread sends the message, its up. Send the initial data
-	Messaging.on('Chicken', data => {
-		data.hasOwnProperty('up') && data.up && Messaging.send({Chicken: {values: realValues}})
-	});
-
-	if (getScript(true).name.toLowerCase() === thisFile.toLowerCase()) {
+	if (thread === 'thread') {
 		Messaging.send({Chicken: {up: true}}); // send message to the to the normal client we are up
 		print('ÿc2Jaensterÿc0 :: Chicken loaded');
 		Messaging.on('Chicken', data => {
@@ -332,10 +321,19 @@
 			return false; // dont block the packet
 		});
 
-
-		const PacketBuilder = require('PacketBuilder');
 		const Worker = require('Worker');
+		Worker.runInBackground.DeathHandler = function() {
+			if (me.dead && realValues['QuitWhenDead']) {
+				print('Died.. Quitting');
+				quit();
+			}
+			return true; // Keeps it looping =)
+		};
+
 		while (true) delay(1000);
+	} else {
+		// Once the thread sends the message, its up. Send the initial data
+		Messaging.on('Chicken', data => data.hasOwnProperty('up') && data.up && Messaging.send({Chicken: {values: realValues}}));
 	}
 
-})(this);
+}).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require, getScript.startAsThread());

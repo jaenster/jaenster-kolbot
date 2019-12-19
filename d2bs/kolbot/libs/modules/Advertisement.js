@@ -37,7 +37,7 @@
 				gamepassword: me.gamepassword,
 				diff: me.diff,
 				numberOfPlayers: (function (count = 0) {
-					if (me.gameReady && getParty()) for (let party = getParty(); party.getNext();) count++;
+					if (me.gameReady && getParty()) for (let party = getParty(); party && party.getNext();) count++;
 					return count;
 				}).call(),
 			}

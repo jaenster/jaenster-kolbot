@@ -150,7 +150,22 @@ let sdk = {
         MatronsDen: 133,
         FogottenSands: 134,
         FurnaceofPain: 135,
-        UberTristram: 136
+        UberTristram: 136,
+
+        townOf: function (area) {
+            switch (true) {
+                case area < sdk.areas.LutGholein:
+                    return 1;
+                case area < sdk.areas.LowerKurast:
+                    return 2;
+                case area < sdk.areas.PandemoniumFortress:
+                    return 3;
+                case area < sdk.areas.Harrogath:
+                    return 4;
+                default:
+                    return 5;
+            }
+        }
     },
 
     skills: {

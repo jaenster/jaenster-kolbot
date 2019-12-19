@@ -347,6 +347,7 @@
 		Fast: false,
 		Follower: false,
 		Entrance: true,
+		killDiablo: true,
 	};
 
 	Config.SpeedBaal = {
@@ -355,6 +356,8 @@
 	Config.Rush = {
 		Give: false,
 	};
+
+	Config.QuitWhenDead = !me.playertype; // If on hardcore, dont quit when your dead
 
 	// some new configurations
 	Config.Follow = undefined; // Still i like to define it

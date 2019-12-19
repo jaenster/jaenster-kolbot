@@ -1,285 +1,356 @@
 /**
- * @description A rush
- * @author Jaenster
- * @config
-
- Config.Rush.Give = false; // get a rush. If true, it gives one.
-
+ * @description A single script for both the rush as the rusher
+ *
  */
 
+(function (module, require) {
 
-function Rush(Config, Attack, Pickit, Pather, Town, Misc) {
-	const aloneInGame = function () {
-		for (let party = getParty(), acceptFirst; party && party.getNext();) if (party.name !== me.name) return false;
-		return true; // Yep
-	};
-	// List of quests it does
-	const questList = [sdk.quests.ForgottenTower, sdk.quests.SistersToTheSlaughter, sdk.quests.TheTaintedSun, sdk.quests.TheHoradricStaff];
+	const sequence = [
+		// Act one
+		sdk.quests.SistersToTheSlaughter,
+		sdk.quests.AbleToGotoActII,
 
-	const Team = require('Team');
-	const Promise = require('Promise');
-	const Worker = require('Worker');
-	require('debug');
-	const portalTaker = questList.map(x => false); // Make an array of questList as an
+		// Act two
+		sdk.quests.TheTaintedSun,
+		sdk.quests.TheHoradricStaff,
+		sdk.quests.TheArcaneSanctuary,
+		sdk.quests.TheSummoner,
+		sdk.quests.TheSevenTombs,
+		sdk.quests.AbleToGotoActIII,
 
-	const sameAreaAs = other => {
-		for (let party = getParty(); party && party.getNext();) if (party.name === other && party.area === me.area) return true;
-	};
-	const waitFor = function (player) {
-		while (!sameAreaAs(player)) delay(10);
-	};
-	const waitForNot = function (player) {
-		while (sameAreaAs(player)) delay(10);
-	};
+		// Act three
+		sdk.quests.TheBlackenedTemple, // travincal
+		sdk.quests.TheGuardian,  // mephisto
+		sdk.quests.AbleToGotoActIV,
 
-	if (Config.Rush.Give) {
-		const workList = [];
-		const doneQuests = [];
-		const doQuest = function (number) {
-			doneQuests.push(number);
-			let leader = portalTaker[questList.indexOf(number)], poi;
-			print('DOING QUEST -- ' + number + ' -- Portal taker ' + leader);
-			Team.broadcastInGame({rush: {doing: number, rusher: me.charname}});
-			Town();
-			switch (number) { // Going to the location
-				case sdk.quests.ForgottenTower: // Countress
-					Pather.journeyTo(sdk.areas.TowerCellarLvl5);
-					poi = getPresetUnit(me.area, 2, 580);
-					switch (poi.roomx * 5 + poi.x) {
-						case 12565:
-							Pather.moveTo(12527, 11063);
-							break;
-						case 12526:
-							Pather.moveTo(12567, 11027);
-							break;
-					}
-					break;
-				case sdk.quests.SistersToTheSlaughter: // andy
-					Pather.journeyTo(sdk.areas.CatacombsLvl4);
-					me.clear(10); // clear around catacombs 4.
-					break;
-				case sdk.quests.TheTaintedSun: // amulet
-					print('The Tainted Sun');
-					Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
-					Pather.moveTo(15044, 14045);
-					break;
-				case sdk.quests.TheHoradricStaff:
-					Pather.journeyTo(sdk.areas.MaggotLairLvl3);
-					Pather.moveToPreset(me.area, 2, 356);
+		// Act four
+		sdk.quests.TerrorsEnd,
+		// Expansion
+		sdk.quests.AbleToGotoActV,
+
+		// Act 5,
+		sdk.quests.PrisonOfIce, // anya
+		sdk.quests.RiteOfPassage,
+		sdk.quests.EveOfDestruction,
+	];
+
+
+	const rush = function (Config, Attack, Pickit, Pather, Town, Misc) {
+		Object.defineProperties(this, {
+			leader: {
+				get: () => Object.keys(TeamData)
+					.filter(key => TeamData[key].hasOwnProperty('highestRushQ')) /* Filter out those that dont know which q is highest*/
+					.sort((a, b) => (TeamData[b].highestRushQ || 0) - (TeamData[a].highestRushQ || 0)) /* sort on highest q done*/
+					.first(),
+			},
+			isLeader: {get: () => this.leader === me.charname && Object.keys(TeamData).length > 1},
+			highestRushQ: {get: () => sequence.map(_ => _).reverse().find(q => me.getQuest(q, 0)) || 0},
+			safe: {
+				get: () => safePortalArea,
+				set: () => Team.broadcastInGame({Rush: {safe: me.area}}),
+			},
+			done: {
+				get: () => doneArea === me.area,
+				set: () => Team.broadcastInGame({Rush: {done: me.area}}),
 			}
-			// ---
-			Attack.securePosition(me.x, me.y, 20, 3000);
-			// ---
-			const portal = Pather.makePortal();
-			const [portal_x, portal_y] = [portal.x, portal.y];
-			print('Wait for ' + leader + ' to come -- ' + portal_x + ',' + portal_y);
-			waitFor(leader);
-			print('char came');
-			switch (number) { // Doing stuff
-				case sdk.quests.ForgottenTower:
-					let [x, y] = [me.x, me.y];
-					Pather.moveToPreset(me.area, 2, 580);
-					let countress;
-					while (!(countress = getUnits(2).filter(x => x.name === getLocaleString(2875)).first())) delay(1200);
-					countress.kill(); // kill her
-					break;
-				case sdk.quests.SistersToTheSlaughter:
-					Attack.kill(156); // Andariel
-					Pather.moveTo(22549, 9520);
-					Pather.moveToExit(sdk.areas.CatacombsLvl3, false);
-			}
-			Pather.moveTo(portal_x, portal_y);
-			switch (number) {
-				case sdk.quests.ForgottenTower:
-				case sdk.quests.SistersToTheSlaughter:
-					Pather.usePortal(null, me.charname); // back to town
-					break;
-				case sdk.quests.TheTaintedSun:
-				case sdk.quests.TheHoradricStaff:
-					waitForNot(leader);
-					Pather.usePortal(null, null, portal);
-
-			}
-
+		});
+		const Delta = new (require('Deltas'));
+		const TeamData = {};
+		const Quest = require('QuestEvents');
+		TeamData[me.charname] = {
+			highestQuestDone: me.highestQuestDone || 0,
+			highestAct: me.highestAct || 1,
+			highestRushQ: this.highestRushQ || 0,
 		};
-		Team.on('rush', function (msg) {
-			if (msg.hasOwnProperty('do') && typeof msg.do === 'number') {
 
-				let index = workList.indexOf(msg.do);
-				if (index === -1 && doneQuests.indexOf(msg.do) === -1) {
-					print('Added quest ' + msg.do + ' to list');
+		const Team = require('Team');
+		const myData = () => ({Rush: {player: {data: TeamData[me.charname], name: me.charname}}});
+		const requestData = () => Team.broadcastInGame({Rush: {request: true}});
+		Team.on('Rush', data => {
 
-					workList.push(msg.do);
-					msg.reply({rush: {added: msg.do}});
-					portalTaker[questList.indexOf(msg.do)] = msg.requester;
-				}
+			if (data.hasOwnProperty('player') && typeof data.player === 'object' && typeof data.player.data === 'object' && data.player.hasOwnProperty('name')) {
+				// If no data of player is known yet
+				if (!TeamData.hasOwnProperty(data.player)) TeamData[data.player.name] = {};
+
+				Object.keys(data.player.data).forEach(key => TeamData[data.player.name][key] = data.player.data[key]);
 			}
+
+			if (data.hasOwnProperty('request')) data.reply(myData());
+
+			if (data.hasOwnProperty('doQuest')) questWorkBench.push(data.doQuest);
+
+			if (data.hasOwnProperty('safe')) {
+				print('Area safe: ' + safePortalArea);
+				safePortalArea = data.safe;
+			}
+
+			if (data.hasOwnProperty('done')) doneArea = data.done;
 		});
 
-		while (aloneInGame()) delay(3);
-
-
-		while (delay(10) || true) {
-			if (!workList.length) continue; // if nothing to do
-			doQuest(workList.shift());
-
-		}
-
-
-	} else { // get a rush
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////         rushee               /////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		const Quests = require('QuestEvents');
-
-		const rusher = questList.map(x => false);
-		const questStart = new (require('Events'))();
-		let currentlyDoing = -1;
-
-		while (!getParty()) delay(10); // waiting for the party to get up
-
-		// Listen on msg's from rusher
-		Team.on('rush', function (msg) {
-			print(JSON.stringify(msg));
-			if (msg.hasOwnProperty('added') && typeof msg.added === 'number') {
-				print('Im the leader of ' + (Object.keys(sdk.quests).filter(x => sdk.quests[x] === msg.added).first()));
-				portalTaker[questList.indexOf(msg.added)] = true; // Im the one that takes the portal
-			}
-
-			if (msg.hasOwnProperty('doing') && typeof msg.doing === "number") {
-				print('get rush for ' + (Object.keys(sdk.quests).filter(x => sdk.quests[x] === msg.doing).first()));
-				currentlyDoing = msg.doing;
-
-				rusher[questList.indexOf(msg.doing)] = msg.rusher; // the person who rushes us
-				Worker.push(() => questStart.emit(msg.doing));
-			}
+		let safePortalArea = 0, doneArea = 0;
+		const questWorkBench = [];
+		let currentQuest = '';
+		let inQuest = false;
+		Delta.track(() => JSON.stringify(TeamData[me.charname]), () => Team.broadcastInGame(myData())); // If something changes in my data, send it to the rest
+		Delta.track(() => me.area, (o, n) => TeamData[me.charname].area = me.area); // Let the team know where i'm at
+		Delta.track(() => questWorkBench.length, () => {
+			if (!questWorkBench.length) return;
+			currentQuest = questWorkBench.shift();
+			if (inQuest) throw Error('In quest');
 		});
 
-		[ // Handlers for the more stupid quests where you do not need to talk/take care of anything
-			{quest: sdk.quests.ForgottenTower, area: sdk.areas.TowerCellarLvl5, town: 1},
-			{quest: sdk.quests.SistersToTheSlaughter, area: sdk.areas.CatacombsLvl4, town: 1},
-			{quest: sdk.quests.TheTaintedSun, area: sdk.areas.ClawViperTempleLvl2, town: 2, chest: 149, item: 521},
-			{quest: sdk.quests.TheHoradricStaff, area: sdk.areas.MaggotLairLvl3, town: 2, item: 92, chest: 356},
-		]
-			.forEach(function (what) {
-				questStart.on(what.quest, function () {
-					const questname = Object.keys(sdk.quests).filter(x => sdk.quests[x] === what.quest).first();
-					print('Starting quest --> ' + questname);
-					Town.goToTown(what.town);
-					// If we are the portal taker, go to the portal spot
-					if (portalTaker[questList.indexOf(what.quest)]) {
-						Town.move("portalspot"); // Move to portal spot
-						print('Taking portal to ' + (Object.keys(sdk.areas).filter(x => sdk.areas[x] === what.area).first()) + ' -- ' + rusher[questList.indexOf(what.quest)]);
-						print('CURRENTLY DOING -- ' + currentlyDoing);
+		const getQuestItem = function (classId, chestId) {
+			let tick = getTickCount();
 
-						while (currentlyDoing === what.quest) {
-							Pather.usePortal(what.area, rusher[questList.indexOf(what.quest)]);
-							if (me.area === what.area) {
-
-								if (what.hasOwnProperty('chest')) {
-									delay(250);
-									let chest = getUnit(2, what.chest);
-									Misc.openChest(chest);
-								}
-
-								if (what.hasOwnProperty('item')) {
-									let item = getUnit(4, what.item);
-									if (!item) for (let i = 0; i < 10 && !item; i += 1) {
-										delay(100 + me.ping);
-										item = getUnit(4, what.item);
-									}
-									for (let i = 0; i < 3 && !Pickit.pickItem(item); i += 1) {
-										delay(250 + me.ping * 2);
-									}
-								}
-
-								if (!what.hasOwnProperty('chest') && !what.hasOwnProperty('item')) {
-									print('WAITING FOR ' + rusher[questList.indexOf(what.quest)] + ' TO LEAVE AREA');
-									waitForNot(rusher[questList.indexOf(what.quest)]);
-									print('PLAYER LEFT');
-								}
-
-								Pather.usePortal(null, null, getUnits(1, 'portal').sort((a, b) => a.distance - b.distance).first());
-								return; // done
-							}
-
-						}
-					}
-				});
-			});
-
-		// Tainted sun is a special quest, as we need to talk to Drognan once we have the darkness hitting us.
-		// addEventListener('gamepacket',bytes => bytes && bytes.length > 0 && bytes[0] === 0x53 && Worker.push(() => {
-		// 	print('DARKNESS FELL');
-		// 	new Promise(resolve => me.area === sdk.areas.LutGholein && resolve())
-		// 		.then(function() {
-		// 			// We are in act 2, we need to talk to Drognan
-		// 			print('TALK TO Drognan');
-		// 			let ret = [me.x,me.y];
-		// 			[5093,5037].moveTo();
-		// 			TalkTo('Drognan');
-		// 			ret.moveTo();
-		// 		})
-		// })());
-		const TalkTo = function (name) {
-			var npc, i;
-
-			if (!me.inTown) {
-				Town.goToTown();
+			if (me.getItem(classId)) {
+				return true;
 			}
+
+			if (me.inTown) return false;
+
+			let chest = getUnit(2, chestId);
+
+			if (!chest) {
+				return false;
+			}
+
+			Misc.openChest(chest);
+			let item;
+			while (!(item = getUnit(4, classId)) && getTickCount() - tick < 1000) delay(30);
+
+			if (!item) return false;
+			return Pickit.pickItem(item) && delay(1000);
+		};
+
+		// Fields of me to track
+		['highestAct', 'highestQuestDone'].forEach(key => Delta.track(() => me[key], (o, n) => TeamData[me.charname][key] = n || 0));
+
+		Team.broadcastInGame(myData()); // send my data
+		requestData();// ask data of other players once we are up
+
+		const WaitOnLeadersPortal = (area) => {
+			print('Waiting for portal of leader');
+			Town.goToTown(sdk.areas.townOf(area)).move('portalspot');
+			while (me.area !== area) {
+				while (this.safe !== area) delay(100);
+				// print('Taking portal! -> ' + this.leader + ' -> ' + area);
+				let portal = getUnits(2, 'portal').filter(portal => portal.objtype === area).first();
+				portal && portal.click();
+			}
+			return me.area === area
+		};
+		const WaitOnDone = (area = me.area) => {
+			print('Wait until done');
+			while (area !== doneArea) delay(100);
+			!me.inTown && Pather.usePortal(null, this.leader);
+		};
+
+		const talkTo = function (name, cancel = false) { // Credit to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
+			let npc, i;
+
+			!me.inTown && Town.goToTown();
 
 			for (i = 5; i; i -= 1) {
 				Town.move(name === "jerhyn" ? "palace" : name);
 				npc = getUnit(1, name === "cain" ? "deckard cain" : name);
-				if (npc) {
-					if (npc.openMenu()) {
-						me.cancel();
-						return true;
-					}
+				if (npc && npc.openMenu()) {
+					cancel && me.cancel();
+					return true;
 				}
-				delay(me.ping * 2 + 500);
 				Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
 			}
 
 			return false;
 		};
 
-		Worker.runInBackground.QuestDecider = function () {
-			let choicenQuest = questList.filter(x => {
-				switch (x) { // Some specific's
-					case sdk.quests.SistersToTheSlaughter:
-						return !(Quests.states[x][1] + Quests.states[x][0]);
-
-				}
-				return !Quests.states[x][0];
-			}).first(); // Filter out those we have done
-			Team.broadcastInGame({rush: {do: choicenQuest, requester: me.charname}});
-			return true;
+		const handlers = {
+			SistersToTheSlaughter: {
+				leader: () => {
+					print('Killing andy');
+					Pather.journeyTo(sdk.areas.CatacombsLvl4); // Going to catacombs 4.
+					const [x, y] = [me.x, me.y];
+					Pather.makePortal();
+					me.clear(15); // clear around this area
+					this.safe = true;
+					Pather.moveTo(22549, 9520);
+					const andy = getUnit(1, sdk.monsters.Andariel); // Andariel
+					if (!andy) throw new Error('Andariel not found');
+					andy.kill();
+					this.done = true;
+					Pather.moveTo(x, y);
+					Pather.usePortal(null, me.charname); // take my portal back to town
+				},
+				follower: function (leader) {
+					print('Doing andy!');
+					WaitOnLeadersPortal(sdk.areas.CatacombsLvl4);
+					WaitOnDone(sdk.areas.CatacombsLvl4);
+					talkTo('Warriv'); // Just talk to warriv
+				},
+			},
+			AbleToGotoActII: {
+				leader: () => {
+				},
+				follower: function (leader) {
+					talkTo('Warriv');
+					Misc.useMenu(sdk.menu.GoEast);
+				},
+			},
+			TheTaintedSun: {
+				leader: () => {
+					Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
+					Pather.moveTo(15049, 14051);
+					this.safe = true;
+					this.done = true;
+					Pather.makePortal(true);
+				},
+				follower: function (leader) {
+					Town.move('drognan'); // To prepair to be talking with drogan
+					while (TeamData[leader].area !== sdk.areas.ClawViperTempleLvl2) delay(10);
+					talkTo('drognan');
+					WaitOnLeadersPortal(sdk.areas.ClawViperTempleLvl2);
+					getQuestItem(521, 149); // ToDo; make sdk for this
+					WaitOnDone(sdk.areas.ClawViperTempleLvl2);
+					talkTo('cain');
+				},
+			},
+			TheHoradricStaff: {
+				leader: () => {
+					Pather.journeyTo(sdk.areas.MaggotLairLvl3);
+					Pather.moveToPreset(me.area, 2, 356);
+					let portal = Pather.makePortal();
+					me.clear(30);
+					portal.moveTo();
+					let chest = getUnit(2, 356);
+					// Open chest already
+					if (chest && !chest.mode) me.getSkill(sdk.skills.Telekinesis, 1) && chest.cast(sdk.skills.Telekinesis) || Misc.openChest(chest);
+					this.safe = true;
+					this.done = true;
+					Pather.usePortal(undefined, undefined, portal);
+				},
+				follower: function (leader) {
+					WaitOnLeadersPortal(sdk.areas.MaggotLairLvl3);
+					getQuestItem(92, 356); // ToDo; make sdk for this
+					WaitOnDone(sdk.areas.MaggotLairLvl3);
+					talkTo('Cain');
+					Town.move('stash');
+				},
+			},
+			TheArcaneSanctuary: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			TheSummoner: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			TheSevenTombs: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			AbleToGotoActIII: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			TheBlackenedTemple: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			TheGuardian: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			AbleToGotoActIV: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			TerrorsEnd: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			AbleToGotoActV: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			PrisonOfIce: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			RiteOfPassage: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			},
+			EveOfDestruction: {
+				leader: () => {
+				},
+				follower: function (leader) {
+				},
+			}
 		};
 
-		delay(10); // give the quests some time to load
-		while (aloneInGame()) delay(3);
-		print('Others in game now');
-
-		Quests.on(sdk.quests.SistersToTheSlaughter, function (states) {
-			print('----- ' + !me.getQuest(sdk.quests.AbleToGotoActII, 0)); // can we go to act 2
-			if (states[1] /*need to talk to warriv*/) {
-				print('TALK TO WARRIVE NEXT TIME IN TOWN');
-				new Promise(resolve => me.inTown && resolve()).then(function () {
-					print('TALK TO WARRIV');
-					Town.moveTo(NPC.Warriv);
-					let warriv = getUnit(1, NPC.Warriv);
-					warriv.openMenu(); // Open menu
-					Misc.useMenu(sdk.menu.GoEast); // use menu
-				})
+		// If we are the designated leader, we want to do the next quest
+		// Delta.track(() => this.isLeader && currentQuest,()=> Team.broadcastInGame({Rush: {doQuest: currentQuest}}));
+		Delta.track(() => {
+			if (!this.isLeader) return false;
+			const lastQ = Math.min.apply(null, Object.keys(TeamData).map(key => TeamData[key].highestQuestDone || 0));
+			// So lets find next q
+			let nextQuestIndex = sequence.findIndex(e => lastQ === e) + 1;
+			if (sequence.hasOwnProperty(nextQuestIndex) && currentQuest !== sequence[nextQuestIndex]) {
+				currentQuest = sequence[nextQuestIndex];
 			}
+			return currentQuest;
+		}, (o, n) => n && Team.broadcastInGame({Rush: {doQuest: currentQuest}}));
 
-		});
+		// For debug purposes
+		// Delta.track(() => JSON.stringify(TeamData), () => print(TeamData));
 
+		const currentQuestName = () => Object.keys(sdk.quests).find(key => sdk.quests[key] === currentQuest);
 		while (true) {
-			delay(100);
+			delay(1000);
+			const [leader, isLeader, doQuest] = [this.leader, this.isLeader, currentQuestName()];
+			if (leader === me.charname && !isLeader) continue; // Waiting for now
+			print('Leader = ' + leader);
+			print('isLeader = ' + isLeader);
+			print('doQuest = ' + doQuest);
+			print(TeamData);
+
+
+			if (!doQuest) continue; // Wait for quest
+
+			print('Doing quest: ' + doQuest);
+			if (handlers.hasOwnProperty(doQuest)) {
+				handlers[doQuest][isLeader && 'leader' || 'follower'](leader);
+			}
+			print('Waiting for next quest...');
+			while (doQuest === currentQuestName()) {
+				delay(1000);
+			}
+			print('Next quest!');
+
 		}
+	};
+	module.exports = rush;
 
 
-	}
-}
+}).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require);
