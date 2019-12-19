@@ -371,7 +371,9 @@
 
 				//ToDo; go to cain if he is closer by and we dont have scrolls & nothing else to identify
 
-				Town.goToTown();
+				if (!Town.goToTown(me.act, false, false)) {
+					return false;
+				}
 				// Lets go to town to identify
 				const npc = Town.initNPC("Shop", "identify");
 				scroll = npc.getItem(sdk.items.idScroll);
