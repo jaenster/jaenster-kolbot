@@ -2157,7 +2157,7 @@
 		}
 
 		if (act === undefined) {
-			return true;
+			return Town;
 		}
 
 		if (act < 1 || act > 5) {
@@ -2172,7 +2172,7 @@
 			}
 		}
 
-		return true;
+		return Town;
 	};
 
 	Town.visitTown = function (repair = false) {

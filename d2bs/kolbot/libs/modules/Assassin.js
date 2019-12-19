@@ -8,6 +8,7 @@
 	const Config = require('Config');
 	const Worker = require('Worker');
 	const Pather = require('Pather');
+	const Town = require('Town');
 
 	// Cast burst of speed in town, fade before we leave town
 	const usePortal = Pather.usePortal, useWaypoint = Pather.useWaypoint;

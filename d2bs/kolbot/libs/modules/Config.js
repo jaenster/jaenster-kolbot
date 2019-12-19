@@ -357,6 +357,8 @@
 		Give: false,
 	};
 
+	Config.QuitWhenDead = !me.playertype; // If on hardcore, dont quit when your dead
+
 	// some new configurations
 	Config.Follow = undefined; // Still i like to define it
 	Config.Silence = true;
