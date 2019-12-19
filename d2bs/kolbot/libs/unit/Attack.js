@@ -6,6 +6,10 @@
 	const Pickit = require('Pickit');
 	const ignoreMonster = [];
 
+	Unit.resetIgnored = () => {
+		ignoreMonster.length = 0;
+	};
+
 	Unit.prototype.clear = function (range, spectype, walk = false, once = false) {
 		const Pather = require('Pather');
 		let start = [], startArea = me.area;
