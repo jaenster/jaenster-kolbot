@@ -64,7 +64,7 @@
 					// return shaman first
 					return -1;
 				}
-				return clearDistance(me.x, me.y, a.x, a.y) - clearDistance(me.x, me.y, b.x, b.y))
+				return clearDistance(me.x, me.y, a.x, a.y) - clearDistance(me.x, me.y, b.x, b.y);
 			});
 
 		// If we clear around _me_ we move around, but just clear around where we started
