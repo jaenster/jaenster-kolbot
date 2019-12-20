@@ -106,6 +106,12 @@
 			Run: getBaseStat('monstats', index, 'Run'),
 			SizeX: getBaseStat('monstats', index, 'SizeX'),
 			SizeY: getBaseStat('monstats', index, 'SizeY'),
+			Attack1MinDmg: getBaseStat('monstats', index, ["A1MinD", "A1MinD(N)", "A1MinD(H)"][me.diff]),
+			Attack1MaxDmg: getBaseStat('monstats', index, ["A1MaxD", "A1MaxD(N)", "A1MaxD(H)"][me.diff]),
+			Attack2MinDmg: getBaseStat('monstats', index, ["A2MinD", "A2MinD(N)", "A2MinD(H)"][me.diff]),
+			Attack2MaxDmg: getBaseStat('monstats', index, ["A2MaxD", "A2MaxD(N)", "A2MaxD(H)"][me.diff]),
+			Skill1MinDmg: getBaseStat('monstats', index, ["S1MinD", "S1MinD(N)", "S1MinD(H)"][me.diff]),
+			Skill1MaxDmg: getBaseStat('monstats', index, ["S1MaxD", "S1MaxD(N)", "S1MaxD(H)"][me.diff]),
 		});
 	}
 
@@ -623,7 +629,7 @@
 	}
 
 	function isEnemy(unit) {
-		return Boolean(unit && isAlive(unit) && unit.getStat(172) !== 2 && typeof unit.classid === 'number' && MonsterData[unit.classid].Killable);
+		return Boolean(unit && isAlive(unit) && unit.getStat(sdk.stats.Alignment) !== 2 && typeof unit.classid === 'number' && MonsterData[unit.classid].Killable);
 	}
 
 	function onGround(item) {
@@ -666,6 +672,35 @@
 		},
 		eliteAvgHP: function (monsterID, areaID) {
 			return (6 - me.diff) / 2 * this.monsterAvgHP(monsterID, areaID, 2);
+		},
+		monsterDamageModifier: function () {
+			return 1 + (this.multiplayerModifier() - 1) * 0.0625;
+		},
+		monsterMaxDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID)+adjustLevel;
+			return Math.max.apply(null, [MonsterData[monsterID].Attack1MaxDmg, MonsterData[monsterID].Attack2MaxDmg, MonsterData[monsterID].Skill1MaxDmg]) * level / 100 * this.monsterDamageModifier();
+		},
+		// https://www.diabloii.net/forums/threads/monster-damage-increase-per-player-count.570346/
+		monsterAttack1AvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID)+adjustLevel;
+			return ((MonsterData[monsterID].Attack1MinDmg + MonsterData[monsterID].Attack1MaxDmg) / 2) * level / 100 * this.monsterDamageModifier();
+		},
+		monsterAttack2AvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID)+adjustLevel;
+			return ((MonsterData[monsterID].Attack2MinDmg + MonsterData[monsterID].Attack2MaxDmg) / 2) * level / 100 * this.monsterDamageModifier();
+		},
+		monsterSkill1AvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID)+adjustLevel;
+			return ((MonsterData[monsterID].Skill1MinDmg + MonsterData[monsterID].Skill1MaxDmg) / 2) * level / 100 * this.monsterDamageModifier();
+		},
+		monsterAvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let attack1 = this.monsterAttack1AvgDmg(monsterID, areaID, adjustLevel);
+			let attack2 = this.monsterAttack2AvgDmg(monsterID, areaID, adjustLevel);
+			let skill1 = this.monsterSkill1AvgDmg(monsterID, areaID, adjustLevel);
+			let dmgs = [attack1, attack2, skill1].filter(x => x > 0);
+			// ignore 0 dmg to avoid reducing average
+			if (!dmgs.length) return 0;
+			return dmgs.reduce((acc, v) => acc + v) / dmgs.length;
 		},
 		averagePackSize: monsterID => (MonsterData[monsterID].GroupCount.Min + MonsterData[monsterID].MinionCount.Min + MonsterData[monsterID].GroupCount.Max + MonsterData[monsterID].MinionCount.Max) / 2,
 		areaLevel: function (areaID) {
@@ -1760,6 +1795,7 @@
 // Export data
 	GameData.MissilesData = MissilesData;
 	GameData.AreaData = AreaData;
+	GameData.MonsterData = MonsterData;
 	GameData.isEnemy = isEnemy;
 	GameData.isAlive = isAlive;
 	GameData.onGround = onGround;
