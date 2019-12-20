@@ -922,7 +922,7 @@
 
 			if (result.result === 1) {
 				try {
-					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
+					if (Storage.Inventory.CanFit(items[i]) && me.gold >= items[i].getItemCost(0)) {
 						Misc.itemLogger("Shopped", items[i]);
 						Misc.logItem("Shopped", items[i], result.line);
 						items[i].buy();

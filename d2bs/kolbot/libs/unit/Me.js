@@ -169,8 +169,6 @@
 				if (me.gold < mercCost) {
 					low = true;
 				}
-
-				print("Total cost of towning = "+total);
 				return low;
 			}
 		}

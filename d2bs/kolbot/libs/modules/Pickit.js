@@ -171,7 +171,7 @@
 				switch (result) {
 					case -1: // Item needs to be identified
 						// For low level chars that can't actually get id scrolls -> prevent an infinite loop
-						if (me.getStat(14) + me.getStat(15) < 100) {
+						if (me.gold < 100) {
 							return false;
 						}
 
