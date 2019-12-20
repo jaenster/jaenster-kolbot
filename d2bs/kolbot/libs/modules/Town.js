@@ -73,7 +73,6 @@
 
 		Town.heal();
 		Town.identify();
-		Town.shopItems();
 		Town.fillTome(518);
 
 		if (Config.FieldID) {
@@ -81,13 +80,13 @@
 		}
 
 		Town.buyPotions();
-		Town.clearInventory();
 		Town.buyKeys();
+		Town.shopItems();
+		Town.clearInventory();
 		Town.repair(repair);
-		Town.gamble();
 		Town.reviveMerc();
+		Town.gamble();
 		Town.stash(true);
-		Town.clearScrolls();
 
 		for (i = 0; i < cancelFlags.length; i += 1) {
 			if (getUIFlag(cancelFlags[i])) {
@@ -231,10 +230,6 @@
 	};
 
 	Town.buyPotions = function () {
-		if (me.gold < 1000) { // Ain't got money fo' dat shyt
-			return false;
-		}
-
 		var i, j, npc, useShift, col, beltSize, pot,
 			needPots = false,
 			needBuffer = true,
@@ -248,24 +243,10 @@
 
 		// HP/MP Buffer
 		if (Config.HPBuffer > 0 || Config.MPBuffer > 0) {
-			pot = me.getItem(-1, 0);
-
-			if (pot) {
-				do {
-					if (pot.location === 3) {
-						switch (pot.itemType) {
-							case 76:
-								buffer.hp += 1;
-
-								break;
-							case 77:
-								buffer.mp += 1;
-
-								break;
-						}
-					}
-				} while (pot.getNext());
-			}
+			const inInventory = me.getItemsEx()
+				.filter(i => i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory);
+			buffer.hp = inInventory.filter(i => i.itemType == sdk.itemtype.hppot).length;
+			buffer.mp = inInventory.filter(i => i.itemType == sdk.itemtype.mppot).length;
 		}
 
 		// Check if we need to buy potions based on Config.MinColumn
@@ -297,8 +278,8 @@
 			return true;
 		}
 
-		if (me.diff === 0 && Pather.accessToAct(4) && me.act < 4) {
-			Town.goToTown(4);
+		if (me.diff === 0) {
+			Town.goToTown(me.highestAct);
 		}
 
 		npc = Town.initNPC("Shop", "buyPotions");
@@ -423,16 +404,8 @@
 	// Return column status (needed potions in each column)
 	Town.checkColumns = function (beltSize) {
 		var col = [beltSize, beltSize, beltSize, beltSize],
-			pot = me.getItem(-1, 2); // Mode 2 = in belt
-
-		if (!pot) { // No potions
-			return col;
-		}
-
-		do {
-			col[pot.x % 4] -= 1;
-		} while (pot.getNext());
-
+			pots = me.getItemsEx().filter(i => i.location == sdk.storage.Belt);
+		pots.forEach(p => col[p.x % 4] -= 1);
 		return col;
 	};
 
@@ -1796,56 +1769,60 @@
 		return true;
 	};
 
-	Town.clearInventory = function () {
-		var i, freeSpace, result, beltSize,
-			items = [];
+	Town.clearPotions = () => {
 		const Storage = require('Storage');
-		Town.checkQuestItems(); // only golden bird quest for now
-		const Pickit = require('Pickit');
+		let beltSize = Storage.BeltSize();
+		let freeSpace = Town.checkColumns(beltSize);
 
-		me.cancel();
-		delay(200);
-
-		beltSize = Storage.BeltSize();
-		freeSpace = Town.checkColumns(beltSize);
+		let potsInInventory = me.getItemsEx()
+			.filter(p => p.location == sdk.storage.Inventory && [sdk.itemtype.hppot, sdk.itemtype.mppot, sdk.itemtype.rvpot].indexOf(p.itemType) > -1)
+			.sort((a, b) => a.itemType - b.itemType); // Sort from HP to RV
 
 		// Return potions from inventory to belt
-		me.getItemsEx()
-			.filter(p => p.location == sdk.storage.Inventory && [sdk.itemtype.hppot, sdk.itemtype.mppot, sdk.itemtype.rvpot].indexOf(p.itemType) > -1)
-			.sort((a, b) => a.itemType - b.itemType) // Sort from HP to RV
-			.forEach(p => {
-				for (i = 0; i < 4; i += 1) {
-					if (p.code.indexOf(Config.BeltColumn[i]) > -1 && freeSpace[i] > 0) {
-						if (freeSpace[i] === beltSize) { // Pick up the potion and put it in belt if the column is empty
-							if (p.toCursor()) {
-								clickItem(0, i, 0, 2);
-							}
-						} else {
-							clickItem(2, p.x, p.y, p.location); // Shift-click potion
+		potsInInventory.forEach(p => {
+			for (var i = 0; i < 4; i += 1) {
+				if (p.code.indexOf(Config.BeltColumn[i]) > -1 && freeSpace[i] > 0) {
+					if (freeSpace[i] === beltSize) { // Pick up the potion and put it in belt if the column is empty
+						if (p.toCursor()) {
+							clickItem(0, i, 0, 2);
 						}
-
-						delay(me.ping + 200);
-
-						freeSpace = Town.checkColumns(beltSize);
+					} else {
+						clickItem(2, p.x, p.y, p.location); // Shift-click potion
 					}
+
+					delay(me.ping + 200);
+
+					freeSpace = Town.checkColumns(beltSize);
 				}
-			});
+			}
+		});
 
 		// Cleanup remaining hp potions
-		me.getItemsEx()
-			.filter((p, i) => p.location == sdk.storage.Inventory && p.itemType == sdk.itemtype.hppot)
+		potsInInventory
+			.filter((p, i) => p.itemType == sdk.itemtype.hppot)
 			.filter((_, i) => i >= Config.HPBuffer)
 			.forEach(p => {
 				p.sellOrDrop();
 			});
 
 		// Cleanup remaining mp potions
-		me.getItemsEx()
-			.filter((p, i) => p.location == sdk.storage.Inventory && p.itemType == sdk.itemtype.mppot)
+		potsInInventory
+			.filter((p, i) => p.itemType == sdk.itemtype.mppot)
 			.filter((_, i) => i >= Config.MPBuffer)
 			.forEach(p => {
 				p.sellOrDrop();
 			});
+	};
+
+	Town.clearInventory = function () {
+		var i, result,
+			items = [];
+		const Storage = require('Storage');
+		Town.checkQuestItems(); // only golden bird quest for now
+		const Pickit = require('Pickit');
+
+		Town.clearPotions();
+		Town.clearScrolls();
 
 		// Any leftover items from a failed ID (crashed game, disconnect etc.)
 		items = Storage.Inventory.Compare(Config.Inventory);
