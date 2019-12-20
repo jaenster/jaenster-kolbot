@@ -53,7 +53,6 @@
 		};
 
 		Delta.track(() => me.area, () => me.area && delay(80) && revealLevel(true));
-		Delta.track(() => me.mode, () => me.mode == 17 && quit());
 
 		var AutoSmurfConfig = [
 			// norm
