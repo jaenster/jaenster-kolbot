@@ -1293,7 +1293,7 @@
 						myQuiver = me.getItem(quiver, 1);
 
 						if (myQuiver) {
-							myQuiver.drop();
+							myQuiver.sellOrDrop();
 						}
 
 						npc = Town.initNPC("Repair", "repair");
@@ -1754,44 +1754,23 @@
 					.length;
 				switch(p.itemType) {
 					case sdk.itemtype.hppot:
-						if (countInInventory < Config.HPBuffer) {
-							if (!Storage.Inventory.MoveTo(p)) {
-								print("Unable to move potion to inventory for buffer, drinking");
-								p.interact();
-								delay(200);
-							}
-						}
-						else {
-							p.interact();
-							delay(200);
+						if (countInInventory >= Config.HPBuffer || !Storage.Inventory.MoveTo(p)) {
+							print("Unable to move potion to inventory for buffer");
+							p.sellOrDrop();
 						}
 						break;
 
 					case sdk.itemtype.mppot:
-						if (countInInventory < Config.MPBuffer) {
-							if (!Storage.Inventory.MoveTo(p)) {
-								print("Unable to move potion to inventory for buffer, drinking");
-								p.interact();
-								delay(200);
-							}
-						}
-						else {
-							p.interact();
-							delay(200);
+						if (countInInventory >= Config.MPBuffer || !Storage.Inventory.MoveTo(p)) {
+							print("Unable to move potion to inventory for buffer");
+							p.sellOrDrop();
 						}
 						break;
 
 					case sdk.itemtype.rvpot:
-						if (countInInventory < Config.RejuvBuffer) {
-							if (!Storage.Inventory.MoveTo(p)) {
-								print("Unable to move potion to inventory for buffer, drinking");
-								p.interact();
-								delay(200);
-							}
-						}
-						else {
-							p.interact();
-							delay(200);
+						if (countInInventory >= Config.RejuvBuffer || !Storage.Inventory.MoveTo(p)) {
+							print("Unable to move potion to inventory for buffer");
+							p.sellOrDrop();
 						}
 						break;
 				}
@@ -1811,13 +1790,7 @@
 				require('Pickit').checkItem(i).result == 0
 			)
 			.forEach(s => {
-				if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-					Misc.itemLogger("Sold", s);
-					s.sell();
-				} else {
-					Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
-					s.drop();
-				}
+				s.sellOrDrop();
 			});
 
 		return true;
@@ -1863,8 +1836,7 @@
 			.filter((p, i) => p.location == sdk.storage.Inventory && p.itemType == sdk.itemtype.hppot)
 			.filter((_, i) => i >= Config.HPBuffer)
 			.forEach(p => {
-				p.interact();
-				delay(200 + me.ping);
+				p.sellOrDrop();
 			});
 
 		// Cleanup remaining mp potions
@@ -1872,8 +1844,7 @@
 			.filter((p, i) => p.location == sdk.storage.Inventory && p.itemType == sdk.itemtype.mppot)
 			.filter((_, i) => i >= Config.MPBuffer)
 			.forEach(p => {
-				p.interact();
-				delay(200 + me.ping);
+				p.sellOrDrop();
 			});
 
 		// Any leftover items from a failed ID (crashed game, disconnect etc.)
@@ -1913,15 +1884,7 @@
 							delay(200);
 						}
 
-						if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-							print("clearInventory sell " + items[i].name);
-							Misc.itemLogger("Sold", items[i]);
-							items[i].sell();
-						} else {
-							print("clearInventory drop " + items[i].name);
-							Misc.itemLogger("Dropped", items[i], "clearInventory");
-							items[i].drop();
-						}
+						items[i].sellOrDrop(true);
 
 						break;
 					case 4: // Sell item
