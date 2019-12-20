@@ -4,14 +4,14 @@
 	const GameData = require('GameData');
 	const Config = require('Config');
 	const Pickit = require('Pickit');
+	const Pather = require('Pather');
 	const ignoreMonster = [];
 
 	Unit.resetIgnored = () => {
 		ignoreMonster.length = 0;
 	};
 
-	Unit.prototype.clear = function (range, spectype, walk = false, once = false) {
-		const Pather = require('Pather');
+	Unit.prototype.clear = function (range, spectype, walk = !Pather.useTeleport(), once = false) {
 		let start = [], startArea = me.area;
 		let shamans = [
 			sdk.monsters.FallenShaman,
@@ -68,23 +68,23 @@
 			});
 
 		// If we clear around _me_ we move around, but just clear around where we started
-		let units;
+		let units, unit;
 		if (me === this) start = [me.x, me.y];
 
 		while ((units = getUnits_filtered()).length) {
 			while ((unit = units.shift())) {
 				if (walk && fallens.indexOf(unit.classid) > -1) {
-					// unit is a fallen, find the shaman, not too far from me, not too far from fallen
+					// unit is a fallen, find the shaman, not too far from fallen
 					let shamansAround = getUnits(sdk.unittype.Monsters)
 						.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && clearDistance(unit.x, unit.y, u.x, u.y) <= range);
 					var shaman;
-					while (shaman = shamansAround.shift()) {
-						shaman.attack();
+					while ((shaman = shamansAround.shift())) {
+						shaman.attack(range);
 						shamansAround = getUnits(sdk.unittype.Monsters)
 							.filter(u => shamans.indexOf(u.classid) > -1 && u.attackable && clearDistance(unit.x, unit.y, u.x, u.y) <= range);
 					}
 				}
-				unit.attack();
+				unit.attack(range);
 			}
 			units = getUnits_filtered();
 			if (once || startArea !== me.area) return true;

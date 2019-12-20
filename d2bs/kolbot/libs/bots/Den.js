@@ -43,7 +43,7 @@
 		Graph.nearestNeighbourSearch(graph, (room) => {
 			Pather.moveTo(room.walkableX, room.walkableY, 3, true);
 			// 0xF = skip normal, 0x7 = champions/bosses, 0 = all
-			Attack.clear(room.xsize*0.707, 0, Pather.useTeleport());
+			Attack.clear(room.xsize*0.707, 0);
 			Pather.moveTo(room.walkableX, room.walkableY, 3, true);
 			Pickit.pickItems();
 		});
