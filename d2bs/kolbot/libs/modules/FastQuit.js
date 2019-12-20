@@ -7,6 +7,7 @@
 // 	const Message = require('Messaging');
 // 	switch (getScript.startAsThread()) {
 // 		case 'thread':
+// 			let startedInGame = me.inGame;
 // 			print('ÿc2Jaensterÿc0 :: Fast quit running');
 // 			const Worker = require('Worker');
 // 			let quitting = false;
@@ -15,25 +16,18 @@
 //
 // 				quitting = true;
 // 				let Default = getScript('default.dbj');
-// 				Default && Default.stop();
-// 				print('fast quitting');
-// 				getScript(true).stop();
+// 				Default && Default.pause(); // pause the default script so quitting game is faster
 // 			};
 //
 // 			Message.on('FastQuit', data => data.hasOwnProperty('act') && data.act && fastQuit());
 // 			addEventListener('gamepacketsent', bytes => bytes && bytes.length && bytes[0] === 0x69 && Worker.push(fastQuit) && false); // false to dont block the packet
 //
-// 			while (!quitting) {
+// 			while (true) {
 // 				delay(3); // Just idle
+// 				if (startedInGame && quitting) break;
 // 			}
 // 			break;
 // 		case 'started':
 // 		case 'loaded':
-// 			const oldQuit = quit;
-// 			typeof global !== 'undefined' && (global.quit = function (reason) {
-// 				Message.send({FastQuit: {act: true, reason: reason}});
-// 				getScript(true).stop();
-// 				oldQuit();
-// 			});
 // 	}
 // })(this);

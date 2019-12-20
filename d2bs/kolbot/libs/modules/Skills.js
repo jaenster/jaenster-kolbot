@@ -309,7 +309,7 @@
 					&& (
 						(
 							item.location === sdk.storage.Inventory
-							&& item.itemType === sdk.itemtype.charms // only charms can give + skills from inventory
+							&& item.itemType === sdk.itemtype.grandCharm // only charms can give + skills from inventory
 						)
 						|| item.location === sdk.storage.Equipment
 					)

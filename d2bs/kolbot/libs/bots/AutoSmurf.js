@@ -12,51 +12,47 @@
 			Precast = require('Precast'),
 			Quests = require('QuestEvents'),
 			NPC = require('NPC'),
-			AutoSkill = require('AutoSkill'),
-			AutoStat = require('AutoStat'),
 			GameData = require('GameData'),
 			AutoEquip = require('AutoEquip'),
+			AutoConfig = require('AutoConfig'),
 			NTIP = require('NTIP'),
 			Worker = require('Worker'),
+			Questing = require('../bots/Questing'),
 			Delta = new (require('Deltas'));
 
 		Worker.runInBackground.stamina = function () {
 			if (typeof me === 'undefined' || me.dead) return true; // happens when we are dead
 
-			if (me.stamina / me.staminamax <= 0.15) {
-				let pot = me.getItemsEx(-1).filter(i => i.classid === 513 && i.location === sdk.storage.Belt || i.location === sdk.storage.Inventory).sort((a, b) => a.location - b.location).first();
-				pot && pot.interact(); // interact with pot (aka click on it)
-				delay(500);
+			const stamina = me.stamina / me.staminamax;
+
+			switch (true) {
+				case me.inTown && !me.runwalk:
+					me.runwalk = 1;
+					break;
+
+				case !me.inTown && me.runwalk && stamina <= 0.15:
+					let pot = me.getItemsEx()
+						.filter(i => i.classid === sdk.items.StaminaPotion && (i.location === sdk.storage.Belt || i.location === sdk.storage.Inventory))
+						.sort((a, b) => a.location - b.location)
+						.first();
+					if (pot) {
+						pot.interact();
+					}
+					else {
+						me.runwalk = 0;
+					}
+					break;
+
+				case !me.inTown && !me.runwalk && stamina >= 0.9:
+					me.runwalk = 1;
+					break;
+
+				default: break;
 			}
 			return true;
 		};
 
-		Delta.track(() => me.area, () => me.area && revealLevel(true));
-		
-		AutoSkill.skills = { // Default stats
-				// First the skills needed
-				// [sdk.skills.Telekinesis, 1],
-				// [sdk.skills.Teleport, 1],
-				// [sdk.skills.FrozenArmor, 1],
-				// [sdk.skills.Warmth, 1],
-				// [sdk.skills.StaticField, 1],
-
-				// [sdk.skills.FrostNova, 1], // <-- Frost nova is a pre needed skill
-				// [sdk.skills.ColdMastery, 1], // <-- 1 skill before maxing the rest to be sure
-
-				// [sdk.skills.Blizzard, 20],
-				// [sdk.skills.IceBlast, 20],
-				// [sdk.skills.GlacialSpike, 20],
-				// [sdk.skills.IceBolt, 20],
-				// [sdk.skills.ColdMastery, 20], // <-- max cold mastery to 20, last thing we do
-		};
-
-		AutoStat.stats = { // Default stats
-			strength: [156, 1],
-			dexterity: [0, 0],
-			vitality: [400, 3], // Last but not least
-			energy: [0, 0],
-		};
+		Delta.track(() => me.area, () => me.area && delay(80) && revealLevel(true));
 
 		var AutoSmurfConfig = [
 			// norm
@@ -78,40 +74,19 @@
 		me.on('lvlup', () => {
 			print('LEVEL UP !');
 			NTIP.ClearRuntime();
-			updatePickit();
+			AutoConfig.MiscPickit();
 		});
 		Delta.track(() => me.charlvl, () => me.emit('lvlup'));
 
-		function updatePickit() {
-			print("updatePickit");
-			for (var potId in GameData.Potions) {
-				var cost = GameData.Potions[potId].cost;
-				if (cost == undefined || cost > me.gold) {
-					NTIP.AddEntry("[name] == "+potId);
-				}
-			}
-
-			if (me.staminaMaxDuration < 60) {
-				NTIP.AddEntry("[name] == staminapotion # # [maxquantity] == 2");
-			}
-
-			if (me.lowGold) {
-				NTIP.AddEntry("[name] == gold");
-			}
-
-			if (!me.findItem(sdk.items.tptome)) {
-				NTIP.AddEntry("[name] == scrolloftownportal # # [maxquantity] == 2");
-			}
-
-			if (!me.findItem(sdk.items.idtome)) {
-				NTIP.AddEntry("[name] == scrollofidentify # # [maxquantity] == 2");
-			}
-		};
+		let works = [];
 
 		function whatToDo() {
-			var easyAreas = GameData.AreaData.filter(area => GameData.areaEffort(area.Index) < 3);
+			var easyAreas = GameData.AreaData.filter(area => GameData.areaEffort(area.Index) <= 3);
+			var expAreas = GameData.AreaData
+				.filter(a => Pather.accessToAct(a.Act))
+				.sort((a, b) => GameData.areaSoloExp(b.Index) - GameData.areaSoloExp(a.Index));
 			//print(easyAreas.length+" areas to farm");
-			print("easyAreas : "+easyAreas.map(a => a.Index));
+			//print("easyAreas : "+easyAreas.map(a => a.Index));
 
 			var questsToDo = GameData.Quests
 				.filter(q => !me.getQuest(q.index, 0) && (q.mandatory || q.reward))
@@ -127,20 +102,28 @@
 			print("easyQuests : "+easyQuests.map(q => q.index));
 
 			easyQuests.forEach(q => {
-				q.do();
-				Town();
+				Quests.on(q.index, state => {
+					print(q.name);
+					print(state);
+				});
+				Quests.emit(q.index, Quests.states[q.index]);
+				works.push(q.do);
+				works.push(Town);
 			});
 
-			if (easyQuests.length == 0) {
+			if (!easyQuests.length) {
 				// do exp
-				easyAreas.forEach(a => {
+				expAreas.forEach(a => {
+					print("Going to "+a.LocaleString+" to XP");
 					Pather.journeyTo(a.Index, true);
-					Attack.clearLevelWalk();
+					Pather.getWP(a.Index, true);
+					Attack.clearLevel({spectype: 0, quitWhen: () => works.length});
+					Town();
 				});
 			}
 		};
 
-		updatePickit();
+		//updatePickit();
 		Town();
 		whatToDo();
 
@@ -149,6 +132,19 @@
 		//require("../bots/Tombs")(Config, Attack, Pickit, Pather, Town);
 
 		while (me.ingame) {
+			if (!works.length) {
+				print("nothing to do, quit game ?");
+				whatToDo();
+			}
+			else {
+				try {
+					works.shift()();
+				}
+				catch (e) {
+					print(e);
+					print(e.stack);
+				}
+			}
 			delay(1000);
 		}
 	}

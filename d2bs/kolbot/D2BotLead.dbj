@@ -42,7 +42,6 @@
  */
 let StarterConfig = {
 	MinGameTime: 120, // Minimum game length in seconds. If a game is ended too soon, the rest of the time is waited in the lobby
-	PingQuitDelay: 30, // Time in seconds to wait in lobby after quitting due to high ping
 	CreateGameDelay: 10, // Seconds to wait before creating a new game
 	ResetCount: 999, // Reset game count back to 1 every X games.
 	CharacterDifference: 99, // Character level difference. Set to false to disable character difference.
@@ -112,7 +111,7 @@ if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
 }
 
-var gameStart, ingame, chatActionsDone, pingQuit, useChat, firstLogin, connectFail,
+var gameStart, ingame, chatActionsDone, useChat, firstLogin, connectFail,
 	gameCount = DataFile.getStats().runs + 1,
 	loginRetry = 0,
 	lastGameStatus = "ready",
@@ -132,29 +131,29 @@ function sayMsg(string) {
 	say(string);
 }
 
-function ReceiveCopyData(mode, msg) {
-	switch (mode) {
-		case 3: // Game request
-				// Don't let others join mule/torch/key/gold drop game
-			if (HeartBeat.gameInfo) {
-				const obj = JSON.parse(msg);
-
-				if (me.gameReady) {
-					D2Bot.joinMe(obj.profile, me.gamename.toLowerCase(), "", me.gamepassword.toLowerCase(), isUp);
-				} else {
-					D2Bot.joinMe(obj.profile, HeartBeat.gameInfo.gameName.toLowerCase(), gameCount, HeartBeat.gameInfo.gamePass.toLowerCase(), isUp);
-				}
-			}
-
-			break;
-		case 0xf124: // Cached info retreival
-			if (msg !== "null") {
-				HeartBeat.crashInfo = JSON.parse(msg);
-			}
-
-			break;
-	}
-}
+// function ReceiveCopyData(mode, msg) {
+// 	switch (mode) {
+// 		case 3: // Game request
+// 				// Don't let others join mule/torch/key/gold drop game
+// 			if (HeartBeat.gameInfo) {
+// 				const obj = JSON.parse(msg);
+//
+// 				if (me.gameReady) {
+// 					D2Bot.joinMe(obj.profile, me.gamename.toLowerCase(), "", me.gamepassword.toLowerCase(), isUp);
+// 				} else {
+// 					D2Bot.joinMe(obj.profile, HeartBeat.gameInfo.gameName.toLowerCase(), gameCount, HeartBeat.gameInfo.gamePass.toLowerCase(), isUp);
+// 				}
+// 			}
+//
+// 			break;
+// 		case 0xf124: // Cached info retreival
+// 			if (msg !== "null") {
+// 				HeartBeat.crashInfo = JSON.parse(msg);
+// 			}
+//
+// 			break;
+// 	}
+// }
 
 function setNextGame() {
 	let nextGame = HeartBeat.gameInfo.gameName;
@@ -193,21 +192,13 @@ function updateCount() {
 	ControlAction.click(6, 33, 572, 128, 35);
 }
 
-function ScriptMsgEvent(msg) {
-	switch (msg) {
-		case "pingquit":
-			pingQuit = true;
-
-			break;
-	}
-}
 
 function timer(tick) {
 	if (!tick) {
 		return "";
 	}
 
-	var min, sec;
+	let min, sec;
 
 	min = Math.floor((getTickCount() - tick) / 60000).toString();
 
@@ -239,12 +230,19 @@ function randomString(len, useNumbers = false) {
 
 function main() {
 	debugLog(me.profile);
-	addEventListener('copydata', ReceiveCopyData);
-	addEventListener('scriptmsg', ScriptMsgEvent);
-
+	const Team = require('Team');
 	require('Config')();
 	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
-
+	Team.on('RequestGame', data => data.reply({
+			Follow: {
+				gameInfo: {
+					gameName: me.ingame && me.gamename.toLowerCase() || HeartBeat.gameInfo && HeartBeat.gameInfo.gameName && HeartBeat.gameInfo.gameName+gameCount,
+					gamePass: me.ingame && me.gamepassword.toLowerCase() || HeartBeat.gameInfo && HeartBeat.gameInfo.gamePass && HeartBeat.gameInfo.gamePass,
+					up: me.ingame,
+				}
+			}
+		})
+	);
 	if (HeartBeat.gameInfo.error) {
 		delay(200);
 
@@ -312,12 +310,6 @@ function locationAction(location) {
 
 				if (lastGameStatus === "pending") {
 					gameCount += 1;
-				}
-
-				if (StarterConfig.PingQuitDelay && pingQuit) {
-					ControlAction.timeoutDelay("Ping Delay", StarterConfig.PingQuitDelay * 1e3);
-
-					pingQuit = false;
 				}
 
 				if (StarterConfig.JoinChannel !== "" || (ChannelConfig[me.profile] && ChannelConfig[me.profile].JoinChannel !== "")) {
@@ -526,7 +518,7 @@ function locationAction(location) {
 					D2Bot.updateRuns();
 				}
 
-				ControlAction.createGame((HeartBeat.gameInfo.gameName === "?" ? randomString(null,true) : HeartBeat.gameInfo.gameName + gameCount), (HeartBeat.gameInfo.gamePass === "?" ? randomString(null,true) : HeartBeat.gameInfo.gamePass), HeartBeat.gameInfo.difficulty, StarterConfig.CreateGameDelay * 1000);
+				ControlAction.createGame((HeartBeat.gameInfo.gameName === "?" ? randomString(null, true) : HeartBeat.gameInfo.gameName + gameCount), (HeartBeat.gameInfo.gamePass === "?" ? randomString(null, true) : HeartBeat.gameInfo.gamePass), HeartBeat.gameInfo.difficulty, StarterConfig.CreateGameDelay * 1000);
 
 				lastGameStatus = "pending";
 

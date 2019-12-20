@@ -150,7 +150,22 @@ let sdk = {
         MatronsDen: 133,
         FogottenSands: 134,
         FurnaceofPain: 135,
-        UberTristram: 136
+        UberTristram: 136,
+
+        townOf: function (area) {
+            switch (true) {
+                case area < sdk.areas.LutGholein:
+                    return 1;
+                case area < sdk.areas.LowerKurast:
+                    return 2;
+                case area < sdk.areas.PandemoniumFortress:
+                    return 3;
+                case area < sdk.areas.Harrogath:
+                    return 4;
+                default:
+                    return 5;
+            }
+        }
     },
 
     skills: {
@@ -2379,6 +2394,7 @@ let sdk = {
     },
     items: {
         cube: 549,
+        StaminaPotion: 513,
         RejuvPotion: 515,
         FullRejuvPotion: 516,
         tptome: 518,
@@ -2393,6 +2409,8 @@ let sdk = {
         JadeFigurine: 546,
         Soulstone: 551,
         BookOfSkill: 552,
+        arrows: 526,
+        bolts: 528,
         tpScroll: 529,
         idScroll: 530,
     },
@@ -2405,17 +2423,30 @@ let sdk = {
         Item: 4,
         Stairs: 5, // ToDo: might be more as stairs
     },
+    itemquality: {
+        lowquality: 1,
+        normal: 2,
+        superior: 3,
+        magic: 4,
+        set: 5,
+        rare: 6,
+        unique: 7,
+        crafted: 8,
+    },
     itemtype: {
         gold: 4,
+        bowquiver: 5,
+        crossbowquiver: 6,
         scroll: 22,
+        bow: 27,
+        crossbow: 35,
         key: 41,
-        sc: 82,
-        lc: 83,
-        gc: 84,
         hppot: 76,
         mppot: 77,
         rvpot: 78,
-        charms: 82,
+        smallCharm: 82,
+        largeCharm: 83,
+        grandCharm: 84,
 	},
     itemmode: {
         inStorage: 0, //Item inven stash cube store = Item inven stash cube store

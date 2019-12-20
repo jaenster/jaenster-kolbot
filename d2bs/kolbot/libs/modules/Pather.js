@@ -35,7 +35,7 @@
 			}
 
 			if (arg.clearPath !== false) {
-				me.clear(15, typeof arg.clearPath === "number" ? arg.clearPath : 0);
+				me.clear(15, arg.clearPath);
 			}
 		},
 
@@ -270,14 +270,6 @@
 
 			// Stamina handler and Charge
 			if (!me.inTown && !me.dead) {
-				if (me.runwalk === 1 && me.stamina / me.staminamax * 100 <= 20) {
-					me.runwalk = 0;
-				}
-
-				if (me.runwalk === 0 && me.stamina / me.staminamax * 100 >= 50) {
-					me.runwalk = 1;
-				}
-
 				if (Pather.config.Charge && me.classid === 3 && me.mp >= 9 && getDistance(me.x, me.y, x, y) > 8 && me.setSkill(107, 1)) {
 					if (Pather.config.Vigor) {
 						me.setSkill(115, 0);
@@ -290,8 +282,6 @@
 					}
 				}
 			}
-
-			(me.inTown && me.runwalk === 0) && (me.runwalk = 1);
 
 			let nFail = 0,
 				attemptCount = 0;
@@ -917,8 +907,6 @@
 
 						delay(10);
 					}
-
-				Packet.flash(me.gid);
 			}
 
 			return false;
@@ -1135,7 +1123,7 @@
 			area - the id of area to get the waypoint in
 			clearPath - clear path
 		*/
-		getWP: function (area, clearPath) {
+		getWP: function (area, clearPath,click=true) {
 			const Misc = require('Misc');
 			var i, j, wp, preset,
 				wpIDs = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539];
@@ -1153,6 +1141,7 @@
 					wp = getUnit(2, "waypoint");
 
 					if (wp) {
+						if (!click) return true;
 						for (j = 0; j < 10; j += 1) {
 							Misc.click(0, 0, wp);
 							//wp.interact();

@@ -2,7 +2,7 @@
 
 Object.defineProperty(Unit.prototype, "gold", {
 	get: function () {
-		return this.getStat(14) + this.getStat(15);
+		return this.getStat(sdk.stats.Gold) + this.getStat(sdk.stats.Goldbank);
 	},
 	enumerable: true
 });

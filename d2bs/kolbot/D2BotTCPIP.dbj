@@ -80,11 +80,11 @@ function main() {
 	});
 	LocationEvents.on(sdk.locations.Difficulty, function () {
 		switch (HeartBeat.gameInfo.difficulty) {
-			case 'normal':
+			case 'Normal':
 				return Control.NormalSP.click();
-			case 'nightmare':
+			case 'Nightmare':
 				return Control.NightmareSP.click();
-			case 'hell':
+			case 'Hell':
 				return Control.HellSP.click();
 			default: // highest
 				return [Control.HellSP, Control.NightmareSP, Control.NormalSP].filter(x => x.control)[0].click();

@@ -5,6 +5,7 @@
 (function (module, require) {
 	const Misc = require('Misc');
 	const Pather = require('Pather');
+	const Config = require('Config');
 	const Diablo = function (Config, Attack, Pickit, _, Town) {
 		const Promise = require('Promise'),
 			TownPrecast = require('TownPrecast'),
@@ -72,14 +73,20 @@
 								}
 							} while (!boss);
 
-							return diaTick || !(Config.Diablo.Fast && Attack.kill(boss) || Attack.clear(40, 0, getLocaleString(locale), diaSort));
+							if (Config.Diablo.Fast) {
+								Attack.kill(boss);
+								return diaTick;
+							}
+
+							Attack.clear(40, 0, getLocaleString(locale), diaSort);
+							return diaTick;
 						}
 						return diaTick;
 					});
 				});
 			};
 
-		new Promise(resolve => diaTick && resolve()).then(function () { // All seals done; Time to go do dia
+		Config.Diablo.killDiablo && new Promise(resolve => diaTick && resolve()).then(function () { // All seals done; Time to go do dia
 			const PreAttack = require('PreAttack');
 			//Do dia
 			star.moveTo(); // go to star
@@ -98,7 +105,7 @@
 
 		if (!Config.Diablo.Follower) {
 			// Cast portal once in chaos
-			Config.Diablo.Entrance && new Promise(resolve => entrance.distance < 5 && resolve()).then(Pather.makePortal);
+			Config.Diablo.Entrance && !Config.Diablo.Fast && new Promise(resolve => entrance.distance < 5 && resolve()).then(Pather.makePortal);
 
 			// cast portal once close to star
 			new Promise(resolve => star.distance < 15 && resolve()).then(Pather.makePortal);
@@ -107,10 +114,11 @@
 			Pather.useWaypoint(107);
 			Precast();
 		} else {
+			Town();
 			// town precast if possible, or go bo
 			!TownPrecast() && Precast.outTown();
 
-			Town();
+
 			Town.goToTown(4); // make sure we really are in act 4
 			Town.move("portalspot");
 			print('wait for portal');
@@ -140,7 +148,7 @@
 
 			part('vizier', [sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive], sdk.locale.monsters.GrandVizierOfChaos);
 			part('seiz', [sdk.units.DiabloSealSeizActive], sdk.locale.monsters.LordDeSeis);
-			part('infector', [sdk.units.DiabloSealInfectorInActive, sdk.units.DiabloSealInfectorActive], sdk.locale.monsters.InfectorOfSouls);
+			part('infector',  (type => Config.Diablo.Fast && type.reverse() || type)([sdk.units.DiabloSealInfectorInActive, sdk.units.DiabloSealInfectorActive]), sdk.locale.monsters.InfectorOfSouls);
 
 
 			parts.forEach(_ => _());
@@ -156,7 +164,7 @@
 		} finally { // Dont care for errors, just want to make sure the packet handler is removed after it
 			Messaging.send({Diablo: {done: true}});
 		}
-	}
+	};
 
 	Diablo.openSeal = function (seal) {
 		for (let i = 0; i < 5; i += 1) {

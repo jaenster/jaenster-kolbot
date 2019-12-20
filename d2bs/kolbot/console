@@ -5,7 +5,7 @@ function main () {
     require('Debug');
     include('sdk.js');
     include('common/prototypes.js')
-    Chicken = {};
+    const Chicken = {};
     Object.defineProperty(Chicken,'off',{
     		get: function() {
     			if (getScript('libs\\modules\\Chicken.js')) {

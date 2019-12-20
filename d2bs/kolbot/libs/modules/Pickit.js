@@ -171,7 +171,7 @@
 				switch (result) {
 					case -1: // Item needs to be identified
 						// For low level chars that can't actually get id scrolls -> prevent an infinite loop
-						if (me.getStat(14) + me.getStat(15) < 100) {
+						if (me.gold < 100) {
 							return false;
 						}
 
@@ -269,7 +269,7 @@
 						}
 					}
 
-					if (item.mode !== 3 && item.mode !== 5) {
+					if (item.mode !== sdk.itemmode.onGround && item.mode !== sdk.itemmode.dropping) {
 						switch (stats.classid) {
 							case 543: // Key
 								print("ÿc7Picked up " + stats.color + stats.name + " ÿc7(" + Town.checkKeys() + "/12)");
@@ -398,7 +398,7 @@
 						}
 					} while (tome.getNext());
 				} else {
-					return false; // Don't pick scrolls if there's no tome
+					return true; // Don't pick scrolls if there's no tome
 				}
 
 				break;

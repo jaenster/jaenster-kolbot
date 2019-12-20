@@ -63,6 +63,7 @@
 			newQuestState.forEach((c, i) => c !== states[q][i] && changed.push({key: i, value: c}));
 
 			states[q] = newQuestState;
+			print(changed);
 			questEvents.emit(q, states[q]); // Trigger
 			questEvents.emit('all', {
 				q: q,

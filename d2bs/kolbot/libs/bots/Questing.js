@@ -14,6 +14,7 @@
 	const Pickit = require('Pickit');
 	const Pather = require('Pather');
 	const Town = require('Town');
+	const Quests = require('QuestEvents');
 
 	const Questing = {
 
@@ -25,7 +26,15 @@
 		},
 
 		DenOfEvil: function () {
-			return require("../bots/Den")(Config, Attack, Pickit, Pather, Town);
+			const Den = require("../bots/Den");
+			if (!Quests.states[sdk.quests.DenOfEvil][1]) {
+				Den.clear();
+				Unit.resetIgnored();
+			}
+			if (Quests.states[sdk.quests.DenOfEvil][1] && !Quests.states[sdk.quests.DenOfEvil][0]) {
+				Den.talkToAkara();
+			}
+			return Quests.states[sdk.quests.DenOfEvil][0];
 		},
 
 		/*SistersBurialGrounds: function () {
@@ -409,7 +418,7 @@
 
 		return true;*/
 
-		doQuest: function (q, retry = 0) {
+		doQuest: function (q, retry = 3) {
 			let quest = GameData.Quests[q];
 			if (!quest) {
 				print("ÿc1Quest "+q+" not found");
@@ -423,7 +432,7 @@
 				return false;
 			}
 
-			if (!Questing.checkQuest(quest.index, 0)) {
+			//if (!Questing.checkQuest(quest.index, 0)) {
 				var r = 0, success = false;
 				do {
 					try {
@@ -434,17 +443,17 @@
 						print(e.stack);
 					}
 					r++;
-				} while (r <= retry && !success);
-				if (!success || !Questing.checkQuest(quest.index, 0)) {
+				} while (r < retry && !success);
+				if (!success || !Quests.states[quest.index][0]) {
 					print("ÿc1Unable to complete quest "+debugName);
 					return false;
 				}
 				return true;
-			}
+			/*}
 			else {
 				print("ÿc2Quest "+debugName+" already done");
 				return true;
-			}
+			}*/
 		}
 	};
 

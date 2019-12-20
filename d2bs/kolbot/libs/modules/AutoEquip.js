@@ -235,18 +235,7 @@
 		}
 		const [magicTier, rareTier] = [tierFuncs.magic, tierFuncs.rare];
 
-		const quality = {
-			lowquality: 1,
-			normal: 2,
-			superior: 3,
-			magic: 4,
-			set: 5,
-			rare: 6,
-			unique: 7,
-			crafted: 8,
-		};
-
-		if (isRuneword || item.quality >= quality.rare) {
+		if (isRuneword || item.quality >= sdk.itemquality.rare) {
 			if (typeof rareTier === 'function') {
 				let tier = rareTier();
 				print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
@@ -263,8 +252,6 @@
 		}
 		print('Error? magicTier is not an function?');
 		return 0;
-
-
 	}
 
 	/**
@@ -300,6 +287,26 @@
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 				.first();
 
+			let dependencies = {};
+			const bow = sdk.itemtype.bow;
+			const crossbow = sdk.itemtype.crossbow;
+			dependencies[bow] = sdk.items.arrows;
+			dependencies[crossbow] = sdk.items.bolts;
+			let dependency = dependencies[item.itemType];
+			if (dependency) {
+				print("Item has a dependency, skip");
+				// TODO: item require an other item to be used (bow, crossbow)
+				return false;
+				//quantity * 100 / getBaseStat("items", quiver.classid, "maxstack")
+				/*const stock = me.getItemsEx()
+					.filter(i => i.classid == dependency && ((i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory) || i.mode == sdk.itemmode.equipped));
+				if (stock.length) {
+					return 1;
+				}
+				// can't use this item as we don't have the dependency
+				return -1;*/
+			}
+
 			// This item's specs are already fully readable
 			if (item.identified && currentItem) {
 				print('items specs are fully readable -- ' + item.name);
@@ -330,7 +337,7 @@
 					.first();
 
 				// No current item? Im pretty sure we want to equip it then
-				if (!currentItem) return item.bodyloc === bodyLoc;
+				if (!currentItem) return item.bodylocation === bodyLoc;
 
 				// Is the current item better as the new item?
 				if (compare(item, currentItem) !== item) return false; // No need to replace
@@ -364,15 +371,30 @@
 
 				//ToDo; go to cain if he is closer by and we dont have scrolls & nothing else to identify
 
-				Town.goToTown();
+				if (!Town.goToTown(me.act, false, false)) {
+					return false;
+				}
 				// Lets go to town to identify
 				const npc = Town.initNPC("Shop", "identify");
 				scroll = npc.getItem(sdk.items.idScroll);
 				if (!scroll.buy()) {
+					me.cancel();
+					//TODO: can't buy scroll, try to identify items and sell to buy a scroll
+					if (returnTo.area !== me.area) {
+						if (!Town.move('portalspot')) {
+							print("Failed to move to portalspot");
+							throw new Error("Unable to go back to area "+returnTo.area);
+						}
+						if (!Pather.usePortal(returnTo.area, null)) {
+							print("Failed to use portal")
+							throw new Error("Unable to go back to area "+returnTo.area);
+						}
+						Pather.moveTo(returnTo.x, returnTo.y);
+					}
 					return false; // cannot buy scroll, cannot id
 				}
 				// buying scroll put it in tome
-				idTool = tome ? tome : scroll;
+				idTool = tome || me.findItem(sdk.items.idScroll, sdk.itemmode.inStorage, sdk.storage.Inventory);
 			}
 
 
@@ -409,8 +431,14 @@
 			if ((failed = !(item.identified && dealWithIt(item)))) item.__wanted__by_AutoEquip = false; // Somehow failed, give up
 
 			if (returnTo.area !== me.area) {
-				Town.moveToSpot('portal');
-				Pather.usePortal(returnTo.area);
+				if (!Town.move('portalspot')) {
+					print("Failed to move to portalspot");
+					throw new Error("Unable to go back to area "+returnTo.area);
+				}
+				if (!Pather.usePortal(returnTo.area, null)) {
+					print("Failed to use portal")
+					throw new Error("Unable to go back to area "+returnTo.area);
+				}
 				Pather.moveTo(returnTo.x, returnTo.y);
 			}
 

@@ -36,15 +36,25 @@ Unit.prototype.equip = function (destLocation = undefined) {
 	let currentEquiped = me.getItemsEx(-1).filter(item =>
 		destLocation.indexOf(item.bodylocation) !== -1
 		|| ( // Deal with double handed weapons
-
-			(item.bodylocation === 4 || item.bodylocation === 5)
-			&& [4, 5].indexOf(destLocation) // in case destination is on the weapon/shield slot
+			(
+				(
+					(item.bodylocation === 4 || item.bodylocation === 5)
+					&& [4, 5].indexOf(destLocation) > -1 // in case destination is on the weapon/shield slot
+				) || (
+					(item.bodylocation === sdk.body.LeftArmSecondary || item.bodylocation === sdk.body.RightArmSecondary)
+					&& [sdk.body.RightArmSecondary, sdk.body.LeftArmSecondary].indexOf(destLocation) > -1 // in case destination is on the weapon/shield slot
+				)
+			)
 			&& (
 				doubleHanded.indexOf(this.itemType) !== -1 // this item is a double handed item
 				|| doubleHanded.indexOf(item.itemType) !== -1 // current item is a double handed item
 			)
 		)
 	).sort((a, b) => b - a); // shields first
+
+	let slot = null; // dont care
+	if ([sdk.body.RightArmSecondary, sdk.body.LeftArmSecondary].indexOf(destLocation) > -1) slot = 1;
+	if ([sdk.body.Right, sdk.body.Left].indexOf(destLocation) > -1) slot = 1;
 
 
 	// if nothing is equipped at the moment, just equip it
@@ -430,6 +440,18 @@ Unit.prototype.getItemsEx = function (...args) {
 	}
 
 	return [];
+};
+
+Unit.prototype.sellOrDrop = function (log = false) {
+	const Config = require('Config');
+	const Misc = require('Misc');
+	if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) {
+		log && Misc.itemLogger("Sold", this);
+		this.sell();
+	} else {
+		log && Misc.itemLogger("Dropped", this);
+		this.drop();
+	}
 };
 
 Object.defineProperty(Unit.prototype, "skinCode", {
