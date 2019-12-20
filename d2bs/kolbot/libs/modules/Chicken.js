@@ -9,6 +9,7 @@
 
 	const Config = require('Config');
 	const GameData = require('GameData');
+	const Skills = require('Skills');
 	const hookOn = ['HealHP', 'HealMP', 'HealStatus', 'LifeChicken', 'ManaChicken', 'MercChicken', 'TownHP', 'TownMP', 'UseHP', 'UseRejuvHP', 'UseMP', 'UseRejuvMP', 'UseMercHP', 'UseMercRejuv', 'QuitWhenDead'];
 	const realValues = hookOn.reduce((a, c) => {
 		if (Config.hasOwnProperty(c)) {
@@ -101,10 +102,6 @@
 				const procentHPMerc = getMercHP();
 				const merc = me.getMerc();
 
-				if (procentHP < realValues.LifeChicken || procentMP < realValues.ManaChicken) { // First check chicken on HP. After that mana.
-					print('Chicken');
-					quit(); // Quitting
-				}
 				const tickRev = getTickCount() - timers.rev;
 				const tickHP = getTickCount() - timers.hp;
 				const tickMP = getTickCount() - timers.mp;
@@ -115,177 +112,97 @@
 				let hpPercentDiff = procentHP-prevHPPercent;
 				prevHP = packet.hp;
 				prevHPPercent = procentHP;
-				let diffPerSec = hpDiff * (1 + (1-delay/1000));
-				print("packet.hp = "+packet.hp);
-				print("procentHP = "+procentHP);
-				print("hpDiff = "+hpDiff);
-				print("hpPercentDiff = "+hpPercentDiff);
-				print("diffPerSec = "+diffPerSec);
+				let diffPerSec = hpDiff * 1000 / delay;
+				let lifePerSecPercent = diffPerSec / me.hpmax * 100;
 
+				function evalPotion (p) {
+					var res = 0;
+					var factor = 1;
+					if ([sdk.items.RejuvPotion, sdk.items.FullRejuvPotion].indexOf(p.classid)) {
+						// the less life you have, the more efficient is a rejuv potion
+						res += procentHP;
+					}
+					// disance to fully refill, taking into account loosing/gaining life (lifePerSec)
+					var distanceToFull = p.diffToFull + lifePerSecPercent * p.duration;
+					if (distanceToFull < 0) {
+						// the potion effect is not high enough to refill to 100%
+						// missing <distanceToFull>% to get to 100%
+					}
+					else {
+						// the potion effect is <distanceToFull>% over refilling
+						// aka, <distanceToFull>% of potion effect will be used for nothing
+					}
+					res += (distanceToFull == 0 ? 1 : distanceToFull);
+					return 1/(res*factor);
+				}
 
 				let hppots = me.getItemsEx()
 					.filter(filterItemsWithMe)
 					.filter(filterHealthPots)
 					.map(p => {
-						p.effectPercent = GameData.potionEffect(p.classid)/me.hpmax*100;
+						p.effectPercent = GameData.potionEffect(p.classid) / me.hpmax * 100;
 						p.duration = GameData.Potions[p.classid].duration;
-						p.diffToFull = Math.abs(procentHP+p.effectPercent-100);
+						p.diffToFull = procentHP+p.effectPercent-100;
+						p.score = evalPotion(p);
 						return p;
+					})
+					//.filter(p => p.diffToFull <= 20)
+					.sort((a, b) => a.score - b.score);
+
+				let monstersAround = getUnits(sdk.unittype.Monsters)
+					.filter(u => GameData.isEnemy(u) && u.distance <= 20)
+					.map(m => {
+						m.avgDmg = GameData.monsterAvgDmg(m.classid, m.area);
+						m.maxDmg = Math.ceil(GameData.monsterMaxDmg(m.classid, m.area));
+						return m;
 					});
 
-				function evalPotion(p) {
-					var res = 0;
-					var factor = 1;
-					if ([sdk.items.RejuvPotion, sdk.items.FullRejuvPotion].indexOf(p.classid)) {
-						res += procentHP;
-						//res += 1/(p.effectPercent-lifePercent)
-					}
-					//res += p.duration; // less duration, better
-					//console.log(res)
-					// disance to full refill taking into account loosing life (lifePerSec)
-					var lifePerSecPercent = diffPerSec/me.hpmax*100
-					var distanceToFull = procentHP + p.effectPercent + lifePerSecPercent*p.duration - 100;
-					//console.log(distanceToFull)
-					if (distanceToFull < 0) {
-						// the potion effectPercent is not high enough to refill
-						//res += 1/distanceToFull;
-					}
-					else {
-						//res += 1
-					}
-					res += (distanceToFull == 0 ? 1 : distanceToFull);
-					return 1/res*factor;
+				let potentialAvgDmgTaken = monstersAround
+					.reduce((total, m) => total + m.avgDmg, 0);
+				let potentialDmgTakenPercent = potentialAvgDmgTaken / me.hpmax * 100;
+				let chicken = (hpDiff < 0 || hppots.length == 0) && potentialDmgTakenPercent >= procentHP;
+				if (chicken) { // First check chicken on HP. After that mana.
+					print('Chicken');
+					quit(); // Quitting
 				}
 
-				function sortPotions(a, b) {
-					return evalPotion(a) - evalPotion(b);
-				}
-				//print(hppots);
-				let nearestToFull = hppots.sort((a, b) => a.diffToFull - b.diffToFull).first();
-				//print(nearestToFull.first().effectPercent/2);
-				//print(nearestToFull.map(p => procentHP+p.effectPercent));
-				if (nearestToFull && procentHP <= nearestToFull.effectPercent/2 && tickHP > 1000) {
-					// you can take a potion
-
-					let bestPot = hppots.sort(sortPotions).last();
-					if (bestPot) {
-						print('ÿc:Drank a ' + bestPot.name + ' Pot');
-						print('ÿc:Pot effect ' + bestPot.effectPercent);
-						bestPot.interact();
-						timers.hp = getTickCount();
-						return false; // dont block the packet
-						//bestPot.interact();
-						//delay(2000);
-					}
+				let potentialMaxDmgTaken = monstersAround
+					.reduce((total, m) => total + m.maxDmg, 0);
+				let potentialMaxDmgTakenPercent = potentialMaxDmgTaken / me.hpmax * 100;
+				let notFullPot = hppots.find(p => p.diffToFull < 0);
+				let useHP = (potentialMaxDmgTakenPercent >= procentHP || notFullPot) && tickHP > 1000;
+				if (useHP) {
+					let bestPot = notFullPot || hppots.last();
+					print('ÿc:Drank a ' + bestPot.name);
+					print('ÿc:Pot effect ' + bestPot.effectPercent + ' %');
+					print('ÿc:Over refilling ' + bestPot.diffToFull + ' %');
+					bestPot.interact();
+					timers.hp = getTickCount();
+					return false; // dont block the packet
 				}
 
-				// TODO: mediation aura rep mana (insight)
-				// TODO: warmth skill rep mana
-/*
-				let itemsRegen = me.getItemsEx()
-					.filter(i => i.mode == sdk.itemmode.equipped)
-					.map(i => i.getStat(sdk.stats.Hpregen))
-					.reduce((acc, s) => acc+s, 0);
-				let regen = me.getStat(sdk.stats.Hpregen);
-				let diffRegen = me.getStat(sdk.stats.Hpregen) - itemsRegen;
-				if (diffRegen > 0) {
-					// An hp potion is refilling your life
-				}
-				// print("ITEMS REGEN LIFE = "+itemsRegen);
-				// print("TOTAL REGEN LIFE = "+regen);
-				// print("BASE REGEN LIFE = "+diffRegen);
-
-				//TODO: handle shrines
-
-				let prayerState = me.getState(sdk.states.Prayer);
-				let prayerSkill = me.getSkill(sdk.skills.Prayer, 1);
-				// WARNING: prayer does not give regenHP stat, have to calculate skill level and regen value from skill level
-				// print("PRAYER = "+prayerState+"    skill = "+prayerSkill);
-				if (prayerState && !prayerSkill) {
-					// can't say if prayer comes from items or another player
-					let auraLevel = me.getItemsEx().filter(i => i.mode == sdk.itemmode.equipped)
-						.map(i => i.getStat(sdk.stats.SkillOnAura, sdk.skills.Prayer))
-						.sort()
-						.last(); // best aura is used
-					if (!auraLevel) {
-						// prayer does not come from me, how to get level ?
-					}
-					else {
-						// print("Prayer aura on me = "+auraLevel);
-					}
-					// print("Prayer aura on me = "+auraLevel);
-				}
-*/
-/*
-				let meditState = me.getState(sdk.states.Meditation);
-				let meditSkill = me.getSkill(sdk.skills.Meditation, 1);
-				//print("MEDITATION = "+meditState+"    skill = "+meditSkill);
-
-				//let warmthState = me.getState(sdk.states.Warmth);
-				let warmthSkill = me.getSkill(sdk.skills.Warmth, 1);
-				if (warmthSkill) {
-					// print("WARMTH = "+warmthSkill);
-				}
-
-				let regenMana = me.getStat(sdk.stats.Manarecovery);
-				//print("REGEN MANA = "+regenMana);
-
-
-
-				if (me.inTown) return false; // not to do anything in town
-
-
-
-
-
-				if (regen >= 100) {
-					// an hp potion is refilling my life (or I have a really good regen life item :) )
-				}
-*/
-/*
-				// Rev pots, Only every 250 ms. Should be enough
-				if ((procentHP < realValues.UseRejuvHP || procentMP < realValues.UseRejuvMP) && tickRev > 250) {
-					let revPot = me.getItemsEx().filter(filterRevPots).filter(filterItemsWithMe).sort(sortBiggest).first();
-					if (revPot) {
-						revPot.interact();
-						timers.rev = getTickCount();
-						print('ÿc:Drank a Rev Pot');
-						return false; // dont block the packet
-					}
-				}
 
 				// Normal pots, Only every 1000 ms. Should be enough
-				var thresholdHP = Math.min(realValues.UseHP, realValues.LifeChicken+10);
-				if ((procentHP < thresholdHP) && tickHP > 1000) {
-					let hppots = me.getItemsEx().filter(filterHPPots)
+				let mostUsedSkill = GameData.mostUsedSkills(true).first();
+				let maxSkillMana = mostUsedSkill ? Skills.manaCost[mostUsedSkill.skillId] : Math.max.apply(null, me.getSkill(4).map(s => Skills.manaCost[s[0]]));
+				let manaCostPercent = maxSkillMana / me.mpmax * 100;
+				if (procentMP <= manaCostPercent && tickMP >= 1000) {
+					let mp = me.getItemsEx()
 						.filter(filterItemsWithMe)
-						.map(p => Object.assign(p, {effect: GameData.potionEffect(p.classid)/me.hpmax*100}))
-						//.filter(p => (procentHP+p.effect-100) <= 0)
-						.sort((a, b) => Math.abs(procentHP+a.effect-100) - Math.abs(procentHP+b.effect-100));
-
-					print("pots effects : "+hppots.map(p => p.effect));
-					// use the lesser potion that fully refills
-					let hp = hppots.first();
-					if (hp) {
-						print('ÿc:Drank a ' + hp.name + ' Pot');
-						hp.interact();
-						timers.hp = getTickCount();
-						return false; // dont block the packet
-					}
-				}
-*/
-
-				// Normal pots, Only every 1000 ms. Should be enough
-				if ((procentMP < realValues.UseMP) && tickMP > 1000) {
-					let mppots = me.getItemsEx().filter(filterMPPots)
-						.filter(filterItemsWithMe)
-						.map(p => Object.assign(p, {effect: GameData.potionEffect(p.classid)/me.hpmax*100}))
-						.filter(p => (procentMP+p.effect-100) <= 0)
-						.sort((a, b) => Math.abs(procentMP+a.effect-100) - Math.abs(procentMP+b.effect-100));
+						.filter(filterMPPots)
+						.map(p => {
+							p.effectPercent = GameData.potionEffect(p.classid) / me.mpmax * 100;
+							p.duration = GameData.Potions[p.classid].duration;
+							p.diffToFull = procentMP+p.effectPercent-100;
+							return p;
+						})
+						.sort((a, b) => a.diffToFull - b.diffToFull)
+						.first();
 						// use the lesser potion that fully refill
-					let mp = mppots.first();
 					if (mp) {
-						print('ÿc:Drank a ' + mp.name + ' Pot');
+						print('ÿc:Drank a ' + mp.name);
+						print('ÿc:Pot effect ' + mp.effectPercent + ' %');
+						print('ÿc:Over refilling ' + mp.diffToFull + ' %');
 						mp.interact();
 						timers.mp = getTickCount();
 						return false; // dont block the packet
