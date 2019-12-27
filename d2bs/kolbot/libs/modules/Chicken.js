@@ -150,7 +150,7 @@
 					.sort((a, b) => a.score - b.score);
 
 				let monstersAround = getUnits(sdk.unittype.Monsters)
-					.filter(u => GameData.isEnemy(u) && u.distance <= 20)
+					.filter(u => GameData.isEnemy(u) && u.distance <= 10)
 					.map(m => {
 						m.avgDmg = GameData.monsterAvgDmg(m.classid, m.area);
 						m.maxDmg = Math.ceil(GameData.monsterMaxDmg(m.classid, m.area));
@@ -164,6 +164,7 @@
 				if (chicken) { // First check chicken on HP. After that mana.
 					print('Chicken');
 					quit(); // Quitting
+					return false;
 				}
 
 				let potentialMaxDmgTaken = monstersAround
@@ -171,8 +172,8 @@
 				let potentialMaxDmgTakenPercent = potentialMaxDmgTaken / me.hpmax * 100;
 				let notFullPot = hppots.find(p => p.diffToFull < 0);
 				let useHP = (potentialMaxDmgTakenPercent >= procentHP || notFullPot) && tickHP > 1000;
-				if (useHP) {
-					let bestPot = notFullPot || hppots.last();
+				let bestPot = notFullPot || hppots.last();
+				if (useHP && bestPot) {
 					print('ÿc:Drank a ' + bestPot.name);
 					print('ÿc:Pot effect ' + bestPot.effectPercent + ' %');
 					print('ÿc:Over refilling ' + bestPot.diffToFull + ' %');
@@ -186,7 +187,7 @@
 				let mostUsedSkill = GameData.mostUsedSkills(true).first();
 				let maxSkillMana = mostUsedSkill ? Skills.manaCost[mostUsedSkill.skillId] : Math.max.apply(null, me.getSkill(4).map(s => Skills.manaCost[s[0]]));
 				let manaCostPercent = maxSkillMana / me.mpmax * 100;
-				if (procentMP <= manaCostPercent && tickMP >= 1000) {
+				if (procentMP <= manaCostPercent*2 && tickMP >= 1000) {
 					let mp = me.getItemsEx()
 						.filter(filterItemsWithMe)
 						.filter(filterMPPots)
