@@ -111,7 +111,7 @@
 					case sdk.areas.ChaosSanctuary: //If we are in chaos, simply open all seals
 						const star = {x: 7792, y: 5292};
 						new Promise(resolve => star.distance < 40 && resolve()).then(function () {
-							const Diablo = require('../bots//Diablo.js');
+							const Diablo = require('../bots/Diablo.js');
 							// Once close to the star, just quickly open all seals
 							[sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive,
 								sdk.units.DiabloSealSeizActive, sdk.units.DiabloSealInfectorInActive,
