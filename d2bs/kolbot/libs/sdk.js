@@ -2541,7 +2541,33 @@ let sdk = {
         RiteOfPassage: 39,
         EveOfDestruction: 40,
         SecretCowLevel: 41,
-    }
+    },
+    colors: {
+        White: "ÿc0",
+        Red: "ÿc1",
+        NeonGreen: "ÿc2",
+        Blue: "ÿc3",
+        DarkGold: "ÿc4",
+        Gray: "ÿc5",
+        Black: "ÿc6",
+        LightGold: "ÿc7",
+        Orange: "ÿc8",
+        Yellow: "ÿc9",
+        DarkGreen: "ÿc:",
+        Purple: "ÿc;",
+        Green: "ÿc<",
+
+        D2Bot: {
+            Black: 0,
+            Blue: 4,
+            Green: 5,
+            Gold: 6,
+            DarkGold: 7,
+            Orange: 8,
+            Red: 9,
+            Gray: 10
+        }
+    },
 };
 
 // Need to be set after its loaded

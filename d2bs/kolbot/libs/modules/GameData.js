@@ -7,6 +7,7 @@
 	const Skills = require('Skills');
 	const Misc = require('Misc');
 	const LocaleStringName = require('LocaleStringID').LocaleStringName;
+	const CSV = require('CSVReader');
 
 	const MONSTER_INDEX_COUNT = 770;
 	const PRESET_MON_COUNT = 734;
@@ -1767,8 +1768,390 @@
 			return 0;
 		},
 
+		attackStartingFrame: function (weaponClass, charClass = GameData.myReference.classid) {
+			// amazon and sorceress only
+			/*
+				Weapon:        hth 1hs 2hs 1ht 2ht stf bow xbw
+				StartingFrame: 1   2   2   2   2   2   0   0
+			*/
+			if (charClass == sdk.charclass.Amazon || charClass == sdk.charclass.Sorceress) {
+				if (weaponClass == "hth") {
+					return 1;
+				}
+				if (["1hs", "2hs", "1ht", "2ht", "stf"].indexOf(weaponClass) > -1) {
+					return 2;
+				}
+			}
+			return 0;
+		},
+
+		/*weaponSpeedModifier: function (weapon1Code, charClass = GameData.myReference.classid, weapon2Code = null) {
+			let weapons = new CSV("sdk/weapons.txt");
+			let weapon1Data = weapons.findObject("code", weapon1Code);
+			if (!weapon2Code) {
+				return weapon1Data.speed;
+			}
+			let weapon2Data = weapons.findObject("code", weapon2Code);
+			if (!weapon2Data) {
+				return weapon1Data.speed;
+			}
+			return (weapon1Data.speed + weapon2Data.speed) / 2;
+		},*/
+
+		attackModeForSkill: function (skillId, charClass = GameData.myReference.classid) {
+			//TODO: 
+
+			if (skillId == sdk.skills.Smite) {
+				return "S1";
+			}
+			/*
+				A1:
+				normal attack or attack skills like
+				"bow and crossbow" skills, energy strike, chain lightning strike, charged strike,
+				opposing tiger strike, cobra strike, phoenix strike
+				Slash, paralyze, concentrate, amok
+				barbarian rage,
+				mangle , fire claws , anger poison dagger
+				victim, zeal, revenge, conversion
+
+				A2:
+				normal attack
+
+				KK: kick (kick barrel) or assassin skills dragon claw, dragon tail
+
+				S1: skill 1
+				(evade, avoid, escape)
+				shield attack smite
+
+				S2: skill 2
+				stationary traps, fire blast , Shock net, blade guard
+
+				S3: skill 3
+				Secondary blow of the barbarian with dual weapons
+				Hunger, rabies
+
+				S4:
+				Secondary blow of the assassin with dual claws
+				Secondary throw of the barbarian dual throwing
+
+				TH:
+				Throw
+				poison throwing spear, lightning strike, plague throwing spit, flashing mischief
+			*/
+			return "A1";
+		},
+
+		weaponAttackAnimationSpeed: function (baseRate, skill, weaponClass, charClass = GameData.myReference.classid, shiftState = null) {
+			/*if (shiftState == "bear") {
+				let framesPerDirection = this.weaponFramesPerDirection(skill, weaponClass, charClass);
+				let baseSpeed = this.weaponAttackAnimationSpeed(baseRate, skill, weaponClass, charClass);
+				let weaponIAS = 0;
+				let weaponSpeedModifier = 0;
+				let delay = baseRate * framesPerDirection / ((256 + weaponIAS - weaponSpeedModifier) * baseSpeed ​​/ 100);
+				return baseRate*
+			}*/
+			//TODO: vampire form or werewolf
+			let attackMode = this.attackModeForSkill(skill, charClass);
+			switch (true) {
+				case charClass == sdk.charclass.Assassin && attackMode.startsWith("A") && weaponClass.startsWith("ht") && weaponClass != "hth":
+				return 208;
+				case charClass == sdk.charclass.Assassin && attackMode == "S2":
+				return 128;
+				case charClass == sdk.charclass.Assassin && attackMode == "S4" && weaponClass == "ht2":
+				return 208;
+			}
+			// wolf or bear :
+			//AnimationSpeed ​​= [Hitshift * NeutralFrames / Delay]
+			return 256;
+		},
+
+		weaponFramesPerDirection: function (skill, weaponClass, charClass = GameData.myReference.classid) {
+			let attackMode = this.attackModeForSkill(skill, charClass);
+/*
+2HT = “2 Hand Thrust” Spear
+STF = “Staff” Staff, Large Axe, Maul, Pole arm
+2HS = “2 Hand Swing” 2-Handed Sword
+BOW = “Bow” Bow
+XBW = “Crossbow” Crossbow
+HT1 = “One Hand-to-Hand” Shield + Claws
+HT2 = “”Two Hand-to-Hand” Claws + Claws
+1HT = “1 Hand Thrust” Shield + (Throwing potion, Knife, Throwing Knife, Javelin)
+1HS = “1 Hand Swing” Shield + (Axe, Wand, Club, Scepter, Mace, Hammer, Sword, Throwing Axe, Orb)
+HTH = “Hand To Hand” Shield + no weapon
+1SS = “Left Swing Right Swing” Left = 1HS, Right = 1HS
+1JT = “Left Jab Right Thrust” Left = 1HT, Right = 1HT
+1ST = “Left Swing Right Thrust” Left = 1HS, Right = 1HT
+1JS = “Left Jab Right Swing” Left = 1HT, Right = 1HS
+*/
+
+/*
+            Amazon 		Assassin	Barbarian	Druid		Necromancer		Paladin		Sorceress
+A1 HTH      08 13 256   06 11 256   06 12 256   08 16 256   08 15 256       07 14 256   09 16 256 
+A2 HTH      ---         06 12 256   ---         ---         ---             ---         08 16 256
+A1 HTx                  06 11 208 
+A2 HTx                  06 12 208 
+A1 1HS      10 16 256   07 15 256   07 16 256   09 19 256   09 19 256       07 15 256   12 20 256
+A1 2HS      12 20 256   11 23 256   08 18 256   10 21 256   11 23 256       08 18 256   14 24 256 
+A2 2HS      ---         ---         ---         ---         ---             08 19 256   --- 
+A1 1HT      09 15 256   07 15 256   07 16 256   08 19 256   09 19 256       08 17 256   11 19 256
+A1 2HT      11 18 256   10 23 256   09 19 256   09 23 256   10 24 256       08 20 256   13 23 256 
+A2 2HT      ---         ---         ---         ---         ---             09 20 256   --- 
+A1 STF      12 20 256   09 19 256   09 19 256   09 17 256   11 20 256       09 18 256   11 18 256
+A1 BOW      06 14 256   07 16 256   07 15 256   08 16 256   09 18 256       08 16 256   09 17 256 
+A1 XBW      09 20 256   10 21 256   10 20 256   10 20 256   11 20 256       10 20 256   11 20 256
+
+TH xxx      09 16 256   07 16 256   08 16 256   08 18 256   10 20 256       08 16 256   10 20 256
+KK xxx                  04 13 256
+
+S1 xxx      xx 09 256                                                       07 12 256
+S2 xxx                  04 08 128 
+S3 1Jx                              08 12 256
+S3 1Sx                              07 12 256 
+S4 1Jx                              08 16 256
+S4 1Sx                              09 16 256 
+S4 HT2                  06 12 208
+
+-------------------------------------------------- ------------------------------------------------
+            Werewolf      bear           fetish       vampire
+A1 xxx      07 13 xxx     07 12 xxx      08 12 256    09 14 176
+S3 xxx      06 10 xxx     06 10 xxx
+NU xxx      xx 09 xxx     xx 10 xxx
+
+-------------------------------------------------- ------------------------------------------------
+            Rogue         City Guard    Eisenwolf     Barbarian Mercenary
+A1 xxx      06 15 256     11 16 256     06 15 256     05/12 16 256
+			*/
+			switch (true) {
+				case charClass == sdk.charclass.Sorceress && attackMode.startsWith("A") && weaponClass == "hth":
+				return 16;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "1hs":
+				return 20;
+				case charClass == sdk.charclass.Sorceress && attackMode.startsWith("A") && weaponClass == "2hs":
+				return 24;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "1ht":
+				return 19;
+				case charClass == sdk.charclass.Sorceress && attackMode.startsWith("A") && weaponClass == "2ht":
+				return 23;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "stf":
+				return 18;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "bow":
+				return 17;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "xbw":
+				return 20;
+				case charClass == sdk.charclass.Sorceress && attackMode == "TH":
+				return 20;
+
+				case charClass == sdk.charclass.Paladin && attackMode.startsWith("A") && weaponClass == "hth":
+				return 14;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "1hs":
+				return 15;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "2hs":
+				return 18;
+				case charClass == sdk.charclass.Paladin && attackMode == "A2" && weaponClass == "2hs":
+				return 19;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "1ht":
+				return 17;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "2ht":
+				return 20;
+				case charClass == sdk.charclass.Paladin && attackMode == "A2" && weaponClass == "2ht":
+				return 20;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "stf":
+				return 18;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "bow":
+				return 16;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "xbw":
+				return 20;
+				case charClass == sdk.charclass.Paladin && attackMode == "TH":
+				return 16;
+				case charClass == sdk.charclass.Paladin && attackMode == "S1":
+				return 12;
+
+				//TODO: full trag oul set
+				case charClass == sdk.charclass.Necromancer && attackMode.startsWith("A") && weaponClass == "hth":
+				return 15;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "1hs":
+				return 19;
+				case charClass == sdk.charclass.Necromancer && attackMode.startsWith("A") && weaponClass == "2hs":
+				return 23;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "1ht":
+				return 19;
+				case charClass == sdk.charclass.Necromancer && attackMode.startsWith("A") && weaponClass == "2ht":
+				return 24;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "stf":
+				return 20;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "bow":
+				return 18;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "xbw":
+				return 20;
+				case charClass == sdk.charclass.Necromancer && attackMode == "TH":
+				return 20;
+
+				case this.shiftState() == "wolf" && attackMode == "A1":
+				return 13;
+				case this.shiftState() == "wolf" && attackMode == "S3":
+				return 10;
+
+				case this.shiftState() == "bear" && attackMode == "A1":
+				return 12;
+				case this.shiftState() == "bear" && attackMode == "S3":
+				return 10;
+
+				case charClass == sdk.charclass.Druid && attackMode.startsWith("A") && weaponClass == "hth":
+				return 16;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "1hs":
+				return 19;
+				case charClass == sdk.charclass.Druid && attackMode.startsWith("A") && weaponClass == "2hs":
+				return 21;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "1ht":
+				return 19;
+				case charClass == sdk.charclass.Druid && attackMode.startsWith("A") && weaponClass == "2ht":
+				return 23;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "stf":
+				return 17;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "bow":
+				return 16;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "xbw":
+				return 20;
+				case charClass == sdk.charclass.Druid && attackMode == "TH":
+				return 18;
+
+				case charClass == sdk.charclass.Barbarian && attackMode.startsWith("A") && weaponClass == "hth":
+				return 12;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "1hs":
+				return 16;
+				case charClass == sdk.charclass.Barbarian && attackMode.startsWith("A") && weaponClass == "2hs":
+				return 18;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "1ht":
+				return 16;
+				case charClass == sdk.charclass.Barbarian && attackMode.startsWith("A") && weaponClass == "2ht":
+				return 19;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "stf":
+				return 19;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "bow":
+				return 15;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "xbw":
+				return 20;
+				case charClass == sdk.charclass.Barbarian && attackMode == "TH":
+				return 16;
+				case charClass == sdk.charclass.Barbarian && attackMode == "S3":
+				return 12;
+				case charClass == sdk.charclass.Barbarian && attackMode == "S4":
+				return 16;
+
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass.startsWith("ht"):
+				return 11;
+				case charClass == sdk.charclass.Assassin && attackMode == "A2" && weaponClass.startsWith("ht"):
+				return 12;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "1hs":
+				return 15;
+				case charClass == sdk.charclass.Assassin && attackMode.startsWith("A") && weaponClass == "2hs":
+				return 23;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "1ht":
+				return 15;
+				case charClass == sdk.charclass.Assassin && attackMode.startsWith("A") && weaponClass == "2ht":
+				return 23;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "stf":
+				return 19;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "bow":
+				return 16;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "xbw":
+				return 21;
+				case charClass == sdk.charclass.Assassin && attackMode == "TH":
+				return 16;
+				case charClass == sdk.charclass.Assassin && attackMode == "KK":
+				return 13;
+				case charClass == sdk.charclass.Assassin && attackMode == "S2":
+				return 8;
+				case charClass == sdk.charclass.Assassin && attackMode == "S4" && weaponClass == "ht2":
+				return 12;
+
+				case charClass == sdk.charclass.Amazon && attackMode.startsWith("A") && weaponClass == "hth":
+				return 13;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "1hs":
+				return 16;
+				case charClass == sdk.charclass.Amazon && attackMode.startsWith("A") && weaponClass == "2hs":
+				return 20;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "1ht":
+				return 15;
+				case charClass == sdk.charclass.Amazon && attackMode.startsWith("A") && weaponClass == "2ht":
+				return 18;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "stf":
+				return 20;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "bow":
+				return 14;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "xbw":
+				return 20;
+				case charClass == sdk.charclass.Amazon && attackMode == "TH":
+				return 16;
+				case charClass == sdk.charclass.Amazon && attackMode == "S1":
+				return 9;
+			}
+			return -1;
+		},
+
+		attackFrames: function (skillId, weaponCode, ias = GameData.myReference.getStat(sdk.stats.Fasterattackrate), charClass = GameData.myReference.classid, weapon2Code = null) {
+			// https://diablo3.ingame.de/forum/threads/1218516-FAQ-Bewegungs-und-Animationsgeschwindigkeiten-Teil-2?s=&postid=17610874
+			/*
+			TODO
+				bear or wolf only :
+
+				frames = {(256 * framesPerDirection) / [animationSpeed ​​* (100 + effectiveIAS + skillsIAS - weaponSpeedModifier + coldEffect) / 100]} - 1
+
+				where :
+				animationSpeed ​​= 256 * NeutralFrames / delay
+				delay = 256 * CharFrames / ((100 + weaponIAS - weaponSpeedModifier) * CharSpeed ​​/ 100)
+
+				framesPerDirection ... The sum of all frames of our attack animation of the Werform.
+				NeutralFrames ... Sum of the frames of our neutral animation (use while standing).
+				CharFrames ... The sum of all frames of the attack animation that we would use in the unchanged state (with the exception of two-handed swords).
+				CharSpeed ​​... This is the animation speed of the attack animation that the unchanged character would use.
+				weaponIAS ... All IAS on our weapon or weapon base
+			*/
+			let weaponData = (new CSV("sdk/weapons.txt")).findObject("code", weaponCode);
+			if (!weaponData) {
+				print(sdk.colors.Orange+"No weapon data found for code "+weaponCode);
+			}
+			let weaponClass = weaponData.wclass;
+			let baseRate = 100;
+			const BASE_ANIMATION_SPEED = 256;
+
+			let animationSpeed = this.weaponAttackAnimationSpeed(baseRate, weaponClass, charClass, this.shiftState());
+			let effectiveIAS = 120 * ias / (120 + ias);
+			let skillsIAS = 0; //TODO: fanaticism or other sills bonus + slowdown skills malus
+			let weaponSpeedModifier = (typeof weaponData.speed == "string") ? isNaN(parseInt(weaponData.speed)) ? 0 : parseInt(weaponData.speed) : weaponData.speed;// this.weaponSpeedModifier(weaponCode, charClass, weapon2Code);
+			// me.getState(sdk.states.Freeze) or me.getState(sdk.states.Cold) ?
+			let coldEffect = GameData.myReference.getState(sdk.states.Freeze) ? -50 : 0; // If we are affected by cold, as a player we receive a penalty of 50.
+			let acceleration = baseRate + effectiveIAS + skillsIAS - weaponSpeedModifier + coldEffect;
+			acceleration = Math.min(175, Math.max(15, acceleration));
+			let startingFrame = this.attackStartingFrame(weaponClass, charClass);
+			let framesPerDirection = this.weaponFramesPerDirection(skillId, weaponClass, charClass);
+			if (framesPerDirection < 1) {
+				print(sdk.colors.Orange+"wrong value for framesPerDirection, IAS calculation may be wrong");
+			}
+
+			print("skillId "+skillId);
+			print("charClass "+charClass);
+			print("weaponCode "+weaponCode);
+			print("weaponClass "+weaponClass);
+			print("ias "+ias);
+			print("effectiveIAS "+effectiveIAS);
+			print("skillsIAS "+skillsIAS);
+			print("weaponSpeedModifier "+weaponSpeedModifier);
+			print("coldEffect "+coldEffect);
+			print("acceleration "+acceleration);
+			print("startingFrame "+startingFrame);
+			print("framesPerDirection "+framesPerDirection);
+			let frames = Math.ceil(BASE_ANIMATION_SPEED * (framesPerDirection - startingFrame) / Math.floor(animationSpeed * acceleration / 100)) - 1;
+			return frames;
+		},
+
+		attackDuration: function (skillId, weaponCode, ias = GameData.myReference.getStat(sdk.stats.Fasterattackrate), charClass = GameData.myReference.classid, weapon2Code = null) {
+			// https://diablo3.ingame.de/forum/threads/1218516-FAQ-Bewegungs-und-Animationsgeschwindigkeiten-Teil-2?s=&postid=17610874
+			return this.attackFrames(skillId, weaponCode, ias, charClass) / 25;
+		},
+
 		// Returns the number of frames needed to cast a given skill at a given FCR for a given char.
-		castingFrames: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+		castingFrames: function (skillId, fcr = GameData.myReference.getStat(sdk.stats.Fastercastrate), charClass = GameData.myReference.classid) {
 			// https://diablo.fandom.com/wiki/Faster_Cast_Rate
 			let effectiveFCR = Math.min(75, (fcr * 120 / (fcr + 120)) | 0);
 			let isLightning = skillId === sdk.skills.Lightning || skillId === sdk.skills.ChainLightning;
@@ -1787,7 +2170,7 @@
 		},
 
 		// Returns the duration in seconds needed to cast a given skill at a given FCR for a given char.
-		castingDuration: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+		castingDuration: function (skillId, fcr = GameData.myReference.getStat(sdk.stats.Fastercastrate), charClass = GameData.myReference.classid) {
 			return this.castingFrames(skillId, fcr, charClass) / 25;
 		}
 	};
