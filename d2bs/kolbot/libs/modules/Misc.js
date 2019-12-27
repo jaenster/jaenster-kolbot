@@ -1082,7 +1082,7 @@
 			for (i = 0; i < lines.length; i += 1) {
 				if (lines[i].selectable && lines[i].text.indexOf(getLocaleString(id)) > -1) {
 					getDialogLines()[i].handler();
-					delay(750);
+					delay(100);
 
 					return true;
 				}

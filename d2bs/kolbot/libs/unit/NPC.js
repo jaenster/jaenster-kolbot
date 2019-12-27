@@ -34,8 +34,8 @@ Unit.prototype.openMenu = function (addDelay) {
 
 		while (getTickCount() - tick < 5000) {
 			if (getUIFlag(0x08)) {
-				delay(Math.max(700 + me.ping, 500 + me.ping * 2 + addDelay * 500));
-
+				// delay(Math.max(700 + me.ping, 500 + me.ping * 2 + addDelay * 500));
+				delay(addDelay || 3);
 				return true;
 			}
 

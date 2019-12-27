@@ -48,11 +48,11 @@
 		// If old quest state isn't known yet. Fill it in
 		if (!states.hasOwnProperty(q)) {
 			states[q] = getQuests(q);
-			questEvents.emit(q, states[q]); // First time in game, or when this is used, trigger all
-			questEvents.emit('all', {
-				q: q,
-				state: states[q],
-			});
+			// questEvents.emit(q, states[q]); // First time in game, or when this is used, trigger all
+			// questEvents.emit('all', {
+			// 	q: q,
+			// 	state: states[q],
+			// });
 			return; // re-check next time
 		}
 
@@ -63,7 +63,7 @@
 			newQuestState.forEach((c, i) => c !== states[q][i] && changed.push({key: i, value: c}));
 
 			states[q] = newQuestState;
-			print(changed);
+			print(q+' => '+JSON.stringify(changed));
 			questEvents.emit(q, states[q]); // Trigger
 			questEvents.emit('all', {
 				q: q,
