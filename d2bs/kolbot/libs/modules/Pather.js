@@ -432,7 +432,7 @@
 		*/
 		moveToPreset: function (area, unitType, unitId, offX = 0, offY = 0, clearPath = false, pop = false) {
 			if (area === undefined || unitType === undefined || unitId === undefined) throw new Error("moveToPreset: Invalid parameters.");
-
+			if (me.area !== area) Pather.journeyTo(area);
 			let presetUnit = getPresetUnit(area, unitType, unitId);
 
 			if (!presetUnit) {

@@ -86,7 +86,6 @@
 
 		areas.forEach((obj, i) => i < 10 && print((obj.hasOwnProperty('isBoss') && obj.isBoss ? obj.name : obj.area.LocaleString) + ' -- ' + obj.effort));
 
-
 		areas.forEach(obj => {
 			try {
 				if (obj.isBoss) {
@@ -111,7 +110,7 @@
 					case sdk.areas.ChaosSanctuary: //If we are in chaos, simply open all seals
 						const star = {x: 7792, y: 5292};
 						new Promise(resolve => star.distance < 40 && resolve()).then(function () {
-							const Diablo = require('../bots/Diablo');
+              const Diablo = require('../bots/Diablo');
 							// Once close to the star, just quickly open all seals
 							[sdk.units.DiabloSealVizierInactive, sdk.units.DiabloSealVizierActive,
 								sdk.units.DiabloSealSeizActive, sdk.units.DiabloSealInfectorInActive,
