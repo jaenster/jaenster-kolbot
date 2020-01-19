@@ -274,6 +274,10 @@
 	Config.Countess = {
 		KillGhosts: false
 	};
+	Config.Coldworm = {
+		KillBeetleburst: false,
+		ClearMaggotLair: false,
+	};
 	Config.Baal = {
 		DollQuit: false,
 		SoulQuit: false,
