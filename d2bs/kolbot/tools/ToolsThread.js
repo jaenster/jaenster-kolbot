@@ -13,7 +13,7 @@ include("OOG.js");
 include("sdk.js ");
 function main() {
 	let Experience = require('../libs/modules/Experience');
-	var i, mercHP, ironGolem, tick, merc, Config = require('../modules/Config'),
+	var i, mercHP, ironGolem, tick, merc, Config = require('../libs/modules/Config'),
 		debugInfo = {area: 0, currScript: "no entry"},
 		pingTimer = [],
 		quitFlag = false,
