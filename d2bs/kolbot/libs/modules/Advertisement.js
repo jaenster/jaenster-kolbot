@@ -4,10 +4,10 @@
  */
 
 (function (module, require) {
-	const Config = require('Config');
-	const Delta = new (require('Deltas'));
-	const Channel = require('Channel');
-	const myEvents = new (require('Events'));
+	const Config = require('../modules/Config');
+	const Delta = new (require('../modules/Deltas'));
+	const Channel = require('../modules/Channel');
+	const myEvents = new (require('../modules/Events'));
 
 	// in case it didnt ran yet
 	!Config.loaded && Config();

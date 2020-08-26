@@ -21,7 +21,7 @@ module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 						quit();
 					}
 
-					require('Precast')();
+					require('../modules/Precast')();
 					delay(1000);
 				}
 			}

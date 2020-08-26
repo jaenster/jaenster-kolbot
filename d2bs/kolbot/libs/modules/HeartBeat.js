@@ -4,7 +4,7 @@
  */
 
 (function (module, require, thread) {
-	const Messaging = require('Messaging');
+	const Messaging = require('../modules/Messaging');
 	const local = module.exports = {
 		handle: 0,
 		gameInfo: {},
@@ -15,7 +15,7 @@
 		Messaging.on('Handle', data => data.hasOwnProperty('request') && Messaging.send({Handle: local}));
 		include('oog.js') && include('polyfill.js');
 
-		require('HotKey').on(19, (script = getScript()) => {
+		require('../modules/HotKey').on(19, (script = getScript()) => {
 			if (script && !me.ingame) do {
 				if (script.name.indexOf(".dbj") === -1) continue;
 				if (script.running) {
@@ -27,7 +27,7 @@
 				script.resume();
 			} while (script.getNext());
 		});
-		const Delta = new (require('Deltas'));
+		const Delta = new (require('../modules/Deltas'));
 		const onData = function (mode, msg) {
 			switch (true) {
 				case msg === "Handle" && !local.handle:

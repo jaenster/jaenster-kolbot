@@ -5,9 +5,9 @@
  */
 
 module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
-	const TownPrecast = require('TownPrecast');
-	const GameData = require('GameData');
-	const Skills = require('Skills');
+	const TownPrecast = require('../modules/TownPrecast');
+	const GameData = require('../modules/GameData');
+	const Skills = require('../modules/Skills');
 
 	this.killMephisto = function () {
 		const meph = getUnit(1, sdk.monsters.Mephisto);

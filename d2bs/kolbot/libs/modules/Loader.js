@@ -28,7 +28,7 @@
 	};
 
 	Loader.loadScripts = function () {
-		const Config = require('Config');
+		const Config = require('../modules/Config');
 		const Scripts = Config.Scripts;
 		let s, script,
 			unmodifiedConfig = {};
@@ -52,14 +52,14 @@
 		}
 	};
 	Loader.runScript = function (script) {
-		const Config = require('Config');
-		const Attack = require('Attack');
+		const Config = require('../modules/Config');
+		const Attack = require('../modules/Attack');
 		const Scripts = Config.Scripts;
-		const Pickit = require('Pickit');
-		const Messaging = require('Messaging');
-		const Town = require('Town');
-		const Misc = require('Misc');
-		const Pather = require('Pather');
+		const Pickit = require('../modules/Pickit');
+		const Messaging = require('../modules/Messaging');
+		const Town = require('../modules/Town');
+		const Misc = require('../modules/Misc');
+		const Pather = require('../modules/Pather');
 
 		let scriptModule;
 		try {

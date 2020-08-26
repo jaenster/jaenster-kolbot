@@ -4,9 +4,9 @@
  *    @desc      game data library
  */
 (function (module, require) {
-	const Skills = require('Skills');
-	const Misc = require('Misc');
-	const LocaleStringName = require('LocaleStringID').LocaleStringName;
+	const Skills = require('../modules/Skills');
+	const Misc = require('../modules/Misc');
+	const LocaleStringName = require('../modules/LocaleStringID').LocaleStringName;
 
 	const MONSTER_INDEX_COUNT = 770;
 	const PRESET_MON_COUNT = 734;
@@ -21,7 +21,7 @@
 		['nmon1', 'nmon2', 'nmon3', 'nmon4', 'nmon5', 'nmon6', 'nmon7', 'nmon8', 'nmon9', 'nmon10'],
 	][me.diff && 1]; // mon is for normal, nmon is for nm/hell, umon is specific to picking champion/uniques in normal
 
-	let Experience = require('Experience');
+	let Experience = require('../modules/Experience');
 
 	/**
 	 *  MonsterData[classID]

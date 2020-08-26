@@ -5,15 +5,15 @@
  */
 
 (function (module, require) {
-	const Config = require('Config'),
-		Storage = require('Storage'),
-		NTIP = require('NTIP'),
-		Misc = require('Misc'),
-		Town = require('Town'),
+	const Config = require('../modules/Config'),
+		Storage = require('../modules/Storage'),
+		NTIP = require('../modules/NTIP'),
+		Misc = require('../modules/Misc'),
+		Town = require('../modules/Town'),
 		beltSize = Storage.BeltSize(),
 		ignoreLog = [4, 5, 6, 22, 41, 76, 77, 78, 79, 80, 81]; // Ignored item types for item logging
 
-	const Pather = require('Pather');
+	const Pather = require('../modules/Pather');
 
 	const Pickit = {};
 

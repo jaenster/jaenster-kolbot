@@ -4,7 +4,7 @@
  */
 
 (function (module, require) {
-	const Precast = require('Precast');
+	const Precast = require('../modules/Precast');
 	/**
 	 * @return {boolean}
 	 */

@@ -4,9 +4,9 @@
  *
  */
 (function (module, require) {
-	const questEvents = new (require('Events'))();
-	const Worker = require('Worker');
-	require('Debug');
+	const questEvents = new (require('../modules/Events'))();
+	const Worker = require('../modules/Worker');
+	require('../modules/Debug');
 
 	const getQuests = (q, newQuest = []) => {
 		for (let y = 0; y < 12; y++) newQuest.push(me.getQuest(q, y));

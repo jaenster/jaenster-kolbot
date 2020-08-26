@@ -1,5 +1,5 @@
 /**
- * @description A node like require object.
+ * @description A node like require function.
  * @author Jaenster
  */
 
@@ -9,42 +9,104 @@
 typeof global === 'undefined' && (this['global'] = this);
 
 global['module'] = {exports: undefined};
-const require = (function (include, isIncluded, print, notify) {
+global['exports'] = {};
+function removeRelativePath(test) {
+	return test.replace(/\\/g, '/').split('/').reduce(function (acc, cur) {
+		if (!cur || cur === '.') return acc;
+		if (cur === '..') {
+			acc.pop();
+			return acc;
+		}
+		acc.push(cur);
+		return acc;
+
+	}, []).join('/');
+}
+
+[].filter.constructor('return this')()['require'] = (function (include, isIncluded, print, notify) {
+
 
 	let depth = 0;
 	const modules = {};
 	const obj = function require(field, path) {
-		const asNew = this.__proto__.constructor === require && ((...args) => new (Function.prototype.bind.apply(modules[packageName].exports, args)));
+		const stack = new Error().stack.match(/[^\r\n]+/g);
+		let directory = stack[1].match(/.*?@.*?d2bs\\(kolbot\\?.*)\\.*(\.js|\.dbj):/)[1].replace('\\', '/') + '/';
+		let filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
+		filename = filename.substr(filename.length - filename.split('').reverse().join('').indexOf('\\'));
+		// remove the name kolbot of the file
+		if (directory.startsWith('kolbot')) {
+			directory = directory.substr('kolbot'.length);
+		}
 
-		path = path || 'modules/';
-		const packageName = (path + field).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+		// remove the / from it
+		if (directory.startsWith('/')) {
+			directory = directory.substr(1);
+		}
+
+		// strip off lib
+		if (directory.startsWith('lib')) {
+			directory = directory.substr(4);
+		} else {
+			directory = '../' + directory; // Add a extra recursive path, as we start out of the lib directory
+		}
+
+
+		path = path || directory;
+
+		let fullpath = removeRelativePath((path + field).replace(/\\/, '/')).toLowerCase();
+		// remove lib again, if required in e.g. kolbot\tools but wants modules\whatever
+		if (fullpath.startsWith('lib')) {
+			fullpath = fullpath.substr(4);
+		}
+		const packageName = fullpath;
+
+		const asNew = this.__proto__.constructor === require && ((...args) => new (Function.prototype.bind.apply(modules[packageName].exports, args)));
 
 		if (field.hasOwnProperty('endsWith') && field.endsWith('.json')) { // Simply reads a json file
 			return modules[packageName] = File.open('libs/' + path + field, 0).readAllLines();
 		}
 
-		if (!isIncluded(path + field + '.js')) {
-			depth && notify && print('ÿc2Jaensterÿc0 ::    - loading dependency: ' + path + field);
-			!depth && notify && print('ÿc2Jaensterÿc0 :: Loading module: ' + path + field);
+		const moduleNameShort = (fullpath + '.js').match(/.*?\/(\w*).js$/)[1];
 
-			let old = Object.create(global['module']);
+		if (!isIncluded(fullpath + '.js') && !modules.hasOwnProperty(moduleNameShort)) {
+			depth && notify && print('ÿc2Kolbotÿc0 ::    - loading dependency of ' + filename + ': ' + moduleNameShort);
+			!depth && notify && print('ÿc2Kolbotÿc0 :: Loading module: ' + moduleNameShort);
+
+			let oldModule = Object.create(global['module']);
+			let oldExports = Object.create(global['exports']);
 			delete global['module'];
-			global['module'] = {exports: undefined};
+			delete global['exports'];
+			global['module'] = {exports: null};
+			global['exports'] = {};
 
 			// Include the file;
 			try {
 				depth++;
-				if (!include(path + field + '.js')) {
-					throw Error('module ' + field + ' not found');
+				if (!include(fullpath + '.js')) {
+					const err = new Error('module ' + fullpath + ' not found');
+
+					// Rewrite the location of the error, to be more clear for the developer/user _where_ it crashes
+					const myStack = err.stack.match(/[^\r\n]+/g);
+					err.fileName = directory + myStack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
+					err.lineNumber = myStack[1].substr(stack[1].lastIndexOf(':') + 1);
+					myStack.unshift();
+					err.stack = myStack.join('\r\n'); // rewrite stack
+
+					throw err;
 				}
 			} finally {
 				depth--
 			}
 
+			if (!global['module']['exports'] && Object.keys(global['exports'])) { // Incase its transpiled typescript
+				global['module']['exports'] = global['exports'];
+			}
+
 			modules[packageName] = Object.create(global['module']);
 			delete global['module'];
-
-			global['module'] = old;
+			delete global['exports'];
+			global['module'] = oldModule;
+			global['exports'] = oldExports;
 		}
 
 		if (!modules.hasOwnProperty(packageName)) throw Error('unexpected module error -- ' + field);
@@ -71,14 +133,3 @@ getScript.startAsThread = function () {
 
 	return 'loaded';
 };
-
-
-me.ingame && (function () {
-	// If in game, load all libraries too
-	!isIncluded('sdk.js') && include('sdk.js');
-	const fileList = dopen("libs/unit").getFiles();
-	Array.isArray(fileList) && fileList
-		.filter(file => file.endsWith('.js'))
-		.sort(a => a.startsWith('Item.js') ? 0 : 1) // Dirty fix to load Item first
-		.forEach(x => !isIncluded('unit/' + x) && include('unit/' + x));
-}).call();

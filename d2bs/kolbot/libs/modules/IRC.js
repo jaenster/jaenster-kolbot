@@ -27,12 +27,12 @@
 
 		if (!config.server) throw new Error('Need a server to connect to');
 
-		const Events = require('Events');
+		const Events = require('../modules/Events');
 		const myEvents = new Events();
 		Object.keys(myEvents).forEach(key=>this[key]=myEvents[key]);
 
 		/** @type Socket*/
-		const socket = new (require('Socket'))(config.server,config.port);
+		const socket = new (require('../modules/Socket'))(config.server,config.port);
 
 		// Override the socket's send function, so it always ends with and crlf
 		(orgSend => socket.send = data => data !== undefined && orgSend.call(orgSend, data.toString() + String.fromCharCode(13, 10)))(socket.send);

@@ -4,8 +4,8 @@
  */
 
 (function (module, require) {
-	const Promise = require('Promise');
-	const Config = require('Config');
+	const Promise = require('../modules/Promise');
+	const Config = require('../modules/Config');
 	const Worker = require('Worker');
 	const Pather = require('Pather');
 	const Town = require('Town');

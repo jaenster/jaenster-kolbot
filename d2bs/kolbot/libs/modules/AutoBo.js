@@ -1,7 +1,7 @@
 /**
  * @description Automaticly figure out who bo's and all
  * @author Jaenster
- * @config, just "require('AutoBo');" in your config
+ * @config, just "require('../modules/AutoBo');" in your config
  */
 
 
@@ -13,13 +13,13 @@
 	// ToDo; get the area location of all bots
 	const workArea = sdk.areas.CatacombsLvl2;
 
-	const Skills = require('Skills');
-	const Worker = require('Worker');
-	const GameEvent = require('GameEvent');
-	const Precast = require('Precast');
-	const Promise = require('Promise');
-	const Town = require('Town');
-	const Pather = require('Pather');
+	const Skills = require('../modules/Skills');
+	const Worker = require('../modules/Worker');
+	const GameEvent = require('../modules/GameEvent');
+	const Precast = require('../modules/Precast');
+	const Promise = require('../modules/Promise');
+	const Town = require('../modules/Town');
+	const Pather = require('../modules/Pather');
 
 	GameEvent.on('quit', function (name, account) { // Remove member from list
 		const member = Object.keys(Members).indexOf(name);
@@ -37,7 +37,7 @@
 		profile: me.windowtitle,
 	};
 
-	const Team = require('Team');
+	const Team = require('../modules/Team');
 	Team.on('AutoBo', data => {
 		if (data.hasOwnProperty('hi') && data.hi.hasOwnProperty('name') && data.hi.hasOwnProperty('boLvl') && data.hi.hasOwnProperty('profile')) {
 			if (typeof Members[data.hi.name] === 'undefined') Members[data.hi.name] = {};

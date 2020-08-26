@@ -5,9 +5,9 @@
 
 
 (function (module, require, thread) {
-	const Messaging = require('Messaging');
+	const Messaging = require('../modules/Messaging');
 
-	const Config = require('Config');
+	const Config = require('../modules/Config');
 	const hookOn = ['HealHP', 'HealMP', 'HealStatus', 'LifeChicken', 'ManaChicken', 'MercChicken', 'TownHP', 'TownMP', 'UseHP', 'UseRejuvHP', 'UseMP', 'UseRejuvMP', 'UseMercHP', 'UseMercRejuv', 'QuitWhenDead'];
 	const realValues = hookOn.reduce((a, c) => {
 		if (Config.hasOwnProperty(c)) {
@@ -158,7 +158,7 @@
 			return false; // dont block the packet
 		});
 
-		const Worker = require('Worker');
+		const Worker = require('../modules/Worker');
 		Worker.runInBackground.DeathHandler = function() {
 			if (me.dead && realValues['QuitWhenDead']) {
 				print('Died.. Quitting');

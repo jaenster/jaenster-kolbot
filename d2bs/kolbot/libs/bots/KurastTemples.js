@@ -7,7 +7,7 @@
 function KurastTemples(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Pather.useWaypoint(80);
-	require('Precast')()
+	require('../modules/Precast')()
 
 	var i,
 		areas = [94, 95, 96, 97, 98, 99];
@@ -24,7 +24,7 @@ function KurastTemples(Config, Attack, Pickit, Pather, Town, Misc) {
 		}
 
 		if (i === 3) {
-			require('Precast')()
+			require('../modules/Precast')()
 		}
 
 		Attack.clearLevel(Config.ClearType);

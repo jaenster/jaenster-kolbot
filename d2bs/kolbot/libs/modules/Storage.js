@@ -4,8 +4,8 @@
  *    @desc        manage inventory, belt, stash, cube
  */
 (function (module, require) {
-	const Misc = require('Misc');
-	const Town = require('Town');
+	const Misc = require('../modules/Misc');
+	const Town = require('../modules/Town');
 	const Container = function (name, width, height, location) {
 		let h, w;
 

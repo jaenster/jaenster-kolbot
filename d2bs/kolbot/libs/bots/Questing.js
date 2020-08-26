@@ -5,8 +5,8 @@
  */
 
 function Questing(Config, Attack, Pickit, Pather, Town, Misc) {
-	const Precast = require('Precast');
-	const NPC = require('NPC');
+	const Precast = require('../modules/Precast');
+	const NPC = require('../modules/NPC');
 	let i, j,
 		quests = [
 			[1, "clearDen"],

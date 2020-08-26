@@ -4,8 +4,8 @@
  */
 
 (function (module, require) {
-	const CollMap = require('CollMap');
-	const Pather = require('Pather');
+	const CollMap = require('../modules/CollMap');
+	const Pather = require('../modules/Pather');
 	const Attack = function () {
 
 	};
@@ -111,7 +111,7 @@
 			quitWhen = () => {
 			};
 
-		const Config = require('Config');
+		const Config = require('../modules/Config');
 
 		if (!room) return false;
 
