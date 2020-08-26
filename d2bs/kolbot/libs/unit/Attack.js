@@ -1,9 +1,9 @@
 (function (require, _delay) {
-	const Skills = require('Skills');
-	const Precast = require('Precast');
-	const GameData = require('GameData');
-	const Config = require('Config');
-	const Pickit = require('Pickit');
+	const Skills = require('../modules/Skills');
+	const Precast = require('../modules/Precast');
+	const GameData = require('../modules/GameData');
+	const Config = require('../modules/Config');
+	const Pickit = require('../modules/Pickit');
 	const ignoreMonster = [];
 
 	Unit.prototype.clear = function (range, spectype,once=false) {
@@ -113,7 +113,7 @@
 				}
 			}
 		};
-		const GameData = require('GameData');
+		const GameData = require('../modules/GameData');
 		if (Config.PacketCasting > 1 || forcePacket || (Config.PacketCasting && skillId === sdk.skills.Teleport)) {
 			if (this === me) {
 				sendPacket(1, (hand === 0) ? 0x0c : 0x05, 2, x, 2, y);
@@ -179,7 +179,7 @@
 		ensureState();
 		return this;
 	};
-	const Town = require('Town');
+	const Town = require('../modules/Town');
 	let check = getTickCount();
 	Unit.prototype.attack = function () {
 		const monsterEffort = GameData.monsterEffort(this, this.area, undefined, undefined, undefined, true);
@@ -271,7 +271,7 @@
 				}
 
 				if (populatedAttack.skill === sdk.skills.BlessedHammer) {
-					if (!require('Paladin').getHammerPosition(this)) return false;
+					if (!require('../modules/Paladin').getHammerPosition(this)) return false;
 				}
 				break;
 			case me.classid === 6: // ToDO; make more viable on lower levels / fire assasin
@@ -529,7 +529,7 @@
 
 			if (charge) {
 				// Setting skill on hand
-				const Config = require('Config');
+				const Config = require('../modules/Config');
 				if (!Config.PacketCasting || Config.PacketCasting === 1 && skillId !== sdk.skills.Teleport) {
 					return me.cast(skillId, 0, x || me.x, y || me.y, this); // Non packet casting
 				}

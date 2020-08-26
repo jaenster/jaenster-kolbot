@@ -140,7 +140,7 @@ function Enchant(Config, Attack, Pickit, Pather, Town, Misc) {
 		}
 
 		Pather.useWaypoint(4);
-		require('Precast')()
+		require('../modules/Precast')()
 		Pather.moveToPreset(me.area, 1, 737, 8, 8);
 
 		for (i = 0; i < 6; i += 1) {

@@ -7,7 +7,7 @@
 function Baal(Config, Attack, Pickit, Pather, Town, Misc) {
 	let portal, tick;
 
-	const PreAttack = require('PreAttack');
+	const PreAttack = require('../modules/PreAttack');
 
 	this.preattack = function () {
 		let check,center = {x: 15094, y: 5029};

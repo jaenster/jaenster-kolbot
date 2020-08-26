@@ -4,9 +4,9 @@
  */
 
 module.exports = new function () {
-	const Config = require('Config');
-	const PacketBuilder = require('PacketBuilder');
-	const Channel = require('Channel');
+	const Config = require('../modules/Config');
+	const PacketBuilder = require('../modules/PacketBuilder');
+	const Channel = require('../modules/Channel');
 
 	const LOCAL_CHAT_ID = 0xD2BAAAA;
 

@@ -4,7 +4,7 @@
  */
 (function (require) {
 	Unit.prototype.moveTo = function (offX, offY, clearPath, pop) {
-		const Pather = require('Pather');
+		const Pather = require('../modules/Pather');
 		this.distance > 5 && Pather.moveTo(this.x + (offX || 0), this.y + (offY || 0), undefined, clearPath, pop);
 		return this;
 	};
@@ -14,14 +14,14 @@
 	};
 
 	PresetUnit.prototype.moveTo = function (offX, offY, clearPath, pop) {
-		const Pather = require('Pather');
+		const Pather = require('../modules/Pather');
 		Pather.moveTo(this.roomx * 5 + this.x + (offX || 0), this.roomy * 5 + this.y + (offY || 0), 4, clearPath, pop);
 		return this;
 	};
 
 	Unit.prototype.bestSpot = function (distance) {
-		const Pather = require('Pather');
-		const CollMap = require('CollMap');
+		const Pather = require('../modules/Pather');
+		const CollMap = require('../modules/CollMap');
 		let n, i, coll = 0x04,
 			coords = [],
 			fullDistance = distance,
@@ -48,8 +48,8 @@
 	};
 
 	Unit.prototype.getIntoPosition = function (distance, coll, walk) { //ToDo; refactor
-		const CollMap = require('CollMap');
-		const Pather = require('Pather');
+		const CollMap = require('../modules/CollMap');
+		const Pather = require('../modules/Pather');
 		if (!this.x) {
 			return false;
 		}

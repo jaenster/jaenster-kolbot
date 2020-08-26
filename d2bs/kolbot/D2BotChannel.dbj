@@ -117,7 +117,7 @@ let gameStart, ingame, firstLogin, useChat,
 		inGame: false
 	};
 
-const HeartBeat = require('HeartBeat');
+const HeartBeat = require('./libs/modules/HeartBeat');
 while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
 
 if (!FileTools.exists("data/" + me.profile + ".json")) {
@@ -201,7 +201,7 @@ function timer(tick) {
 function main() {
 	addEventListener('copydata', ReceiveCopyData);
 
-	require('Config')();
+	require('./libs/modules/Config')();
 	if (HeartBeat.gameInfo.error) {
 		if (!!DataFile.getStats().debugInfo) {
 			HeartBeat.gameInfo.crashInfo = DataFile.getStats().debugInfo;

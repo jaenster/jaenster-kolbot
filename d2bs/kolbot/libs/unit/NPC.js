@@ -2,8 +2,8 @@
 
 // Open NPC menu
 Unit.prototype.openMenu = function (addDelay) {
-	const Config = require('Config');
-	const Packet = require('PacketHelpers');
+	const Config = require('../modules/Config');
+	const Packet = require('../modules/PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.openMenu(this);
 	}
@@ -22,8 +22,8 @@ Unit.prototype.openMenu = function (addDelay) {
 
 	var i, tick;
 
-	const Pather = require('Pather');
-	const Misc = require('Misc');
+	const Pather = require('../modules/Pather');
+	const Misc = require('../modules/Misc');
 	for (i = 0; i < 5; i += 1) {
 		if (getDistance(me, this) > 4) {
 			Pather.moveToUnit(this);
@@ -57,8 +57,8 @@ Unit.prototype.openMenu = function (addDelay) {
 
 // mode = "Gamble", "Repair" or "Shop"
 Unit.prototype.startTrade = function (mode) {
-	const Config = require('Config');
-	const Packet = require('PacketHelpers');
+	const Config = require('../modules/Config');
+	const Packet = require('../modules/PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.startTrade(this, mode);
 	}
@@ -70,7 +70,7 @@ Unit.prototype.startTrade = function (mode) {
 	if (getUIFlag(0x0C)) {
 		return true;
 	}
-	const Misc = require('Misc');
+	const Misc = require('../modules/Misc');
 
 	var i, tick,
 		menuId = mode === "Gamble" ? 0x0D46 : mode === "Repair" ? 0x0D06 : 0x0D44;
@@ -99,8 +99,8 @@ Unit.prototype.startTrade = function (mode) {
 };
 
 Unit.prototype.buy = function (shiftBuy, gamble) {
-	const Config = require('Config');
-	const Packet = require('PacketHelpers');
+	const Config = require('../modules/Config');
+	const Packet = require('../modules/PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.buyItem(this, shiftBuy, gamble);
 	}

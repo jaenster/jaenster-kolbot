@@ -3,13 +3,13 @@
  * @description An improved version of a diablo run.
  */
 (function (module, require) {
-	const Misc = require('Misc');
-	const Pather = require('Pather');
-	const Config = require('Config');
+	const Misc = require('../modules/Misc');
+	const Pather = require('../modules/Pather');
+	const Config = require('../modules/Config');
 	const Diablo = function (Config, Attack, Pickit, _, Town) {
-		const Promise = require('Promise'),
-			TownPrecast = require('TownPrecast'),
-			Precast = require('Precast');
+		const Promise = require('../modules/Promise'),
+			TownPrecast = require('../modules/TownPrecast'),
+			Precast = require('../modules/Precast');
 
 		let diaSort = function (a, b) {
 				// Entrance to Star / De Seis
@@ -87,7 +87,7 @@
 			};
 
 		Config.Diablo.killDiablo && new Promise(resolve => diaTick && resolve()).then(function () { // All seals done; Time to go do dia
-			const PreAttack = require('PreAttack');
+			const PreAttack = require('../modules/PreAttack');
 			//Do dia
 			star.moveTo(); // go to star
 			let diablo;
@@ -135,7 +135,7 @@
 			star.path.forEach(node => node.moveTo() && Attack.clear(30));
 		}
 
-		const Messaging = require('Messaging');
+		const Messaging = require('../modules/Messaging');
 
 		Messaging.on('Diablo', function (data) {
 			if (data.hasOwnProperty('diaTick')) {
@@ -197,7 +197,7 @@
 
 		if (getScript(currentFile) && getScript(currentFile).name === getScript(true).name) {
 			// Running as thread
-			const Messaging = require('Messaging');
+			const Messaging = require('../modules/Messaging');
 			let diaTick = 0, done = false;
 			const gamepacketHandler = bytes =>
 				bytes // If bytes is set

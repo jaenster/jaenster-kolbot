@@ -7,7 +7,7 @@
 function Eldritch(Config, Attack, Pickit, Pather, Town, Misc) {
 	Town();
 	Pather.useWaypoint(111);
-	require('Precast').call();
+	require('../modules/Precast').call();
 	Pather.moveTo(3745, 5084);
 	Attack.clear(15, 0, getLocaleString(22500)); // Eldritch the Rectifier
 

@@ -74,7 +74,7 @@ var i, j, joinInfo = {gameName: '', gamePass: '', up: false}, gameStart, ingame,
 	leader = "",
 	lastGame = [];
 
-const HeartBeat = require('HeartBeat');
+const HeartBeat = require('./libs/modules/HeartBeat');
 if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
 }
@@ -154,27 +154,27 @@ function timer(tick) {
 
 function main() {
 	debugLog(me.profile);
-	const Team = require('Team');
-	const Delta = new (require('Deltas'));
+	const Team = require('./libs/modules/Team');
+	const Delta = new (require('./libs/modules/Deltas'));
 	addEventListener('copydata', ReceiveCopyData);
 
 	while (!HeartBeat.handle) {
 		delay(100);
 	}
 
-	require('debug');
+	require('./libs/modules/debug');
 	Team.on('Follow', data => {
 		joinInfo = typeof data.gameInfo === 'object' && data.gameInfo || {gameName: '', gamePass: '', up: false};
 	});
 
 	Delta.track(() => JSON.stringify(joinInfo),() => print(joinInfo));
 
-	require('Config')(); // execute the config file
+	require('./libs/modules/Config')(); // execute the config file
 	leader = Object.keys(JoinSettings).filter(key => JoinSettings[key].filter(item => item === me.profile).length);
 	print(leader);
 
 	let ticker = getTickCount();
-	const Worker = require('Worker');
+	const Worker = require('./libs/modules/Worker');
 	Worker.runInBackground.RequestGame = (() => (() => {
 		if ((getTickCount() - ticker) < 100 || me.ingame || (ticker = getTickCount()) && false) return;
 		leader.forEach(profile => {

@@ -6,7 +6,7 @@
 
 function Pindleskin(Config, Attack, Pickit, Pather, Town, Misc) {
 	let anya;
-	const Precast = require('Precast');
+	const Precast = require('../modules/Precast');
 
 	Town.goToTown(Config.Pindleskin.UseWaypoint ? undefined : 5);
 	Town();
@@ -19,7 +19,7 @@ function Pindleskin(Config, Attack, Pickit, Pather, Town, Misc) {
 			throw new Error("Failed to move to Nihlahak's Temple");
 		}
 	} else {
-		const NPC = require('NPC');
+		const NPC = require('../modules/NPC');
 		Town.move(NPC.Anya);
 
 		if (!Pather.getPortal(121) && me.getQuest(37, 1)) {

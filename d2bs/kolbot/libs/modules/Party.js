@@ -1,6 +1,6 @@
 (function (module, require) {
-	const Config = require('Config');
-	const Worker = require('Worker');
+	const Config = require('../modules/Config');
+	const Worker = require('../modules/Worker');
 	const NO_PARTY = 65535;
 	const PARTY_MEMBER = 1;
 	const ACCEPTABLE = 2;

@@ -7,8 +7,8 @@
 (function (module, require) {
 
 	/** @class MockItem */
-	const MockItem = require('MockItem');
-	const Skills = require('Skills');
+	const MockItem = require('../modules/MockItem');
+	const Skills = require('../modules/Skills');
 
 	function MockPlayer(settings) {
 		Object.keys(settings).forEach(key => this[key] = settings[key]);

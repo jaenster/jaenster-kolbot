@@ -149,7 +149,7 @@ function excludeCheck(game) {
 // No touchy!
 include('require.js');
 include("OOG.js");
-const HeartBeat = require('HeartBeat');
+const HeartBeat = require('./libs/modules/HeartBeat');
 
 if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
@@ -284,10 +284,10 @@ function randomString(len) {
 
 function main() {
 	debugLog(me.profile);
-	const Misc = require('Misc');
+	const Misc = require('./libs/modules/Misc');
 	addEventListener('scriptmsg', ScriptMsgEvent);
 
-	require('Config')();
+	require('./libs/modules/Config')();
 
 	if (HeartBeat.gameInfo.error) {
 		D2Bot.retrieve();

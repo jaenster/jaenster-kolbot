@@ -4,8 +4,8 @@
  *
  */
 (function (module, require) {
-	const myEvents = new (require('Events'));
-	const Promise = require('Promise');
+	const myEvents = new (require('../modules/Events'));
+	const Promise = require('../modules/Promise');
 	const exports = {
 		on: myEvents.on,
 		off: myEvents.off,
@@ -15,11 +15,11 @@
 			Message.send({BotNet: {send: {channel: {data: data, name: channel}}}})
 		},
 	};
-	const Message = require('Messaging');
+	const Message = require('../modules/Messaging');
 	const type = getScript.startAsThread();
 	if (type === 'thread') {
 		/** @type Socket */
-		const Socket = require('Socket');
+		const Socket = require('../modules/Socket');
 		const hostname = 'travinc.al';
 		const registeredChannels = [];
 

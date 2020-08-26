@@ -1,5 +1,5 @@
 Unit.prototype.equip = function (destLocation = undefined) {
-	const Storage = require('Storage');
+	const Storage = require('../modules/Storage');
 	let spot;
 	const doubleHanded = [26, 27, 34, 35, 67, 85, 86],
 		findspot = function (item) {
@@ -68,7 +68,7 @@ Unit.prototype.equip = function (destLocation = undefined) {
 			if (index === (currentEquiped.length - 1)) {
 				print('swap ' + this.name + ' for ' + item.name);
 				D2Bot.printToConsole('Swapping item ' + this.name + ' for ' + item.name);
-				require('Config').Debug && D2Bot.printToConsole('New\r\n' + this.description + '\r\n -- Old\r\n' + item.description);
+				require('../modules/Config').Debug && D2Bot.printToConsole('New\r\n' + this.description + '\r\n -- Old\r\n' + item.description);
 				let oldLoc = {x: this.x, y: this.y, location: this.location};
 				clickItemAndWait(0, this); // Pick up current item
 				clickItemAndWait(0, destLocation.first()); // the swap of items
@@ -152,8 +152,8 @@ Object.defineProperties(Unit.prototype, {
 
 // You MUST use a delay after Unit.sell() if using custom scripts. delay(500) works best, dynamic delay is used when identifying/selling (500 - item id time)
 Unit.prototype.sell = function () {
-	const Config = require('Config');
-	const Packet = require('PacketHelpers');
+	const Config = require('../modules/Config');
+	const Packet = require('../modules/PacketHelpers');
 	if (Config.PacketShopping) {
 		return Packet.sellItem(this);
 	}
@@ -189,7 +189,7 @@ Unit.prototype.sell = function () {
 };
 
 Unit.prototype.toCursor = function () {
-	const Town = require('Town');
+	const Town = require('../modules/Town');
 	if (this.type !== 4) {
 		throw new Error("Unit.toCursor: Must be used with items.");
 	}

@@ -54,7 +54,7 @@ function Follower(Config, Attack, Pickit, Pather, Town, Misc) {
 		classes = ["amazon", "sorceress", "necromancer", "paladin", "barbarian", "druid", "assassin"],
 		action = "";
 
-	const CollMap = require('CollMap');
+	const CollMap = require('../modules/CollMap');
 
 	// Get leader's Party Unit
 	this.getLeader = function (name) {
@@ -843,7 +843,7 @@ WPLoop:
 			break;
 		case "bo":
 			if (me.classid === 4) {
-				require('Precast')()
+				require('../modules/Precast')()
 			}
 
 			break;

@@ -3,8 +3,8 @@
  * @author Jaenster
  */
 (function (module, require) {
-	const Messaging = require('Messaging');
-	const Delta = new (require('Deltas'));
+	const Messaging = require('../modules/Messaging');
+	const Delta = new (require('../modules/Deltas'));
 	switch (getScript.startAsThread()) {
 		case 'thread':
 			let tick, oldtick, diaTick;
@@ -32,7 +32,7 @@
 		case 'loaded':
 		case 'started':
 			const SpeedBaal = function (Config, Attack, Pickit, Pather, Town, Misc) {
-				require('FastQuit');
+				require('../modules/FastQuit');
 				// Enforce the fact we have settings
 				const config = typeof Config.SpeedBaal === 'object' && Config.SpeedBaal || {};
 				if (!config.hasOwnProperty('Follower')) config.Follower = false;
@@ -45,13 +45,13 @@
 
 				Object.keys(config).forEach(key=> print('Config.SpeedDiablo.'+key+' = '+config[key]));
 
-				const Precast = require('Precast');
-				const TownPrecast = require('TownPrecast');
-				const GameData = require('GameData');
-				const PreAttack = require('PreAttack');
-				const Team = require('Team');
-				const Promise = require('Promise');
-				const Party = require('Party');
+				const Precast = require('../modules/Precast');
+				const TownPrecast = require('../modules/TownPrecast');
+				const GameData = require('../modules/GameData');
+				const PreAttack = require('../modules/PreAttack');
+				const Team = require('../modules/Team');
+				const Promise = require('../modules/Promise');
+				const Party = require('../modules/Party');
 
 				// Data we get from the thread
 				const data = {baalTick: 0, diaTick: 0};

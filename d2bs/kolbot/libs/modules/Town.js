@@ -4,11 +4,11 @@
  *    @desc        do town chores like buying, selling and gambling
  */
 (function (module, require) {
-	const NPC = require('NPC');
-	const Config = require('Config');
-	const Packet = require('PacketHelpers');
-	const Misc = require('Misc');
-	const Pather = require('Pather');
+	const NPC = require('../modules/NPC');
+	const Config = require('../modules/Config');
+	const Packet = require('../modules/PacketHelpers');
+	const Misc = require('../modules/Misc');
+	const Pather = require('../modules/Pather');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -242,7 +242,7 @@
 				hp: 0,
 				mp: 0
 			};
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		beltSize = Storage.BeltSize();
 		col = Town.checkColumns(beltSize);
 
@@ -483,7 +483,7 @@
 		}
 
 		delay(500);
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		if (code === 518 && !me.findItem(518, 0, 3)) {
 			tome = npc.getItem(518);
 
@@ -539,9 +539,9 @@
 		var i, item, tome, scroll, npc, list, timer, tpTome,
 			tpTomePos = {};
 
-		const Pickit = require('Pickit');
+		const Pickit = require('../modules/Pickit');
 		Town.cainID();
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		list = Storage.Inventory.Compare(Config.Inventory);
 
 		if (!list) {
@@ -677,7 +677,7 @@
 		if (!Config.CainID.Enable) {
 			return false;
 		}
-		const Pickit = require('Pickit');
+		const Pickit = require('../modules/Pickit');
 
 		// Check if we're already in a shop. It would be pointless to go to Cain if so.
 		var i, cain, unids, result,
@@ -749,7 +749,7 @@
 		var list, tome, item, result;
 
 		list = Town.getUnids();
-		const Pickit = require('Pickit');
+		const Pickit = require('../modules/Pickit');
 		if (!list) {
 			return false;
 		}
@@ -889,7 +889,7 @@
 		if (!Config.MiniShopBot) {
 			return true;
 		}
-		const Pickit = require('Pickit');
+		const Pickit = require('../modules/Pickit');
 
 		var i, item, result,
 			items = [],
@@ -904,7 +904,7 @@
 		if (!item) {
 			return false;
 		}
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		print("ÿc4MiniShopBotÿc0: Scanning " + npc.itemcount + " items.");
 
 		do {
@@ -938,7 +938,7 @@
 		if (!Town.needGamble() || Config.GambleItems.length === 0) {
 			return true;
 		}
-		const Pickit = require('Pickit');
+		const Pickit = require('../modules/Pickit');
 
 		var i, item, items, npc, newItem, result,
 			list = [];
@@ -978,7 +978,7 @@
 		while (items && items.length > 0) {
 			list.push(items.shift().gid);
 		}
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		while (me.gold >= Config.GambleGoldStop) {
 			if (!getInteractedNPC()) {
 				npc.startTrade("Gamble");
@@ -1094,7 +1094,7 @@
 	};
 
 	Town.checkKeys = function () {
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		if (!Config.OpenChests || me.classid === 6 || me.gold < 540 || (!me.getItem("key") && !Storage.Inventory.CanFit({
 			sizex: 1,
 			sizey: 1
@@ -1195,7 +1195,7 @@
 	Town.cubeRepairItem = function (item) {
 		var i, rune, cubeItems,
 			bodyLoc = item.bodylocation;
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		if (item.mode !== 1) {
 			return false;
 		}
@@ -1475,7 +1475,7 @@
 			if (Config.MercWatch) { // Cast BO on merc so he doesn't just die again
 				print("MercWatch precast");
 				Pather.useWaypoint("random");
-				require('Precast')();
+				require('../modules/Precast')();
 				Pather.useWaypoint(preArea);
 			}
 
@@ -1512,7 +1512,7 @@
 
 	Town.canStash = function (item) {
 		var ignoredClassids = [91, 174]; // Some quest items that have to be in inventory or equipped
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		if (ignoredItemTypes.indexOf(item.itemType) > -1 || ignoredClassids.indexOf(item.classid) > -1 || !Storage.Stash.CanFit(item)) {
 			return false;
 		}
@@ -1524,9 +1524,9 @@
 		if (!Town.needStash()) {
 			return true;
 		}
-		const Pickit = require('Pickit');
+		const Pickit = require('../modules/Pickit');
 		me.cancel();
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		const items = Storage.Inventory.Compare(Config.Inventory);
 
 		if (items) {
@@ -1576,7 +1576,7 @@
 		if (Config.StashGold && me.getStat(14) >= Config.StashGold && me.getStat(15) < 25e5) {
 			return true;
 		}
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		var i,
 			items = Storage.Inventory.Compare(Config.Inventory);
 
@@ -1629,7 +1629,7 @@
 	};
 
 	Town.getCorpse = function () {
-		const CollMap = require('CollMap');
+		const CollMap = require('../modules/CollMap');
 		var i, corpse, gid, coord,
 			corpseList = [],
 			timer = getTickCount();

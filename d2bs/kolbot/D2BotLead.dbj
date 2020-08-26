@@ -106,7 +106,7 @@ var ChannelConfig = {
 include('require.js');
 include("OOG.js");
 
-const HeartBeat = require('HeartBeat');
+const HeartBeat = require('./libs/modules/HeartBeat');
 if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
 }
@@ -230,8 +230,8 @@ function randomString(len, useNumbers = false) {
 
 function main() {
 	debugLog(me.profile);
-	const Team = require('Team');
-	require('Config')();
+	const Team = require('./libs/modules/Team');
+	require('./libs/modules/Config')();
 	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
 	Team.on('RequestGame', data => data.reply({
 			Follow: {

@@ -12,17 +12,17 @@ include("OOG.js");
 
 include("sdk.js ");
 function main() {
-	let Experience = require('Experience');
-	var i, mercHP, ironGolem, tick, merc, Config = require('Config'),
+	let Experience = require('../libs/modules/Experience');
+	var i, mercHP, ironGolem, tick, merc, Config = require('../libs/modules/Config'),
 		debugInfo = {area: 0, currScript: "no entry"},
 		pingTimer = [],
 		quitFlag = false,
 		cloneWalked = false,
 		canQuit = true,
 		timerLastDrink = [];
-	const Misc = require('Misc');
-	const Town = require('Town');
-	const Pather = require('Pather');
+	const Misc = require('../libs/modules/Misc');
+	const Town = require('../libs/modules/Town');
+	const Pather = require('../libs/modules/Pather');
 
 	print("ÿc3Start ToolsThread script");
 	Config();
@@ -380,7 +380,7 @@ function main() {
 
 			break;
 		case 106: // numpad * - precast
-			require('Precast')();
+			require('../libs/modules/Precast')();
 
 			break;
 		}
