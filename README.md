@@ -123,7 +123,7 @@ The example config file:
 ```
  
  # Any questions, or want to be involved?
- Check out the our [discord](http://baa.al/discord), see ya there ;)
+ Check out the our [discord](http://travinc.al/discord), see ya there ;)
  
  ## Technical stuff.
  Allot of internal stuff of kolton is rewritten, as a faster pickit parser, a better party script, a better precasting script, 
