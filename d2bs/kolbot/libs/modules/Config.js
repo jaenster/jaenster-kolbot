@@ -20,11 +20,13 @@
 			D2Bot.stop();
 		}
 
-		print('../../config/'+Config.file,undefined,true);
 		const scripts = require('../../config/'+Config.file);
 		const currentScript = getScript(true).name.toLowerCase();
 		Object.keys(scripts || {})
-			.forEach(x => Config.Scripts[x] = scripts[x]);
+			.forEach(x => {
+				getScript(true).name === 'default.dbj' && print(' -- Enabled script: '+x);
+				Config.Scripts[x] = scripts[x];
+			});
 
 		if (me.ingame) {
 			Config.Silence && (global.say = print); // Remove the say function, to instantly make the bot silenced

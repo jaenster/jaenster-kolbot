@@ -82,7 +82,7 @@ function main() {
 
 	const Misc = require('./libs/modules/Misc');
 	try {
-		require('./libs/modules/Loader').call();
+		require('./libs/modules/Loader')(Config);
 	} catch(e) {
 		Misc.errorReport(e);
 	}

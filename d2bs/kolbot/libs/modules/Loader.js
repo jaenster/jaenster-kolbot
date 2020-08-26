@@ -6,9 +6,9 @@
 
 (function (module, require) {
 
-	const Loader = function () {
+	const Loader = function (Config) {
 		Loader.getScripts();
-		Loader.loadScripts();
+		Loader.loadScripts(Config);
 	};
 
 	Loader.fileList = [];
@@ -27,8 +27,8 @@
 		}
 	};
 
-	Loader.loadScripts = function () {
-		const Config = require('../modules/Config');
+	Loader.loadScripts = function (Config) {
+		print(getScript(true).name.toString()+ ' --- '+(JSON.stringify(Config)));
 		const Scripts = Config.Scripts;
 		let s, script,
 			unmodifiedConfig = {};
