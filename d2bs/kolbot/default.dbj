@@ -42,8 +42,8 @@ function main() {
 	};
 
 	// Initialize libs - load config variables, build pickit list, attacks, containers and cubing and runeword recipes
-	const Config = require('Config').call();
-	const Pickit = require('Pickit');
+	const Config = require('./libs/modules/Config').call();
+	const Pickit = require('./libs/modules/Pickit');
 
 	// Load events
 	addEventListener("scriptmsg", this.scriptEvent);
@@ -71,7 +71,7 @@ function main() {
 		load("tools/AntiHostile.js");
 	}
 
-	const Town = require('Town');
+	const Town = require('./libs/modules/Town');
 
 	Town.getCorpse();
 	me.charlvl > 1 && Town.clearBelt();
@@ -80,9 +80,9 @@ function main() {
 
 	me.automap = Config.AutoMap;
 
-	const Misc = require('Misc');
+	const Misc = require('./libs/modules/Misc');
 	try {
-		require('Loader').call();
+		require('./libs/modules/Loader').call();
 	} catch(e) {
 		Misc.errorReport(e);
 	}
@@ -104,7 +104,7 @@ function main() {
 
 	if (sojPause) {
 		(function () {
-			const Town = require('Town');
+			const Town = require('./libs/modules/Town');
 			try {
 				Town.goToTown();
 				Town();
@@ -139,7 +139,7 @@ function main() {
 	}
 
 
-	const Storage = require('Storage');
+	const Storage = require('./libs/modules/Storage');
 
 	scriptBroadcast("quit");
 

@@ -4,10 +4,10 @@
 *	@desc		handle out of game operations like creating characters/accounts, maintaining profile datafiles, d2bot# logging etc.
 */
 let [D2Bot,DataFile,ControlAction,ShitList] = (function() {
-	const Misc = require('Misc');
-	const Pather = require('Pather');
-	const HeartBeat = require('HeartBeat');
-	const Promise = require('Promise');
+	const Misc = require('./modules/Misc');
+	const Pather = require('./modules/Pather');
+	const HeartBeat = require('./modules/HeartBeat');
+	const Promise = require('./modules/Promise');
 
 	// In case we are within the HeartBeat thread, we get here while its being required. Bugs out the require.js
 	HeartBeat && new Promise(resolve => HeartBeat.handle && resolve()).then(() => D2Bot.handle = HeartBeat.handle);

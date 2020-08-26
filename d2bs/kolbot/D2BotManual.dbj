@@ -50,7 +50,7 @@ include('require.js');
 include("sdk.js");
 getLocation() === sdk.locations.None && sendKey(32); // skip splash screen
 include("OOG.js");
-const HeartBeat = require('HeartBeat');
+const HeartBeat = require('./libs/modules/HeartBeat');
 
 function main() {
 	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
@@ -58,13 +58,13 @@ function main() {
 		name: '',
 		pass: '',
 	};
-	require('debug');
-	require('Config').call();
+	require('./libs/modules/debug');
+	require('./libs/modules/Config').call();
 
-	const LocationEvents = require('LocationEvents'),
-		Promise = require('Promise'),
-		Worker = require('Worker'),
-		Control = require('Control');
+	const LocationEvents = require('./libs/modules/LocationEvents'),
+		Promise = require('./libs/modules/Promise'),
+		Worker = require('./libs/modules/Worker'),
+		Control = require('./libs/modules/Control');
 
 	LocationEvents.on(sdk.locations.JoinGame, () => {
 		Control.JoinGameName.setText(lastGame.name);

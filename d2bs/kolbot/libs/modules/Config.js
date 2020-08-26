@@ -20,7 +20,8 @@
 			D2Bot.stop();
 		}
 
-		const scripts = require(Config.file, '../config/');
+		print('../../config/'+Config.file,undefined,true);
+		const scripts = require('../../config/'+Config.file);
 		const currentScript = getScript(true).name.toLowerCase();
 		Object.keys(scripts || {})
 			.forEach(x => Config.Scripts[x] = scripts[x]);

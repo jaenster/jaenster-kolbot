@@ -28,11 +28,21 @@ function removeRelativePath(test) {
 
 	let depth = 0;
 	const modules = {};
-	const obj = function require(field, path) {
+	const obj = function require(field, path,debug) {
 		const stack = new Error().stack.match(/[^\r\n]+/g);
-		let directory = stack[1].match(/.*?@.*?d2bs\\(kolbot\\?.*)\\.*(\.js|\.dbj):/)[1].replace('\\', '/') + '/';
-		let filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
-		filename = filename.substr(filename.length - filename.split('').reverse().join('').indexOf('\\'));
+		let directory,filename;
+		try {
+			directory = stack[1].match(/.*?@.*?d2bs\\(kolbot\\?.*)\\.*(\.js|\.dbj|console):/)[1].replace('\\', '/') + '/';
+			filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj|console):/)[1];
+
+			filename = filename.substr(filename.length - filename.split('').reverse().join('').indexOf('\\'));
+		} catch (e) {
+			print('ERROR WTF');
+			print('                 '+e.message);
+			print('                 '+e.stack);
+		}
+		let appendUpperFolder = !removeRelativePath(directory + field).startsWith('kolbot/libs');
+
 		// remove the name kolbot of the file
 		if (directory.startsWith('kolbot')) {
 			directory = directory.substr('kolbot'.length);
@@ -50,7 +60,6 @@ function removeRelativePath(test) {
 			directory = '../' + directory; // Add a extra recursive path, as we start out of the lib directory
 		}
 
-
 		path = path || directory;
 
 		let fullpath = removeRelativePath((path + field).replace(/\\/, '/')).toLowerCase();
@@ -58,6 +67,11 @@ function removeRelativePath(test) {
 		if (fullpath.startsWith('lib')) {
 			fullpath = fullpath.substr(4);
 		}
+
+		if (appendUpperFolder) {
+			fullpath = '../'+fullpath;
+		}
+
 		const packageName = fullpath;
 
 		const asNew = this.__proto__.constructor === require && ((...args) => new (Function.prototype.bind.apply(modules[packageName].exports, args)));
@@ -66,7 +80,20 @@ function removeRelativePath(test) {
 			return modules[packageName] = File.open('libs/' + path + field, 0).readAllLines();
 		}
 
-		const moduleNameShort = (fullpath + '.js').match(/.*?\/(\w*).js$/)[1];
+		const match  =(fullpath + '.js').match(/.*?\/(\w*).js$/);
+		if (!match) {
+			(function(){
+				const err = new Error('module "' + fullpath + '.js" not found');
+				print('error eh');
+
+				const myStack = err.stack.match(/[^\r\n]+/g);
+				err.fileName = directory + myStack[2].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
+				err.lineNumber = myStack[2].substr(stack[1].lastIndexOf(':') + 1);
+				print(err.fileName + ':' + err.lineNumber + ' module ' + fullpath + ' not found');
+				throw new Error(err.fileName+'.js' + ':' + err.lineNumber + ' module ' + fullpath + ' not found');
+			})();
+		}
+		const moduleNameShort = match[1];
 
 		if (!isIncluded(fullpath + '.js') && !modules.hasOwnProperty(moduleNameShort)) {
 			depth && notify && print('ÿc2Kolbotÿc0 ::    - loading dependency of ' + filename + ': ' + moduleNameShort);
