@@ -2,7 +2,7 @@ const global = this;
 function main () {
 	print('ÿc2D2BSÿc0 :: Started Console Script');
     include('require.js');
-    require('Debug');
+    require('./libs/modules/Debug');
     include('sdk.js');
     include('common/prototypes.js')
     global['Chicken'] = {};

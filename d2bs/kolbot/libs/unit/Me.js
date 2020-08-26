@@ -1,7 +1,7 @@
 /** @typedef {Unit} me */
 
 (function () {
-	const Events = new (require('Events'));
+	const Events = new (require('../modules/Events'));
 	me.switchWeapons = function (slot) {
 		if (this.gametype === 0 || this.weaponswitch === slot && slot !== undefined) {
 			return true;
@@ -65,7 +65,7 @@
 	Object.defineProperties(me, {
 		primarySlot: {
 			get: function () {
-				const Config = require('Config');
+				const Config = require('../modules/Config');
 				return Config.PrimarySlot !== undefined ? Config.PrimarySlot : 0;
 			},
 			enumerable: false,
@@ -125,19 +125,19 @@
 	});
 
 	me.journeyToPreset = function (area, unitType, unitId, offX, offY, clearPath, pop) {
-		const Pather = require('Pather');
+		const Pather = require('../modules/Pather');
 		if (me.area !== area) Pather.journeyTo(area);
 
 		return Pather.moveToPreset(area, unitType, unitId, offX, offY, clearPath, pop);
 	};
 	me.useWaypoint = function (targetArea) {
-		const Pather = require('Pather');
+		const Pather = require('../modules/Pather');
 		Pather.useWaypoint(targetArea);
 		return this;
 	};
 
 	me.emptyCube = function () {
-		const Storage = require('Storage');
+		const Storage = require('../modules/Storage');
 		const cube = me.cube,
 			items = me.getItemsEx().filter(item => item.location === sdk.storage.Cube);
 
@@ -156,7 +156,7 @@
 
 		if (getUIFlag(0x1a)) return true;
 
-		const Town = require('Town');
+		const Town = require('../modules/Town');
 		if (cube.location === 7 && !Town.openStash()) return false;
 
 		for (i = 0; i < 3; i += 1) {

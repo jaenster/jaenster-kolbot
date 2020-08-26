@@ -12,7 +12,7 @@ include("OOG.js");
 // ToDo; looking at the script, it seems to not work with this kolton version. Needs fixing?
 
 function main() {
-	const Misc = require('Misc');
+	const Misc = require('../libs/modules/Misc');
 
 	include("bots/KillDclone.js");
 	if (typeof KillDclone === "function") {

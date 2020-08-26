@@ -4,7 +4,7 @@
  */
 (function (module, require) {
 
-	const Misc = require('Misc');
+	const Misc = require('../modules/Misc');
 	// Override the interact function, to use telekinesis when possible
 	(function (interact) {
 		Unit.prototype.interact = function (...args) {

@@ -54,16 +54,16 @@
 				set: () => Team.broadcastInGame({Rush: {done: me.area}}),
 			}
 		});
-		const Delta = new (require('Deltas'));
+		const Delta = new (require('../modules/Deltas'));
 		const TeamData = {};
-		const Quest = require('QuestEvents');
+		const Quest = require('../modules/QuestEvents');
 		TeamData[me.charname] = {
 			highestQuestDone: me.highestQuestDone || 0,
 			highestAct: me.highestAct || 1,
 			highestRushQ: this.highestRushQ || 0,
 		};
 
-		const Team = require('Team');
+		const Team = require('../modules/Team');
 		const myData = () => ({Rush: {player: {data: TeamData[me.charname], name: me.charname}}});
 		const requestData = () => Team.broadcastInGame({Rush: {request: true}});
 		Team.on('Rush', data => {

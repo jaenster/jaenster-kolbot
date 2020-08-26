@@ -4,9 +4,9 @@
  */
 
 module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
-	const GameData = require('GameData');
-	const Delta = new (require('Deltas'));
-	const Storage = require('Storage');
+	const GameData = require('../modules/GameData');
+	const Delta = new (require('../modules/Deltas'));
+	const Storage = require('../modules/Storage');
 	const excluded = [0,sdk.areas.InnerCloister,sdk.areas.OuterCloister, sdk.areas.MatronsDen,sdk.areas.FogottenSands,sdk.areas.FurnaceofPain,sdk.areas.UberTristram, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.AncientsWay, sdk.areas.MooMooFarm];
 
 	this.do = () => !done && GameData.AreaData

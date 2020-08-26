@@ -6,14 +6,14 @@ include('require.js');
 
 function main() {
 	// Take care of the HeartBeat
-	const HeartBeat = require('HeartBeat');
+	const HeartBeat = require('./libs/modules/HeartBeat');
 	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
 
 	include("OOG.js");
 	if (!FileTools.exists("data/" + me.profile + ".json")) DataFile.create();
 
 	// If you press R, it restarts the script, for developing very handy
-	require('Debug').restarter(82); // Press R to restart the script
+	require('./libs/modules/Debug').restarter(82); // Press R to restart the script
 
 	// do whatever
 	while (true) {

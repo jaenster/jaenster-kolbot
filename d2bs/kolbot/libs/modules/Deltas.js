@@ -3,7 +3,7 @@
  * @description a basic implementation of delta's
  */
 (function (module, require) {
-	const Worker = require('Worker');
+	const Worker = require('../modules/Worker');
 	let instances = 0;
 
 	/** @constructor

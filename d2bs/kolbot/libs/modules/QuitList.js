@@ -5,10 +5,10 @@
 
 (function (module, require) {
 
-	const GameEvent = require('GameEvent');
-	const Config = require('Config');
-	const Promise = require('Promise');
-	const Misc = require('Misc');
+	const GameEvent = require('../modules/GameEvent');
+	const Config = require('../modules/Config');
+	const Promise = require('../modules/Promise');
+	const Misc = require('../modules/Misc');
 
 	GameEvent.on('quit', function (name, account) {
 		let wantToQuit = false;

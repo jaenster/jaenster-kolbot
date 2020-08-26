@@ -3,8 +3,8 @@
  * @author Jaenster
  */
 (function (module, require) {
-	const Worker = require('Worker');
-	const LocationEvents = new (require('Events'))();
+	const Worker = require('../modules/Worker');
+	const LocationEvents = new (require('../modules/Events'))();
 	// Deal with locations
 	Worker.runInBackground.outGame = (new function () {
 		let oldLocation = -1;

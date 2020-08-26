@@ -23,7 +23,7 @@
 
 	let NTIP = {},
 		stringArray = [];
-	const Misc = require('Misc');
+	const Misc = require('../modules/Misc');
 
 	NTIP.CheckList = [];
 	NTIP.OpenFile = function (filepath, notify) {

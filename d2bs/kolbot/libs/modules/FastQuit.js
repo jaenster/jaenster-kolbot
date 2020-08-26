@@ -4,12 +4,12 @@
 //  */
 // (function (global) { // Doesnt have return anything, it injects itself in global scope
 // 	!isIncluded('require.js') && include('require.js');
-// 	const Message = require('Messaging');
+// 	const Message = require('../modules/Messaging');
 // 	switch (getScript.startAsThread()) {
 // 		case 'thread':
 // 			let startedInGame = me.inGame;
 // 			print('ÿc2Jaensterÿc0 :: Fast quit running');
-// 			const Worker = require('Worker');
+// 			const Worker = require('../modules/Worker');
 // 			let quitting = false;
 // 			const fastQuit = function () {
 // 				if (quitting) return; // Somehow there is recursion

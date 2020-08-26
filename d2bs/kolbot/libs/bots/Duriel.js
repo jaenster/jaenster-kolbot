@@ -44,7 +44,7 @@ function Duriel(Config, Attack, Pickit, Pather, Town, Misc) {
 		Pather.useWaypoint(46);
 	}
 
-	require('Precast').call();
+	require('../modules/Precast').call();
 
 	if (!me.journeyToPreset(getRoom().correcttomb, 2, 152, -11, 3)) {
 		throw new Error("Failed to move to Orifice");

@@ -5,7 +5,7 @@
 */
 
 function Vizier(Config, Attack, Pickit, Pather, Town, Misc) {
-	const Precast = require('Precast');
+	const Precast = require('../modules/Precast');
 	var i, tick, seal;
 
 	this.openSeal = function (id) {

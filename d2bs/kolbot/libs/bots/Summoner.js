@@ -7,7 +7,7 @@
 	module.exports = function (Config, Attack, Pickit, Pather, Town) {
 		Town();
 		Pather.useWaypoint(74);
-		require('Precast')();
+		require('../modules/Precast')();
 
 		if (Config.Summoner.FireEye) {
 			if (!Pather.usePortal(null)) {
@@ -27,7 +27,7 @@
 
 		Attack.clear(15, 0, 250); // The Summoner
 
-		const Loader = require('Loader');
+		const Loader = require('../modules/Loader');
 
 		if (Loader.scriptName(1) === "Duriel") {
 			let journal = getUnit(2, 357);

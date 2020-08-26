@@ -11,10 +11,9 @@ include("OOG.js");
 
 
 function main() {
-	const Config = require('Config');
-	const Town = require('Town');
-	const Misc = require('Misc');
-	const Pather = require('Pather');
+	const Config = require('../libs/modules/Config');
+	const Town = require('../libs/modules/Town');
+	const Misc = require('../libs/modules/Misc');
 
 	var townCheck = false;
 

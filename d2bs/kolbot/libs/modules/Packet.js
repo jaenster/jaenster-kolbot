@@ -8,7 +8,7 @@
 	switch (getScript.startAsThread()) {
 		case 'thread':
 			(function (require) {
-				const Packet = require('require.js');
+				const Packet = require('../modules/require.js');
 			})(include('require.js') && require);
 			break;
 		case 'loaded':

@@ -51,15 +51,15 @@ include("sdk.js");
 include("OOG.js");
 
 function main() {
-	const HeartBeat = require('HeartBeat');
+	const HeartBeat = require('./libs/modules/HeartBeat');
 	while (!(HeartBeat.handle && Object.keys(HeartBeat.gameInfo).length)) delay(10);
 
-	const LocationEvents = require('LocationEvents');
-	const Promise = require('Promise');
-	const Worker = require('Worker');
-	const Config = require('Config').call();
-	const Control = require('Control');
-	const Team = require('Team');
+	const LocationEvents = require('./libs/modules/LocationEvents');
+	const Promise = require('./libs/modules/Promise');
+	const Worker = require('./libs/modules/Worker');
+	const Config = require('./libs/modules/Config').call();
+	const Control = require('./libs/modules/Control');
+	const Team = require('./libs/modules/Team');
 
 	// create datafile (needs some refactoring trough)
 	!FileTools.exists("data/" + me.profile + ".json") && DataFile.create();
