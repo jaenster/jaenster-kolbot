@@ -5,7 +5,7 @@
 
 
 (function (module, require) {
-	const myEvents = new (require('Events')), list = [];
+	const myEvents = new (require('../modules/Events')), list = [];
 
 	addEventListener('keyup', key => (key = parseInt(key)) && key && list.indexOf(key) > -1 && myEvents.emit(key));
 

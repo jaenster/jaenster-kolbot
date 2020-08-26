@@ -13,7 +13,7 @@
 
 const Development = (function (global) {
 	const thisFilename = 'libs/bots/Development.js';
-	const Config = !isIncluded('GameData.js') && require('Config')() || require('Config'); // Either load the config file, or get the config
+	const Config = !isIncluded('GameData.js') && require('../modules/Config')() || require('../modules/Config'); // Either load the config file, or get the config
 	// If config is not set (can happen), create empty object
 	typeof Config === 'undefined' && (global.Config = {});
 	// In case it hasnt set the a variable Development
@@ -22,7 +22,7 @@ const Development = (function (global) {
 	// In case no specific script is given
 	typeof Config.Development !== 'string' && (Config.Development = '');
 
-	require('debug');
+	require('../modules/debug');
 
 	// The thread part
 	if (getScript(true).name.toLowerCase() !== 'default.dbj') global.main = function () {
@@ -57,10 +57,10 @@ const Development = (function (global) {
 		});
 
 		// Load the config file
-		require('Config').call();
+		require('../modules/Config').call();
 
 		restart && _print('ÿc2Restarting script: ÿc9' + Config.Development + ' (in development)');
-		const Loader = require('Loader');
+		const Loader = require('../modules/Loader');
 		Loader.runScript(Config.Development);
 
 		// Just idle, in case we will be resetted

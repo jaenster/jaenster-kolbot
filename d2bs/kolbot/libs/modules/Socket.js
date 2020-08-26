@@ -5,8 +5,8 @@
 
 
 (function (module, require, buildinSock) {
-	const Worker = require('Worker');
-	const Events = require('Events');
+	const Worker = require('../modules/Worker');
+	const Events = require('../modules/Events');
 
 	/** @constructor Socket*/
 	function Socket(hostname, port) {

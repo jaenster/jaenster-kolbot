@@ -3,7 +3,7 @@
  * @description Some prototypes on objects
  */
 (function (global) {
-	const Pather = require('Pather');
+	const Pather = require('../modules/Pather');
 	let coords = function () {
 		if (Array.isArray(this) && this.length > 1) {
 			return [this[0], this[1]];

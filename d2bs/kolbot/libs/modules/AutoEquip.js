@@ -4,11 +4,11 @@
  */
 
 (function (module, require) {
-	const Pickit = require('Pickit');
-	const Promise = require('Promise');
-	const GameData = require('GameData');
-	const Town = require('Town');
-	const Pather = require('Pather');
+	const Pickit = require('../modules/Pickit');
+	const Promise = require('../modules/Promise');
+	const GameData = require('../modules/GameData');
+	const Town = require('../modules/Town');
+	const Pather = require('../modules/Pather');
 
 	let bestSkills = [];
 	(function () {
@@ -265,7 +265,7 @@
 
 	}
 
-	require('Debug');
+	require('../modules/Debug');
 
 	AutoEquip.want = function (item) {
 		return item.__wanted__by_AutoEquip = (function () {

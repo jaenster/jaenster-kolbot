@@ -10,9 +10,9 @@
 	const others = [];
 	getScript(true).name.toLowerCase() === thisFile.toLowerCase() && include('require.js'); // load the require.js
 
-	const myEvents = new (require('Events'));
-	const Worker = require('Worker');
-	const Messaging = require('Messaging');
+	const myEvents = new (require('../modules/Events'));
+	const Worker = require('../modules/Worker');
+	const Messaging = require('../modules/Messaging');
 	const defaultCopyDataMode = 0xC0FFFEE;
 
 	const Team = {
@@ -40,7 +40,7 @@
 	if (getScript(true).name.toLowerCase() === thisFile.toLowerCase()) {
 		print('ÿc2Jaensterÿc0 :: Team thread started');
 
-		require('debug');
+		require('../modules/debug');
 		Messaging.on('Team', data => {
 			return typeof data === 'object' && data && data.hasOwnProperty('call') && Team[data.call].apply(Team, data.hasOwnProperty('args') && data.args || []);
 		});

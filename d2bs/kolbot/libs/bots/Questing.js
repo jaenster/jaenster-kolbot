@@ -6,15 +6,15 @@
 
 (function (module, require) {
 
-	const Precast = require('Precast');
-	const NPC = require('NPC');
-	const GameData = require('GameData');
-	const Config = require('Config');
-	const Attack = require('Attack');
-	const Pickit = require('Pickit');
-	const Pather = require('Pather');
-	const Town = require('Town');
-	const Quests = require('QuestEvents');
+	const Precast = require('../modules/Precast');
+	const NPC = require('../modules/NPC');
+	const GameData = require('../modules/GameData');
+	const Config = require('../modules/Config');
+	const Attack = require('../modules/Attack');
+	const Pickit = require('../modules/Pickit');
+	const Pather = require('../modules/Pather');
+	const Town = require('../modules/Town');
+	const Quests = require('../modules/QuestEvents');
 
 	const Questing = {
 
@@ -50,7 +50,7 @@
 		},
 /*
 		ToolsOfTheTrade: function () {
-			
+
 		},
 */
 		SistersToTheSlaughter: function () {
@@ -58,11 +58,11 @@
 		},
 /*
 		AbleToGotoActII: function () {
-			
+
 		},
 
 		SpokeToJerhyn: function () {
-			
+
 		},
 */
 		RadamentsLair: function () {
@@ -70,15 +70,15 @@
 		},
 /*
 		TheHoradricStaff: function () {
-			
+
 		},
 
 		TheTaintedSun: function () {
-			
+
 		},
 
 		TheArcaneSanctuary: function () {
-			
+
 		},
 */
 		TheSummoner: function () {
@@ -90,27 +90,27 @@
 		},
 /*
 		AbleToGotoActIII: function () {
-			
+
 		},
 
 		SpokeToHratli: function () {
-			
+
 		},
 
 		TheGoldenBird: function () {
-			
+
 		},
 
 		BladeOfTheOldReligion: function () {
-			
+
 		},
 
 		KhalimsWill: function () {
-			
+
 		},
 
 		LamEsensTome: function () {
-			
+
 		},
 */
 		TheBlackenedTemple: function () {
@@ -122,11 +122,11 @@
 		},
 /*
 		AbleToGotoActIV: function () {
-			
+
 		},
 
 		SpokeToTyrael: function () {
-			
+
 		},
 */
 		TheFallenAngel: function () {
@@ -134,7 +134,7 @@
 		},
 /*
 		HellsForge: function () {
-			
+
 		},
 */
 		TerrorsEnd: function () {
@@ -142,7 +142,7 @@
 		},
 /*
 		AbleToGotoActV: function () {
-			
+
 		},
 
 		SiegeOnHarrogath: function () {
@@ -150,19 +150,19 @@
 		},
 
 		RescueonMountArreat: function () {
-			
+
 		},
 
 		PrisonOfIce: function () {
-			
+
 		},
 
 		BetrayalOfHaggorath: function () {
-			
+
 		},
 
 		RiteOfPassage: function () {
-			
+
 		},
 */
 		EveOfDestruction: function () {

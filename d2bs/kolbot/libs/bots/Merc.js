@@ -22,7 +22,7 @@ const Merc = (function () {
 		(_ => Misc.errorReport = new Function('return ' + _.toString().replace(/this\./gi, 'Misc.').replace('print(msg);', "print(msg);typeof error === 'object' && print(error.stack);"))())(Misc.errorReport);
 
 		// Here some crap that i want to use.
-		const Promise = require('Promise');
+		const Promise = require('../modules/Promise');
 
 		// Do we want to teleport or walk?
 		const useTeleport = () => Pather.teleport && !me.getState(139) && !me.getState(140) && !me.inTown && ((me.classid === 1 && me.getSkill(54, 1)) || me.getStat(97, 54));

@@ -20,28 +20,31 @@
 			D2Bot.stop();
 		}
 
-		const scripts = require(Config.file, '../config/');
+		const scripts = require('../../config/'+Config.file);
 		const currentScript = getScript(true).name.toLowerCase();
 		Object.keys(scripts || {})
-			.forEach(x => Config.Scripts[x] = scripts[x]);
+			.forEach(x => {
+				getScript(true).name === 'default.dbj' && print(' -- Enabled script: '+x);
+				Config.Scripts[x] = scripts[x];
+			});
 
 		if (me.ingame) {
 			Config.Silence && (global.say = print); // Remove the say function, to instantly make the bot silenced
 
 			// Load pickit if files are configured
 			if (Array.isArray(Config.PickitFiles) && Config.PickitFiles.length) {
-				let Pickit = require('Pickit');
+				let Pickit = require('../modules/Pickit');
 				Pickit.LoadFiles(Config.PickitFiles);
 			}
 
 			if (currentScript === 'default.dbj') {
-				Config.Party && require('Party');
+				Config.Party && require('../modules/Party');
 
 				// Load the InGameStatus stuff
-				require('InGameStatus');
+				require('../modules/InGameStatus');
 
 				if (Array.isArray(Config.QuitList) && Config.QuitList.length || (typeof Config.QuitList === 'string' && Config.QuitList.length)) {
-					require('QuitList');
+					require('../modules/QuitList');
 				}
 			}
 		} else {
@@ -59,7 +62,7 @@
 
 		// Load the advertisement module if we want to advertise
 		if (Config.Advertisement && currentScript.endsWith('.dbj') && currentScript !== 'default.dbj') {
-			require('Advertisement');
+			require('../modules/Advertisement');
 		}
 
 		Config.loaded = true;
@@ -226,7 +229,6 @@
 	Config.TeleStomp = false;
 	Config.ClearType = false;
 	Config.ClearPath = false;
-	Config.BossPriority = false;
 
 
 	// Assassin specific
@@ -274,6 +276,10 @@
 	};
 	Config.Countess = {
 		KillGhosts: false
+	};
+	Config.Coldworm = {
+		KillBeetleburst: false,
+		ClearMaggotLair: false,
 	};
 	Config.Baal = {
 		DollQuit: false,

@@ -186,7 +186,7 @@
 		Pather.usePortal(sdk.areas.MooMooFarm);
 
 
-		const Promise = require('Promise');
+		const Promise = require('../modules/Promise');
 		let done = false;
 		new Promise((resolve, reject) => {
 			if (done) reject(); // Done with cows so done looking for king
@@ -206,7 +206,7 @@
 		});
 
 
-		require('Precast')();
+		require('../modules/Precast')();
 		this.clearCowLevel();
 
 		return done = true;

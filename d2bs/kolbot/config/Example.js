@@ -40,6 +40,7 @@
 	//Config.QuitList = ['myLeader']; // Exit the game if my leader does so too
 
 
+
 // Some magic to make it all work, do not touch after this line
 	module.exports = Scripts;
-})(module, require, require('Config'), require('AutoConfig'), require('Config').StarterConfig, {} /*Scripts*/);
+})(module, require, require('../libs/modules/Config'), require('../libs/modules/AutoConfig'), require('../libs/modules/Config').StarterConfig, {} /*Scripts*/);

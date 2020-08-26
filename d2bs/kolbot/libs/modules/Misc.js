@@ -5,8 +5,8 @@
  */
 
 (function (module, require) {
-	const Pather = require('Pather');
-	const Config = require('Config');
+	const Pather = require('../modules/Pather');
+	const Config = require('../modules/Config');
 
 	const Misc = module.exports = {
 		// Click something
@@ -230,7 +230,7 @@
 			if (!range) {
 				range = 15;
 			}
-			const Pickit = require('Pickit');
+			const Pickit = require('../modules/Pickit');
 
 			// Testing all container code
 			if (Config.OpenChests === 2) {
@@ -280,7 +280,7 @@
 			var i, j, shrine,
 				index = -1,
 				shrineList = [];
-			const Pickit = require('Pickit');
+			const Pickit = require('../modules/Pickit');
 
 			// Initiate shrine states
 			if (!this.shrineStates) {
@@ -581,7 +581,7 @@
 					break;
 			}
 
-			const Pickit = require('Pickit');
+			const Pickit = require('../modules/Pickit');
 			return this.fileAction("logs/ItemLog.txt", 2, dateString + " <" + me.profile + "> <" + action + "> (" + Pickit.itemQualityToName(unit.quality) + ") " + desc + (text ? " {" + text + "}" : "") + "\n");
 		},
 
@@ -796,7 +796,7 @@
 			if (me.area === 136 || me.dead) {
 				return false;
 			}
-			const Town = require('Town');
+			const Town = require('../modules/Town');
 
 			if (Config.TownCheck && !me.inTown) {
 				try {
@@ -956,7 +956,7 @@
 		},
 
 		fileActionAsync: function (path, mode, msg) {
-			const Worker = require('Worker');
+			const Worker = require('../modules/Worker');
 			const Promise = require('Promise');
 			if (mode === 0) { // just read
 				return FileTools.readText(path);
@@ -1082,7 +1082,7 @@
 			for (i = 0; i < lines.length; i += 1) {
 				if (lines[i].selectable && lines[i].text.indexOf(getLocaleString(id)) > -1) {
 					getDialogLines()[i].handler();
-					delay(750);
+					delay(100);
 
 					return true;
 				}

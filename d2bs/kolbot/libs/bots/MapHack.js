@@ -5,10 +5,10 @@
  */
 
 function MapHack(Config, Attack, Pickit, Pather, Town, Misc) {
-	const GameData = require('GameData'),
-		Worker = require('Worker'),
-		Promise = require('Promise'),
-		Skills = require('Skills');
+	const GameData = require('../modules/GameData'),
+		Worker = require('../modules/Worker'),
+		Promise = require('../modules/Promise'),
+		Skills = require('../modules/Skills');
 
 	const isAlive = GameData.isAlive,
 		isEnemy = GameData.isEnemy,
@@ -17,7 +17,7 @@ function MapHack(Config, Attack, Pickit, Pather, Town, Misc) {
 		itemTier = GameData.itemTier
 	;
 
-	const deltas = new (require('Deltas'));
+	const deltas = new (require('../modules/Deltas'));
 
 	/*
 Usage:
@@ -361,7 +361,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 	// 		Worker.push(() => {
 	// 			let hands = [2, 3].map(x => me.getSkill(x)), success;
 	// 			if (!me.inTown) {
-	// 				success = require('Precast').call();
+	// 				success = require('../modules/Precast').call();
 	// 			}
 	// 			success && hands.forEach((sk, hand) => me.setSkill(sk, hand)); // put hand back
 	// 		});
@@ -632,7 +632,7 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 		return true;
 
 	};
-	require('Debug');
+	require('../modules/Debug');
 	me.automap = true; // what is a maphack without an default enabled map
 	while (me.ingame) {
 		delay(40);
@@ -641,9 +641,9 @@ s.angle(math.atan2(pointhere.x-me.x,pointhere.y-me.y));
 
 (function () {
 	!isIncluded('require.js') && include('require.js');
-	const PacketBuilder = require('PacketBuilder');
+	const PacketBuilder = require('../modules/PacketBuilder');
 	if (getScript.startAsThread() === 'thread') {
-		const Worker = require('Worker');
+		const Worker = require('../modules/Worker');
 		let tick = 0;
 		addEventListener('gamepacket', bytes => bytes && bytes.length && ((bytes[0] === 0xA4 /* baal laughs*/ && Worker.push(() => {
 			if (getTickCount() - tick > 3000) new PacketBuilder().byte(38).byte(1, me.locale).word(2, 0, 0).byte(90).string('jaenster', 'baal laughs').get();

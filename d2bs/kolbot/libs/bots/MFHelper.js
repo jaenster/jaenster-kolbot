@@ -193,7 +193,7 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						require('Precast')()
+						require('../modules/Precast')()
 
 						try {
 							if (!!parseInt(split, 10)) {
@@ -226,9 +226,9 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						require('Precast')()
+						require('../modules/Precast')()
 						Attack.clearLevel(Config.ClearType);
-						require('Precast')()
+						require('../modules/Precast')()
 
 						if (!Pather.usePortal(null, player.name)) {
 							Town.goToTown();
@@ -250,7 +250,7 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						require('Precast')()
+						require('../modules/Precast')()
 
 						try {
 							if (!!parseInt(split, 10)) {
@@ -284,7 +284,7 @@ MainLoop:
 					}
 
 					if (me.area === 39) {
-						require('Precast')()
+						require('../modules/Precast')()
 						this.clearCowLevel();
 						delay(1000);
 
@@ -306,7 +306,7 @@ MainLoop:
 					}
 
 					if (me.area === player.area) {
-						require('Precast')()
+						require('../modules/Precast')()
 						Attack.clearList(Attack.getMob([345, 346, 347], 0, 40));
 
 						if (!Pather.usePortal(null, player.name)) {

@@ -42,14 +42,14 @@
 		// Open chests while pathing
 		popChests: function () {
 			if (!!Pather.config.OpenChests) {
-				require('Misc').openChests(20);
+				require('../modules/Misc').openChests(20);
 			}
 		},
 
 		// Scan shrines while pathing
 		getShrines: function () {
 			if (!!Pather.config.ScanShrines && Pather.config.ScanShrines.length > 0) {
-				require('Misc').scanShrines();
+				require('../modules/Misc').scanShrines();
 			}
 		}
 	};
@@ -95,7 +95,7 @@
 	};
 
 	const Pather = {
-		config: require('Config'),
+		config: require('../modules/Config'),
 		teleport: true,
 		walkDistance: 5,
 		teleDistance: 40,
@@ -422,7 +422,7 @@
 		*/
 		moveToPreset: function (area, unitType, unitId, offX = 0, offY = 0, clearPath = false, pop = false) {
 			if (area === undefined || unitType === undefined || unitId === undefined) throw new Error("moveToPreset: Invalid parameters.");
-
+			if (me.area !== area) Pather.journeyTo(area);
 			let presetUnit = getPresetUnit(area, unitType, unitId);
 
 			if (!presetUnit) {

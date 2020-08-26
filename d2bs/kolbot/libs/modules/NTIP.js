@@ -24,7 +24,7 @@
 	let NTIP = {},
 		CheckListInfo = [],
 		RuntimeCheckListInfo = [];
-	const Misc = require('Misc');
+	const Misc = require('../modules/Misc');
 
 	NTIP.CheckList = [];
 	NTIP.RuntimeCheckList = [];
@@ -606,7 +606,7 @@
 		for (let i = 0; i < 2; i++) {
 			if (p_result[i].length) {
 				try {
-					p_result[i] = (new Function('return item =>' + p_result[i] + ';')).call(null); // generate function out of
+					p_result[i] = (new Function('return function(item) {return ' + p_result[i] + '}')).call(null); // generate function out of it
 				} catch(e) {
 					print('Pickit line incorrect: ');
 					print(input);

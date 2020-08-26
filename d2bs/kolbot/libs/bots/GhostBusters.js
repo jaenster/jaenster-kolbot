@@ -53,7 +53,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 		var i;
 
 		Pather.useWaypoint(6);
-		require('Precast')()
+		require('../modules/Precast')()
 
 		for (i = 20; i <= 25; i += 1) {
 			Pather.moveToExit(i, true);
@@ -67,7 +67,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 		var i;
 
 		Pather.useWaypoint(32);
-		require('Precast')()
+		require('../modules/Precast')()
 
 		for (i = 31; i >= 29; i -= 1) {
 			Pather.moveToExit(i, true);
@@ -79,7 +79,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	this.cathedral = function () { // inner cloister wp
 		Pather.useWaypoint(32);
-		require('Precast')()
+		require('../modules/Precast')()
 		Pather.moveToExit(33, true);
 		this.clearGhosts();
 
@@ -90,7 +90,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 		var i;
 
 		Pather.useWaypoint(46);
-		require('Precast')()
+		require('../modules/Precast')()
 
 		for (i = 66; i <= 72; i += 1) {
 			Pather.moveToExit(i, true);
@@ -105,7 +105,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 		var areas = [88, 89, 91];
 
 		Pather.useWaypoint(78);
-		require('Precast')()
+		require('../modules/Precast')()
 
 		while (areas.length) {
 			Pather.moveToExit(areas.shift(), true);
@@ -117,7 +117,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	this.crystalinePassage = function () { // crystaline passage wp
 		Pather.useWaypoint(113);
-		require('Precast')()
+		require('../modules/Precast')()
 		this.clearGhosts();
 		Pather.moveToExit(114, true); // frozen river
 		this.clearGhosts();
@@ -127,7 +127,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	this.glacialTrail = function () { // glacial trail wp
 		Pather.useWaypoint(115);
-		require('Precast')()
+		require('../modules/Precast')()
 		this.clearGhosts();
 		Pather.moveToExit(116, true); // drifter
 		this.clearGhosts();
@@ -137,7 +137,7 @@ function GhostBusters(Config, Attack, Pickit, Pather, Town, Misc) {
 
 	this.icyCellar = function () { // glacial trail wp
 		Pather.useWaypoint(118);
-		require('Precast')()
+		require('../modules/Precast')()
 		Pather.moveToExit(119, true); // drifter
 		this.clearGhosts();
 

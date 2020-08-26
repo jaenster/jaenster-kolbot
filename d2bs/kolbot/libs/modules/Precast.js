@@ -4,10 +4,10 @@
  */
 
 (function (module, require) {
-	const Pather = require('Pather');
-	const Town = require('Town');
-	const Config = require('Config');
-	const Skills = require('Skills');
+	const Pather = require('../modules/Pather');
+	const Town = require('../modules/Town');
+	const Config = require('../modules/Config');
+	const Skills = require('../modules/Skills');
 	const getSkill = skillId => Math.max.apply(Math, Skills.getSkillLevel(skillId));
 	const bestSkill = arr => arr.length === 1 && arr.first() || arr.sort((a, b) => getSkill(b) - getSkill(a)).first();
 

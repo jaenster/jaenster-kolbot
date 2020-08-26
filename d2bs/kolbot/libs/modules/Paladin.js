@@ -1,8 +1,8 @@
 (function (module, require) {
-	const Pather = require('Pather');
-	const CollMap = require('CollMap');
+	const Pather = require('../modules/Pather');
+	const CollMap = require('../modules/CollMap');
 	const Paladin = {};
-	const Misc = require('Misc');
+	const Misc = require('../modules/Misc');
 
 	Paladin.getHammerPosition = function (unit) {
 		let i, x, y, positions, check,

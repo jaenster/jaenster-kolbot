@@ -4,8 +4,8 @@
  */
 (function (module, require) {
 	// Should be an module
-	const Config = require('Config');
-	const Auto = {}, Skills = require('Skills');
+	const Config = require('../modules/Config');
+	const Auto = {}, Skills = require('../modules/Skills');
 	Object.defineProperties(Auto, {
 		Config: {
 			get: function () {
@@ -40,7 +40,7 @@
 	};
 
 	AutoConfig.Chicken = function () {
-		require('Chicken'); // Load the chicken
+		require('../modules/Chicken'); // Load the chicken
 		Config.HealHP = 90;
 		Config.HealMP = 90;
 		Config.HealStatus = false;
@@ -91,7 +91,7 @@
 			// Create a promise, once we can read a merc resolve with the merc object
 			// Once we have the merc, determin if it has Infinity, ifso, we definitely want to resurrect the merc during battle
 			print('need to watch merc?');
-			getScript(true).name.toLowerCase() === 'default.dbj' && new (require('Promise'))(function (resolve, reject) {
+			getScript(true).name.toLowerCase() === 'default.dbj' && new (require('../modules/Promise'))(function (resolve, reject) {
 				const merc = me.getMerc();
 				merc && typeof merc === 'object' && merc.hasOwnProperty('getItemsEx') && resolve();
 			})
@@ -126,16 +126,16 @@
 		switch (true) {
 			// Almost all sorcs are the same, just setup a sorc
 			case me.classid === 1: //sorc
-				require('Sorceress'); // Use more telekenis and such
+				require('../modules/Sorceress'); // Use more telekenis and such
 				break;
 
 			case me.classid === 5: // Druid
 				break;
 			case me.classid === 2: // Pala
-				require('Paladin');
+				require('../modules/Paladin');
 				break;
 			case me.classid === 6:
-				require('Assassin');
+				require('../modules/Assassin');
 				break;
 
 		}

@@ -16,8 +16,8 @@
 
 
 (function (module, require) {
-	const Worker = require('Worker');
-	const PacketBuilder = require('PacketBuilder');
+	const Worker = require('../modules/Worker');
+	const PacketBuilder = require('../modules/PacketBuilder');
 
 	function checkStat(stat, items) {
 		let bonus = 0;

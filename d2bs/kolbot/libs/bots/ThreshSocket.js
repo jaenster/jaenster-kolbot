@@ -5,7 +5,7 @@
 */
 
 function ThreshSocket(Config, Attack, Pickit, Pather, Town, Misc) {
-	const Precast = require('Precast');
+	const Precast = require('../modules/Precast');
 	Town();
 	Pather.useWaypoint(112);
 	Precast();

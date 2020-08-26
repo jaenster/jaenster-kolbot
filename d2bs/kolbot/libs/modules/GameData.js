@@ -4,10 +4,10 @@
  *    @desc      game data library
  */
 (function (module, require) {
-	const Skills = require('Skills');
-	const Misc = require('Misc');
-	const LocaleStringName = require('LocaleStringID').LocaleStringName;
-	const CSV = require('CSVReader');
+	const Skills = require('../modules/Skills');
+	const Misc = require('../modules/Misc');
+	const LocaleStringName = require('../modules/LocaleStringID').LocaleStringName;
+	const CSV = require('./CSVReader');
 
 	const MONSTER_INDEX_COUNT = 770;
 	const PRESET_MON_COUNT = 734;
@@ -22,7 +22,7 @@
 		['nmon1', 'nmon2', 'nmon3', 'nmon4', 'nmon5', 'nmon6', 'nmon7', 'nmon8', 'nmon9', 'nmon10'],
 	][me.diff && 1]; // mon is for normal, nmon is for nm/hell, umon is specific to picking champion/uniques in normal
 
-	let Experience = require('Experience');
+	let Experience = require('../modules/Experience');
 
 	/**
 	 *  MonsterData[classID]
@@ -1799,7 +1799,7 @@
 		},*/
 
 		attackModeForSkill: function (skillId, charClass = GameData.myReference.classid) {
-			//TODO: 
+			//TODO:
 
 			if (skillId == sdk.skills.Smite) {
 				return "S1";
@@ -1886,29 +1886,29 @@ HTH = “Hand To Hand” Shield + no weapon
 
 /*
             Amazon 		Assassin	Barbarian	Druid		Necromancer		Paladin		Sorceress
-A1 HTH      08 13 256   06 11 256   06 12 256   08 16 256   08 15 256       07 14 256   09 16 256 
+A1 HTH      08 13 256   06 11 256   06 12 256   08 16 256   08 15 256       07 14 256   09 16 256
 A2 HTH      ---         06 12 256   ---         ---         ---             ---         08 16 256
-A1 HTx                  06 11 208 
-A2 HTx                  06 12 208 
+A1 HTx                  06 11 208
+A2 HTx                  06 12 208
 A1 1HS      10 16 256   07 15 256   07 16 256   09 19 256   09 19 256       07 15 256   12 20 256
-A1 2HS      12 20 256   11 23 256   08 18 256   10 21 256   11 23 256       08 18 256   14 24 256 
-A2 2HS      ---         ---         ---         ---         ---             08 19 256   --- 
+A1 2HS      12 20 256   11 23 256   08 18 256   10 21 256   11 23 256       08 18 256   14 24 256
+A2 2HS      ---         ---         ---         ---         ---             08 19 256   ---
 A1 1HT      09 15 256   07 15 256   07 16 256   08 19 256   09 19 256       08 17 256   11 19 256
-A1 2HT      11 18 256   10 23 256   09 19 256   09 23 256   10 24 256       08 20 256   13 23 256 
-A2 2HT      ---         ---         ---         ---         ---             09 20 256   --- 
+A1 2HT      11 18 256   10 23 256   09 19 256   09 23 256   10 24 256       08 20 256   13 23 256
+A2 2HT      ---         ---         ---         ---         ---             09 20 256   ---
 A1 STF      12 20 256   09 19 256   09 19 256   09 17 256   11 20 256       09 18 256   11 18 256
-A1 BOW      06 14 256   07 16 256   07 15 256   08 16 256   09 18 256       08 16 256   09 17 256 
+A1 BOW      06 14 256   07 16 256   07 15 256   08 16 256   09 18 256       08 16 256   09 17 256
 A1 XBW      09 20 256   10 21 256   10 20 256   10 20 256   11 20 256       10 20 256   11 20 256
 
 TH xxx      09 16 256   07 16 256   08 16 256   08 18 256   10 20 256       08 16 256   10 20 256
 KK xxx                  04 13 256
 
 S1 xxx      xx 09 256                                                       07 12 256
-S2 xxx                  04 08 128 
+S2 xxx                  04 08 128
 S3 1Jx                              08 12 256
-S3 1Sx                              07 12 256 
+S3 1Sx                              07 12 256
 S4 1Jx                              08 16 256
-S4 1Sx                              09 16 256 
+S4 1Sx                              09 16 256
 S4 HT2                  06 12 208
 
 -------------------------------------------------- ------------------------------------------------

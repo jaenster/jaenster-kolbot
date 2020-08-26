@@ -1,9 +1,9 @@
 (function (module, require) {
 
     module.exports = new function () {
-        const GameData = require('GameData');
-        const Skills = require('Skills');
-        const Precast = require('Precast');
+        const GameData = require('../modules/GameData');
+        const Skills = require('../modules/Skills');
+        const Precast = require('../modules/Precast');
         /**
          * @description
          * @param monster

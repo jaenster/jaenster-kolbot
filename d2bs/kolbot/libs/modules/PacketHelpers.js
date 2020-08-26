@@ -1,5 +1,5 @@
 (function (module, require) {
-	const Pather = require('Pather');
+	const Pather = require('../modules/Pather');
 	const Packet = module.exports = {
 		openMenu: function (unit) {
 			if (unit.type !== 1) {
@@ -22,16 +22,15 @@
 
 				while (getTickCount() - tick < 5000) {
 					if (getUIFlag(0x08)) {
-						delay(Math.max(500, me.ping * 2));
-
+						delay(Math.max(10, me.ping * 2));
 						return true;
 					}
 
-					if (getInteractedNPC() && getTickCount() - tick > 1000) {
+					if (getInteractedNPC() && getTickCount() - tick > 500) {
 						me.cancel();
 					}
 
-					delay(100);
+					delay(10);
 				}
 
 				sendPacket(1, 0x2f, 4, 1, 4, unit.gid);

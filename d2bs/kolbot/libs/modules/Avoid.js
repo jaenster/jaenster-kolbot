@@ -5,9 +5,9 @@
  *  @version    2018.09.16 19:56
  */
 (function (module, require) {
-	const Worker = require('Worker');
-	const Config = require('Config');
-	const Pather = require('Pather');
+	const Worker = require('../modules/Worker');
+	const Config = require('../modules/Config');
+	const Pather = require('../modules/Pather');
 	module.exports = {
 		dodgeHP: Math.max(Config.LifeChicken * 1.20, Config.TownHP * 1.20)
 	}; // 20% above life chicken, or town chicken if set

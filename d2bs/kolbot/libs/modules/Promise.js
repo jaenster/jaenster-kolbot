@@ -4,8 +4,8 @@
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 	 * @author Jaenster
 	 */
-	const Worker = require('Worker');
-	const Misc = require('Misc');
+	const Worker = require('../modules/Worker');
+	const Misc = require('../modules/Misc');
 	/**
 	 *
 	 * @param {function({resolve},{reject}):boolean} callback

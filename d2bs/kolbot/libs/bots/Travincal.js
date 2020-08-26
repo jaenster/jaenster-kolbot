@@ -36,7 +36,7 @@ function Travincal(Config, Attack, Pickit, Pather, Town, Misc) {
 		Pather.moveTo(orgX + 85, orgY - 139);
 		Pather.makePortal();
 		delay(1000);
-		require('Precast')();
+		require('../modules/Precast')();
 	}
 
 	if (me.getSkill(143, 0) && !me.getSkill(54, 0) && !me.getStat(97, 54)) {

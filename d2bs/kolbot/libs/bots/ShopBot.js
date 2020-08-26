@@ -7,7 +7,7 @@ function ShopBot(Config, Attack, Pickit, Pather, Town, Misc) {
 		totalCyclesText = new Text("Total cycles:", 50, 290, 2, 1),
 		validItems = 0,
 		totalCycles = 0;
-	const Storage = require('Storage');
+	const Storage = require('../modules/Storage');
 	Pather.teleport = false;
 	this.pickEntries = [];
 	this.npcs = {};
