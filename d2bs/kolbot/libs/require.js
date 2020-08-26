@@ -160,3 +160,14 @@ getScript.startAsThread = function () {
 
 	return 'loaded';
 };
+
+
+me.ingame && (function () {
+	// If in game, load all libraries too
+	!isIncluded('sdk.js') && include('sdk.js');
+	const fileList = dopen("libs/unit").getFiles();
+	Array.isArray(fileList) && fileList
+		.filter(file => file.endsWith('.js'))
+		.sort(a => a.startsWith('Item.js') ? 0 : 1) // Dirty fix to load Item first
+		.forEach(x => !isIncluded('unit/' + x) && include('unit/' + x));
+}).call();
