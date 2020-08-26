@@ -99,8 +99,17 @@
 		},
 		highestAct: {
 			get: function () {
-				return [true, me.getQuest(7, 0), me.getQuest(15, 0), me.getQuest(23, 0), me.getQuest(28, 0)]
-					.findIndex(i => !i);
+				let i=1, acts = [sdk.quests.AbleToGotoActII,
+					sdk.quests.AbleToGotoActIII,
+					sdk.quests.AbleToGotoActIV,
+					sdk.quests.AbleToGotoActV,
+				];
+
+				while(acts.length && me.getQuest(acts.shift(), 0)) {
+					i++;
+				}
+				return i;
+
 			}
 		},
 		highestQuestDone: {
