@@ -4,268 +4,15 @@
  *    @desc      game data library
  */
 (function (module, require) {
-	const Skills = require('../modules/Skills');
-	const Misc = require('../modules/Misc');
-	const LocaleStringName = require('../modules/LocaleStringID').LocaleStringName;
 
-	const MONSTER_INDEX_COUNT = 770;
-	const PRESET_MON_COUNT = 734;
-	const PRESET_SUPER_COUNT = 66;
-	const PRESET_PLACE_COUNT = 37;
-	const AREA_INDEX_COUNT = 137;
-	const MISSILES_COUNT = 385;
-	const SUPER = [0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 0, 1, 4, 0, 2, 3, 1, 0, 1, 1, 0, 0, 0, 1, 3, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 5, 1, 1, 1, 1, 3];
-	const AREA_LOCALE_STRING = [5389, 5055, 5054, 5053, 5052, 5051, 5050, 5049, 5048, 5047, 5046, 5045, 5044, 5043, 5042, 5041, 5040, 5039, 5038, 5037, 5036, 5035, 5034, 5033, 5032, 5031, 5030, 5029, 5028, 5027, 5026, 5025, 5024, 5023, 5022, 5021, 5020, 5019, 5018, 788, 852, 851, 850, 849, 848, 847, 846, 845, 844, 843, 842, 841, 840, 839, 838, 837, 836, 835, 834, 833, 832, 831, 830, 829, 828, 827, 826, 826, 826, 826, 826, 826, 826, 825, 824, 820, 819, 818, 817, 816, 815, 814, 813, 812, 810, 811, 809, 808, 806, 805, 807, 804, 845, 844, 803, 802, 801, 800, 799, 798, 797, 796, 795, 790, 792, 793, 794, 791, 789, 22646, 22647, 22648, 22649, 22650, 22651, 22652, 22653, 22654, 22655, 22656, 22657, 22658, 22659, 22660, 22662, 21865, 21866, 21867, 22663, 22664, 22665, 22667, 22666, 5389, 5389, 5389, 5018];
-	const MONSTER_KEYS = [
-		['mon1', 'mon2', 'mon3', 'mon4', 'mon5', 'mon6', 'mon7', 'mon8', 'mon9', 'mon10'],
-		['nmon1', 'nmon2', 'nmon3', 'nmon4', 'nmon5', 'nmon6', 'nmon7', 'nmon8', 'nmon9', 'nmon10'],
-	][me.diff && 1]; // mon is for normal, nmon is for nm/hell, umon is specific to picking champion/uniques in normal
+	const Skills = require('./Skills');
+	const Misc = require('./Misc');
+	const CSV = require('./CSVReader');
+	const MonsterData = require('./MonsterData');
 
-	let Experience = require('../modules/Experience');
-
-	/**
-	 *  MonsterData[classID]
-	 *  .Index = Index of this monster
-	 *  .Level = Level of this monster in normal (use GameData.monsterLevel to find monster levels)
-	 *  .Ranged = if monster is ranged
-	 *  .Rarity = weight of this monster in level generation
-	 *  .Threat = threat level used by mercs
-	 *  .Align = alignment of unit (determines what it will attack)
-	 *  .Melee = if monster is melee
-	 *  .NPC = if unit is NPC
-	 *  .Demon = if monster is demon
-	 *  .Flying = if monster is flying
-	 *  .Boss = if monster is a boss
-	 *  .ActBoss = if monster is act boss
-	 *  .Killable = if monster can be killed
-	 *  .Convertable = if monster is affected by convert or mind blast
-	 *  .NeverCount = if not counted as a minion
-	 *  .DeathDamage = explodes on death
-	 *  .Regeneration = hp regeneration
-	 *  .LocaleString = locale string index for getLocaleString
-	 *  .ExperienceModifier = percent of base monster exp this unit rewards when killed
-	 *  .Undead = 2 if greater undead, 1 if lesser undead, 0 if neither
-	 *  .Drain = drain effectiveness percent
-	 *  .Block = block percent
-	 *  .Physical = physical resist
-	 *  .Magic = magic resist
-	 *  .Fire = fire resist
-	 *  .Lightning = lightning resist
-	 *  .Poison = poison resist
-	 *  .Minions = array of minions that can spawn with this unit
-	 *  .MinionCount.Min = minimum number of minions that can spawn with this unit
-	 *  .MinionCount.Max = maximum number of minions that can spawn with this unit
-	 */
-
-	var MonsterData = Array(MONSTER_INDEX_COUNT);
-
-	for (let i = 0; i < MonsterData.length; i++) {
-		let index = i;
-		MonsterData[i] = ({
-			Index: index,
-			ClassID: index,
-			Level: getBaseStat('monstats', index, 'Level'), // normal only, nm/hell are determined by area's LevelEx
-			Ranged: getBaseStat('monstats', index, 'RangedType'),
-			Rarity: getBaseStat('monstats', index, 'Rarity'),
-			Threat: getBaseStat('monstats', index, 'threat'),
-			PetIgnore: getBaseStat('monstats', index, 'petignore'),
-			Align: getBaseStat('monstats', index, 'Align'),
-			Melee: getBaseStat('monstats', index, 'isMelee'),
-			NPC: getBaseStat('monstats', index, 'npc'),
-			Demon: getBaseStat('monstats', index, 'demon'),
-			Flying: getBaseStat('monstats', index, 'flying'),
-			Boss: getBaseStat('monstats', index, 'boss'),
-			ActBoss: getBaseStat('monstats', index, 'primeevil'),
-			Killable: getBaseStat('monstats', index, 'killable'),
-			Convertable: getBaseStat('monstats', index, 'switchai'),
-			NeverCount: getBaseStat('monstats', index, 'neverCount'),
-			DeathDamage: getBaseStat('monstats', index, 'deathDmg'),
-			Regeneration: getBaseStat('monstats', index, 'DamageRegen'),
-			LocaleString: getLocaleString(getBaseStat('monstats', index, 'NameStr')),
-			InternalName: LocaleStringName[getBaseStat('monstats', index, 'NameStr')],
-			ExperienceModifier: getBaseStat('monstats', index, ['Exp', 'Exp(N)', 'Exp(H)'][me.diff]),
-			Undead: (getBaseStat('monstats', index, 'hUndead') && 2) | (getBaseStat('monstats', index, 'lUndead') && 1),
-			Drain: getBaseStat('monstats', index, ["Drain", "Drain(N)", "Drain(H)"][me.diff]),
-			Block: getBaseStat('monstats', index, ["ToBlock", "ToBlock(N)", "ToBlock(H)"][me.diff]),
-			Physical: getBaseStat('monstats', index, ["ResDm", "ResDm(N)", "ResDm(H)"][me.diff]),
-			Magic: getBaseStat('monstats', index, ["ResMa", "ResMa(N)", "ResMa(H)"][me.diff]),
-			Fire: getBaseStat('monstats', index, ["ResFi", "ResFi(N)", "ResFi(H)"][me.diff]),
-			Lightning: getBaseStat('monstats', index, ["ResLi", "ResLi(N)", "ResLi(H)"][me.diff]),
-			Cold: getBaseStat('monstats', index, ["ResCo", "ResCo(N)", "ResCo(H)"][me.diff]),
-			Poison: getBaseStat('monstats', index, ["ResPo", "ResPo(N)", "ResPo(H)"][me.diff]),
-			Minions: ([getBaseStat('monstats', index, 'minion1'), getBaseStat('monstats', index, 'minion2')].filter(mon => mon !== 65535)),
-			GroupCount: ({
-				Min: getBaseStat('monstats', index, 'MinGrp'),
-				Max: getBaseStat('monstats', index, 'MaxGrp')
-			}),
-			MinionCount: ({
-				Min: getBaseStat('monstats', index, 'PartyMin'),
-				Max: getBaseStat('monstats', index, 'PartyMax')
-			}),
-			Velocity: getBaseStat('monstats', index, 'Velocity'),
-			Run: getBaseStat('monstats', index, 'Run'),
-			SizeX: getBaseStat('monstats', index, 'SizeX'),
-			SizeY: getBaseStat('monstats', index, 'SizeY'),
-		});
-	}
-
-	MonsterData.findByName = function (whatToFind) {
-		let matches = MonsterData.map(mon => [Math.min(whatToFind.diffCount(mon.LocaleString), whatToFind.diffCount(mon.InternalName)), mon]).sort((a, b) => a[0] - b[0]);
-
-		return matches[0][1];
-	};
-
-//(MonsterData);
-
-	/**
-	 *  PresetMonsters[presetID]
-	 */
-
-	var PresetMonsters = Array(PRESET_MON_COUNT + PRESET_SUPER_COUNT + PRESET_PLACE_COUNT);
-
-	if (PresetMonsters) {
-		let ind = 0;
-
-		for (let i = 0; i < PRESET_MON_COUNT; i++, ind++) {
-			PresetMonsters[ind] = MonsterData[i];
-		}
-
-		for (let i = 0; i < PRESET_SUPER_COUNT; i++, ind++) {
-			let sourceMonster = MonsterData[getBaseStat('superuniques', i, 'class')];
-			PresetMonsters[ind] = {};
-
-			for (let k in sourceMonster) {
-				PresetMonsters[ind] = sourceMonster[k];
-			}
-
-			PresetMonsters[ind].Index = ind;
-			PresetMonsters[ind].LocaleString = getLocaleString(getBaseStat('superuniques', i, 'name'));
-			PresetMonsters[ind].InternalName = LocaleStringName[getBaseStat('superuniques', i, 'name')];
-			PresetMonsters[ind].Mods = ([
-				getBaseStat('superuniques', i, 'Mod1'),
-				getBaseStat('superuniques', i, 'Mod2'),
-				getBaseStat('superuniques', i, 'Mod3')
-			].filter(Boolean));
-
-			(PresetMonsters[ind]);
-		}
-
-		PresetMonsters[805] = Object.create(MonsterData[267], {
-			Index: {
-				value: 805,
-				enumerable: true,
-			},
-		});
-		(PresetMonsters[805]);
-	}
-
-	PresetMonsters.findByName = function (whatToFind) {
-		let matches = PresetMonsters.map(mon => [Math.min(whatToFind.diffCount(mon.LocaleString), whatToFind.diffCount(mon.InternalName)), mon]).sort((a, b) => a[0] - b[0]);
-
-		return matches[0][1];
-	};
-
-//(PresetMonsters);
-
-	/**
-	 *  MissilesData
-	 */
-
-	var MissilesData = Array(MISSILES_COUNT);
-
-	for (let i = 0; i < MissilesData.length; i++) {
-		let index = i;
-		MissilesData[i] = ({
-			Index: index,
-			ClassID: index,
-			InternalName: getBaseStat('missiles', index, 'Missile'),
-			Velocity: getBaseStat('missiles', index, 'Vel'),
-			VelocityMax: getBaseStat('missiles', index, 'MaxVel'),
-			Acceleration: getBaseStat('missiles', index, 'Accel'),
-			Range: getBaseStat('missiles', index, 'Range'),
-			Size: getBaseStat('missiles', index, 'Size'),
-		});
-	}
-
-//(MissilesData);
-
-	/**
-	 *  AreaData[areaID]
-	 *  .Super = number of super uniques present in this area
-	 *  .Index = areaID
-	 *  .Act = act this area is in [0-4]
-	 *  .MonsterDensity = value used to determine monster population density
-	 *  .ChampionPacks.Min = minimum number of champion or unique packs that spawn here
-	 *  .ChampionPacks.Max = maximum number of champion or unique packs that spawn here
-	 *  .Waypoint = number in waypoint menu that leads to this area
-	 *  .Level = level of area (use GameData.areaLevel)
-	 *  .Size.x = width of area
-	 *  .Size.y = depth of area
-	 *  .Monsters = array of monsters that can spawn in this area
-	 *  .LocaleString = locale string index for getLocaleString
-	 */
-
-	var AreaData = new Array(AREA_INDEX_COUNT);
-
-	for (let i = 0; i < AreaData.length; i++) {
-		let index = i;
-		AreaData[i] = ({
-			Super: SUPER[index],
-			Index: index,
-			Act: getBaseStat('levels', index, 'Act'),
-			MonsterDensity: getBaseStat('levels', index, ['MonDen', 'MonDen(N)', 'MonDen(H)'][me.diff]),
-			ChampionPacks: ({
-				Min: getBaseStat('levels', index, ['MonUMin', 'MonUMin(N)', 'MonUMin(H)'][me.diff]),
-				Max: getBaseStat('levels', index, ['MonUMax', 'MonUMax(N)', 'MonUMax(H)'][me.diff])
-			}),
-			Waypoint: getBaseStat('levels', index, 'Waypoint'),
-			Level: getBaseStat('levels', index, ['MonLvl1Ex', 'MonLvl2Ex', 'MonLvl3Ex'][me.diff]),
-			Size: (() => {
-				if (index === 111) { // frigid highlands doesn't specify size, manual measurement
-					return {x: 210, y: 710};
-				}
-
-				if (index === 112) { // arreat plateau doesn't specify size, manual measurement
-					return {x: 690, y: 230};
-				}
-
-				return {
-					x: getBaseStat('leveldefs', index, ['SizeX', 'SizeX(N)', 'SizeX(H)'][me.diff]),
-					y: getBaseStat('leveldefs', index, ['SizeY', 'SizeY(N)', 'SizeY(H)'][me.diff])
-				};
-			})(),
-			Monsters: (MONSTER_KEYS.map(key => getBaseStat('levels', index, key)).filter(key => key !== 65535)),
-			forEachMonster: function (cb) {
-				if (typeof cb === 'function') {
-					this.Monsters.forEach(monID => {
-						cb(MonsterData[monID], MonsterData[monID].Rarity * (MonsterData[monID].GroupCount.Min + MonsterData[monID].GroupCount.Max) / 2);
-					});
-				}
-			},
-			forEachMonsterAndMinion: function (cb) {
-				if (typeof cb === 'function') {
-					this.Monsters.forEach(monID => {
-						let rarity = MonsterData[monID].Rarity * (MonsterData[monID].GroupCount.Min + MonsterData[monID].GroupCount.Max) / 2;
-						cb(MonsterData[monID], rarity, null);
-						MonsterData[monID].Minions.forEach(minionID => {
-							let minionrarity = MonsterData[monID].Rarity * (MonsterData[monID].MinionCount.Min + MonsterData[monID].MinionCount.Max) / 2 / MonsterData[monID].Minions.length;
-							cb(MonsterData[minionID], minionrarity, MonsterData[monID]);
-						});
-					});
-				}
-			},
-			LocaleString: getLocaleString(AREA_LOCALE_STRING[index]),
-			InternalName: LocaleStringName[AREA_LOCALE_STRING[index]],
-		});
-	}
-
-	AreaData.findByName = function (whatToFind) {
-		let matches = AreaData.map(area => [Math.min(whatToFind.diffCount(area.LocaleString), whatToFind.diffCount(area.InternalName)), area]).sort((a, b) => a[0] - b[0]);
-
-		return matches[0][1];
-	};
-
-//(AreaData);
+	let Experience = require('Experience');
+	const AreaData = require('./AreaData');
+	const PresetMonsters = require('./PresetMonstersData');
 
 
 	const Potions = {
@@ -351,273 +98,13 @@
 
 //(Potions);
 
-	const MandatoryQuests = [
-		sdk.quests.SistersToTheSlaughter, // kill Andy
-		sdk.quests.TheHoradricStaff, // make staff
-		sdk.quests.TheArcaneSanctuary, // go to arcane and find portal to tombs
-		sdk.quests.TheSummoner, // kill The Summoner
-		sdk.quests.TheSevenTombs, // kill Duriel
-		sdk.quests.KhalimsWill, // depends, if you have wp to meph not needed
-		sdk.quests.TheBlackenedTemple, // kill Travincal
-		sdk.quests.TheGuardian, // kill Meph
-		sdk.quests.TerrorsEnd, // kill Diablo
-		sdk.quests.RiteOfPassage, // kill Ancients (depends on charlvl)
-		sdk.quests.EveOfDestruction // kill Baal
-	];
-
-	const RewardedQuests = [
-		sdk.quests.DenOfEvil, // 1 skill + 1 respec
-		sdk.quests.RadamentsLair, // 1 skill
-		sdk.quests.TheGoldenBird, // 20 life
-		sdk.quests.LamEsensTome, // 5 stat pts
-		sdk.quests.TheFallenAngel, // 2 skills
-		sdk.quests.HellsForge, // 1 rune
-		sdk.quests.SiegeOnHarrogath, // 1 socket
-		sdk.quests.PrisonOfIce // 10@ res
-	];
-
-	const Quests = [];
-	Quests.MandatoryQuests = MandatoryQuests;
-	Quests.RewardedQuests = RewardedQuests;
-
-	Quests.questScore = function (q) {
-		var score = 0;
-		var highestAct = me.highestAct;
-		if (!me.getQuest(q.index, 0) && highestAct >= q.act) {
-			// we did not complete the quest
-			score += q.mandatory ? 2 : 0;
-			score += q.reward ? 2 : 0;
-
-			if (q.mandatory || q.reward) {
-				// the quest is mandatory or reward
-				// the higher the act is, the less this quest is good to do, aka do earliest quest
-				score += q.act > 0 ? 1 / q.act : 0;
-				var questEffort = q.areas.reduce((acc, a) => acc + GameData.areaEffort(a), 0);
-				score += questEffort > 0 ? 1 / questEffort : 0;
-
-				var bossEffort = q.bosses.reduce((acc, boss) => acc + GameData.monsterEffort(boss, q.areas.last()).effort, 0);
-				score += bossEffort > 0 ? 1 / bossEffort : 0;
-				// monsterEffort: function (unit, areaID, skillDamageInfo, parent = undefined, preattack = false, all = false)
-			}
-		} else if (highestAct < q.act) {
-			// we can not access the quest act
-		} else {
-			// we have done this quest
-		}
-
-
-		return score;
-	}
-
-	Quests.actForQuest = function (q) {
-		switch (true) {
-			case (q >= sdk.quests.SpokeToWarriv && q <= sdk.quests.AbleToGotoActII) || q == sdk.quests.SecretCowLevel:
-				return 1;
-			case (q >= sdk.quests.SpokeToJerhyn && q <= sdk.quests.AbleToGotoActIII):
-				return 2;
-			case (q >= sdk.quests.SpokeToHratli && q <= sdk.quests.AbleToGotoActIV):
-				return 3;
-			case (q >= sdk.quests.SpokeToTyrael && q <= sdk.quests.AbleToGotoActV):
-				return 4;
-			case (q >= sdk.quests.SiegeOnHarrogath && q < sdk.quests.SecretCowLevel):
-				return 5;
-		}
-		return undefined;
-	}
-
-	Quests.areasForQuest = function (q) {
-		switch (q) {
-			case sdk.quests.SpokeToWarriv:
-				return [sdk.areas.RogueEncampment];
-
-			case sdk.quests.DenOfEvil:
-				return [sdk.areas.DenOfEvil];
-
-			case sdk.quests.SistersBurialGrounds:
-				return [sdk.areas.BurialGrounds];
-
-			case sdk.quests.TheSearchForCain:
-				// scroll, stones, trist
-				return [sdk.areas.DarkWood, sdk.areas.StonyField, sdk.areas.Tristram];
-
-			case sdk.quests.ForgottenTower:
-				return [sdk.areas.TowerCellarLvl5];
-
-			case sdk.quests.ToolsOfTheTrade:
-				return [sdk.areas.Barracks];
-
-			case sdk.quests.SistersToTheSlaughter:
-				return [sdk.areas.CatacombsLvl4];
-
-			case sdk.quests.AbleToGotoActII:
-				return [sdk.areas.RogueEncampment];
-
-			case sdk.quests.SpokeToJerhyn:
-				return [sdk.areas.LutGholein];
-
-			case sdk.quests.RadamentsLair:
-				return [sdk.areas.A2SewersLvl3];
-
-			case sdk.quests.TheHoradricStaff:
-				// cube, staff, amu
-				return [sdk.areas.HallsOfDeadLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.ClawViperTempleLvl2];
-
-			case sdk.quests.TheTaintedSun:
-				// amu + speak to Drognan
-				return [sdk.areas.ClawViperTempleLvl2, sdk.areas.LutGholein];
-
-			case sdk.quests.TheArcaneSanctuary:
-				return [sdk.areas.ArcaneSanctuary];
-
-			case sdk.quests.TheSummoner:
-				return [sdk.areas.ArcaneSanctuary];
-
-			case sdk.quests.TheSevenTombs:
-				return [sdk.areas.DurielsLair];
-
-			case sdk.quests.AbleToGotoActIII:
-				return [sdk.areas.LutGholein];
-
-			case sdk.quests.SpokeToHratli:
-				return [sdk.areas.KurastDocktown];
-
-			case sdk.quests.TheGoldenBird:
-				return []; // any, kill an elite and have a chance that it drops golden bird
-
-			case sdk.quests.BladeOfTheOldReligion:
-				return [sdk.areas.FlayerJungle];
-
-			case sdk.quests.KhalimsWill:
-				// eye, brain, heart, flail
-				return [sdk.areas.SpiderCavern, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl2, sdk.areas.Travincal];
-
-			case sdk.quests.LamEsensTome:
-				return [sdk.areas.RuinedTemple];
-
-			case sdk.quests.TheBlackenedTemple:
-				return [sdk.areas.Travincal];
-
-			case sdk.quests.TheGuardian:
-				return [sdk.areas.DuranceOfHateLvl3];
-
-			case sdk.quests.AbleToGotoActIV:
-				// meph red portal
-				return [sdk.areas.DuranceOfHateLvl3];
-
-			case sdk.quests.SpokeToTyrael:
-				return [sdk.areas.PandemoniumFortress];
-
-			case sdk.quests.TheFallenAngel:
-				return [sdk.areas.PlainsOfDespair];
-
-			case sdk.quests.HellsForge:
-				return [sdk.areas.RiverOfFlame];
-
-			case sdk.quests.TerrorsEnd:
-				return [sdk.areas.ChaosSanctuary];
-
-			case sdk.quests.AbleToGotoActV:
-				return [sdk.areas.PandemoniumFortress];
-
-			case sdk.quests.SiegeOnHarrogath:
-				return [sdk.areas.BloodyFoothills];
-
-			case sdk.quests.RescueonMountArreat:
-				return [sdk.areas.FrigidHighlands];
-
-			case sdk.quests.PrisonOfIce:
-				// anya and speak to malah
-				return [sdk.areas.FrozenRiver, sdk.areas.Harrogath];
-
-			case sdk.quests.BetrayalOfHaggorath:
-				return [sdk.areas.NihlathaksTemple];
-
-			case sdk.quests.RiteOfPassage:
-				return [sdk.areas.ArreatSummit];
-
-			case sdk.quests.EveOfDestruction:
-				return [sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber];
-
-			case sdk.quests.SecretCowLevel:
-				// get wirt and open portal
-				return [sdk.areas.Tristram, sdk.areas.RogueEncampment];
-		}
-		return [];
-	}
-
-	Quests.bossForQuest = function (q) {
-		switch (q) {
-			case sdk.quests.SistersBurialGrounds:
-				return [sdk.monsters.Bloodraven];
-
-			case sdk.quests.ForgottenTower:
-				return [sdk.monsters.TheCountess];
-
-			case sdk.quests.SistersToTheSlaughter:
-				return [sdk.monsters.Andariel];
-
-			case sdk.quests.RadamentsLair:
-				return [sdk.monsters.Radament];
-
-			case sdk.quests.TheSummoner:
-				return [sdk.monsters.Summoner];
-
-			case sdk.quests.TheSevenTombs:
-				return [sdk.monsters.Duriel];
-
-			case sdk.quests.KhalimsWill:
-			case sdk.quests.TheBlackenedTemple:
-				return [sdk.monsters.GelebFlamefinger, sdk.monsters.IsmailVilehand, sdk.monsters.ToorcIcefist];
-
-			case sdk.quests.TheGuardian:
-				return [sdk.monsters.Mephisto];
-
-			case sdk.quests.TheFallenAngel:
-				return [sdk.monsters.Izual];
-
-			case sdk.quests.TerrorsEnd:
-				return [sdk.monsters.Diablo1];
-
-			case sdk.quests.SiegeOnHarrogath:
-				return []; // TODO shenk id ?
-
-			case sdk.quests.BetrayalOfHaggorath:
-				return [sdk.monsters.Nihlathak];
-
-			case sdk.quests.RiteOfPassage:
-				return [sdk.monsters.Ancient1, sdk.monsters.Ancient2, sdk.monsters.Ancient3];
-
-			case sdk.quests.EveOfDestruction:
-				return [sdk.monsters.Crab];
-
-			case sdk.quests.SecretCowLevel:
-				return [sdk.monsters.TheCowKing];
-		}
-		return [];
-	}
-
-	for (var q = sdk.quests.SpokeToWarriv; q <= sdk.quests.SecretCowLevel; q++) {
-		Quests[q] = {
-			index: q,
-			name: Object.keys(sdk.quests).find(x => sdk.quests[x] == q),
-			mandatory: MandatoryQuests.indexOf(q) > -1,
-			reward: RewardedQuests.indexOf(q) > -1,
-			areas: Quests.areasForQuest(q),
-			act: Quests.actForQuest(q),
-			bosses: Quests.bossForQuest(q),
-			do: ((q) => () => require('../bots/Questing').doQuest(q))(q)
-		}
-	}
-
-//(Quests);
-
 
 	function isAlive(unit) {
 		return Boolean(unit && unit.hp);
 	}
 
 	function isEnemy(unit) {
-		return Boolean(unit && isAlive(unit) && unit.getStat(172) !== 2 && typeof unit.classid === 'number' && MonsterData[unit.classid].Killable);
+		return Boolean(unit && isAlive(unit) && unit.getStat(sdk.stats.Alignment) !== 2 && typeof unit.classid === 'number' && MonsterData[unit.classid].Killable);
 	}
 
 	function onGround(item) {
@@ -660,6 +147,35 @@
 		},
 		eliteAvgHP: function (monsterID, areaID) {
 			return (6 - me.diff) / 2 * this.monsterAvgHP(monsterID, areaID, 2);
+		},
+		monsterDamageModifier: function () {
+			return 1 + (this.multiplayerModifier() - 1) * 0.0625;
+		},
+		monsterMaxDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID) + adjustLevel;
+			return Math.max.apply(null, [MonsterData[monsterID].Attack1MaxDmg, MonsterData[monsterID].Attack2MaxDmg, MonsterData[monsterID].Skill1MaxDmg]) * level / 100 * this.monsterDamageModifier();
+		},
+		// https://www.diabloii.net/forums/threads/monster-damage-increase-per-player-count.570346/
+		monsterAttack1AvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID) + adjustLevel;
+			return ((MonsterData[monsterID].Attack1MinDmg + MonsterData[monsterID].Attack1MaxDmg) / 2) * level / 100 * this.monsterDamageModifier();
+		},
+		monsterAttack2AvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID) + adjustLevel;
+			return ((MonsterData[monsterID].Attack2MinDmg + MonsterData[monsterID].Attack2MaxDmg) / 2) * level / 100 * this.monsterDamageModifier();
+		},
+		monsterSkill1AvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let level = this.monsterLevel(monsterID, areaID) + adjustLevel;
+			return ((MonsterData[monsterID].Skill1MinDmg + MonsterData[monsterID].Skill1MaxDmg) / 2) * level / 100 * this.monsterDamageModifier();
+		},
+		monsterAvgDmg: function (monsterID, areaID, adjustLevel = 0) {
+			let attack1 = this.monsterAttack1AvgDmg(monsterID, areaID, adjustLevel);
+			let attack2 = this.monsterAttack2AvgDmg(monsterID, areaID, adjustLevel);
+			let skill1 = this.monsterSkill1AvgDmg(monsterID, areaID, adjustLevel);
+			let dmgs = [attack1, attack2, skill1].filter(x => x > 0);
+			// ignore 0 dmg to avoid reducing average
+			if (!dmgs.length) return 0;
+			return dmgs.reduce((acc, v) => acc + v) / dmgs.length;
 		},
 		averagePackSize: monsterID => (MonsterData[monsterID].GroupCount.Min + MonsterData[monsterID].MinionCount.Min + MonsterData[monsterID].GroupCount.Max + MonsterData[monsterID].MinionCount.Max) / 2,
 		areaLevel: function (areaID) {
@@ -1642,25 +1158,36 @@
 			return null;
 		},
 		areaEffort: function (areaID, skills) {
-			let effortpool = 0, raritypool = 0;
+			let effortpool = 0, raritypool = 0, dmgAcc = 0;
+
 			skills = skills || this.allSkillDamage();
 
 			AreaData[areaID].forEachMonsterAndMinion((mon, rarity, parent) => {
 				effortpool += rarity * this.monsterEffort(mon.Index, areaID, skills, parent && parent.Index).effort;
 				raritypool += rarity;
+
+				dmgAcc += rarity * this.monsterAvgDmg(mon.Index, areaID);
 			});
 
-			return raritypool ? effortpool / raritypool : Infinity;
+			// print('avg dmg '+ AreaData[areaID].LocaleString+' -- ' + dmgAcc+' -- ' + avgDmg);
+
+			return (raritypool ? effortpool / raritypool : Infinity);
 		},
 		areaSoloExp: function (areaID, skills) {
-			let effortpool = 0, raritypool = 0;
+			let effortpool = 0, raritypool = 0, dmgAcc = 0;
+
 			skills = skills || this.allSkillDamage();
 			AreaData[areaID].forEachMonsterAndMinion((mon, rarity, parent) => {
 				effortpool += rarity * this.monsterExp(mon.Index, areaID) * this.levelModifier(GameData.myReference.charlvl, this.monsterLevel(mon.Index, areaID)) / this.monsterEffort(mon.Index, areaID, skills, parent && parent.Index).effort;
 				raritypool += rarity;
+
+				dmgAcc += rarity * this.monsterAvgDmg(mon.Index, areaID);
 			});
 
-			return raritypool ? effortpool / raritypool : 0;
+			let avgDmg = 0; //(raritypool ? dmgAcc / raritypool : Infinity);
+			// print('avg dmg '+ AreaData[areaID].LocaleString+' -- ' + dmgAcc+' -- ' + avgDmg);
+
+			return raritypool ? effortpool / raritypool / (avgDmg||1): 0;
 		},
 		mostUsedSkills: function (force = false) {
 			if (!force && GameData.myReference.hasOwnProperty('__cachedMostUsedSkills') && GameData.myReference.__cachedMostUsedSkills) return GameData.myReference.__cachedMostUsedSkills;
@@ -1726,8 +1253,390 @@
 			return 0;
 		},
 
+		attackStartingFrame: function (weaponClass, charClass = GameData.myReference.classid) {
+			// amazon and sorceress only
+			/*
+				Weapon:        hth 1hs 2hs 1ht 2ht stf bow xbw
+				StartingFrame: 1   2   2   2   2   2   0   0
+			*/
+			if (charClass == sdk.charclass.Amazon || charClass == sdk.charclass.Sorceress) {
+				if (weaponClass == "hth") {
+					return 1;
+				}
+				if (["1hs", "2hs", "1ht", "2ht", "stf"].indexOf(weaponClass) > -1) {
+					return 2;
+				}
+			}
+			return 0;
+		},
+
+		/*weaponSpeedModifier: function (weapon1Code, charClass = GameData.myReference.classid, weapon2Code = null) {
+			let weapons = new CSV("sdk/weapons.txt");
+			let weapon1Data = weapons.findObject("code", weapon1Code);
+			if (!weapon2Code) {
+				return weapon1Data.speed;
+			}
+			let weapon2Data = weapons.findObject("code", weapon2Code);
+			if (!weapon2Data) {
+				return weapon1Data.speed;
+			}
+			return (weapon1Data.speed + weapon2Data.speed) / 2;
+		},*/
+
+		attackModeForSkill: function (skillId, charClass = GameData.myReference.classid) {
+			//TODO:
+
+			if (skillId == sdk.skills.Smite) {
+				return "S1";
+			}
+			/*
+				A1:
+				normal attack or attack skills like
+				"bow and crossbow" skills, energy strike, chain lightning strike, charged strike,
+				opposing tiger strike, cobra strike, phoenix strike
+				Slash, paralyze, concentrate, amok
+				barbarian rage,
+				mangle , fire claws , anger poison dagger
+				victim, zeal, revenge, conversion
+
+				A2:
+				normal attack
+
+				KK: kick (kick barrel) or assassin skills dragon claw, dragon tail
+
+				S1: skill 1
+				(evade, avoid, escape)
+				shield attack smite
+
+				S2: skill 2
+				stationary traps, fire blast , Shock net, blade guard
+
+				S3: skill 3
+				Secondary blow of the barbarian with dual weapons
+				Hunger, rabies
+
+				S4:
+				Secondary blow of the assassin with dual claws
+				Secondary throw of the barbarian dual throwing
+
+				TH:
+				Throw
+				poison throwing spear, lightning strike, plague throwing spit, flashing mischief
+			*/
+			return "A1";
+		},
+
+		weaponAttackAnimationSpeed: function (baseRate, skill, weaponClass, charClass = GameData.myReference.classid, shiftState = null) {
+			/*if (shiftState == "bear") {
+				let framesPerDirection = this.weaponFramesPerDirection(skill, weaponClass, charClass);
+				let baseSpeed = this.weaponAttackAnimationSpeed(baseRate, skill, weaponClass, charClass);
+				let weaponIAS = 0;
+				let weaponSpeedModifier = 0;
+				let delay = baseRate * framesPerDirection / ((256 + weaponIAS - weaponSpeedModifier) * baseSpeed ​​/ 100);
+				return baseRate*
+			}*/
+			//TODO: vampire form or werewolf
+			let attackMode = this.attackModeForSkill(skill, charClass);
+			switch (true) {
+				case charClass == sdk.charclass.Assassin && attackMode.startsWith("A") && weaponClass.startsWith("ht") && weaponClass != "hth":
+					return 208;
+				case charClass == sdk.charclass.Assassin && attackMode == "S2":
+					return 128;
+				case charClass == sdk.charclass.Assassin && attackMode == "S4" && weaponClass == "ht2":
+					return 208;
+			}
+			// wolf or bear :
+			//AnimationSpeed ​​= [Hitshift * NeutralFrames / Delay]
+			return 256;
+		},
+
+		weaponFramesPerDirection: function (skill, weaponClass, charClass = GameData.myReference.classid) {
+			let attackMode = this.attackModeForSkill(skill, charClass);
+			/*
+			2HT = “2 Hand Thrust” Spear
+			STF = “Staff” Staff, Large Axe, Maul, Pole arm
+			2HS = “2 Hand Swing” 2-Handed Sword
+			BOW = “Bow” Bow
+			XBW = “Crossbow” Crossbow
+			HT1 = “One Hand-to-Hand” Shield + Claws
+			HT2 = “”Two Hand-to-Hand” Claws + Claws
+			1HT = “1 Hand Thrust” Shield + (Throwing potion, Knife, Throwing Knife, Javelin)
+			1HS = “1 Hand Swing” Shield + (Axe, Wand, Club, Scepter, Mace, Hammer, Sword, Throwing Axe, Orb)
+			HTH = “Hand To Hand” Shield + no weapon
+			1SS = “Left Swing Right Swing” Left = 1HS, Right = 1HS
+			1JT = “Left Jab Right Thrust” Left = 1HT, Right = 1HT
+			1ST = “Left Swing Right Thrust” Left = 1HS, Right = 1HT
+			1JS = “Left Jab Right Swing” Left = 1HT, Right = 1HS
+			*/
+
+			/*
+						Amazon 		Assassin	Barbarian	Druid		Necromancer		Paladin		Sorceress
+			A1 HTH      08 13 256   06 11 256   06 12 256   08 16 256   08 15 256       07 14 256   09 16 256
+			A2 HTH      ---         06 12 256   ---         ---         ---             ---         08 16 256
+			A1 HTx                  06 11 208
+			A2 HTx                  06 12 208
+			A1 1HS      10 16 256   07 15 256   07 16 256   09 19 256   09 19 256       07 15 256   12 20 256
+			A1 2HS      12 20 256   11 23 256   08 18 256   10 21 256   11 23 256       08 18 256   14 24 256
+			A2 2HS      ---         ---         ---         ---         ---             08 19 256   ---
+			A1 1HT      09 15 256   07 15 256   07 16 256   08 19 256   09 19 256       08 17 256   11 19 256
+			A1 2HT      11 18 256   10 23 256   09 19 256   09 23 256   10 24 256       08 20 256   13 23 256
+			A2 2HT      ---         ---         ---         ---         ---             09 20 256   ---
+			A1 STF      12 20 256   09 19 256   09 19 256   09 17 256   11 20 256       09 18 256   11 18 256
+			A1 BOW      06 14 256   07 16 256   07 15 256   08 16 256   09 18 256       08 16 256   09 17 256
+			A1 XBW      09 20 256   10 21 256   10 20 256   10 20 256   11 20 256       10 20 256   11 20 256
+
+			TH xxx      09 16 256   07 16 256   08 16 256   08 18 256   10 20 256       08 16 256   10 20 256
+			KK xxx                  04 13 256
+
+			S1 xxx      xx 09 256                                                       07 12 256
+			S2 xxx                  04 08 128
+			S3 1Jx                              08 12 256
+			S3 1Sx                              07 12 256
+			S4 1Jx                              08 16 256
+			S4 1Sx                              09 16 256
+			S4 HT2                  06 12 208
+
+			-------------------------------------------------- ------------------------------------------------
+						Werewolf      bear           fetish       vampire
+			A1 xxx      07 13 xxx     07 12 xxx      08 12 256    09 14 176
+			S3 xxx      06 10 xxx     06 10 xxx
+			NU xxx      xx 09 xxx     xx 10 xxx
+
+			-------------------------------------------------- ------------------------------------------------
+						Rogue         City Guard    Eisenwolf     Barbarian Mercenary
+			A1 xxx      06 15 256     11 16 256     06 15 256     05/12 16 256
+						*/
+			switch (true) {
+				case charClass == sdk.charclass.Sorceress && attackMode.startsWith("A") && weaponClass == "hth":
+					return 16;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "1hs":
+					return 20;
+				case charClass == sdk.charclass.Sorceress && attackMode.startsWith("A") && weaponClass == "2hs":
+					return 24;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "1ht":
+					return 19;
+				case charClass == sdk.charclass.Sorceress && attackMode.startsWith("A") && weaponClass == "2ht":
+					return 23;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "stf":
+					return 18;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "bow":
+					return 17;
+				case charClass == sdk.charclass.Sorceress && attackMode == "A1" && weaponClass == "xbw":
+					return 20;
+				case charClass == sdk.charclass.Sorceress && attackMode == "TH":
+					return 20;
+
+				case charClass == sdk.charclass.Paladin && attackMode.startsWith("A") && weaponClass == "hth":
+					return 14;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "1hs":
+					return 15;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "2hs":
+					return 18;
+				case charClass == sdk.charclass.Paladin && attackMode == "A2" && weaponClass == "2hs":
+					return 19;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "1ht":
+					return 17;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "2ht":
+					return 20;
+				case charClass == sdk.charclass.Paladin && attackMode == "A2" && weaponClass == "2ht":
+					return 20;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "stf":
+					return 18;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "bow":
+					return 16;
+				case charClass == sdk.charclass.Paladin && attackMode == "A1" && weaponClass == "xbw":
+					return 20;
+				case charClass == sdk.charclass.Paladin && attackMode == "TH":
+					return 16;
+				case charClass == sdk.charclass.Paladin && attackMode == "S1":
+					return 12;
+
+				//TODO: full trag oul set
+				case charClass == sdk.charclass.Necromancer && attackMode.startsWith("A") && weaponClass == "hth":
+					return 15;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "1hs":
+					return 19;
+				case charClass == sdk.charclass.Necromancer && attackMode.startsWith("A") && weaponClass == "2hs":
+					return 23;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "1ht":
+					return 19;
+				case charClass == sdk.charclass.Necromancer && attackMode.startsWith("A") && weaponClass == "2ht":
+					return 24;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "stf":
+					return 20;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "bow":
+					return 18;
+				case charClass == sdk.charclass.Necromancer && attackMode == "A1" && weaponClass == "xbw":
+					return 20;
+				case charClass == sdk.charclass.Necromancer && attackMode == "TH":
+					return 20;
+
+				case this.shiftState() == "wolf" && attackMode == "A1":
+					return 13;
+				case this.shiftState() == "wolf" && attackMode == "S3":
+					return 10;
+
+				case this.shiftState() == "bear" && attackMode == "A1":
+					return 12;
+				case this.shiftState() == "bear" && attackMode == "S3":
+					return 10;
+
+				case charClass == sdk.charclass.Druid && attackMode.startsWith("A") && weaponClass == "hth":
+					return 16;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "1hs":
+					return 19;
+				case charClass == sdk.charclass.Druid && attackMode.startsWith("A") && weaponClass == "2hs":
+					return 21;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "1ht":
+					return 19;
+				case charClass == sdk.charclass.Druid && attackMode.startsWith("A") && weaponClass == "2ht":
+					return 23;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "stf":
+					return 17;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "bow":
+					return 16;
+				case charClass == sdk.charclass.Druid && attackMode == "A1" && weaponClass == "xbw":
+					return 20;
+				case charClass == sdk.charclass.Druid && attackMode == "TH":
+					return 18;
+
+				case charClass == sdk.charclass.Barbarian && attackMode.startsWith("A") && weaponClass == "hth":
+					return 12;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "1hs":
+					return 16;
+				case charClass == sdk.charclass.Barbarian && attackMode.startsWith("A") && weaponClass == "2hs":
+					return 18;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "1ht":
+					return 16;
+				case charClass == sdk.charclass.Barbarian && attackMode.startsWith("A") && weaponClass == "2ht":
+					return 19;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "stf":
+					return 19;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "bow":
+					return 15;
+				case charClass == sdk.charclass.Barbarian && attackMode == "A1" && weaponClass == "xbw":
+					return 20;
+				case charClass == sdk.charclass.Barbarian && attackMode == "TH":
+					return 16;
+				case charClass == sdk.charclass.Barbarian && attackMode == "S3":
+					return 12;
+				case charClass == sdk.charclass.Barbarian && attackMode == "S4":
+					return 16;
+
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass.startsWith("ht"):
+					return 11;
+				case charClass == sdk.charclass.Assassin && attackMode == "A2" && weaponClass.startsWith("ht"):
+					return 12;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "1hs":
+					return 15;
+				case charClass == sdk.charclass.Assassin && attackMode.startsWith("A") && weaponClass == "2hs":
+					return 23;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "1ht":
+					return 15;
+				case charClass == sdk.charclass.Assassin && attackMode.startsWith("A") && weaponClass == "2ht":
+					return 23;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "stf":
+					return 19;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "bow":
+					return 16;
+				case charClass == sdk.charclass.Assassin && attackMode == "A1" && weaponClass == "xbw":
+					return 21;
+				case charClass == sdk.charclass.Assassin && attackMode == "TH":
+					return 16;
+				case charClass == sdk.charclass.Assassin && attackMode == "KK":
+					return 13;
+				case charClass == sdk.charclass.Assassin && attackMode == "S2":
+					return 8;
+				case charClass == sdk.charclass.Assassin && attackMode == "S4" && weaponClass == "ht2":
+					return 12;
+
+				case charClass == sdk.charclass.Amazon && attackMode.startsWith("A") && weaponClass == "hth":
+					return 13;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "1hs":
+					return 16;
+				case charClass == sdk.charclass.Amazon && attackMode.startsWith("A") && weaponClass == "2hs":
+					return 20;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "1ht":
+					return 15;
+				case charClass == sdk.charclass.Amazon && attackMode.startsWith("A") && weaponClass == "2ht":
+					return 18;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "stf":
+					return 20;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "bow":
+					return 14;
+				case charClass == sdk.charclass.Amazon && attackMode == "A1" && weaponClass == "xbw":
+					return 20;
+				case charClass == sdk.charclass.Amazon && attackMode == "TH":
+					return 16;
+				case charClass == sdk.charclass.Amazon && attackMode == "S1":
+					return 9;
+			}
+			return -1;
+		},
+
+		attackFrames: function (skillId, weaponCode, ias = GameData.myReference.getStat(sdk.stats.Fasterattackrate), charClass = GameData.myReference.classid, weapon2Code = null) {
+			// https://diablo3.ingame.de/forum/threads/1218516-FAQ-Bewegungs-und-Animationsgeschwindigkeiten-Teil-2?s=&postid=17610874
+			/*
+			TODO
+				bear or wolf only :
+
+				frames = {(256 * framesPerDirection) / [animationSpeed ​​* (100 + effectiveIAS + skillsIAS - weaponSpeedModifier + coldEffect) / 100]} - 1
+
+				where :
+				animationSpeed ​​= 256 * NeutralFrames / delay
+				delay = 256 * CharFrames / ((100 + weaponIAS - weaponSpeedModifier) * CharSpeed ​​/ 100)
+
+				framesPerDirection ... The sum of all frames of our attack animation of the Werform.
+				NeutralFrames ... Sum of the frames of our neutral animation (use while standing).
+				CharFrames ... The sum of all frames of the attack animation that we would use in the unchanged state (with the exception of two-handed swords).
+				CharSpeed ​​... This is the animation speed of the attack animation that the unchanged character would use.
+				weaponIAS ... All IAS on our weapon or weapon base
+			*/
+			let weaponData = (new CSV("sdk/weapons.txt")).findObject("code", weaponCode);
+			if (!weaponData) {
+				print(sdk.colors.Orange + "No weapon data found for code " + weaponCode);
+			}
+			let weaponClass = weaponData.wclass;
+			let baseRate = 100;
+			const BASE_ANIMATION_SPEED = 256;
+
+			let animationSpeed = this.weaponAttackAnimationSpeed(baseRate, weaponClass, charClass, this.shiftState());
+			let effectiveIAS = 120 * ias / (120 + ias);
+			let skillsIAS = 0; //TODO: fanaticism or other sills bonus + slowdown skills malus
+			let weaponSpeedModifier = (typeof weaponData.speed == "string") ? isNaN(parseInt(weaponData.speed)) ? 0 : parseInt(weaponData.speed) : weaponData.speed;// this.weaponSpeedModifier(weaponCode, charClass, weapon2Code);
+			// me.getState(sdk.states.Freeze) or me.getState(sdk.states.Cold) ?
+			let coldEffect = GameData.myReference.getState(sdk.states.Freeze) ? -50 : 0; // If we are affected by cold, as a player we receive a penalty of 50.
+			let acceleration = baseRate + effectiveIAS + skillsIAS - weaponSpeedModifier + coldEffect;
+			acceleration = Math.min(175, Math.max(15, acceleration));
+			let startingFrame = this.attackStartingFrame(weaponClass, charClass);
+			let framesPerDirection = this.weaponFramesPerDirection(skillId, weaponClass, charClass);
+			if (framesPerDirection < 1) {
+				print(sdk.colors.Orange + "wrong value for framesPerDirection, IAS calculation may be wrong");
+			}
+
+			print("skillId " + skillId);
+			print("charClass " + charClass);
+			print("weaponCode " + weaponCode);
+			print("weaponClass " + weaponClass);
+			print("ias " + ias);
+			print("effectiveIAS " + effectiveIAS);
+			print("skillsIAS " + skillsIAS);
+			print("weaponSpeedModifier " + weaponSpeedModifier);
+			print("coldEffect " + coldEffect);
+			print("acceleration " + acceleration);
+			print("startingFrame " + startingFrame);
+			print("framesPerDirection " + framesPerDirection);
+			let frames = Math.ceil(BASE_ANIMATION_SPEED * (framesPerDirection - startingFrame) / Math.floor(animationSpeed * acceleration / 100)) - 1;
+			return frames;
+		},
+
+		attackDuration: function (skillId, weaponCode, ias = GameData.myReference.getStat(sdk.stats.Fasterattackrate), charClass = GameData.myReference.classid, weapon2Code = null) {
+			// https://diablo3.ingame.de/forum/threads/1218516-FAQ-Bewegungs-und-Animationsgeschwindigkeiten-Teil-2?s=&postid=17610874
+			return this.attackFrames(skillId, weaponCode, ias, charClass) / 25;
+		},
+
 		// Returns the number of frames needed to cast a given skill at a given FCR for a given char.
-		castingFrames: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+		castingFrames: function (skillId, fcr = GameData.myReference.getStat(sdk.stats.Fastercastrate), charClass = GameData.myReference.classid) {
 			// https://diablo.fandom.com/wiki/Faster_Cast_Rate
 			let effectiveFCR = Math.min(75, (fcr * 120 / (fcr + 120)) | 0);
 			let isLightning = skillId === sdk.skills.Lightning || skillId === sdk.skills.ChainLightning;
@@ -1746,21 +1655,16 @@
 		},
 
 		// Returns the duration in seconds needed to cast a given skill at a given FCR for a given char.
-		castingDuration: function (skillId, fcr = GameData.myReference.getStat(105), charClass = GameData.myReference.classid) {
+		castingDuration: function (skillId, fcr = GameData.myReference.getStat(sdk.stats.Fastercastrate), charClass = GameData.myReference.classid) {
 			return this.castingFrames(skillId, fcr, charClass) / 25;
 		}
 	};
 
 // Export data
-	GameData.MissilesData = MissilesData;
-	GameData.AreaData = AreaData;
 	GameData.isEnemy = isEnemy;
 	GameData.isAlive = isAlive;
 	GameData.onGround = onGround;
 	GameData.itemTier = itemTier;
-	GameData.PresetMonsters = PresetMonsters;
 	GameData.Potions = Potions;
-	GameData.Quests = Quests;
-
 	module.exports = GameData;
 })(module, require);
