@@ -84,7 +84,7 @@
 			get: function () {
 				var bonusReduction = me.getStat(28);
 				var armorMalusReduction = 0; // TODO:
-				return 25 * Math.max(40 * (1 + armorMalusReduction/10) * (100-bonusReduction) / 100, 1) / 256;
+				return 25 * Math.max(40 * (1 + armorMalusReduction / 10) * (100 - bonusReduction) / 100, 1) / 256;
 			}
 		},
 		staminaTimeLeft: { // seconds before I run out of stamina (assuming we are running)
@@ -99,13 +99,13 @@
 		},
 		highestAct: {
 			get: function () {
-				let i=1, acts = [sdk.quests.AbleToGotoActII,
+				let i = 1, acts = [sdk.quests.AbleToGotoActII,
 					sdk.quests.AbleToGotoActIII,
 					sdk.quests.AbleToGotoActIV,
 					sdk.quests.AbleToGotoActV,
 				];
 
-				while(acts.length && me.getQuest(acts.shift(), 0)) {
+				while (acts.length && me.getQuest(acts.shift(), 0)) {
 					i++;
 				}
 				return i;
@@ -199,7 +199,6 @@
 	};
 
 
-
 	me.findItem = function (id, mode, loc, quality) {
 		if (id === undefined) {
 			id = -1;
@@ -261,6 +260,29 @@
 		} while (item.getNext());
 
 		return list;
+	};
+
+	// Credits to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
+	me.talkTo = function (name) {
+		const Pather = require('../modules/Pather'),
+			Town = require('../modules/Town');
+
+		!me.inTown && Town.goToTown();
+
+		for (let i = 5, npc; i; i -= 1) {
+			Town.move(name === "jerhyn" ? "palace" : name);
+			npc = getUnit(1, name === "cain" ? "deckard cain" : name);
+
+			if (npc && npc.openMenu()) {
+				me.cancel();
+				return true;
+			}
+
+			delay(me.ping * 2 + 500);
+			Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
+		}
+
+		return false;
 	};
 
 	me.on = Events.on;

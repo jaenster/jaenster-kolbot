@@ -6,12 +6,15 @@
 
 
 	// Actual classical bot script
-	module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
+	module.exports = function (...args) {
+
+		let [Config, Attack, Pickit, Pather, Town, Misc] = args;
 
 
 		const GameAnalyzer = require('../../modules/GameAnalyzer');
 
 		let nowWhat, scriptRunning, lastScript;
+		scriptRunning = lastScript = '';
 
 		const errorOut = {};
 		do {
@@ -37,6 +40,19 @@
 					case 'quest':
 						const quest = nowWhat[1];
 						console.debug('Want to do quest. ' + quest.name);
+						if (lastScript === scriptRunning) {
+							console.log('Waiting 15 seconds to retry same script again');
+							delay(15000);
+						}
+
+						const module = require('./Questing/' + (lastScript = scriptRunning));
+
+						// prep parameters for, so its module(quest, ...args), but this isn't es6
+						const paramters = [quest];
+						args.forEach(paramters.push.bind(paramters));
+
+						module.apply(module, paramters);
+
 						break;
 				}
 			} catch (e) {
