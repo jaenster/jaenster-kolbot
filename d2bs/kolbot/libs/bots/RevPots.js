@@ -9,6 +9,9 @@ module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 	const Storage = require('../modules/Storage');
 	const excluded = [0,sdk.areas.InnerCloister,sdk.areas.OuterCloister, sdk.areas.MatronsDen,sdk.areas.FogottenSands,sdk.areas.FurnaceofPain,sdk.areas.UberTristram, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.AncientsWay, sdk.areas.MooMooFarm];
 
+	// First check for in town is when stepping _out_ of town, so make sure we check at start, given we are not in town
+	me.inTown && Town();
+
 	this.do = () => !done && GameData.AreaData
 		.filter(target => excluded.indexOf(target.Index) === -1)
 		.map(target => ({area: target, effort: GameData.areaEffort(target.Index)}))
