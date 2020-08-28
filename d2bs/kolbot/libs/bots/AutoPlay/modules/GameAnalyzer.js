@@ -67,7 +67,7 @@
 			do {
 				minlevel--;
 				maxattacks *= 2;
-				areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Level >= minlevel && area[1] <= maxattacks)).slice(0, 4);
+				areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Level >= minlevel && area[1] <= maxattacks)).slice(0, 20);
 			} while (areas.length < 1 && minlevel > 0);
 
 			let outtxt = (me.diff < 2 ? "Top XP Areas (Current " : "Low Effort Areas (Current ") + currentexp.toFixed(1) + "):";
@@ -145,12 +145,6 @@
 			 Do that, repeat.
 			 */
 
-
-			const Pather = require('../../../modules/Pather');
-
-			// If we cant see we have the waypoint of act 1, we didnt interact with any WP yet
-			if (!getWaypoint(1)) Pather.useWaypoint(null);
-
 			const areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Index >= 0));
 			for (let i = 0; i < areas.length; i++) {
 				// Got an area
@@ -161,40 +155,54 @@
 
 				// Can we go to this area?
 				const canAccess = area.canAccess();
-				console.log('Looking at area ' + area.LocaleString);
+				console.log('Looking at area ' + area.LocaleString + ' ('+Math.round(effortXp*100)/100+')');
+
+				tmpSkip.push(area.Index);
 
 				// Found an area we can access, and gives allot of xp
 				if (canAccess) {
-					let dungeonsKey = Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index));
-					if (dungeonsKey) {
-						console.log('Looking at dungeons ' + dungeonsKey);
 
+					// Is this area part of an dungeon?
+					let dungeonsKey = Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index));
+
+					// before saying we want to do this dungeon, lets see if our second best option is as viable as this
+					if (!area.haveWaypoint()) {
+						let copy = tmpSkip.slice();
+
+						if (dungeonsKey) {
+							AreaData.dungeons[dungeonsKey].forEach(el => copy.push(el));
+						} else {
+							copy.push(area.Index);
+						}
+
+
+
+						const result = this.nowWhat(copy);
+						if (result && result.length >= 3) {
+							const [type,what,otherXp] = result;
+
+							const otherArea = type === 'clear' ? what : AreaData[AreaData.dungeons[what].first()];
+
+							// another area only make sense if we do have that waypoint
+							if (!otherArea.haveWaypoint()) {
+								console.debug((type === 'clear' ? what.LocaleString : what) + ' is not a valid option as we dont have that waypoint either');
+							} else if ( 100 / effortXp * otherXp > 70) {
+								console.debug((type === 'clear' ? what.LocaleString : what)+' is a better idea as '+(dungeonsKey || area.LocaleString));
+								return [type,what,otherXp];
+							} else {
+								console.debug((type === 'clear' ? what.LocaleString : what) + ' is not a valid option');
+							}
+						}
+					}
+
+					if (dungeonsKey) {
 						/** @type [Area, number][]*/
 						let dungeonAreas = allareas.filter(([a]) => AreaData.dungeons[dungeonsKey].includes(a.Index));
 
 						// Calculate if every dungeon listed here gives atleast that much xp?
 						if (dungeonAreas.every(([a, curxp]) => !curxp || 100 - (100 / effortXp * curxp) < 30)) {
+
 							// This entire dungeon is an good idea
-
-
-							// before saying we want to do this dungeon, lets see if our second best option is as viable as this
-							if (!area.haveWaypoint()) {
-
-								console.debug('Want to do dungeon, but we dont have waypoint. Seeing other options');
-								let copy = tmpSkip.slice();
-
-								dungeonAreas.forEach(el => copy.push(el[0].Index));
-
-								const result = this.nowWhat(copy);
-								if (result && result.length >= 2) {
-									const [type,what,otherXp] = result;
-									if (100 / effortXp * otherXp > 70) {
-										console.debug('Going with other option instead');
-										return [type,what,otherXp];
-									}
-								}
-							}
-
 							return ['dungeon', dungeonsKey, effortXp];
 						}
 					} else {
@@ -230,8 +238,8 @@
 				const wantedQuest = questTree.first();
 				if (!wantedQuest) continue; // cant figure out what we want
 
-				print('---- Quest tree we need to do to level @ ' + area.LocaleString);
-				questTree.map(q => q.name).join(' --> ');
+				// print('---- Quest tree we need to do to level @ ' + area.LocaleString);
+				// questTree.map(q => q.name).join(' --> ');
 				return wantedQuest && ['quest', wantedQuest]
 			}
 		},

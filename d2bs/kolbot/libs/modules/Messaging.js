@@ -32,7 +32,15 @@
 		on: myEvents.on,
 		off: myEvents.off,
 		once: myEvents.once,
-		send: what => scriptBroadcast(what)
+		send: what => {
+			try {
+				// If we cant stringify it, d2bs cant either
+				JSON.stringify(what);
+				scriptBroadcast(what);
+			} catch (e) {
+				print(e.stack);
+			}
+		}
 	}
 
 })(module, require);
