@@ -256,6 +256,13 @@
 			},
 			LocaleString: getLocaleString(AREA_LOCALE_STRING[index]),
 			InternalName: LocaleStringName[AREA_LOCALE_STRING[index]],
+
+			canAccess: function () {
+				return Quests.some(quest => {
+					// if we have quest, and it opens the path to this area?
+					return me.getQuest(quest.index, 0) && quest.opensAreas.length && quest.opensAreas.includes(this.Index);
+				})
+			}
 		});
 	}
 
@@ -264,6 +271,48 @@
 
 		return matches[0][1];
 	};
+
+
+	AreaData.dungeons = {
+		Hole: [sdk.areas.HoleLvl1, sdk.areas.HoleLvl2,],
+
+		Pit: [sdk.areas.PitLvl1, sdk.areas.PitLvl2],
+
+		Cave: [sdk.areas.CaveLvl1, sdk.areas.CaveLvl2],
+
+		UndergroundPassage: [sdk.areas.UndergroundPassageLvl1, sdk.areas.UndergroundPassageLvl2,],
+
+		Cellar: [sdk.areas.TowerCellarLvl1, sdk.areas.TowerCellarLvl2, sdk.areas.TowerCellarLvl3, sdk.areas.TowerCellarLvl4, sdk.areas.TowerCellarLvl5,],
+
+		// act 2
+		A2Sewers: [sdk.areas.A2SewersLvl1, sdk.areas.A2SewersLvl2, sdk.areas.A2SewersLvl3,],
+
+		StonyTomb: [sdk.areas.StonyTombLvl1, sdk.areas.StonyTombLvl2,],
+
+		HallsOfDead: [sdk.areas.HallsOfDeadLvl1, sdk.areas.HallsOfDeadLvl2, sdk.areas.HallsOfDeadLvl3,],
+
+		ClawViperTemple: [sdk.areas.ClawViperTempleLvl1, sdk.areas.ClawViperTempleLvl2,],
+
+		MaggotLair: [sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3,],
+
+		tombs: [sdk.areas.TalRashasTomb1, sdk.areas.TalRashasTomb2, sdk.areas.TalRashasTomb3, sdk.areas.TalRashasTomb4, sdk.areas.TalRashasTomb5, sdk.areas.TalRashasTomb6, sdk.areas.TalRashasTomb7,],
+
+		// act 3
+		Swamp: [sdk.areas.SwampyPitLvl1, sdk.areas.SwampyPitLvl2, sdk.areas.SwampyPitLvl3,],
+
+		FlayerDungeon: [sdk.areas.FlayerDungeonLvl1, sdk.areas.FlayerDungeonLvl2, sdk.areas.FlayerDungeonLvl3,],
+
+		A3Sewers: [sdk.areas.A3SewersLvl1, sdk.areas.A3SewersLvl2,],
+
+		ForgottenTemples: [sdk.areas.RuinedTemple, sdk.areas.DisusedFane, sdk.areas.ForgottenReliquary, sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary,],
+
+		// act 4 has no areas like that
+
+		// act 5
+		RedPortalPits: [sdk.areas.Abaddon, sdk.areas.PitOfAcheron, sdk.areas.InfernalPit,],
+	};
+
+
 
 //(AreaData);
 
@@ -596,17 +645,120 @@
 		return [];
 	}
 
+	const QuestConsts = {
+		opensAreas: {
+
+			// this makes the program more easy, you need to talk to warriv @ act 1. If you didnt, its a very new char so. Do this so it seems like area's open up
+			SpokeToWarriv: [sdk.areas.RogueEncampment, sdk.areas.BloodMoor, sdk.areas.ColdPlains, sdk.areas.StonyField, sdk.areas.DarkWood, sdk.areas.BlackMarsh, sdk.areas.TamoeHighland, sdk.areas.DenOfEvil, sdk.areas.CaveLvl1, sdk.areas.UndergroundPassageLvl1, sdk.areas.HoleLvl1, sdk.areas.PitLvl1, sdk.areas.CaveLvl2, sdk.areas.UndergroundPassageLvl2, sdk.areas.HoleLvl2, sdk.areas.PitLvl2, sdk.areas.BurialGrounds, sdk.areas.Crypt, sdk.areas.Mausoleum, sdk.areas.ForgottenTower, sdk.areas.TowerCellarLvl1, sdk.areas.TowerCellarLvl2, sdk.areas.TowerCellarLvl3, sdk.areas.TowerCellarLvl4, sdk.areas.TowerCellarLvl5, sdk.areas.MonasteryGate, sdk.areas.OuterCloister, sdk.areas.Barracks, sdk.areas.JailLvl1, sdk.areas.JailLvl2, sdk.areas.JailLvl3, sdk.areas.InnerCloister, sdk.areas.Cadral, sdk.areas.CatacombsLvl1, sdk.areas.CatacombsLvl2, sdk.areas.CatacombsLvl3, sdk.areas.CatacombsLvl4],
+
+			// Act 1 gives access to all areas, except tristham
+			TheSearchForCain: [sdk.areas.Tristram],
+
+			// act 2
+			AbleToGotoActII: [sdk.areas.LutGholein, sdk.areas.RockyWaste, sdk.areas.DryHills, sdk.areas.FarOasis, sdk.areas.LostCity, sdk.areas.ValleyOfSnakes,
+
+				// sewers are always available
+				sdk.areas.A2SewersLvl1, sdk.areas.A2SewersLvl2, sdk.areas.A2SewersLvl3,
+
+				// Dungeons are always available if you have access to act 2
+				sdk.areas.StonyTombLvl1, sdk.areas.HallsOfDeadLvl1, sdk.areas.HallsOfDeadLvl2, sdk.areas.ClawViperTempleLvl1, sdk.areas.StonyTombLvl2, sdk.areas.HallsOfDeadLvl3, sdk.areas.ClawViperTempleLvl2, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.AncientTunnels,
+			],
+			TheArcaneSanctuary: [sdk.areas.TalRashasTomb1, sdk.areas.TalRashasTomb2, sdk.areas.TalRashasTomb3, sdk.areas.TalRashasTomb4, sdk.areas.TalRashasTomb5, sdk.areas.TalRashasTomb6, sdk.areas.TalRashasTomb7],
+
+			TheTaintedSun: [sdk.areas.HaremLvl1, sdk.areas.HaremLvl2, sdk.areas.PalaceCellarLvl1, sdk.areas.PalaceCellarLvl2, sdk.areas.PalaceCellarLvl3, sdk.areas.ArcaneSanctuary],
+
+			// Placing the staff completes the quest and its what opens it
+			TheHoradricStaff: [sdk.areas.DurielsLair],
+
+
+			// act 3
+			// This opens everything @ act 3 except mephisto area's
+			AbleToGotoActIII: [sdk.areas.KurastDocktown, sdk.areas.SpiderForest, sdk.areas.GreatMarsh, sdk.areas.FlayerJungle, sdk.areas.LowerKurast, sdk.areas.KurastBazaar, sdk.areas.UpperKurast, sdk.areas.KurastCauseway, sdk.areas.Travincal, sdk.areas.SpiderCave, sdk.areas.SpiderCavern, sdk.areas.SwampyPitLvl1, sdk.areas.SwampyPitLvl2, sdk.areas.FlayerDungeonLvl1, sdk.areas.FlayerDungeonLvl2, sdk.areas.SwampyPitLvl3, sdk.areas.FlayerDungeonLvl3, sdk.areas.A3SewersLvl1, sdk.areas.A3SewersLvl2, sdk.areas.RuinedTemple, sdk.areas.DisusedFane, sdk.areas.ForgottenReliquary, sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary,],
+			KhalimsWill: [sdk.areas.DuranceOfHateLvl1, sdk.areas.DuranceOfHateLvl2, sdk.areas.DuranceOfHateLvl3],
+
+			// act 4 is bloody simple
+			AbleToGotoActIV: [sdk.areas.PandemoniumFortress, sdk.areas.OuterSteppes, sdk.areas.PlainsOfDespair, sdk.areas.CityOfDamned, sdk.areas.RiverOfFlame, sdk.areas.ChaosSanctuary],
+
+
+			// Act 5
+			// Act 5 is very much like act 3, you can enter almost all from the start, minor differences
+			AbleToGotoActV: [
+				sdk.areas.Harrogath,
+				sdk.areas.BloodyFoothills,
+				sdk.areas.FrigidHighlands,
+				sdk.areas.ArreatPlateau,
+				sdk.areas.CrystalizedPassage,
+				sdk.areas.FrozenRiver,
+				sdk.areas.GlacialTrail,
+				sdk.areas.DrifterCavern,
+				sdk.areas.FrozenTundra,
+				sdk.areas.AncientsWay,
+				sdk.areas.IcyCellar,
+				sdk.areas.ArreatSummit,
+				sdk.areas.Abaddon,
+				sdk.areas.PitOfAcheron,
+				sdk.areas.InfernalPit,
+			],
+
+			// Anya's quest opens up the temple areas
+			PrisonOfIce: [sdk.areas.NihlathaksTemple, sdk.areas.HallsOfAnguish, sdk.areas.HallsOfPain, sdk.areas.HallsOfVaught,],
+
+			// Ancients open up the throne obv
+			RiteOfPassage: [sdk.areas.WorldstoneLvl1, sdk.areas.WorldstoneLvl2, sdk.areas.WorldstoneLvl3, sdk.areas.ThroneOfDestruction, sdk.areas.WorldstoneChamber,],
+
+			// Technically so does Chaos but, lets focus on xpac. @ToDo: Fix classic support
+			EveOfDestruction: [sdk.areas.MooMooFarm],
+		},
+		prerequisites: {
+			// Act 1,
+			// You can do everything right away @ act 1, however these 2 are special
+			SecretCowLevel: [sdk.quests.TheSearchForCain, sdk.quests.EveOfDestruction], // side quest
+			RespecQuest: [sdk.quests.DenOfEvil], // side quest / reward
+
+
+			// Act 2
+
+			// To go to act 2, you need to pwn andy
+			AbleToGotoActII: [sdk.quests.SistersToTheSlaughter],
+			RadamentsLair: [sdk.quests.AbleToGotoActII], // Side quest  / reward
+			TheTaintedSun: [sdk.quests.AbleToGotoActII],
+			TheArcaneSanctuary: [sdk.quests.TheTaintedSun],
+			TheHoradricStaff: [sdk.quests.TheArcaneSanctuary],
+			TheSevenTombs: [sdk.quests.TheHoradricStaff],
+
+			// Act 3
+			AbleToGotoActIII: [sdk.quests.TheSevenTombs],
+			LamEsensTome: [sdk.quests.AbleToGotoActIII], // Side quest  / reward
+			KhalimsWill: [sdk.quests.AbleToGotoActIII],
+			TheBlackenedTemple: [sdk.quests.KhalimsWill],
+			TheGuardian: [sdk.quests.KhalimsWill], // you can glitch around it but lets assume this
+
+			// Act 4,
+			AbleToGotoActIV: [sdk.quests.TheGuardian],
+			HellsForge: [sdk.quests.AbleToGotoActIV], // Side quest / reward
+			TheFallenAngel: [sdk.quests.AbleToGotoActIV], // Side quest / reward
+			TerrorsEnd: [sdk.quests.AbleToGotoActIV],
+
+			// Act 5,
+			AbleToGotoActV: [sdk.quests.TerrorsEnd],
+			SiegeOnHarrogath: [sdk.quests.AbleToGotoActV], // Side quest / reward
+			PrisonOfIce: [sdk.quests.AbleToGotoActV],// Side quest / reward
+			RiteOfPassage: [sdk.quests.AbleToGotoActV], // lvl req
+			EveOfDestruction: [sdk.quests.RiteOfPassage],
+		}
+	};
 	for (var q = sdk.quests.SpokeToWarriv; q <= sdk.quests.SecretCowLevel; q++) {
 		Quests[q] = {
 			index: q,
-			name: Object.keys(sdk.quests).find(x => sdk.quests[x] == q),
+			name: Object.keys(sdk.quests).find(x => sdk.quests[x] === q),
 			mandatory: MandatoryQuests.indexOf(q) > -1,
 			reward: RewardedQuests.indexOf(q) > -1,
 			areas: Quests.areasForQuest(q),
-			act: Quests.actForQuest(q),
 			bosses: Quests.bossForQuest(q),
-			do: ((q) => () => require('../bots/Questing').doQuest(q))(q)
-		}
+			opensAreas: [], // Set in block below
+			prerequisites: [], // Set in block below
+		};
+		['opensAreas', 'prerequisites'].forEach(key => Quests[q][key] = QuestConsts[key].hasOwnProperty(Quests[q].name) ? QuestConsts[key][Quests[q].name] : []);
 	}
 
 //(Quests);
