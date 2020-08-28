@@ -11,9 +11,8 @@
 	module.exports = function (...args) {
 
 		let [Config, Attack, Pickit, Pather, Town, Misc] = args;
-
-
-		const GameAnalyzer = require('../../modules/GameAnalyzer');
+		const Feedback = require('./modules/Feedback');
+		const GameAnalyzer = require('./modules/GameAnalyzer');
 
 		let nowWhat, scriptRunning, lastScript;
 		scriptRunning = lastScript = '';
@@ -31,18 +30,27 @@
 						console.debug('Nothing more to do');
 						break;
 
-					case 'dungeon':
+					case 'dungeon': {
+						const dungeonName = nowWhat[1];
+
+						Feedback.lastDecision = 'Want to dungeon ' + dungeonName;
 						console.debug('We want to pwn a dungeon');
 
 						//ToDo; write properly
 						break;
+					}
 
-					case 'clear':
+					case 'clear': {
+						const area = Feedback.area = nowWhat[1];
+
+						Feedback.lastDecision = 'clear area ' + area.LocaleString;
 						console.debug('Want to clear a area: ' + nowWhat[1].LocaleString);
 						break;
+					}
 
-					case 'quest':
+					case 'quest': {
 						const quest = nowWhat[1];
+						Feedback.lastDecision = 'do quest '+ quest.name;
 						console.debug('Want to do quest. ' + quest.name);
 
 						if (lastScript === (scriptRunning = quest.name)) {
@@ -55,6 +63,7 @@
 						delay(1500);
 
 						break;
+					}
 				}
 			} catch (e) {
 				console.log(e);

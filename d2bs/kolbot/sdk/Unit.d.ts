@@ -53,6 +53,7 @@ declare class Unit {
 }
 
 declare class me {
+    public fps: number;
     revive() : void;
     getRepairCost() :number;
 }

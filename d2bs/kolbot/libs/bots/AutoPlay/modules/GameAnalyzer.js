@@ -3,9 +3,11 @@
  * @Author Nishimura-Katsuo, Jaenster
  */
 (function (module, require) {
-	const GameData = require('./GameData');
-	const AreaData = require('./AreaData');
-	const QuestData = require('./QuestData');
+	const GameData = require('../../../modules/GameData');
+	const AreaData = require('../../../modules/AreaData');
+	const QuestData = require('../../../modules/QuestData');
+
+	const Feedback = require('./Feedback');
 
 	let allareas = [];
 	const Analyzer = new function () {
@@ -108,7 +110,7 @@
 
 
 	// (() => { // Which are the updates
-	const Delta = require('../modules/Deltas');
+	const Delta = require('../../../modules/Deltas');
 	const deltas = new Delta();
 	deltas.track(() => me.charlvl, Analyzer.update);
 
@@ -179,6 +181,9 @@
 				const areaId = area.Index;
 				const quest = QuestData.find(quest => quest.opensAreas.includes(areaId));
 				if (!quest) continue; // We cant find the quest we need to do for this area, wtf
+
+				// the quest we wanna work to
+				Feedback.quest = quest;
 
 				const questTree = [quest];
 				// For each prerequisites we need to see recursively if we need to do the previous onem

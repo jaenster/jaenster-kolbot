@@ -13,7 +13,6 @@
 		let pwnedAndy = 0;
 
 		if (!log[states.PwnedAndy]) {
-			QuestData.logQuestStatuses(quest);
 			// Already did quest?
 			if (me.getQuest(quest.index, 0)) {
 				return true; // Done already
