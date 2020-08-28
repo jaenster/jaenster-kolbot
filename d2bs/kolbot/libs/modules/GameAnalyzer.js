@@ -108,7 +108,7 @@
 
 
 	// (() => { // Which are the updates
-	const Delta = require('../../modules/Deltas');
+	const Delta = require('../modules/Deltas');
 	const deltas = new Delta();
 	deltas.track(() => me.charlvl, Analyzer.update);
 

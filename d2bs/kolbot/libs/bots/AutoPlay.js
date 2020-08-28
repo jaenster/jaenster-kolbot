@@ -5,7 +5,7 @@
 
 (function (module, require) {
 
-	const first = (new Error().stack.match(/[^\r\n]+/g)).unshift(),
+	const first = (new Error().stack.match(/[^\r\n]+/g)).shift(),
 		filename = (fn => fn.substr(0, fn.indexOf('.')))(first.substr(first.lastIndexOf('\\') + 1));
 
 	module.exports = require('./'+filename+'/main');

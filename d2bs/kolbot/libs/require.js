@@ -10,6 +10,7 @@ typeof global === 'undefined' && (this['global'] = this);
 
 global['module'] = {exports: undefined};
 global['exports'] = {};
+
 function removeRelativePath(test) {
 	return test.replace(/\\/g, '/').split('/').reduce(function (acc, cur) {
 		if (!cur || cur === '.') return acc;
@@ -28,9 +29,9 @@ function removeRelativePath(test) {
 
 	let depth = 0;
 	const modules = {};
-	const obj = function require(field, path,debug) {
+	const obj = function require(field, path, debug) {
 		const stack = new Error().stack.match(/[^\r\n]+/g);
-		let directory,filename;
+		let directory, filename;
 		try {
 			directory = stack[1].match(/.*?@.*?d2bs\\(kolbot\\?.*)\\.*(\.js|\.dbj|console):/)[1].replace('\\', '/') + '/';
 			filename = stack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj|console):/)[1];
@@ -38,8 +39,8 @@ function removeRelativePath(test) {
 			filename = filename.substr(filename.length - filename.split('').reverse().join('').indexOf('\\'));
 		} catch (e) {
 			print('ERROR WTF');
-			print('                 '+e.message);
-			print('                 '+e.stack);
+			print('                 ' + e.message);
+			print('                 ' + e.stack);
 		}
 		let appendUpperFolder = !removeRelativePath(directory + field).startsWith('kolbot/libs');
 
@@ -69,7 +70,7 @@ function removeRelativePath(test) {
 		}
 
 		if (appendUpperFolder) {
-			fullpath = '../'+fullpath;
+			fullpath = '../' + fullpath;
 		}
 
 		const packageName = fullpath;
@@ -80,9 +81,9 @@ function removeRelativePath(test) {
 			return modules[packageName] = File.open('libs/' + path + field, 0).readAllLines();
 		}
 
-		const match  =(fullpath + '.js').match(/.*?\/(\w*).js$/);
+		const match = (fullpath + '.js').match(/.*?\/(\w*).js$/);
 		if (!match) {
-			(function(){
+			(function () {
 				const err = new Error('module "' + fullpath + '.js" not found');
 				print('error eh');
 
@@ -90,7 +91,7 @@ function removeRelativePath(test) {
 				err.fileName = directory + myStack[2].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
 				err.lineNumber = myStack[2].substr(stack[1].lastIndexOf(':') + 1);
 				print(err.fileName + ':' + err.lineNumber + ' module ' + fullpath + ' not found');
-				throw new Error(err.fileName+'.js' + ':' + err.lineNumber + ' module ' + fullpath + ' not found');
+				throw new Error(err.fileName + '.js' + ':' + err.lineNumber + ' module ' + fullpath + ' not found');
 			})();
 		}
 		const moduleNameShort = match[1];
@@ -113,11 +114,12 @@ function removeRelativePath(test) {
 					const err = new Error('module ' + fullpath + ' not found');
 
 					// Rewrite the location of the error, to be more clear for the developer/user _where_ it crashes
-					const myStack = err.stack.match(/[^\r\n]+/g);
-					err.fileName = directory + myStack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
-					err.lineNumber = myStack[1].substr(stack[1].lastIndexOf(':') + 1);
-					myStack.unshift();
-					err.stack = myStack.join('\r\n'); // rewrite stack
+					// const myStack = err.stack.match(/[^\r\n]+/g);
+					// err.fileName = directory + myStack[1].match(/.*?@.*?d2bs\\kolbot\\?(.*)(\.js|\.dbj):/)[1];
+					// err.lineNumber = myStack[1].substr(stack[1].lastIndexOf(':') + 1);
+					// myStack.unshift();
+					// err.stack = myStack.join('\r\n'); // rewrite stack
+					console.debug((new Error).stack);
 
 					throw err;
 				}
