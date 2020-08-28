@@ -128,7 +128,7 @@
 	const myData = module.exports = {
 		skip: [sdk.areas.InnerCloister],
 		areas: [],
-		nowWhat: function() {
+		nowWhat: function (tmpSkip=[]) {
 			/**
 
 			 The idea,
@@ -145,30 +145,58 @@
 			 Do that, repeat.
 			 */
 
-			print('Now what?');
-			const areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Level >= 0));
+
+			const Pather = require('../../../modules/Pather');
+
+			// If we cant see we have the waypoint of act 1, we didnt interact with any WP yet
+			if (!getWaypoint(1)) Pather.useWaypoint(null);
+
+			const areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Index >= 0));
 			for (let i = 0; i < areas.length; i++) {
 				// Got an area
 				const [area, effortXp] = areas[i];
 
-				if (this.skip.includes(area.Level)) continue; // Nope
+				if (this.skip.includes(area.Index)) continue; // Nope
+				if (tmpSkip.includes(area.Index)) continue; // Nope
 
 				// Can we go to this area?
 				const canAccess = area.canAccess();
-				print('Looking at area ' + area.LocaleString);
+				console.log('Looking at area ' + area.LocaleString);
 
 				// Found an area we can access, and gives allot of xp
 				if (canAccess) {
 					let dungeonsKey = Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index));
 					if (dungeonsKey) {
-						print('Looking at dungeons ' + dungeonsKey);
+						console.log('Looking at dungeons ' + dungeonsKey);
 
 						/** @type [Area, number][]*/
-						let dungeonAreas = allareas.filter(([a]) => a.Index === AreaData.dungeons[dungeonsKey].includes(area.Index));
+						let dungeonAreas = allareas.filter(([a]) => AreaData.dungeons[dungeonsKey].includes(a.Index));
 
 						// Calculate if every dungeon listed here gives atleast that much xp?
 						if (dungeonAreas.every(([a, curxp]) => !curxp || 100 - (100 / effortXp * curxp) < 30)) {
 							// This entire dungeon is an good idea
+
+
+							// before saying we want to do this dungeon, lets see if our second best option is as viable as this
+							if (!area.haveWaypoint()) {
+
+								console.debug('Want to do dungeon, but we dont have waypoint. Seeing other options');
+								let copy = tmpSkip.slice();
+
+								dungeonAreas.forEach(el => copy.push(el[0].Index));
+
+								console.debug(copy);
+								delay(1000);
+								const result = this.nowWhat(copy);
+								if (result && result.length >= 2) {
+									const [type,what,otherXp] = result;
+									if (100 / effortXp * otherXp > 70) {
+										console.debug('Going with other option instead');
+										return [type,what,otherXp];
+									}
+								}
+							}
+
 							return ['dungeon', dungeonsKey, effortXp];
 						}
 					} else {
@@ -205,7 +233,7 @@
 				if (!wantedQuest) continue; // cant figure out what we want
 
 				print('---- Quest tree we need to do to level @ ' + area.LocaleString);
-				questTree.map(q=>q.name).join(' --> ');
+				questTree.map(q => q.name).join(' --> ');
 				return wantedQuest && ['quest', wantedQuest]
 			}
 		},

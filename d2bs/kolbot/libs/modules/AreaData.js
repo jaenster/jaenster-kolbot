@@ -81,6 +81,30 @@
 					// if we have quest, and it opens the path to this area?
 					return me.getQuest(quest.index, 0) && quest.opensAreas.length && quest.opensAreas.includes(this.Index);
 				})
+			},
+			townArea: function () {
+				return AreaData[[1, sdk.areas.RogueEncampment, sdk.areas.LutGholein, sdk.areas.KurastDocktown, sdk.areas.PandemoniumFortress, sdk.areas.Harrogath][this.Act]];
+			},
+			haveWaypoint: function () {
+				const Pather = require('./Pather');
+
+				console.debug(getWaypoint(1));
+				// If we cant see we have the waypoint of act 1, we didnt interact with any WP yet
+				if (!getWaypoint(1)) Pather.useWaypoint(null);
+
+				// plot toward this are
+				const plot = Pather.plotCourse(this.Index, this.townArea().Index);
+
+				console.debug(plot);
+				const course = plot.course;
+
+				// get the last area that got a WP
+				let wpArea = plot.course.filter(el => Pather.wpAreas.indexOf(el) > -1).last();
+
+				console.debug(wpArea);
+
+				// If you dont need a wp, we want at least the town's wp
+				return getWaypoint(Pather.wpAreas.indexOf(wpArea || this.townArea().Index));
 			}
 		});
 	}
