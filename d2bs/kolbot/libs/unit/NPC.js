@@ -39,6 +39,15 @@ Unit.prototype.openMenu = function (addDelay) {
 				return true;
 			}
 
+			// if we are interacting with the npc, but we find no selectable text,
+			if (!getUIFlag(sdk.uiflags.NPCMenu) && getInteractedNPC() && !getDialogLines() && !getUIFlag(sdk.uiflags.Shop)) {
+
+				print('seems like its just text, cancel that shit');
+				// we can assume we are listing to some boring story, cancel that shit
+				me.cancel();
+				delay(100); // give it all a sec
+			}
+
 			if (getInteractedNPC() && getTickCount() - tick > 1000) {
 				me.cancel();
 			}
