@@ -38,3 +38,32 @@ const clickItemAndWait = (...args) => {
 	delay(Math.max(me.ping, 50));
 	itemEvent = false;
 };
+
+
+(function(global,print) {
+	global['console'] = global['console'] || (function() {
+		const console = {};
+
+		const argMap = el => typeof el === 'object' && el /*not null */ && JSON.stringify(el) || el;
+
+		console.log = function(...args) {
+			// use call to avoid type errors
+			print.call(null,args.map(argMap).join(','));
+		};
+
+		console.printDebug = true;
+		console.debug = function(...args) {
+
+			if (console.printDebug) {
+				const stack = new Error().stack.match(/[^\r\n]+/g),
+					filenameAndLine = stack && stack.length && stack[1].substr(stack[1].lastIndexOf('\\') + 1) || 'unknown:0';
+
+				this.log('ÿc:[ÿc:' + filenameAndLine  + 'ÿc:]ÿc0 '+args.map(argMap).join(','));
+			}
+		};
+
+		return console;
+
+	})()
+
+})([].filter.constructor('return this')(),print);
