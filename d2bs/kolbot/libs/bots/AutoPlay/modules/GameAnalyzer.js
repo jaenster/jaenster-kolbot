@@ -185,8 +185,6 @@
 
 								dungeonAreas.forEach(el => copy.push(el[0].Index));
 
-								console.debug(copy);
-								delay(1000);
 								const result = this.nowWhat(copy);
 								if (result && result.length >= 2) {
 									const [type,what,otherXp] = result;
