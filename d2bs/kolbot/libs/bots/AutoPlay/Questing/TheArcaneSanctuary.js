@@ -2,7 +2,7 @@
 
 	const QuestData = require('../../../modules/QuestData');
 
-	module.exports = function (quest) {
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		// Log the quest status
 		QuestData.logQuestStatuses(quest);
 

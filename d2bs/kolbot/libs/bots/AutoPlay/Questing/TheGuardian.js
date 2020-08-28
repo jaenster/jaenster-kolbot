@@ -20,9 +20,9 @@
 		return false;
 	};
 
-	module.exports = function (quest) {
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		const TownPrecast = require('../../../modules/TownPrecast');
-		const sdk = require('../../modules/sdk');
+
 
 		TownPrecast();
 		if (!Pather.journeyTo(sdk.areas.DuranceOfHateLvl3)) {

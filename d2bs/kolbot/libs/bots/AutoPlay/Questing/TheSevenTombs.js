@@ -1,6 +1,6 @@
 (function (module, require) {
-	const sdk = require('../../modules/sdk');
-	module.exports = function (quest) {
+
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		if (me.act === 2 && me.area === sdk.areas.LutGholein) {
 			const portal = getUnits(2,59).filter(portal => portal && portal.objtype > sdk.areas.AncientTunnels && portal.objtype < sdk.areas.DurielsLair).first();
 			print(portal && portal.toSource());

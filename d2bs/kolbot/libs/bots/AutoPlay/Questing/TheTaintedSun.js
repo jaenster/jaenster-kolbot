@@ -1,15 +1,14 @@
-(function() {
+(function () {
 
 	const QuestData = require('../../../modules/QuestData');
 
-	module.exports = function (quest) {
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		// Log the quest status
 		QuestData.logQuestStatuses(quest);
 
 		const log = QuestData.fetchQuestArray(quest);
 
-		Pather.useWaypoint(sdk.areas.LostCity);
-		Pather.moveToExit([sdk.areas.ValleyOfSnakes,sdk.areas.ClawViperTempleLvl1,sdk.areas.ClawViperTempleLvl2],true);
+		Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
 
 		Pather.moveTo(15044, 14045); // ToDo; figure out what lvl we are
 

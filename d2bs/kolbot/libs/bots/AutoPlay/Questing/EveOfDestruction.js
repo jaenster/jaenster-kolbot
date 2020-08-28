@@ -1,6 +1,6 @@
 (function (module, require) {
 
-	module.exports = function (quest) {
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 
 		const getMonsters = () => {
 

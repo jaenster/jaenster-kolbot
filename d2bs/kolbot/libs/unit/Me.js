@@ -262,12 +262,68 @@
 		return list;
 	};
 
+	// get the item classid from chestid. Usefull for items like inifuss with tree, act 2 staff and amulet with chests etc...
+	me.getQuestItem = function (classid, chestid) { // Accepts classid only or a classid/chestid combination.
+		const Storage = require('../modules/Storage'),
+			Pickit = require('../modules/Pickit'),
+			Town = require('../modules/Town'),
+			Misc = require('../modules/Misc');
+
+		var i, chest, item,
+			tick = getTickCount();
+
+		if (me.findItem(classid)) { // Don't open "chest" or try picking up item if we already have it.
+			return true;
+		}
+
+		if (me.inTown) {
+			return false;
+		}
+
+		if (arguments.length > 1) {
+			chest = getUnit(2, chestid);
+			if (chest) {
+				Misc.openChest(chest);
+			}
+		}
+
+		for (i = 0; i < 50; i += 1) { // Give the quest item plenty of time (up to two seconds) to drop because if it's not detected the function will end.
+			item = getUnit(4, classid);
+			if (item) {
+				break;
+			}
+			delay(40);
+		}
+
+		while (!me.findItem(classid)) { // Try more than once in case someone beats me to it.
+			item = getUnit(4, classid);
+			if (item) {
+				if (Storage.Inventory.CanFit(item)) {
+					Pickit.pickItem(item);
+					delay(me.ping * 2 + 500);
+				} else {
+					if (Pickit.canMakeRoom()) {
+						print("ÿc1Trying to make room for " + Pickit.itemColor(item) + item.name);
+						Town.visitTown(); // Go to Town and do chores. Will throw an error if it fails to return from Town.
+					} else {
+						print("ÿc1Not enough room for " + Pickit.itemColor(item) + item.name);
+						return false;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+
 	// Credits to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
 	me.talkTo = (npc) => {
 		const NPC = require('../modules/NPC'),
 			Town = require('../modules/Town'),
 			Pather = require('../modules/Pather');
-
 
 
 		for (var i = 0; i < 5; i++) {
@@ -282,6 +338,29 @@
 		}
 
 		return false;
+	};
+
+	me.getCube = () => {
+		const Misc = require('../modules/Misc');
+
+		me.journeyToPreset(sdk.areas.HallsOfDeadLvl3, 2, sdk.units.HoradricCubeChest);
+
+		const chest = getUnit(2, sdk.units.HoradricCubeChest);
+		if (chest) {
+			Misc.openChest(chest);
+		}
+
+		const cube = Misc.poll(() => getUnit(4, sdk.items.cube), 3000, 30);
+		cube && cube.pick();
+
+		return !!me.getItem(sdk.items.cube);
+	};
+
+	me.openCube = () => {
+		while (!getUIFlag(0x1A)) {
+			sendPacket(1, 0x27, 4, me.findItem(-1, -1, me.findItems(-1, -1, 3) === false ? 1 : 3).gid, 4, me.getItem("box").gid);
+			delay((me.ping || 0) * 2 + 200);
+		}
 	};
 
 	me.on = Events.on;

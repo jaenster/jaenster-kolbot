@@ -1,10 +1,8 @@
 (function (module, require) {
-	const sdk = require('../../modules/sdk');
-	module.exports = function (quest) {
-		const cube = me.findItem('box');
-		if (!cube) {
-			// Dont have a cube, fetch one
-			Cubing.getCube();//ToDO; write a proper function
+
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
+		if (!me.findItem('box') || !me.getCube()) {
+			throw Error('Failed to get a cube')
 		}
 
 		let fullStaff = me.getItem(91);
@@ -16,7 +14,7 @@
 			// somehow lost the amulet, do the quest of getting the amulet again
 			require('./TheTaintedSun')(require('../../../modules/QuestData')[sdk.quests.TheTaintedSun])
 		} else if (!fullStaff) {
-			Cubing.openCube();
+			me.openCube();
 			clickItemAndWait(0, amulet);
 			clickItemAndWait(0, 1, 1, sdk.storage.Cube);
 		}
@@ -34,7 +32,7 @@
 
 		if (!fullStaff) {
 			// Open cube, move to cube
-			Cubing.openCube();
+			me.openCube();
 			clickItemAndWait(0, staff);
 			clickItemAndWait(0, 0, 0, sdk.storage.Cube);
 			transmute();
@@ -57,7 +55,7 @@
 		delay(500);
 		fullStaff = me.getItem(91);
 		// open cube
-		Cubing.openCube();
+		me.openCube();
 		print('Getting staff from cube');
 		// clickItemAndWait(0, fullStaff);
 		// me.cancel();

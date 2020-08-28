@@ -11,7 +11,7 @@
 		finishedFlail: 174,
 	};
 
-	module.exports = function (quest) {
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		QuestData.logQuestStatuses(quest);
 
 		const parts = [
@@ -36,7 +36,7 @@
 				if (Pather.moveToPreset(me.area, 2, chestid)) {
 					me.getQuestItem(id, chestid);
 					const item = me.getItem(id);
-					Cubing.openCube();
+					me.openCube();
 					clickItemAndWait(0, item);
 					clickItemAndWait(0, x, y, sdk.storage.Cube);
 				}
@@ -81,7 +81,7 @@
 
 			// place in cube
 			const flail = me.getItem(classids.plainFlail);
-			Cubing.openCube();
+			me.openCube();
 			clickItemAndWait(0, flail);
 			clickItemAndWait(0, 0, 0, sdk.storage.Cube);
 
@@ -100,7 +100,7 @@
 			Pather.moveTo(wp.x + 85, wp.y - 139);
 
 			// if in cube open the cube
-			(finishedFlail.location === sdk.storage.Cube) && !getUIFlag(sdk.uiflags.Cube) && Cubing.openCube();
+			(finishedFlail.location === sdk.storage.Cube) && !getUIFlag(sdk.uiflags.Cube) && me.openCube();
 
 			// Equip if we havent equiped it yet
 			if (finishedFlail.location !== sdk.storage.Equipment) {

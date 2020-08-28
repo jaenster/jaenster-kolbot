@@ -188,6 +188,11 @@ Unit.prototype.sell = function () {
 	return false;
 };
 
+Unit.prototype.pick = function () {
+	const Pickit = require('../modules/Pickit');
+	this.type === 4 && Pickit.pickItem(this);
+};
+
 Unit.prototype.toCursor = function () {
 	const Town = require('../modules/Town');
 	if (this.type !== 4) {
@@ -367,7 +372,6 @@ Unit.prototype.getSuffix = function (id) {
 };
 
 
-
 Object.defineProperty(Unit.prototype, "dexreq", {
 	get: function () {
 		var finalReq,
@@ -443,7 +447,7 @@ Unit.prototype.getItemsEx = function (...args) {
 };
 
 Object.defineProperty(Unit.prototype, "skinCode", {
-	get: function() {
+	get: function () {
 		var code;
 		if (this.getFlag(0x10)) {
 			switch (this.quality) {

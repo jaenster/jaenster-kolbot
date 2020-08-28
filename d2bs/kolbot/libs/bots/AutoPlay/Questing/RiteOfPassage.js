@@ -12,7 +12,7 @@
 		return coords.filter((e, i, s) => s.indexOf(e) === i); // only unique spots
 	};
 
-	module.exports = function (quest) {
+	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		const Skills = require('../../../modules/Skills');
 		let altar, i, j,
 			boss = [22488, 22489, 22490]; //Korlic, Madawc, Talic

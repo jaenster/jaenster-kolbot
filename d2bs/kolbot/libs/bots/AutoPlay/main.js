@@ -57,9 +57,10 @@
 			} catch (e) {
 				console.log(e);
 				Misc.errorReport(e, 'AutoPlay, ' + (scriptRunning || ''));
-
-				if (++errorOut[me.area] > 5) break;
+				if (typeof errorOut[me.area] === 'undefined') errorOut[me.area] = 0;
+				if ((++errorOut[me.area]) > 5) break;
 				console.log('Retry #' + (errorOut[me.area] + '/5'));
+				delay(10000)
 			}
 		} while (nowWhat);
 
