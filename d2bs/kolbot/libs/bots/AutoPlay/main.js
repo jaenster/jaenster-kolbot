@@ -19,7 +19,9 @@
 		const errorOut = {};
 		do {
 
+
 			nowWhat = GameAnalyzer.nowWhat();
+			delay(1000);
 			try {
 				switch (nowWhat && nowWhat.length >= 2 && nowWhat[0]) {
 					case false:
@@ -40,18 +42,15 @@
 					case 'quest':
 						const quest = nowWhat[1];
 						console.debug('Want to do quest. ' + quest.name);
-						if (lastScript === scriptRunning) {
+
+						if (lastScript === (scriptRunning = quest.name)) {
 							console.log('Waiting 15 seconds to retry same script again');
-							delay(15000);
+							delay(1500);
 						}
 
-						const module = require('./Questing/' + (lastScript = scriptRunning));
+						require('./Questing/' + (lastScript = scriptRunning))(quest, Config, Attack, Pickit, Pather, Town, Misc);
 
-						// prep parameters for, so its module(quest, ...args), but this isn't es6
-						const paramters = [quest];
-						args.forEach(paramters.push.bind(paramters));
-
-						module.apply(module, paramters);
+						delay(1500);
 
 						break;
 				}

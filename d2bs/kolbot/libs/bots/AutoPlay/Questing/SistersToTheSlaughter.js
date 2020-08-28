@@ -1,6 +1,5 @@
 (function (module, require) {
 
-	// const Attack = require('../../../modules/Attack');
 	const QuestData = require('../../../modules/QuestData');
 
 	const states = {
@@ -9,7 +8,7 @@
 		WantToTalkToWarriv: 3,
 	};
 
-	module.exports = function (quest) {
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		print('--------------- <---');
 
 		const log = QuestData.fetchQuestArray(quest);
@@ -25,7 +24,7 @@
 
 
 			print('Doing andy');
-			Town.doChores();
+			Town();
 			Pather.journeyTo(37);
 
 			Pather.moveTo(22549, 9520);

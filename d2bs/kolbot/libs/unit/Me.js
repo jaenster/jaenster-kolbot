@@ -263,21 +263,20 @@
 	};
 
 	// Credits to Jean Max for this function: https://github.com/JeanMax/AutoSmurf/blob/master/AutoSmurf.js#L1346
-	me.talkTo = function (name) {
-		const Pather = require('../modules/Pather'),
-			Town = require('../modules/Town');
+	me.talkTo = (npc) => {
+		const NPC = require('../modules/NPC'),
+			Town = require('../modules/Town'),
+			Pather = require('../modules/Pather');
 
-		!me.inTown && Town.goToTown();
 
-		for (let i = 5, npc; i; i -= 1) {
-			Town.move(name === "jerhyn" ? "palace" : name);
-			npc = getUnit(1, name === "cain" ? "deckard cain" : name);
 
-			if (npc && npc.openMenu()) {
-				me.cancel();
-				return true;
+		for (var i = 0; i < 5; i++) {
+			Town.move(npc === NPC.Jerhyn ? "palace" : npc);
+			var monkey = getUnit(sdk.unittype.NPC, npc === NPC.Cain ? "deckard cain" : npc);
+			if (monkey && monkey.openMenu()) {
+				return monkey;
 			}
-
+			//Packet.flash(me.gid);
 			delay(me.ping * 2 + 500);
 			Pather.moveTo(me.x + rand(-5, 5), me.y + rand(-5, 5));
 		}

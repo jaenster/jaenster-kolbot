@@ -2,7 +2,7 @@
 
 	const QuestData = require('../../../modules/QuestData');
 
-	module.exports = function (quest) {
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		const log = QuestData.fetchQuestArray(quest);
 
 		if (!log[0]) { // Need to do this quest still
