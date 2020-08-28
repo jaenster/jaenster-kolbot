@@ -16,10 +16,18 @@
 			throw new Error("Failed to move to Summoner");
 		}
 
+
 		// open the journal
 		getUnit(2, 357).cast(sdk.skills.Telekinesis);
+
+		console.debug('CASTED TK ON JOURNAL');
+		delay(2500);
+
 		delay(500);
 		me.cancel();
+
+		console.debug('DISABLED TALK');
+		delay(2500);
 
 		// Take wp first, go back to act 1 it can work around the red portal delay
 		if (Pather.usePortal(sdk.areas.CanyonOfMagi)) {
@@ -45,6 +53,9 @@
 
 		// Going to Canyon once again
 		Pather.usePortal(sdk.areas.CanyonOfMagi);
+
+		console.debug('TO CANYON');
+		delay(2500);
 
 
 	}

@@ -1,5 +1,6 @@
 (function (module, require) {
 
+	const Storage = require('../../../modules/Storage');
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		if (!me.findItem('box') || !me.getCube()) {
 			throw Error('Failed to get a cube')

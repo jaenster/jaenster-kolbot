@@ -65,7 +65,7 @@
 			do {
 				minlevel--;
 				maxattacks *= 2;
-				areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Level >= minlevel && area[1] <= maxattacks)).slice(0, 26);
+				areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Level >= minlevel && area[1] <= maxattacks)).slice(0, 4);
 			} while (areas.length < 1 && minlevel > 0);
 
 			let outtxt = (me.diff < 2 ? "Top XP Areas (Current " : "Low Effort Areas (Current ") + currentexp.toFixed(1) + "):";
@@ -201,7 +201,7 @@
 
 				print('What quest we wanna do? ' + wantedQuest.toSource());
 				print('---- Quest tree we need to do to level @ ' + area.LocaleString);
-				questTree.forEach((quest, i) => print(' '.repeat(i) + quest.name));
+				questTree.slice(0,3).forEach((quest, i) => print(' '.repeat(i) + quest.name));
 				return wantedQuest && ['quest', wantedQuest]
 			}
 		},

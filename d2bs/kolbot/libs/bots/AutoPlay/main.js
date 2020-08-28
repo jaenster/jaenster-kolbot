@@ -4,6 +4,8 @@
  */
 (function (module, require) {
 
+	// Mainly for debugging so i see changes now
+	require('../../modules/QuestEvents');
 
 	// Actual classical bot script
 	module.exports = function (...args) {

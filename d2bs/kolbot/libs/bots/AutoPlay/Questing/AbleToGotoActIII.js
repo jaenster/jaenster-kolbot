@@ -1,8 +1,18 @@
 (function(module,require){
-	module.exports = function() {
 
+	const NPC = require('../../../modules/NPC');
+	const QuestData = require('../../../modules/QuestData');
 
-		me.talkTo(NPC.Meshif).useMenu(sdk.menu.SailEast);
+	const states = {
+		Done: 0,
+	};
+
+	module.exports = function(quest) {
+
+		const log = QuestData.fetchQuestArray(quest);
+		if (!log[states.Done]) {
+			me.talkTo(NPC.Meshif).useMenu(sdk.menu.SailEast);
+		}
 
 	}
 })(module,require);

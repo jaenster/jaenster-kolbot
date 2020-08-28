@@ -1,5 +1,5 @@
 (function (module, require) {
-	module.exports = function () {
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		if (me.area !== sdk.areas.DuranceOfHateLvl3) {
 			Pather.journeyTo(sdk.areas.DuranceOfHateLvl3);
 		}

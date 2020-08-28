@@ -38,7 +38,7 @@
 			} while (seals.length)
 		};
 
-		const DodgeAttack = require('../../../modules/DodgeAttack');
+		const DodgeAttack = require('../modules/DodgeAttack');
 
 		const clear = (settings) => {
 			// clear the safe spots

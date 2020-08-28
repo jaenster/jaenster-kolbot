@@ -50,7 +50,7 @@
 			bottomleft: {x:17565,y:8081},
 		};
 
-		require('../../../modules/DodgeAttack')({
+		require('../modules/DodgeAttack')({
 			spots: spots,
 			monsterid: 242,
 			default: 'center',
