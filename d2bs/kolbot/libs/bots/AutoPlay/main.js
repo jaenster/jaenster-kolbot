@@ -32,9 +32,12 @@
 
 					case 'dungeon': {
 						const dungeonName = nowWhat[1];
+						const dungeon = require('./modules/Dungeon');
 
 						Feedback.lastDecision = 'Want to dungeon ' + dungeonName;
 						console.debug('We want to pwn a dungeon');
+
+						dungeon(dungeonName, Config, Attack, Pickit, Pather, Town, Misc);
 
 						//ToDo; write properly
 						break;
