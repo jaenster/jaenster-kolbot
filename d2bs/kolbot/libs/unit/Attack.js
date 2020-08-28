@@ -548,5 +548,30 @@
 		return false;
 	};
 
+	Unit.prototype.securePosition = function (range=30, collision = 0x04,timer = 2000) {
+		let tick = 0;
+		do {
+			this.clear(35, false, undefined, undefined, () => {
+				let found = getUnits(1)
+					.filter(unit =>
+						ignoreMonster.indexOf(unit.gid) === -1 // Dont attack those we ignore
+						&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
+						&& unit.attackable // Dont attack those we cant attack
+						&& unit.area === me.area
+						&& !checkCollision(me, unit, collision)
+						&& getDistance(this.x, this.y, unit.x, unit.y) <= range
+					).sort((a, b) => b.distance - a.distance);
+
+				if (found.length) {
+					// There is something to attack, aka it aint safe yet
+					tick = 0;
+				} else if(!found.length && !tick) {
+					tick = getTickCount();
+				}
+				return found;
+			}); // Clear around me
+		} while(!tick || getTickCount()-tick < timer)
+	}
+
 
 })(require, delay);
