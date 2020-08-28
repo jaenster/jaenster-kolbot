@@ -5,7 +5,6 @@
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 
 		const log = QuestData.fetchQuestArray(quest);
-		QuestData.logQuestStatuses(quest);
 
 		if (me.act === 2 && me.area === sdk.areas.LutGholein) {
 			const portal = getUnits(2,59).filter(portal => portal && portal.objtype > sdk.areas.AncientTunnels && portal.objtype < sdk.areas.DurielsLair).first();

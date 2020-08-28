@@ -13,6 +13,9 @@
 	};
 
 	const message = {
+		0: {
+			0: 'Welcome to act I',
+		},
 		6: {
 			0: 'Quest completed',
 			1: "Warriv wants to talk",
@@ -28,11 +31,12 @@
 			0: 'Spoke with Jerhyn',
 		},
 		10: {
+			0: 'Quest completed',
 			11: 'Staff cubed',
 		},
 		11: {
 			0: 'Quest completed',
-		 	1: 'Darkness has fallen',
+		 	1: 'Talk to Drogan',
 		},
 		12: {
 			0: 'Quest completed',

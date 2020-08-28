@@ -12,7 +12,6 @@
 	};
 
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
-		QuestData.logQuestStatuses(quest);
 
 		const parts = [
 			[[76, 85], classids.eye, 407, 2, 0],
@@ -137,8 +136,16 @@
 
 			// Move close to the exit
 			const exit = getUnit(2, 386);
-			exit.getIntoPosition(5, 0x7/* line of sight*/);
-			Pather.moveToExit([sdk.areas.DuranceOfHateLvl1, sdk.areas.DuranceOfHateLvl2]);
+
+			// keep on clicking the exit until we are not @ travincal anymore
+			Misc.poll(() => !exit || me.area !== sdk.areas.Travincal || (exit.moveTo() && exit.click() && false),10000,40);
+
+			if (me.area !== sdk.areas.DuranceOfHateLvl1) {
+				Pather.moveToExit([sdk.areas.DuranceOfHateLvl1, sdk.areas.DuranceOfHateLvl2]);
+			} else {
+				Pather.journeyTo(sdk.areas.DuranceOfHateLvl2);
+			}
+
 			Pather.getWP(sdk.areas.DuranceOfHateLvl2);
 		}
 

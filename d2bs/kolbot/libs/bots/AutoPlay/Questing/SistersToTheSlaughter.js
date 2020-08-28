@@ -9,12 +9,9 @@
 	};
 
 	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
-		print('--------------- <---');
-
 		const log = QuestData.fetchQuestArray(quest);
 		let pwnedAndy = 0;
 
-		QuestData.logQuestStatuses(quest);
 		if (!log[states.PwnedAndy]) {
 			QuestData.logQuestStatuses(quest);
 			// Already did quest?

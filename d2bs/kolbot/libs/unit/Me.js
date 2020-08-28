@@ -340,6 +340,11 @@
 		return false;
 	};
 
+	me.moveTo = function(...args) {
+		const Pather = require('../modules/Pather');
+		Pather.moveTo.apply(Pather, args)
+	};
+
 	me.getCube = () => {
 		const Misc = require('../modules/Misc');
 

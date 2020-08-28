@@ -199,9 +199,8 @@
 				const wantedQuest = questTree.first();
 				if (!wantedQuest) continue; // cant figure out what we want
 
-				print('What quest we wanna do? ' + wantedQuest.toSource());
 				print('---- Quest tree we need to do to level @ ' + area.LocaleString);
-				questTree.slice(0,3).forEach((quest, i) => print(' '.repeat(i) + quest.name));
+				questTree.map(q=>q.name).join(' --> ');
 				return wantedQuest && ['quest', wantedQuest]
 			}
 		},

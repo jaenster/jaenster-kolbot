@@ -3,11 +3,12 @@
 
 
 	Unit.prototype.lure = function (path) {
+
 		const merc = me.getMerc();
 		for (let i = 0; i < 10; i++) if (path.every(node => {
 
 			// walk to next node
-			Pather.moveTo(node.x, node.y);
+			me.moveTo(node.x, node.y);
 
 			// see if it targets us (aka coming to us)
 			return Misc.poll(() => {
@@ -20,7 +21,7 @@
 		return false;
 	};
 
-	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		const TownPrecast = require('../../../modules/TownPrecast');
 
 
@@ -31,23 +32,23 @@
 
 		// if we did the quest
 		if (me.getQuest(quest.index, 0)) {
-			Pather.moveTo(17590, 8068); // Save time and activate the river bank
+			me.moveTo(17590, 8068); // Save time and activate the river bank
 			delay(400);
 		}
 
 		// Get in range
-		Pather.moveTo(17571, 8071);
+		me.moveTo(17571, 8071);
 
 		let spots = {
-			rigth: {x:17554,y:8054},
-			left: {x:17554,y:8077},
-			top: {x:17554,y:8066},
-			bottom: {x:17565,y:8070},
-			center: {x:17551,y:8066},
-			topright: {x:17539,y:8054},
-			topleft: {x:17539,y:8072},
-			bottomright: {x:17565,y:8059},
-			bottomleft: {x:17565,y:8081},
+			rigth: {x: 17554, y: 8054},
+			left: {x: 17554, y: 8077},
+			top: {x: 17554, y: 8066},
+			bottom: {x: 17565, y: 8070},
+			center: {x: 17551, y: 8066},
+			topright: {x: 17539, y: 8054},
+			topleft: {x: 17539, y: 8072},
+			bottomright: {x: 17565, y: 8059},
+			bottomleft: {x: 17565, y: 8081},
 		};
 
 		require('../modules/DodgeAttack')({
@@ -56,7 +57,6 @@
 			default: 'center',
 			skill: sdk.skills.Blizzard,
 		});
-		Pather.monsterHandler.disabled = false;
 		Pickit.pickItems();
 	}
 
