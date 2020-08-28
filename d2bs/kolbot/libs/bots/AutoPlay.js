@@ -1,4 +1,5 @@
 /**
+ * @author Jaenster
  * @description This is a template file that simply loads the directory of this file
  */
 
