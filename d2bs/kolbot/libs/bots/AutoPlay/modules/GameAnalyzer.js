@@ -126,7 +126,7 @@
 	// })();
 
 	const myData = module.exports = {
-		skip: [sdk.areas.InnerCloister,sdk.areas.DenOfEvil],
+		skip: [sdk.areas.InnerCloister],
 		areas: [],
 		nowWhat: function (tmpSkip=[],comparedTo=undefined) {
 			/**
