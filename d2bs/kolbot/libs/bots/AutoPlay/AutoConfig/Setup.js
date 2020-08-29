@@ -36,5 +36,8 @@
 
 	require('./' + charClass);
 
+	const Config = require('../../../modules/Config');
+	Config.LowGold = me.charlvl * 1e3;
+
 	module.exports = ConfigObj;
 })(module, require);

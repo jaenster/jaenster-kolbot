@@ -1,3 +1,8 @@
+[type] == healingpotion
+[type] == manapotion
+[type] == rejuvpotion
+[name] == gold
+
 [name] == greaterhealingpotion
 [name] == superhealingpotion
 [name] == greatermanapotion

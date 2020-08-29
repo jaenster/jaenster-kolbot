@@ -27,8 +27,8 @@
 					//ToDo; backtrack further if that is a safer bet
 
 					const nodesBack = Math.min(index, 1);
-					console.debug('backtracking '+nodesBack+' nodes');
-					nearestNode = settings.nodes[index-nodesBack];
+					console.debug('backtracking ' + nodesBack + ' nodes');
+					nearestNode = settings.nodes[index - nodesBack];
 					nearestNode.moveTo();
 				}
 			};
@@ -62,7 +62,7 @@
 			if (me === this) start = [me.x, me.y];
 
 			while ((units = getUnits_filtered()).length) {
-				if (getUnits(1).filter(unit => unit.attackable && unit.distance < 5).length >= 2) {
+				if (getUnits(1).filter(unit => unit.attackable && unit.distance < 5).length >= 3) {
 					backTrack();
 					continue; // we maybe wanna attack someone else now
 				}
@@ -120,6 +120,11 @@
 	};
 	FastestPath.DebugLines = [];
 
+	const searchShrine = () => getUnits(2, "shrine")
+		.filter(el => el.objtype === 15 && !el.mode)
+		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
+		.first();
+
 	module.exports = function (dungeonName, Config, Attack, Pickit, Pather, Town, Misc) {
 		// print('Running ' + dungeonName);
 
@@ -141,7 +146,8 @@
 		const plot = Pather.plotCourse(dungeons.first(), me.area);
 		if (!plot) throw Error('couldnt find path');
 
-		if (plot.useWP) {
+		if (plot.useWP && plot.course.first() !== me.area) {
+			console.debug('Gonna use waypoint..?');
 			Pather.useWaypoint(plot.course.first());
 		} else if (plot.course.length) {
 			console.debug('Adding areas to dungeon area, as we need to walk');
@@ -182,7 +188,10 @@
 				let exits = area.exits;
 				let exit = exits && exits.find(el => el.target === self[index + 1]);
 
-				targets.push(exit);
+				if (exit) {
+					exit.isExit = true;
+					targets.push(exit);
+				}
 			}
 
 			const getExit = (id = 0) => getArea().exits.sort((a, b) => b - a).find(el => !id || el.target === id);
@@ -196,7 +205,10 @@
 						// in the blood more, we simply wanna walk towards the otherside of it. In this case, cold plains
 						console.debug('Now that we are here, just follow trough the exit - ' + AreaData[exitTarget[area]].LocaleString);
 						const exit = getExit(exitTarget[area]);
-						targets.push(exit);
+						if (exit) {
+							exit.isExit = true;
+							targets.push(exit);
+						}
 					}
 					break;
 				}
@@ -227,37 +239,31 @@
 
 
 			targets.forEach(target => {
-				console.debug('Walking? -- '+target.x+', '+target.y);
+				console.debug('Walking? -- ' + target.x + ', ' + target.y);
 
-				const path = getPath(me.area, target.x, target.y, me.x, me.y, 1, 5);
+				const path = getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
 				if (!path) throw new Error('failed to generate path');
 
 				path.reverse();
 				const lines = path.map((node, i, self) => i/*skip first*/ && new Line(self[i - 1].x, self[i - 1].y, node.x, node.y, 0x33, true));
 
 				const pathCopy = path.slice();
-				let loops = 0;
-				const walkNodes = (path) => {
+				let loops = 0, shrine;
+
+				const walkNodes = (path, recursion = 0) => {
 					for (let i = 0, node, l = path.length; i < l; loops++) {
 
 						node = path[i];
-						console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
+						// console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
-						if (!Pather.useTeleport() && node.distance > 20) {
-							console.debug('Taking subnodes?')
-							const shortPath = getPath(me.area, node.x, node.y, me.x, me.y, 0, 1);
-							shortPath.reverse().forEach(shortNode => {
-								shortNode.moveTo();
-								clear({nodes: path});
-								Pickit.pickItems();
-							})
-
-						} else {
-							node.moveTo();
-						}
+						node.moveTo();
 
 						// ToDo; only if clearing makes sense in this area due to effort
 						clear({nodes: path});
+						Pickit.pickItems();
+
+						// if shrine found, click on it
+						(shrine = searchShrine()) && shrine.click();
 
 						// if this wasnt our last node
 						if (l - 1 !== i) {
@@ -283,8 +289,21 @@
 
 				walkNodes(path);
 
-				// if we are near a waypoint, click it if we dont got it yet
+				if (target.hasOwnProperty('isExit') && target.isExit) {
+					const currExit = target;
 
+					if (currExit.type === 1) {// walk through
+
+						let targetRoom = Pather.getNearestRoom(currExit.target);
+						if (targetRoom) targetRoom.moveTo();
+
+					} else if (currExit.type === 2) {// stairs
+						!Pather.openExit(currExit.target) && !Pather.useUnit(5, currExit.tileid, currExit.target);
+					}
+
+				}
+
+				// if we are near a waypoint, click it if we dont got it yet
 				if (target.hasOwnProperty('type')) {
 
 					let wp = getUnit(2, "waypoint");
