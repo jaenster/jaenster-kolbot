@@ -29,10 +29,12 @@
 
 	const ConfigObj = require('./Config');
 
-	const ConfigName = ['Amazon', 'Sorceress', 'Necromancer', 'Paladin', 'Barbarian', 'Druid', 'Assassin'][me.classid];
+	const charClass = ['Amazon', 'Sorceress', 'Necromancer', 'Paladin', 'Barbarian', 'Druid', 'Assassin'][me.classid];
+
 	// Load possible builds for this char
-	loadDirectory('../Builds/' + ConfigName).forEach(build => ConfigObj.builds.push(build));
-	require('./' + ConfigName);
+	loadDirectory('../Builds/' + charClass).forEach(build => ConfigObj.builds.push(build));
+
+	require('./' + charClass);
 
 	module.exports = ConfigObj;
 })(module, require);
