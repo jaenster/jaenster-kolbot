@@ -1169,12 +1169,12 @@
 				dmgAcc += rarity * this.monsterAvgDmg(mon.Index, areaID);
 			});
 
-			// print('avg dmg '+ AreaData[areaID].LocaleString+' -- ' + dmgAcc+' -- ' + avgDmg);
+			// console.debug('avg dmg '+ AreaData[areaID].LocaleString+' -- ' + dmgAcc+' -- ' + avgDmg);
 
 			return (raritypool ? effortpool / raritypool : Infinity);
 		},
 		areaSoloExp: function (areaID, skills) {
-			let effortpool = 0, raritypool = 0, dmgAcc = 0;
+			let effortpool = 0, raritypool = 0,dmgAcc = 0;
 
 			skills = skills || this.allSkillDamage();
 			AreaData[areaID].forEachMonsterAndMinion((mon, rarity, parent) => {
@@ -1185,9 +1185,8 @@
 			});
 
 			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity);
-			// print('avg dmg '+ AreaData[areaID].LocaleString+' -- ' + dmgAcc+' -- ' + avgDmg);
 
-			return raritypool ? effortpool / raritypool / (avgDmg||1): 0;
+			return (raritypool ? effortpool / raritypool : 0)-avgDmg;
 		},
 		mostUsedSkills: function (force = false) {
 			if (!force && GameData.myReference.hasOwnProperty('__cachedMostUsedSkills') && GameData.myReference.__cachedMostUsedSkills) return GameData.myReference.__cachedMostUsedSkills;

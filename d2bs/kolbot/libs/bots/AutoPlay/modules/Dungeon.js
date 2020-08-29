@@ -8,7 +8,6 @@
 
 	const clear = (function (range, spectype, once = false) {
 		let start = [], startArea = me.area;
-		//ToDo; keep track of the place we are at
 		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
 				global['__________ignoreMonster'].indexOf(unit.gid) === -1 // Dont attack those we ignore
