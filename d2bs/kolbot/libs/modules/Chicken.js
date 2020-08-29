@@ -5,7 +5,7 @@
 
 
 (function (module, require, thread) {
-	const Messaging = require('../../modules/Messaging');
+	const Messaging = require('./Messaging');
 	const hookOn = ['UseHP', 'UseRejuvHP'];
 	let dmgAround = 0;
 	let realValues = {};
@@ -40,10 +40,9 @@
 	}
 
 	if (thread === 'thread') {
-		const sdk = require('../../modules/sdk');
-		const GameData = require('../modules/GameData');
-		const Skills = require('../modules/Skills');
-		const debug = require('../modules/Debug');
+		const GameData = require('./GameData');
+		const Skills = require('./Skills');
+		const debug = require('./Debug');
 
 		Messaging.send({Chicken: {up: true}}); // send message to the to the normal client we are up
 		//@ts-ignore
@@ -257,7 +256,7 @@
 			return false; // dont block the packet
 		});
 
-		const Worker = require('../modules/Worker');
+		const Worker = require('./Worker');
 		Worker.runInBackground.DeathHandler = function () {
 			if (me.dead && realValues['QuitWhenDead']) {
 				debug('Died.. Quitting');
