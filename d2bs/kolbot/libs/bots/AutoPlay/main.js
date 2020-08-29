@@ -20,6 +20,7 @@
 		const dungeon = require('./modules/Dungeon');
 		const Worker = require('../../modules/Worker');
 
+		Town();
 		Worker.runInBackground.townCheck = (() => {
 			let inTown = me.inTown;
 			return function () {

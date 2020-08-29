@@ -322,6 +322,7 @@ function main() {
 		return id || "";
 	};
 
+	let __nearestPresetLine;
 	// Event functions
 	this.keyEvent = function (key) {
 		switch (key) {
@@ -332,6 +333,12 @@ function main() {
 		case 123: // F12 key
 			me.overhead("Revealing " + Pather.getAreaName(me.area));
 			revealLevel(true);
+
+			let preset = getPresetUnits(me.area).sort((a,b) => a.distance-b.distance).first();
+			console.debug(preset);
+			__nearestPresetLine = new Line(me.x, me.y, preset.roomx * 5 + preset.x, preset.roomy * 5 + preset.y, 0x84, true);
+			preset.moveTo();
+
 
 			break;
 		case 107: // Numpad +
