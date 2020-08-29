@@ -42,7 +42,6 @@
 	if (thread === 'thread') {
 		const GameData = require('./GameData');
 		const Skills = require('./Skills');
-		const debug = require('./Debug');
 
 		Messaging.send({Chicken: {up: true}}); // send message to the to the normal client we are up
 		//@ts-ignore
@@ -93,7 +92,7 @@
 
 				let delay = getTickCount() - time;
 				time = getTickCount();
-				//debug("gamepacket time = "+delay);
+				//console.debug("gamepacket time = "+delay);
 
 				if (me.inTown) return false; // not to do anything in town
 				if (!me.gameReady) return false;
@@ -163,8 +162,8 @@
 				let monstersAround = getUnits(sdk.unittype.Monsters)
 					.filter(u => GameData.isEnemy(u) && u.distance <= 10)
 					.map(m => {
-						// debug('=O -> ');
-						// debug(m.toString());
+						// console.debug('=O -> ');
+						// console.debug(m.toString());
 						m.avgDmg = GameData.monsterAvgDmg(m.classid, m.area);
 						m.maxDmg = Math.ceil(GameData.monsterMaxDmg(m.classid, m.area));
 						return m;
@@ -173,11 +172,11 @@
 				let potentialAvgDmgTaken = monstersAround.reduce((total, m) => total + m.avgDmg, 0);
 
 				let potentialDmgTakenPercent = dmgAround = potentialAvgDmgTaken / me.hpmax * 100;
-				// debug(potentialDmgTakenPercent + '% potential dmg');
-				// debug(procentHP + '% procentHP');
+				// console.debug(potentialDmgTakenPercent + '% potential dmg');
+				// console.debug(procentHP + '% procentHP');
 				let chicken = (hpDiff < 0 || hppots.length == 0) && potentialDmgTakenPercent >= procentHP;
 				if (chicken && procentHP <= 40) { // First check chicken on HP. After that mana.
-					debug('Chicken');
+					console.debug('Chicken');
 					getScript('default.dbj').stop();
 					quit(); // Quitting
 					getScript(true).stop();
@@ -191,9 +190,9 @@
 				let useHP = ((potentialMaxDmgTakenPercent >= procentHP || notFullPot) || procentHP < 20) && tickHP > 1000;
 				let bestPot = notFullPot || hppots.last();
 				if (useHP && bestPot) {
-					debug('ÿc:Drank a ' + bestPot.name);
-					debug('ÿc:Pot effect ' + bestPot.effectPercent + ' %');
-					debug('ÿc:Over refilling ' + bestPot.diffToFull + ' %');
+					console.debug('ÿc:Drank a ' + bestPot.name);
+					console.debug('ÿc:Pot effect ' + bestPot.effectPercent + ' %');
+					console.debug('ÿc:Over refilling ' + bestPot.diffToFull + ' %');
 					bestPot.interact();
 					timers.hp = getTickCount();
 					return false; // dont block the packet
@@ -218,9 +217,9 @@
 						.first();
 					// use the lesser potion that fully refill
 					if (mp) {
-						debug('ÿc:Drank a ' + mp.name);
-						debug('ÿc:Pot effect ' + mp.effectPercent + ' %');
-						debug('ÿc:Over refilling ' + mp.diffToFull + ' %');
+						console.debug('ÿc:Drank a ' + mp.name);
+						console.debug('ÿc:Pot effect ' + mp.effectPercent + ' %');
+						console.debug('ÿc:Over refilling ' + mp.diffToFull + ' %');
 						mp.interact();
 						timers.mp = getTickCount();
 						return false; // dont block the packet
@@ -233,7 +232,7 @@
 					if (revPot) {
 						clickItem(2, revPot);
 						timers.revMerc = getTickCount();
-						debug('ÿc:Gave Rev Pot to merc');
+						console.debug('ÿc:Gave Rev Pot to merc');
 						return false; // dont block the packet
 					}
 				}
@@ -243,15 +242,15 @@
 				if (merc && procentHPMerc < realValues.UseHP && tickHPMerc > 250) {
 					let hp = me.getItemsEx().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (hp) {
-						debug('ÿc:Drank a ' + hp.name + ' Pot');
+						console.debug('ÿc:Drank a ' + hp.name + ' Pot');
 						clickItem(2, hp);
 						timers.hpMerc = getTickCount();
 						return false; // dont block the packet
 					}
 				}
 			} catch (e) {
-				debug(e.stack);
-				debug(e.message);
+				console.debug(e.stack);
+				console.debug(e.message);
 			}
 			return false; // dont block the packet
 		});
@@ -259,7 +258,7 @@
 		const Worker = require('./Worker');
 		Worker.runInBackground.DeathHandler = function () {
 			if (me.dead && realValues['QuitWhenDead']) {
-				debug('Died.. Quitting');
+				console.debug('Died.. Quitting');
 				quit();
 			}
 			return true; // Keeps it looping =)

@@ -9,7 +9,7 @@
 
 	const clear = (function () {
 		const defaults = {
-			range: 10,
+			range: 12,
 			spectype: 0,
 			once: false,
 			nodes: [],
@@ -59,7 +59,10 @@
 			if (me === this) start = [me.x, me.y];
 
 			while ((units = getUnits_filtered()).length) {
-				if (getUnits(1).filter(unit=>unit.attackable && unit.distance < 5).length >= 2) backTrack();
+				if (getUnits(1).filter(unit => unit.attackable && unit.distance < 5).length >= 2) {
+					backTrack();
+					continue; // we maybe wanna attack someone else now
+				}
 				const unit = units.shift();
 
 				// Do something with the effort to not kill monsters that are too harsh
