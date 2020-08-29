@@ -229,7 +229,7 @@
 			targets.forEach(target => {
 				console.debug('Walking? -- '+target.x+', '+target.y);
 
-				const path = getPath(me.area, target.x, target.y, me.x, me.y, Pather.useTeleport() ? 1 : 0, Pather.useTeleport() ? ([62, 63, 64].indexOf(me.area) > -1 ? 25 : 40) : 2);
+				const path = getPath(me.area, target.x, target.y, me.x, me.y, 1, 5);
 				if (!path) throw new Error('failed to generate path');
 
 				path.reverse();
@@ -237,46 +237,51 @@
 
 				const pathCopy = path.slice();
 				let loops = 0;
-				for (let i = 0, node, l = path.length; i < l; loops++) {
+				const walkNodes = (path) => {
+					for (let i = 0, node, l = path.length; i < l; loops++) {
 
-					node = path[i];
-					// console.debug('Moving to node ('+i+'/'+l+')');
+						node = path[i];
+						console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
-					// if (!Pather.useTeleport()) {
-					// 	const shortPath = getPath(me.area, node.x, node.y, me.x, me.y, 0, 1);
-					// 	shortPath.reverse().forEach(shortNode => {
-					// 		shortNode.moveTo();
-					// 		clear({nodes: path});
-					// 		Pickit.pickItems();
-					// 	})
-					//
-					// } else {
-						node.moveTo();
-					// }
+						if (!Pather.useTeleport() && node.distance > 20) {
+							console.debug('Taking subnodes?')
+							const shortPath = getPath(me.area, node.x, node.y, me.x, me.y, 0, 1);
+							shortPath.reverse().forEach(shortNode => {
+								shortNode.moveTo();
+								clear({nodes: path});
+								Pickit.pickItems();
+							})
 
-					// ToDo; only if clearing makes sense in this area due to effort
-					clear({nodes: path});
-
-					// if this wasnt our last node
-					if (l - 1 !== i) {
-
-						// Sometimes we go way out track due to clearing,
-						// lets find the nearest node on the path and go from there
-						let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
-
-						// if the nearnest node is still in 95% of our current node, we dont need to reset
-						if (nearestNode.distance > 5 && node.distance > 5 && 100 / node.distance * nearestNode.distance < 95) {
-
-							console.debug('reseting path to other node');
-							// reset i to the nearest node
-							i = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
-							continue; // and there for no i++
+						} else {
+							node.moveTo();
 						}
-					}
 
-					i++;
-				}
-				console.debug('Took ' + loops + ' to continue ' + path.length + ' steps');
+						// ToDo; only if clearing makes sense in this area due to effort
+						clear({nodes: path});
+
+						// if this wasnt our last node
+						if (l - 1 !== i) {
+
+							// Sometimes we go way out track due to clearing,
+							// lets find the nearest node on the path and go from there
+							let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
+
+							// if the nearnest node is still in 95% of our current node, we dont need to reset
+							if (nearestNode.distance > 5 && node.distance > 5 && 100 / node.distance * nearestNode.distance < 95) {
+
+								console.debug('reseting path to other node');
+								// reset i to the nearest node
+								i = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
+								continue; // and there for no i++
+							}
+						}
+
+						i++;
+					}
+					console.debug('Took ' + loops + ' to continue ' + path.length + ' steps');
+				};
+
+				walkNodes(path);
 
 				// if we are near a waypoint, click it if we dont got it yet
 
