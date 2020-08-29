@@ -176,7 +176,7 @@
 
 			if (visitPresets.hasOwnProperty(area)) {
 
-				const visitNodes = visitPresets.map(getPresetUnit.bind(null, area)).map(preset => ({
+				const visitNodes = visitPresets[area].map(getPresetUnit.bind(null, area)).map(preset => ({
 					x: (preset.roomx * 5 + preset.x),
 					y: (preset.roomy * 5 + preset.y),
 				}));
@@ -216,6 +216,7 @@
 						shortPath.reverse().forEach(shortNode => {
 							shortNode.moveTo();
 							clear(10);
+							Pickit.pickItems();
 						})
 
 					} else {
