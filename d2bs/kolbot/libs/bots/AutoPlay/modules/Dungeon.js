@@ -6,10 +6,10 @@
 	const GameAnalyzer = require('./GameAnalyzer');
 
 	module.exports = function (dungeonName, Config, Attack, Pickit, Pather, Town, Misc) {
-		print('Running ' + dungeonName);
+		// print('Running ' + dungeonName);
 
 		// make copy of array
-		let dungeons = AreaData.dungeons[dungeonName];
+		let dungeons = AreaData.dungeons.hasOwnProperty(dungeonName) ? AreaData.dungeons[dungeonName] : [dungeonName];
 
 		// strip leading areas, if we are already at that location
 		let currentAreaIndex = dungeons.indexOf(me.area);
@@ -48,15 +48,6 @@
 
 			let targets = [], preset;
 
-			// if this isnt the last area of target, our goal is to run towards an exit
-			if (!lastArea) {
-				let area = getArea();
-
-				let exits = area.exits;
-				let exit = exits && exits.find(el => el.target === self[index + 1]);
-
-				targets.push(exit);
-			}
 
 			// if this is a waypoint area, run to wards the waypoint
 
@@ -70,10 +61,21 @@
 				}
 			}
 
+			// if this isnt the last area of target, our goal is to run towards an exit
+			if (!lastArea) {
+				let area = getArea();
+
+				let exits = area.exits;
+				let exit = exits && exits.find(el => el.target === self[index + 1]);
+
+				targets.push(exit);
+			}
+
+
 			targets.forEach(target => {
 				console.debug('Walking?');
 
-				const path = getPath(me.area, target.x, target.y, me.x, me.y, Pather.useTeleport() ? 1 : 0, Pather.useTeleport() ? ([62, 63, 64].indexOf(me.area) > -1 ? 25 : 40) : 3);
+				const path = getPath(me.area, target.x, target.y, me.x, me.y, Pather.useTeleport() ? 1 : 0, Pather.useTeleport() ? ([62, 63, 64].indexOf(me.area) > -1 ? 25 : 40) : 2);
 				if (!path) throw new Error('failed to generate path');
 
 				path.reverse();
@@ -84,7 +86,7 @@
 					node = path[i];
 					console.debug('Moving to node ('+i+'/'+l+')');
 					node.moveTo();
-					me.clear(20);
+					me.clear(8);
 
 					// if this wasnt our last node
 					if (l - 1 !== i) {
@@ -94,7 +96,7 @@
 						let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
 
 						// if the nearnest node is still in 95% of our current node, we dont need to reset
-						if (100 / node.distance * nearestNode.distance < 95) {
+						if (nearestNode.distance > 5 && node.distance > 5 && 100 / node.distance * nearestNode.distance < 95) {
 
 							// reset i to the nearest node
 							i = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
@@ -111,21 +113,24 @@
 				if (target.hasOwnProperty('type')) {
 
 					let wp = getUnit(2, "waypoint");
-					if (wp && wp.mode === 0) {
+					if (wp && wp.mode !== 2) {
 						wp.moveTo();
 						Misc.poll(() => {
 							wp.click();
-							return wp.mode === 0;
+							return getUIFlag(sdk.uiflags.Waypoint) || wp.mode !== 2;
 						}, 6000, 30);
+
+						getUIFlag(sdk.uiflags.Waypoint) && me.cancel();
 					}
 				}
-
-
 			});
 
 			GameAnalyzer.skip.push(area);
 
 			switch (me.area) {
+				case sdk.areas.DenOfEvil: {
+					break;
+				}
 				case sdk.areas.TowerCellarLvl5: {
 					// cunt-ress pwnage
 					let poi = getPresetUnit(me.area, 2, 580);

@@ -14,6 +14,8 @@
 		const Feedback = require('./modules/Feedback');
 		const GameAnalyzer = require('./modules/GameAnalyzer');
 
+		const dungeon = require('./modules/Dungeon');
+
 		let nowWhat, scriptRunning, lastScript;
 		scriptRunning = lastScript = '';
 
@@ -32,7 +34,7 @@
 
 					case 'dungeon': {
 						const dungeonName = nowWhat[1];
-						const dungeon = require('./modules/Dungeon');
+
 
 						Feedback.lastDecision = 'Want to dungeon ' + dungeonName;
 						console.debug('We want to pwn a dungeon');
@@ -48,6 +50,8 @@
 
 						Feedback.lastDecision = 'clear area ' + area.LocaleString;
 						console.debug('Want to clear a area: ' + nowWhat[1].LocaleString);
+
+						dungeon(area.Index, Config, Attack, Pickit, Pather, Town, Misc);
 						break;
 					}
 
