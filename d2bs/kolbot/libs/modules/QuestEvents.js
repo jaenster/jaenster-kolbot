@@ -16,6 +16,10 @@
 		0: {
 			0: 'Welcome to act I',
 		},
+		2: {
+			1: 'Quest completed',
+			4: 'Kill blood raven',
+		},
 		6: {
 			0: 'Quest completed',
 			1: "Warriv wants to talk",

@@ -38,7 +38,6 @@
 				};
 
 
-				console.debug('here?');
 				// Stat the char to a specified build. Thanks dzik <3
 				var i, j, points, stat, items, charms, one, before, tick,
 					missing = [0, 0, 0, 0],
@@ -97,7 +96,7 @@
 							return;
 						}
 						if (before < me.getStat(i)) {
-							debug("Added " + send[i] + " to " + names[i], 9);
+							console.debug("Added +" + send[i] + " to " + names[i]);
 							break;
 						}
 						delay(200);
@@ -105,6 +104,8 @@
 				}
 			},
 			function skill() {
+
+
 				if (getUIFlag(0x17)) return; // cant skill while in trade
 
 				const getPrerequisites = (skId) => [183, 182, 181].map(item => getBaseStat('skills', skId, item)).filter(el => el > 0 && el < 356 && !me.getSkill(el, 0));
@@ -146,12 +147,12 @@
 				if (found) {
 					// We found a skill we wanna spend a point in.
 					if (parent) {
-						print('Skilling ' + getSkillById(found) + ' as prerequisites of ' + getSkillById(parent));
+						console.debug('Skilling ' + getSkillById(found) + ' as prerequisites of ' + getSkillById(parent));
 					} else {
-						print('Skilling ' + getSkillById(found) + ' (' + (me.getSkill(found, 0) + 1) + '/' + goal + ')');
+						console.debug('Skilling ' + getSkillById(found) + ' (' + (me.getSkill(found, 0) + 1) + '/' + goal + ')');
 					}
 					useSkillPoint(found);
-					// _delay(1000);
+					delay(200);
 				}
 			}
 		];

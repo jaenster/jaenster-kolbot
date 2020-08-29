@@ -8,6 +8,7 @@
 	require('../../modules/QuestEvents');
 
 	require('./AutoConfig/Setup');
+	require('./Builds/Auto');
 
 	// Actual classical bot script
 	module.exports = function (...args) {
