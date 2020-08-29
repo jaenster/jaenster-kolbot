@@ -23,6 +23,9 @@
 
 				const index = settings.nodes.indexOf(nearestNode);
 				if (index > 0) {
+
+					//ToDo; backtrack further if that is a safer bet
+
 					const nodesBack = Math.min(index, 1);
 					console.debug('backtracking '+nodesBack+' nodes');
 					nearestNode = settings.nodes[index-nodesBack];
