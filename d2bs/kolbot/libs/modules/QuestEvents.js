@@ -16,6 +16,9 @@
 		0: {
 			0: 'Welcome to act I',
 		},
+		1: {
+		 	3: 'Find den of evil',
+		},
 		2: {
 			1: 'Quest completed',
 			4: 'Kill blood raven',

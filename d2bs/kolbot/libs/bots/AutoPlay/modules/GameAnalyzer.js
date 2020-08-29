@@ -128,7 +128,7 @@
 	const myData = module.exports = {
 		skip: [sdk.areas.InnerCloister,sdk.areas.DenOfEvil],
 		areas: [],
-		nowWhat: function (tmpSkip=[]) {
+		nowWhat: function (tmpSkip=[],comparedTo=undefined) {
 			/**
 
 			 The idea,
@@ -177,7 +177,7 @@
 
 
 
-						const result = this.nowWhat(copy);
+						const result = this.nowWhat(copy,comparedTo||effortXp);
 						if (result && result.length >= 3) {
 							const [type,what,otherXp] = result;
 
@@ -188,7 +188,7 @@
 							if (!otherArea.haveWaypoint()) {
 								Feedback.lastDecision = 'Should do '+((dungeonsKey || area.LocaleString));
 								console.debug(otherName + ' is not a valid option as we dont have that waypoint either');
-							} else if ( 100 / effortXp * otherXp > 70) {
+							} else if ( 100 / (effortXp||comparedTo) * otherXp > 90) {
 								console.debug(otherName+' is a better idea as '+(dungeonsKey || area.LocaleString));
 								Feedback.lastDecision = 'Should do '+otherName;
 								return [type,what,otherXp];

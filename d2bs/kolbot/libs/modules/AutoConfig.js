@@ -114,9 +114,13 @@
 
 	//ToDo; Do something with this. For now 4 rows of rv pots to avoid belt clearance
 	AutoConfig.Belt = function () {
-		let [b, m] = [Config.BeltColumn, Config.MinColumn];
-		for (let i = 0; i < 4; i++) (b[i] = i === 0 && 'hp' || i === 1 && 'mp' || 'rv') && (m[i] = b[i] !== 'rv' && 3 || 0);
-		[Config.BeltColumn, Config.MinColumn] = [b, m];
+		if (me.charlvl === 1) {
+			Config.BeltColumn = ['hp','hp','hp','hp'];
+		} else {
+			let [b, m] = [Config.BeltColumn, Config.MinColumn];
+			for (let i = 0; i < 4; i++) (b[i] = i === 0 && 'hp' || i === 1 && 'mp' || 'rv') && (m[i] = b[i] !== 'rv' && 3 || 0);
+			[Config.BeltColumn, Config.MinColumn] = [b, m];
+		}
 	};
 
 
