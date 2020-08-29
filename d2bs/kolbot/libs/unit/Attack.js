@@ -17,7 +17,7 @@
 				&& unit.area === me.area
 				&& (
 					start.length // If start has a length
-						? start.distance < range // If it has a range smaller as from the start point (when using me.clear)
+						? getDistance(start[0], start[1], unit) < range // If it has a range smaller as from the start point (when using me.clear)
 						: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
 				)
 				&& !checkCollision(me, unit, 0x0)
