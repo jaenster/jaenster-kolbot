@@ -6,45 +6,70 @@
 	const GameAnalyzer = require('./GameAnalyzer');
 	const GameData = require("../../../modules/GameData");
 
-	const clear = (function (range, spectype, once = false) {
-		let start = [], startArea = me.area;
-		const getUnits_filtered = () => getUnits(1, -1)
-			.filter(unit =>
-				global['__________ignoreMonster'].indexOf(unit.gid) === -1 // Dont attack those we ignore
-				&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
-				&& unit.attackable // Dont attack those we cant attack
-				&& unit.area === me.area
-				&& (
-					start.length // If start has a length
-						? getDistance(start[0], start[1], unit) < range // If it has a range smaller as from the start point (when using me.clear)
-						: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
+
+	const clear = (function () {
+		const defaults = {
+			range: 10,
+			spectype: 0,
+			once: false,
+			nodes: [],
+		};
+		return (function (_settings = {}) {
+			const settings = Object.assign({}, defaults, _settings);
+			const pathCopy = settings.nodes.slice();
+			let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
+
+			const backTrack = () => {
+
+				const index = settings.nodes.indexOf(nearestNode);
+				if (index > 0) {
+					const nodesBack = Math.min(index, 1);
+					console.debug('backtracking '+nodesBack+' nodes');
+					nearestNode = settings.nodes[index-nodesBack];
+					nearestNode.moveTo();
+				}
+			};
+
+			let start = [], startArea = me.area;
+			const getUnits_filtered = () => getUnits(1, -1)
+				.filter(unit =>
+					global['__________ignoreMonster'].indexOf(unit.gid) === -1 // Dont attack those we ignore
+					&& unit.hp > 0 // Dont attack those that have no health 	(catapults and such)
+					&& unit.attackable // Dont attack those we cant attack
+					&& unit.area === me.area
+					&& (
+						start.length // If start has a length
+							? getDistance(start[0], start[1], unit) < settings.range // If it has a range smaller as from the start point (when using me.clear)
+							: getDistance(this, unit) < settings.range // if "me" move, the object doesnt move. So, check distance of object
+					)
+					&& !checkCollision(me, unit, 0x0)
 				)
-				&& !checkCollision(me, unit, 0x0)
-			)
-			.filter(unit => {
-				if (!spectype || typeof spectype !== 'number') return true; // No spectype =  all monsters
-				return unit.spectype & spectype;
-			})
-			.filter(unit => {
-				const skill = GameData.monsterEffort(unit, unit.area);
-				return skill.effort <= 6;
-			})
-			.sort((a, b) => a.distance - b.distance);
+				.filter(unit => {
+					if (!settings.spectype || typeof settings.spectype !== 'number') return true; // No spectype =  all monsters
+					return unit.spectype & settings.spectype;
+				})
+				.filter(unit => {
+					const skill = GameData.monsterEffort(unit, unit.area);
+					return skill.effort <= 6;
+				})
+				.sort((a, b) => a.distance - b.distance);
 
-		// If we clear around _me_ we move around, but just clear around where we started
-		let units;
-		if (me === this) start = [me.x, me.y];
+			// If we clear around _me_ we move around, but just clear around where we started
+			let units;
+			if (me === this) start = [me.x, me.y];
 
-		while ((units = getUnits_filtered()).length) {
-			const unit = units.shift();
+			while ((units = getUnits_filtered()).length) {
+				if (getUnits(1).filter(unit=>unit.attackable && unit.distance < 5).length >= 2) backTrack();
+				const unit = units.shift();
 
-			// Do something with the effort to not kill monsters that are too harsh
+				// Do something with the effort to not kill monsters that are too harsh
+				unit.attack();
 
-			unit.attack();
-			if (once || startArea !== me.area) return true;
-		}
-		return true;
-	}).bind(me);
+				if (settings.once || startArea !== me.area) return true;
+			}
+			return true;
+		}).bind(me);
+	})();
 
 	const FastestPath = (nodes, timeLimit = 250) => {
 		const hooks = [];
@@ -132,13 +157,12 @@
 
 			let targets = [], preset;
 
-
 			// if this is a waypoint area, run to wards the waypoint
-
-			if (Pather.wpAreas.includes(me.area)) {
+			if (Pather.wpAreas.includes(me.area) && !getWaypoint(me.area)) {
 				const wpIDs = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539];
 				for (let i = 0; i < wpIDs.length || preset; i += 1) {
 					if ((preset = getPresetUnit(area, 2, wpIDs[i]))) {
+						console.debug('Added waypoint to the list');
 						targets.push(preset);
 						break;
 					}
@@ -158,7 +182,9 @@
 			const getExit = (id = 0) => getArea().exits.sort((a, b) => b - a).find(el => !id || el.target === id);
 			const exitTarget = {};
 			exitTarget[sdk.areas.BloodMoor] = sdk.areas.ColdPlains;
+			exitTarget[sdk.areas.ColdPlains] = sdk.areas.StonyField;
 			switch (area) {
+				case sdk.areas.ColdPlains:
 				case sdk.areas.BloodMoor: {
 					if (lastArea) {
 						// in the blood more, we simply wanna walk towards the otherside of it. In this case, cold plains
@@ -195,7 +221,7 @@
 
 
 			targets.forEach(target => {
-				console.debug('Walking?');
+				console.debug('Walking? -- '+target.x+', '+target.y);
 
 				const path = getPath(me.area, target.x, target.y, me.x, me.y, Pather.useTeleport() ? 1 : 0, Pather.useTeleport() ? ([62, 63, 64].indexOf(me.area) > -1 ? 25 : 40) : 2);
 				if (!path) throw new Error('failed to generate path');
@@ -210,20 +236,20 @@
 					node = path[i];
 					// console.debug('Moving to node ('+i+'/'+l+')');
 
-					if (!Pather.useTeleport()) {
-						const shortPath = getPath(me.area, node.x, node.y, me.x, me.y, 0, 1);
-						shortPath.reverse().forEach(shortNode => {
-							shortNode.moveTo();
-							clear(10);
-							Pickit.pickItems();
-						})
-
-					} else {
+					// if (!Pather.useTeleport()) {
+					// 	const shortPath = getPath(me.area, node.x, node.y, me.x, me.y, 0, 1);
+					// 	shortPath.reverse().forEach(shortNode => {
+					// 		shortNode.moveTo();
+					// 		clear({nodes: path});
+					// 		Pickit.pickItems();
+					// 	})
+					//
+					// } else {
 						node.moveTo();
-					}
+					// }
 
 					// ToDo; only if clearing makes sense in this area due to effort
-					clear(10);
+					clear({nodes: path});
 
 					// if this wasnt our last node
 					if (l - 1 !== i) {

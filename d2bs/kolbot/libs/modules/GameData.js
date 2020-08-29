@@ -1186,7 +1186,7 @@
 
 			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity);
 
-			return (raritypool ? effortpool / raritypool : 0)-avgDmg;
+			return (raritypool ? effortpool / raritypool : 0)-(avgDmg/2);
 		},
 		mostUsedSkills: function (force = false) {
 			if (!force && GameData.myReference.hasOwnProperty('__cachedMostUsedSkills') && GameData.myReference.__cachedMostUsedSkills) return GameData.myReference.__cachedMostUsedSkills;
