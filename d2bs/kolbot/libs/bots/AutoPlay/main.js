@@ -7,6 +7,8 @@
 	// Mainly for debugging so i see changes now
 	require('../../modules/QuestEvents');
 
+	require('./AutoConfig/Setup');
+
 	// Actual classical bot script
 	module.exports = function (...args) {
 

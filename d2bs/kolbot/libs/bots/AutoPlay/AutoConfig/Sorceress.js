@@ -1,20 +1,6 @@
 (function (module, require) {
 
-	const obj = {
-		autoSkill: {}, // Overwritten
-	};
 
-
-	Object.defineProperties(obj, {
-		autoSkill: {
-			get() {
-				return [
-
-				]
-			},
-			enumerable: true,
-		}
-	})
-	module.exports = obj;
+	//ToDO; do sorc specifics
 
 })(module, require);
