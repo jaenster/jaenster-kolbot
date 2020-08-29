@@ -20,7 +20,6 @@
 		const dungeon = require('./modules/Dungeon');
 		const Worker = require('../../modules/Worker');
 
-		Town();
 		Worker.runInBackground.townCheck = (() => {
 			let inTown = me.inTown;
 			return function () {
@@ -37,7 +36,8 @@
 
 		const errorOut = {};
 		do {
-
+			
+			me.inTown && Town();
 			nowWhat = GameAnalyzer.nowWhat();
 			delay(1000);
 			try {
@@ -95,6 +95,7 @@
 				console.log('Retry #' + (errorOut[me.area] + '/5'));
 				delay(10000)
 			}
+			delay(100);
 		} while (nowWhat);
 
 

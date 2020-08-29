@@ -14,7 +14,7 @@
 	Loader.fileList = [];
 	Loader.scriptList = [];
 	Loader.scriptIndex = -1;
-	Loader.skipTown = ["Test", "Follower"];
+	Loader.skipTown = ["Test", "Follower", 'AutoPlay'];
 
 	Loader.getScripts = function () {
 		var i,

@@ -1,6 +1,12 @@
-[type] == healingpotion
-[type] == manapotion
-[type] == rejuvpotion
+[name] == minorhealingpotion
+[name] == lighthealingpotion
+[name] == healingpotion
+[name] == minormanapotion
+[name] == lightmanapotion
+[name] == manapotion
+[name] == healingpotion
+[name] == rejuvenationpotion
+[name] == fullrejuvenationpotion
 [name] == gold
 
 [name] == greaterhealingpotion

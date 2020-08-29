@@ -160,7 +160,7 @@
 		return {
 			update: () => {
 				build = getCurrentBuild();
-				run.some(_ => _());
+				build && run.some(_ => _());
 				return true;
 			}
 		}

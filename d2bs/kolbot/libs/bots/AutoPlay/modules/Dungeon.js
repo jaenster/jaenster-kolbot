@@ -16,7 +16,7 @@
 		const shamans = [sdk.monsters.FallenShaman, sdk.monsters.CarverShaman2, sdk.monsters.DevilkinShaman2, sdk.monsters.DarkShaman1, sdk.monsters.WarpedShaman, sdk.monsters.CarverShaman, sdk.monsters.DevilkinShaman, sdk.monsters.DarkShaman2],
 			fallens = [sdk.monsters.Fallen, sdk.monsters.Carver2, sdk.monsters.Devilkin2, sdk.monsters.DarkOne1, sdk.monsters.WarpedFallen, sdk.monsters.Carver1, sdk.monsters.Devilkin, sdk.monsters.DarkOne2];
 
-		const clearDistance = (x,y,xx,yy) => {
+		const clearDistance = (x, y, xx, yy) => {
 
 			getUnits(1).forEach((monster) => {
 				if (typeof monster['beendead'] === 'undefined') monster.beendead = false;
@@ -32,7 +32,7 @@
 			}, 0);
 		};
 
-		return (function (_settings = {}) {
+		const ret = (function (_settings = {}) {
 			const settings = Object.assign({}, defaults, _settings);
 			const pathCopy = settings.nodes.slice();
 			let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
@@ -105,48 +105,61 @@
 			}
 			return true;
 		}).bind(me);
+		ret.defaults = defaults;
+		return ret;
 	})();
 
 	const FastestPath = (nodes, timeLimit = 250) => {
+		nodes = nodes.filter(_ => _ && _.hasOwnProperty('x') && _.hasOwnProperty('y'));
 		const hooks = [];
 
-		const calcDistance = (nodes) => {
+		const calcDistance = () => {
 			let sum = 0;
-			for (let i = 0; i < nodes.length - 1; i++) sum += getDistance(nodes[i].x, nodes[i].y, nodes[i + 1].x, nodes[i + 1].y);
+			for (let i = 1; i < nodes.length; i++) {
+				sum += getPath(me.area, nodes[i - 1].x, nodes[i - 1].y, nodes[i].x, nodes[i].y, 0, 25)
+					.map((el, i, self) => i && getDistance(el.x, el.y, self[i - 1].x, self[i - 1].y) || 0)
+					.reduce((acc, cur) => acc + cur, 0);
+
+			}
 			return sum;
 		};
 
 
-		let recordDistance = calcDistance(nodes);
+		let recordDistance = calcDistance();
 		let winningPath = nodes.slice(); // current
 
 		let x, y, d;
 		const singleRun = () => {
-			x = rand(1, nodes.length);
-			y = rand(1, nodes.length);
+			x = rand(1, nodes.length) - 1;
+			y = rand(1, nodes.length) - 1;
+
+			if (x === y) return;
+
 			const tmp = nodes[x];
 			nodes[x] = nodes[y];
 			nodes[y] = tmp;
 
 			hooks.forEach(line => line.remove());
-			nodes.forEach((e, i, s) => i && hooks.push(new Line(e[2], e[3], s[i - 1][2], s[i - 1][3], 0x37, true)));
 
-			d = calcDistance(nodes);
+			d = calcDistance();
 
 			if (d < recordDistance) {
-				FastestPath.DebugLines.forEach(line => line.remove());
-				nodes.forEach((e, i, s) => s.length - 1 !== i && DebugLines.push(new Line(e[0], e[1], s[i + 1][0], s[i + 1][1], 0x20, true)));
-
+				console.debug('Winning path?');
 				recordDistance = d;
-				winningPath = nodes.slice();
+				winningPath.forEach(() => winningPath.pop());
+				nodes.forEach(node => winningPath.push(node));
 			}
 		};
 
 		let tick = getTickCount();
 
+		console.debug('Fastest path');
 		while (getTickCount() - tick < timeLimit) singleRun();
 
-		return winningPath;
+		return {
+			winningPath: winningPath,
+			singleRun: singleRun,
+		};
 	};
 	FastestPath.DebugLines = [];
 
@@ -280,56 +293,57 @@
 			}
 
 
-			targets.forEach(target => {
-				console.debug('Walking? -- ' + target.x + ', ' + target.y);
+			const walkTo = (target, recursion = 0) => {
 
-				const path = getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
+				const path = Pather.useTeleport() ? getPath(me.area, target.x, target.y, me.x, me.y, 1, 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
 				if (!path) throw new Error('failed to generate path');
 
 				path.reverse();
+
 				const lines = path.map((node, i, self) => i/*skip first*/ && new Line(self[i - 1].x, self[i - 1].y, node.x, node.y, 0x33, true));
 
 				const pathCopy = path.slice();
 				let loops = 0, shrine;
+				for (let i = 0, node, l = path.length; i < l; loops++) {
 
-				const walkNodes = (path, recursion = 0) => {
-					for (let i = 0, node, l = path.length; i < l; loops++) {
+					node = path[i];
+					// console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
-						node = path[i];
-						// console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
+					node.moveTo();
 
-						node.moveTo();
+					// ToDo; only if clearing makes sense in this area due to effort
+					clear({nodes: path});
+					Pickit.pickItems();
 
-						// ToDo; only if clearing makes sense in this area due to effort
-						clear({nodes: path});
-						Pickit.pickItems();
+					// if shrine found, click on it
+					(shrine = searchShrine()) && shrine.click();
 
-						// if shrine found, click on it
-						(shrine = searchShrine()) && shrine.click();
+					// if this wasnt our last node
+					if (l - 1 !== i) {
 
-						// if this wasnt our last node
-						if (l - 1 !== i) {
+						// Sometimes we go way out track due to clearing,
+						// lets find the nearest node on the path and go from there
+						let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
 
-							// Sometimes we go way out track due to clearing,
-							// lets find the nearest node on the path and go from there
-							let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
+						// if the nearnest node is still in 95% of our current node, we dont need to reset
+						if (nearestNode.distance > 5 && node.distance > 5 && 100 / node.distance * nearestNode.distance < 95) {
 
-							// if the nearnest node is still in 95% of our current node, we dont need to reset
-							if (nearestNode.distance > 5 && node.distance > 5 && 100 / node.distance * nearestNode.distance < 95) {
-
-								console.debug('reseting path to other node');
-								// reset i to the nearest node
-								i = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
-								continue; // and there for no i++
-							}
+							console.debug('reseting path to other node');
+							// reset i to the nearest node
+							i = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
+							continue; // and there for no i++
 						}
-
-						i++;
 					}
-					console.debug('Took ' + loops + ' to continue ' + path.length + ' steps');
-				};
 
-				walkNodes(path);
+					i++;
+				}
+				console.debug('Took ' + loops + ' to continue ' + path.length + ' steps');
+			};
+
+			targets.forEach(target => {
+				console.debug('Walking? -- ' + target.x + ', ' + target.y);
+
+				walkTo(target);
 
 				if (target.hasOwnProperty('isExit') && target.isExit) {
 					const currExit = target;
@@ -381,6 +395,62 @@
 
 			switch (me.area) {
 				case sdk.areas.DenOfEvil: {
+					if (me.getQuest(1, 0)) break;
+					let lines;
+
+					const corpseFire = (poi => ({
+						x: poi.roomx * 5 + poi.x,
+						y: poi.roomy * 5 + poi.y,
+					}))(getPresetUnit(sdk.areas.DenOfEvil, 1, 774));
+
+					const myPathToCorpse = getPath(me.area, me.x, me.y, corpseFire.x, corpseFire.y, 0, 25).map(el => el.distance).reduce((acc, cur) => acc + cur, 0);
+
+					const rooms = (function (room, ret = []) {
+						do {
+							let obj = {
+								x: room.x * 5 + room.xsize / 2,
+								y: room.y * 5 + room.ysize / 2,
+								d: 0,
+								c: 0,
+								s: 0,
+							};
+							let result = Pather.getNearestWalkable(obj.x, obj.y, 18, 3);
+							if (result) {
+								let [x, y] = result;
+								obj.x = x;
+								obj.y = y;
+								obj.d = getPath(me.area, x, y, me.x, me.y, 0, 25).map(el => el.distance).reduce((acc, cur) => acc + cur, 0);
+								console.debug(corpseFire.x + ',' + corpseFire.y);
+								obj.c = getPath(me.area, x, y, corpseFire.x, corpseFire.y, 0, 25).map(el => el.distance).reduce((acc, cur) => acc + cur, 0);
+
+								obj.s = (obj.d * 2) - obj.c;
+								console.debug(x, y, Math.round(obj.d), Math.round(obj.c), ' -', Math.round(obj.s));
+
+								ret.push(obj);
+							}
+						} while (room.getNext());
+						return ret;
+					})(getRoom());
+
+					// console.debug(rooms);
+
+					// let fastestPath = FastestPath(rooms, 2500);
+					// let nodes = fastestPath.winningPath;
+					let nodes = rooms;
+
+					nodes.sort((a, b) => (a.s - b.s));
+					lines = nodes.map((node, i, self) => i/*skip first*/ && new Line(self[i - 1].x, self[i - 1].y, node.x, node.y, 0x84, true));
+
+
+					let _cacheRange = clear.defaults.range;
+					clear.defaults.range = 20;
+
+					rooms.some(node => {
+						walkTo(node);
+						return me.getQuest(1, 0);
+					});
+
+					clear.defaults.range = _cacheRange;
 
 					break;
 				}
