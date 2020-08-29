@@ -1184,7 +1184,7 @@
 				dmgAcc += rarity * this.monsterAvgDmg(mon.Index, areaID);
 			});
 
-			let avgDmg = 0; //(raritypool ? dmgAcc / raritypool : Infinity);
+			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity);
 			// print('avg dmg '+ AreaData[areaID].LocaleString+' -- ' + dmgAcc+' -- ' + avgDmg);
 
 			return raritypool ? effortpool / raritypool / (avgDmg||1): 0;

@@ -132,9 +132,11 @@
 
 
 			const changed = recursiveSearch(JSON.parse(o) || {}, feedbackData);
-			// console.debug('here =o');
-			// console.debug(changed);
-			// Messaging.send({Feedback: {update: changed}});
+
+			// gets rid of the property descriptions that d2bs dont handle well
+			let converted = JSON.parse(JSON.stringify(changed));
+
+			Messaging.send({Feedback: {update: converted}});
 		});
 	}
 

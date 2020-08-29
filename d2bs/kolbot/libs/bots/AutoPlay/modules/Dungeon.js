@@ -129,6 +129,7 @@
 
 			switch (me.area) {
 				case sdk.areas.DenOfEvil: {
+
 					break;
 				}
 				case sdk.areas.TowerCellarLvl5: {

@@ -15,13 +15,24 @@
 		const GameAnalyzer = require('./modules/GameAnalyzer');
 
 		const dungeon = require('./modules/Dungeon');
+		const Worker = require('../../modules/Worker');
+
+		Worker.runInBackground.townCheck = (() => {
+			let inTown = me.inTown;
+			return function () {
+				if (me.inTown !== inTown) {
+					(inTown = me.inTown) && Town();
+				}
+				return true;
+			}
+		})();
 
 		let nowWhat, scriptRunning, lastScript;
 		scriptRunning = lastScript = '';
 
+
 		const errorOut = {};
 		do {
-
 
 			nowWhat = GameAnalyzer.nowWhat();
 			delay(1000);
@@ -57,7 +68,7 @@
 
 					case 'quest': {
 						const quest = nowWhat[1];
-						Feedback.lastDecision = 'do quest '+ quest.name;
+						Feedback.lastDecision = 'do quest ' + quest.name;
 						console.debug('Want to do quest. ' + quest.name);
 
 						if (lastScript === (scriptRunning = quest.name)) {

@@ -126,7 +126,7 @@
 	// })();
 
 	const myData = module.exports = {
-		skip: [sdk.areas.InnerCloister],
+		skip: [sdk.areas.InnerCloister,sdk.areas.DenOfEvil],
 		areas: [],
 		nowWhat: function (tmpSkip=[]) {
 			/**
@@ -183,14 +183,17 @@
 
 							const otherArea = type === 'clear' ? what : AreaData[AreaData.dungeons[what].first()];
 
+							let otherName = (type === 'clear' ? what.LocaleString : what);
 							// another area only make sense if we do have that waypoint
 							if (!otherArea.haveWaypoint()) {
-								console.debug((type === 'clear' ? what.LocaleString : what) + ' is not a valid option as we dont have that waypoint either');
+								Feedback.lastDecision = 'Should do '+((dungeonsKey || area.LocaleString));
+								console.debug(otherName + ' is not a valid option as we dont have that waypoint either');
 							} else if ( 100 / effortXp * otherXp > 70) {
-								console.debug((type === 'clear' ? what.LocaleString : what)+' is a better idea as '+(dungeonsKey || area.LocaleString));
+								console.debug(otherName+' is a better idea as '+(dungeonsKey || area.LocaleString));
+								Feedback.lastDecision = 'Should do '+otherName;
 								return [type,what,otherXp];
 							} else {
-								console.debug((type === 'clear' ? what.LocaleString : what) + ' is not a valid option');
+								console.debug(otherName + ' is not a valid option');
 							}
 						}
 					}
@@ -202,6 +205,7 @@
 						// Calculate if every dungeon listed here gives atleast that much xp?
 						if (dungeonAreas.every(([a, curxp]) => !curxp || 100 - (100 / effortXp * curxp) < 30)) {
 
+							Feedback.lastDecision = 'Do dungeon '+dungeonsKey;
 							// This entire dungeon is an good idea
 							return ['dungeon', dungeonsKey, effortXp];
 						}
