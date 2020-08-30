@@ -1174,19 +1174,28 @@
 			return (raritypool ? effortpool / raritypool : Infinity);
 		},
 		areaSoloExp: function (areaID, skills) {
-			let effortpool = 0, raritypool = 0,dmgAcc = 0;
+			let brokeness = 1 + ((100 - Math.min(100, Math.max(0, (100 / Config.LowGold * me.gold)))) / 100);
+
+			let effortpool = 0, raritypool = 0, dmgAcc = 0;
 
 			skills = skills || this.allSkillDamage();
 			AreaData[areaID].forEachMonsterAndMinion((mon, rarity, parent) => {
 				effortpool += rarity * this.monsterExp(mon.Index, areaID) * this.levelModifier(GameData.myReference.charlvl, this.monsterLevel(mon.Index, areaID)) / this.monsterEffort(mon.Index, areaID, skills, parent && parent.Index).effort;
 				raritypool += rarity;
 
-				dmgAcc += rarity * this.monsterAvgDmg(mon.Index, areaID);
+				dmgAcc += (rarity * this.monsterAvgDmg(mon.Index, areaID));
 			});
 
-			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity);
 
-			return (raritypool ? effortpool / raritypool : 0)-(avgDmg/2);
+			let log = (5 - Math.log(areaID)) * brokeness;
+
+			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * brokeness * log;
+			if (areaID < sdk.areas.CatacombsLvl4) {
+				print('Brokeness: ' + brokeness);
+				print('avg dmg: ' + Math.round(avgDmg * 100) / 100 + ' -- ' + Math.round((raritypool ? effortpool / raritypool : 0) * 100) / 100);
+			}
+
+			return (raritypool ? effortpool / raritypool : 0) - (avgDmg);
 		},
 		mostUsedSkills: function (force = false) {
 			if (!force && GameData.myReference.hasOwnProperty('__cachedMostUsedSkills') && GameData.myReference.__cachedMostUsedSkills) return GameData.myReference.__cachedMostUsedSkills;
