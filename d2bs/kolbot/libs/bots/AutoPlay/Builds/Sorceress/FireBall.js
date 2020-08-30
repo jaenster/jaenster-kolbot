@@ -5,12 +5,13 @@
 		name: 'fireball',
 		skills: [
 			// First skills that are needed
+			[sdk.skills.FireBolt, 3], // first 3 points in firebolt
+			[sdk.skills.StaticField, 3], // All left over points in static field
 			[sdk.skills.Telekinesis, 1],
 			[sdk.skills.Warmth, 1],
-			[sdk.skills.Teleport, 1],
 
+			[sdk.skills.Teleport, 1],
 			[sdk.skills.FireBall, 20],
-			[sdk.skills.StaticField, 3], // All left over points in static field
 			[sdk.skills.FireBolt, 20],
 
 		],
