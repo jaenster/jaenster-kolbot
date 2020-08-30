@@ -1406,7 +1406,10 @@
 		},
 
 		getWalkDistance: function (x, y, area = me.area, xx = me.x, yy = me.y) {
-			return getPath(area, x, y, xx, yy, 0, 5).map(el => el.distance).reduce((acc, cur) => acc + cur, 0);
+			return getPath(area, x, y, xx, yy, 0, 5)
+				// distance between node x and x-1
+				.map((e, i, s) => i && getDistance(s[i - 1], e) || 0)
+				.reduce((acc, cur) => acc + cur, 0);
 		},
 
 		/**
@@ -1416,7 +1419,7 @@
 		 */
 		getWalkDistanceLongDistance: function (spot1, spot2) {
 			return this.getLongDistancePath(spot1, spot2)
-				.map((obj) => this.getWalkDistance(obj.fromx, obj.fromy, area, obj.tox, obj.toy) || 0)
+				.map((obj) => this.getWalkDistance(obj.fromx, obj.fromy, obj.area, obj.tox, obj.toy) || 0)
 				.reduce((acc, cur) => acc + (cur || 0), 0);
 		},
 
@@ -1424,11 +1427,16 @@
 		 *
 		 * @param {{area:number,x:number,y:number}|Unit} spot1
 		 * @param {{area:number,x:number,y:number}|Unit} spot2
+		 * @param {boolean} reverse?
+		 *
+		 * @return {{area,fromx,fromy,tox,toy}[]}
 		 */
-
-		getLongDistancePath: function (spot1, spot2) {
+		getLongDistancePath: function (spot1, spot2,reverse=false) {
 			const plot = Pather.plotCourse(spot1.area, spot2.area) || {course: [spot1.area]};
 
+			if (reverse) plot.course.reverse();
+
+			console.debug(plot.course);
 			return plot.course.map((area, i, self) => {
 				let start = spot1, previous, next;
 
@@ -1450,7 +1458,7 @@
 				}
 
 				return {
-					area: me.area,
+					area: area,
 					fromx: start.x,
 					fromy: start.y,
 

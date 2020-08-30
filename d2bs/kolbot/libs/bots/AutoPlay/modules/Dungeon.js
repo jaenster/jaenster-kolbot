@@ -184,7 +184,7 @@
 			}
 
 			targets.forEach(target => {
-				console.debug('Walking? -- ' + target.x + ', ' + target.y);
+				console.debug('Walking? -- ' + target.x + ', ' + target.y+' , '+target.distance);
 
 				walkTo(target);
 

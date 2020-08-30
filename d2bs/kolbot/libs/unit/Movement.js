@@ -15,7 +15,7 @@
 
 	PresetUnit.prototype.realCoords = function () {
 		return {
-			area: this.area,
+			area: this.level, // for some reason, preset units names the area "level"
 			x: this.roomx * 5 + this.x,
 			y: this.roomy * 5 + this.y,
 		}

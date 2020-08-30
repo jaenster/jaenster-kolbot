@@ -1954,9 +1954,7 @@
 		return true;
 	};
 
-	const act = [{}, {}, {}, {}, {}];
-
-	Town.ActData = act;
+	Town.ActData = [{}, {}, {}, {}, {}];
 
 	Town.initialize = function () {
 		//print("Initialize town " + me.act);
@@ -1973,77 +1971,77 @@
 
 				fire = [fireUnit.roomx * 5 + fireUnit.x, fireUnit.roomy * 5 + fireUnit.y];
 
-				act[0].spot = {};
-				act[0].spot.stash = [fire[0] - 7, fire[1] - 12];
-				act[0].spot[NPC.Warriv] = [fire[0] - 5, fire[1] - 2];
-				act[0].spot[NPC.Cain] = [fire[0] + 6, fire[1] - 5];
-				act[0].spot[NPC.Kashya] = [fire[0] + 14, fire[1] - 4];
-				act[0].spot[NPC.Akara] = [fire[0] + 56, fire[1] - 30];
-				act[0].spot[NPC.Charsi] = [fire[0] - 39, fire[1] - 25];
-				act[0].spot[NPC.Gheed] = [fire[0] - 34, fire[1] + 36];
-				act[0].spot.portalspot = [fire[0] + 10, fire[1] + 18];
-				act[0].spot.waypoint = [wp.roomx * 5 + wp.x, wp.roomy * 5 + wp.y];
-				act[0].initialized = true;
+				Town.ActData[0].spot = {};
+				Town.ActData[0].spot.stash = [fire[0] - 7, fire[1] - 12];
+				Town.ActData[0].spot[NPC.Warriv] = [fire[0] - 5, fire[1] - 2];
+				Town.ActData[0].spot[NPC.Cain] = [fire[0] + 6, fire[1] - 5];
+				Town.ActData[0].spot[NPC.Kashya] = [fire[0] + 14, fire[1] - 4];
+				Town.ActData[0].spot[NPC.Akara] = [fire[0] + 56, fire[1] - 30];
+				Town.ActData[0].spot[NPC.Charsi] = [fire[0] - 39, fire[1] - 25];
+				Town.ActData[0].spot[NPC.Gheed] = [fire[0] - 34, fire[1] + 36];
+				Town.ActData[0].spot.portalspot = [fire[0] + 10, fire[1] + 18];
+				Town.ActData[0].spot.waypoint = [wp.roomx * 5 + wp.x, wp.roomy * 5 + wp.y];
+				Town.ActData[0].initialized = true;
 
 				break;
 			case 2:
-				act[1].spot = {};
-				act[1].spot[NPC.Fara] = [5124, 5082];
-				act[1].spot[NPC.Cain] = [5124, 5082];
-				act[1].spot[NPC.Lysander] = [5118, 5104];
-				act[1].spot[NPC.Greiz] = [5033, 5053];
-				act[1].spot[NPC.Elzix] = [5032, 5102];
-				act[1].spot.palace = [5088, 5153];
-				act[1].spot.sewers = [5221, 5181];
-				act[1].spot[NPC.Meshif] = [5205, 5058];
-				act[1].spot[NPC.Drognan] = [5097, 5035];
-				act[1].spot[NPC.Atma] = [5137, 5060];
-				act[1].spot[NPC.Warriv] = [5152, 5201];
-				act[1].spot.portalspot = [5168, 5060];
-				act[1].spot.stash = [5124, 5076];
-				act[1].spot.waypoint = [5070, 5083];
-				act[1].initialized = true;
+				Town.ActData[1].spot = {};
+				Town.ActData[1].spot[NPC.Fara] = [5124, 5082];
+				Town.ActData[1].spot[NPC.Cain] = [5124, 5082];
+				Town.ActData[1].spot[NPC.Lysander] = [5118, 5104];
+				Town.ActData[1].spot[NPC.Greiz] = [5033, 5053];
+				Town.ActData[1].spot[NPC.Elzix] = [5032, 5102];
+				Town.ActData[1].spot.palace = [5088, 5153];
+				Town.ActData[1].spot.sewers = [5221, 5181];
+				Town.ActData[1].spot[NPC.Meshif] = [5205, 5058];
+				Town.ActData[1].spot[NPC.Drognan] = [5097, 5035];
+				Town.ActData[1].spot[NPC.Atma] = [5137, 5060];
+				Town.ActData[1].spot[NPC.Warriv] = [5152, 5201];
+				Town.ActData[1].spot.portalspot = [5168, 5060];
+				Town.ActData[1].spot.stash = [5124, 5076];
+				Town.ActData[1].spot.waypoint = [5070, 5083];
+				Town.ActData[1].initialized = true;
 
 				break;
 			case 3:
-				act[2].spot = {};
-				act[2].spot[NPC.Meshif] = [5118, 5168];
-				act[2].spot[NPC.Hratli] = [5223, 5048, 5127, 5172];
-				act[2].spot[NPC.Ormus] = [5129, 5093];
-				act[2].spot[NPC.Asheara] = [5043, 5093];
-				act[2].spot[NPC.Alkor] = [5083, 5016];
-				act[2].spot[NPC.Cain] = [5148, 5066];
-				act[2].spot.stash = [5144, 5059];
-				act[2].spot.portalspot = [5150, 5063];
-				act[2].spot.waypoint = [5158, 5050];
-				act[2].initialized = true;
+				Town.ActData[2].spot = {};
+				Town.ActData[2].spot[NPC.Meshif] = [5118, 5168];
+				Town.ActData[2].spot[NPC.Hratli] = [5223, 5048, 5127, 5172];
+				Town.ActData[2].spot[NPC.Ormus] = [5129, 5093];
+				Town.ActData[2].spot[NPC.Asheara] = [5043, 5093];
+				Town.ActData[2].spot[NPC.Alkor] = [5083, 5016];
+				Town.ActData[2].spot[NPC.Cain] = [5148, 5066];
+				Town.ActData[2].spot.stash = [5144, 5059];
+				Town.ActData[2].spot.portalspot = [5150, 5063];
+				Town.ActData[2].spot.waypoint = [5158, 5050];
+				Town.ActData[2].initialized = true;
 
 				break;
 			case 4:
-				act[3].spot = {};
-				act[3].spot[NPC.Cain] = [5027, 5027];
-				act[3].spot[NPC.Halbu] = [5089, 5031];
-				act[3].spot[NPC.Tyrael] = [5027, 5027];
-				act[3].spot[NPC.Jamella] = [5088, 5054];
-				act[3].spot.stash = [5022, 5040];
-				act[3].spot.portalspot = [5045, 5042];
-				act[3].spot.waypoint = [5043, 5018];
-				act[3].initialized = true;
+				Town.ActData[3].spot = {};
+				Town.ActData[3].spot[NPC.Cain] = [5027, 5027];
+				Town.ActData[3].spot[NPC.Halbu] = [5089, 5031];
+				Town.ActData[3].spot[NPC.Tyrael] = [5027, 5027];
+				Town.ActData[3].spot[NPC.Jamella] = [5088, 5054];
+				Town.ActData[3].spot.stash = [5022, 5040];
+				Town.ActData[3].spot.portalspot = [5045, 5042];
+				Town.ActData[3].spot.waypoint = [5043, 5018];
+				Town.ActData[3].initialized = true;
 
 				break;
 			case 5:
-				act[4].spot = {};
-				act[4].spot.portalspot = [5098, 5019];
-				act[4].spot.stash = [5129, 5061];
-				act[4].spot[NPC.Larzuk] = [5141, 5045];
-				act[4].spot[NPC.Malah] = [5078, 5029];
-				act[4].spot[NPC.Cain] = [5119, 5061];
-				act[4].spot[NPC.Qual_Kehk] = [5066, 5083];
-				act[4].spot[NPC.Anya] = [5112, 5120];
-				act[4].spot.portal = [5118, 5120];
-				act[4].spot.waypoint = [5113, 5068];
-				act[4].spot[NPC.Nihlathak] = [5071, 5111];
-				act[4].initialized = true;
+				Town.ActData[4].spot = {};
+				Town.ActData[4].spot.portalspot = [5098, 5019];
+				Town.ActData[4].spot.stash = [5129, 5061];
+				Town.ActData[4].spot[NPC.Larzuk] = [5141, 5045];
+				Town.ActData[4].spot[NPC.Malah] = [5078, 5029];
+				Town.ActData[4].spot[NPC.Cain] = [5119, 5061];
+				Town.ActData[4].spot[NPC.Qual_Kehk] = [5066, 5083];
+				Town.ActData[4].spot[NPC.Anya] = [5112, 5120];
+				Town.ActData[4].spot.portal = [5118, 5120];
+				Town.ActData[4].spot.waypoint = [5113, 5068];
+				Town.ActData[4].spot[NPC.Nihlathak] = [5071, 5111];
+				Town.ActData[4].initialized = true;
 
 				break;
 		}
@@ -2058,7 +2056,7 @@
 
 		var i, path;
 
-		if (!act[me.act - 1].initialized) {
+		if (!Town.ActData[me.act - 1].initialized) {
 			Town.initialize();
 		}
 
@@ -2086,12 +2084,12 @@
 		var i, path, townSpot,
 			longRange = (spot === "waypoint");
 
-		if (!act[me.act - 1].hasOwnProperty("spot") || !act[me.act - 1].spot.hasOwnProperty(spot)) {
+		if (!Town.ActData[me.act - 1].hasOwnProperty("spot") || !Town.ActData[me.act - 1].spot.hasOwnProperty(spot)) {
 			return false;
 		}
 
-		if (typeof (act[me.act - 1].spot[spot]) === "object") {
-			townSpot = act[me.act - 1].spot[spot];
+		if (typeof (Town.ActData[me.act - 1].spot[spot]) === "object") {
+			townSpot = Town.ActData[me.act - 1].spot[spot];
 		} else {
 			return false;
 		}
@@ -2231,6 +2229,8 @@
 		80, // Antidote Potion
 		81 // Thawing Potion
 	]
+
+	// Town.ActData = act;
 	module.exports = Town;
 })
 (module, require);

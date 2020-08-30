@@ -11,6 +11,10 @@
 
 	module.exports = function (target, recursion = 0) {
 
+
+		console.debug('generating path towards target: ', target);
+		global['debuglineLol'] = new Line(target.x, target.x, me.x, me.y, 0x12, true);
+
 		/** @type {{x,y}[]|undefined}*/
 		const path = Pather.useTeleport() ? getPath(me.area, target.x, target.y, me.x, me.y, 1, 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
 		if (!path) throw new Error('failed to generate path');

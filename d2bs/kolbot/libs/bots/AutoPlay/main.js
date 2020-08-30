@@ -95,7 +95,7 @@
 						}
 					}
 				} catch (e) {
-					console.log(e);
+					console.log(e.stack);
 					Misc.errorReport(e, 'AutoPlay, ' + (scriptRunning || ''));
 					if (typeof errorOut[me.area] === 'undefined') errorOut[me.area] = 0;
 					if ((++errorOut[me.area]) > 5) break;

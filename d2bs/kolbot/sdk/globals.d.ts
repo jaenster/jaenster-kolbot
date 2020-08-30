@@ -55,9 +55,9 @@ declare class PresetUnit {
     getNext(): PresetUnit | false
 }
 
-declare function getPresetUnit(): PresetUnit | false
+declare function getPresetUnit(...args): PresetUnit | false
 
-declare function getPresetUnits(): PresetUnit[] | false
+declare function getPresetUnits(...args): PresetUnit[] | false
 
 declare class Area {
     getNext(): Area | false;
