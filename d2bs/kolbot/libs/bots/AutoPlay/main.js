@@ -9,11 +9,13 @@
 
 	require('./AutoConfig/Setup');
 	require('./Builds/Auto');
+	require('./modules/PickitHook');
 
 	// Actual classical bot script
 	module.exports = function (...args) {
 
 		let [Config, Attack, Pickit, Pather, Town, Misc] = args;
+
 		const Feedback = require('./modules/Feedback');
 		const GameAnalyzer = require('./modules/GameAnalyzer');
 
@@ -36,10 +38,12 @@
 
 		const errorOut = {};
 		do {
-			
+
 			me.inTown && Town();
 			nowWhat = GameAnalyzer.nowWhat();
-			delay(1000);
+			//
+			// nowWhat = ['dungeon', 'DenOfEvil', 1337];
+
 			try {
 				switch (nowWhat && nowWhat.length >= 2 && nowWhat[0]) {
 					case false:

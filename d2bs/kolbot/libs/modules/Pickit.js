@@ -5,8 +5,7 @@
  */
 
 (function (module, require) {
-	const Config = require('../modules/Config'),
-		Storage = require('../modules/Storage'),
+	const Storage = require('../modules/Storage'),
 		NTIP = require('../modules/NTIP'),
 		Misc = require('../modules/Misc'),
 		Town = require('../modules/Town'),

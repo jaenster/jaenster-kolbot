@@ -241,6 +241,7 @@ Unit.prototype.toCursor = function () {
 };
 
 Unit.prototype.drop = function () {
+	console.debug((new Error).stack);
 	if (this.type !== 4) {
 		throw new Error("Unit.drop: Must be used with items.");
 	}

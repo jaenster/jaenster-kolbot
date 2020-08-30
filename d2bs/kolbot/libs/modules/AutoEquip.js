@@ -431,8 +431,6 @@
 	module.exports = AutoEquip;
 
 	// Inject ourselfs into the pickit handlers
-
 	Pickit.hooks.push(AutoEquip)
-
 })
 (module, require);

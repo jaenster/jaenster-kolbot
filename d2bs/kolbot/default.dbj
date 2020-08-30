@@ -74,8 +74,8 @@ function main() {
 	const Town = require('./libs/modules/Town');
 
 	Town.getCorpse();
-	me.charlvl > 1 && Town.clearBelt();
-	me.charlvl > 1 && Town.clearInventory();
+	// me.charlvl > 1 && Town.clearBelt();
+	// me.charlvl > 1 && Town.clearInventory();
 	Pickit.pickItems();
 
 	me.automap = Config.AutoMap;

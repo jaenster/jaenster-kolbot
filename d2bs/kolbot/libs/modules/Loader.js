@@ -6,9 +6,9 @@
 
 (function (module, require) {
 
-	const Loader = function (Config) {
+	const Loader = function () {
 		Loader.getScripts();
-		Loader.loadScripts(Config);
+		Loader.loadScripts();
 	};
 
 	Loader.fileList = [];
@@ -27,8 +27,7 @@
 		}
 	};
 
-	Loader.loadScripts = function (Config) {
-		print(getScript(true).name.toString()+ ' --- '+(JSON.stringify(Config)));
+	Loader.loadScripts = function () {
 		const Scripts = Config.Scripts;
 		let s, script,
 			unmodifiedConfig = {};
@@ -48,18 +47,16 @@
 
 		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
 			script = Loader.scriptList[Loader.scriptIndex];
-			Loader.runScript(script);
+			Loader.runScript(script,Config);
 		}
 	};
 	Loader.runScript = function (script) {
-		const Config = require('../modules/Config');
-		const Attack = require('../modules/Attack');
-		const Scripts = Config.Scripts;
-		const Pickit = require('../modules/Pickit');
-		const Messaging = require('../modules/Messaging');
-		const Town = require('../modules/Town');
-		const Misc = require('../modules/Misc');
-		const Pather = require('../modules/Pather');
+		const Attack = require('./Attack');
+		const Pickit = require('./Pickit');
+		const Messaging = require('./Messaging');
+		const Town = require('./Town');
+		const Misc = require('./Misc');
+		const Pather = require('./Pather');
 
 		let scriptModule;
 		try {

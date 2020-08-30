@@ -265,12 +265,14 @@
 								continue;
 							}
 
+							// filter out items that are already on the list =O
 							for (n = 0; n < itemList.length; n += 1) {
 								if (itemList[n].gid === item.gid) {
 									continue Loop;
 								}
 							}
 
+							console.debug('here? ',h, w, reference[h][w]);
 							//Check if the buffers changed and the current buffer has an item there.
 							if (this.buffer[h][w] > 0 && reference[h][w] > 0) {
 								itemList.push(copyUnit(item));

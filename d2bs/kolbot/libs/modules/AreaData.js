@@ -107,7 +107,7 @@
 	};
 
 	AreaData.dungeons = {
-		DenOfEvil: [sdk.areas.BloodMoor, sdk.areas.DenOfEvil],
+		DenOfEvil: [sdk.areas.DenOfEvil],
 
 		Hole: [sdk.areas.HoleLvl1, sdk.areas.HoleLvl2,],
 

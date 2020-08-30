@@ -20,11 +20,11 @@
 			D2Bot.stop();
 		}
 
-		const scripts = require('../../config/'+Config.file);
+		const scripts = require('../../config/' + Config.file);
 		const currentScript = getScript(true).name.toLowerCase();
 		Object.keys(scripts || {})
 			.forEach(x => {
-				getScript(true).name === 'default.dbj' && print(' -- Enabled script: '+x);
+				getScript(true).name === 'default.dbj' && print(' -- Enabled script: ' + x);
 				Config.Scripts[x] = scripts[x];
 			});
 
@@ -381,5 +381,7 @@
 	Config.Advertisement = false;
 
 	module.exports = Config;
+	const global = [].filter.constructor('return this')();
+	if (typeof global['Config'] !== 'object') global['Config'] = Config;
 
 })(module, require);
