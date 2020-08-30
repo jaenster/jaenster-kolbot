@@ -272,7 +272,6 @@
 								}
 							}
 
-							console.debug('here? ',h, w, reference[h][w]);
 							//Check if the buffers changed and the current buffer has an item there.
 							if (this.buffer[h][w] > 0 && reference[h][w] > 0) {
 								itemList.push(copyUnit(item));

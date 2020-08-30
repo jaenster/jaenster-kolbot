@@ -11,7 +11,6 @@
 		this.fn = fn;
 		this.installed = false;
 
-
 		Overload.instances.push(this);
 	}
 	// static variable
@@ -19,7 +18,7 @@
 
 	Overload.prototype.remove = function () {
 		if (this.installed) {
-			console.debug('removing ' + this.name + '.' + name);
+			console.debug('removing ' + this.obj.name + '.' + this.name);
 			this.obj[this.name] = this.original;
 
 			this.installed = false;
@@ -28,7 +27,7 @@
 
 	Overload.prototype.install = function () {
 		if (!this.installed) {
-			console.debug('Overloading ' + this.name + '.' + name);
+			console.debug('Overloading ' + this.obj.name + '.' + this.name);
 			this.obj[this.name] = this.fn.bind(this.obj, this.original);
 
 			this.installed = true;
