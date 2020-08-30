@@ -128,7 +128,7 @@
 	const myData = module.exports = {
 		skip: [sdk.areas.InnerCloister],
 		areas: [],
-		nowWhat: function (tmpSkip=[],comparedTo=undefined) {
+		nowWhat: function (tmpSkip = [], comparedTo = undefined) {
 			/**
 
 			 The idea,
@@ -155,15 +155,16 @@
 
 				// Can we go to this area?
 				const canAccess = area.canAccess();
-				console.log('Looking at area ' + area.LocaleString + ' ('+Math.round(effortXp*100)/100+')');
-
+				console.log('Looking at area ' + area.LocaleString + ' (' + Math.round(effortXp * 100) / 100 + ')');
 				tmpSkip.push(area.Index);
+
+				let dungeonsKey = '';
 
 				// Found an area we can access, and gives allot of xp
 				if (canAccess) {
 
 					// Is this area part of an dungeon?
-					let dungeonsKey = Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index));
+					dungeonsKey = Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index));
 
 					// before saying we want to do this dungeon, lets see if our second best option is as viable as this
 					if (!area.haveWaypoint()) {
@@ -176,22 +177,21 @@
 						}
 
 
-
-						const result = this.nowWhat(copy,comparedTo||effortXp);
+						const result = this.nowWhat(copy, comparedTo || effortXp);
 						if (result && result.length >= 3) {
-							const [type,what,otherXp] = result;
+							const [type, what, otherXp] = result;
 
 							const otherArea = type === 'clear' ? what : AreaData[AreaData.dungeons[what].first()];
 
 							let otherName = (type === 'clear' ? what.LocaleString : what);
 							// another area only make sense if we do have that waypoint
 							if (!otherArea.haveWaypoint()) {
-								Feedback.lastDecision = 'Should do '+((dungeonsKey || area.LocaleString));
+								Feedback.lastDecision = 'Should do ' + ((dungeonsKey || area.LocaleString));
 								console.debug(otherName + ' is not a valid option as we dont have that waypoint either');
-							} else if ( 100 / (effortXp||comparedTo) * otherXp > 90) {
-								console.debug(otherName+' is a better idea as '+(dungeonsKey || area.LocaleString));
-								Feedback.lastDecision = 'Should do '+otherName;
-								return [type,what,otherXp];
+							} else if (100 / (effortXp || comparedTo) * otherXp > 90) {
+								console.debug(otherName + ' is a better idea as ' + (dungeonsKey || area.LocaleString));
+								Feedback.lastDecision = 'Should do ' + otherName;
+								return [type, what, otherXp];
 							} else {
 								console.debug(otherName + ' is not a valid option');
 							}
@@ -205,7 +205,7 @@
 						// Calculate if every dungeon listed here gives atleast that much xp?
 						if (dungeonAreas.every(([a, curxp]) => !curxp || 100 - (100 / effortXp * curxp) < 30)) {
 
-							Feedback.lastDecision = 'Do dungeon '+dungeonsKey;
+							Feedback.lastDecision = 'Do dungeon ' + dungeonsKey;
 							// This entire dungeon is an good idea
 							return ['dungeon', dungeonsKey, effortXp];
 						}
