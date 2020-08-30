@@ -403,8 +403,6 @@
 						y: poi.roomy * 5 + poi.y,
 					}))(getPresetUnit(sdk.areas.DenOfEvil, 1, 774));
 
-					const myPathToCorpse = getPath(me.area, me.x, me.y, corpseFire.x, corpseFire.y, 0, 25).map(el => el.distance).reduce((acc, cur) => acc + cur, 0);
-
 					const rooms = (function (room, ret = []) {
 						do {
 							let obj = {
