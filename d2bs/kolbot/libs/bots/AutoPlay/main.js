@@ -9,7 +9,11 @@
 
 	require('./AutoConfig/Setup');
 	require('./Builds/Auto');
+
+	require('./modules/Guard');
 	require('./modules/PickitHook');
+
+	getPacket(1, 0x1d, 1, sdk.stats.Fastergethitrate, 1, 255);
 
 	// Actual classical bot script
 	module.exports = function (...args) {
