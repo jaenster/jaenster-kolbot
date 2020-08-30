@@ -892,7 +892,7 @@
 		}
 		const Pickit = require('./Pickit');
 
-		var i, item, result,
+		let i, item, result,
 			items = [],
 			npc = getInteractedNPC();
 
@@ -905,6 +905,7 @@
 		if (!item) {
 			return false;
 		}
+
 		const Storage = require('./Storage');
 		print("ÿc4MiniShopBotÿc0: Scanning " + npc.itemcount + " items.");
 
@@ -917,12 +918,17 @@
 		for (i = 0; i < items.length; i += 1) {
 			result = Pickit.checkItem(items[i]);
 
-			if (result.result === 1) {
+			// if result is a string, its a pickit hook that wants to buy the item
+			if (result.result === 1 || typeof result.result === 'string') {
 				try {
 					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
 						Misc.itemLogger("Shopped", items[i]);
 						Misc.logItem("Shopped", items[i], result.line);
 						items[i].buy();
+						if (typeof result.result === 'string') {
+							const hook = Pickit.hooks.find(el => el.name === result.result);
+							if (hook) hook.handle(item);
+						}
 					}
 				} catch (e) {
 					print(e);
