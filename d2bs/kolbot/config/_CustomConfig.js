@@ -8,14 +8,14 @@ var CustomConfig = {
 
 };
 
-/* Jaenster: Easier way to configure
+// Jaenster: Easier way to configure
 
 
 // Check if title starts with MyBotsPrefix,
-if (me.windowtitle.indexOf('MyBotsPrefix') === 0) {
+if (me.windowtitle.indexOf('AutoPlay') === 0) {
 	// Put it to the list of CustomConfig
-	CustomConfig['MyConfigFile'] = [me.windowtitle];
+	CustomConfig['AutoPlay'] = [me.windowtitle];
 }
 
 
- */
+ //*/

@@ -172,7 +172,7 @@
 
 
 				// calculate what is the shortest to walk between
-				let nodes = FastestPath(visitNodes);
+				let nodes = FastestPath(visitNodes).winningPath;
 
 				let nearestNode = nodes.indexOf(nodes.slice().sort((a, b) => a.distance - b.distance).first());
 
@@ -308,7 +308,7 @@
 					walkTo(target);
 
 					const cuntress = getUnits(2).filter(unit=>unit.name === getLocaleString(2875)).first();
-					
+
 					cuntress.clear(20);
 					cuntress.kill();
 				}
