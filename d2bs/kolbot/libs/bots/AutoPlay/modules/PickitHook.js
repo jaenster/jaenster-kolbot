@@ -23,6 +23,20 @@
 
 			if (!item) return false; // We dont want an item that doesnt exists
 
+			const npc = getInteractedNPC();
+			if (npc && item.getParent().gid === npc.gid) {
+
+				// Item for sale
+
+
+
+
+			} else {
+				// item is not for sale
+
+
+			}
+
 			// Do some calculation why we want an item
 			return false;
 		}).call();
