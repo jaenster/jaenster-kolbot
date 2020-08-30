@@ -21,7 +21,7 @@
 	function Overload(Obj, name, fn) {
 		this.obj = Obj;
 		this.name = name;
-		this.original = Obj[fn];
+		this.original = Obj[name];
 		this.fn = fn;
 		this.installed = false;
 
@@ -52,6 +52,8 @@
 		const from = Overload.instances.length;
 
 		new Overload(Pather, 'journeyTo', /**@this Pather*/ function (original, ...args) {
+
+			return original.apply(Pather,args);
 
 			// If we can teleport we just use the original Pather.journeyTo
 			const useTeleport = this.useTeleport();
