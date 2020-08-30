@@ -9,9 +9,7 @@
 		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
 		.first();
 
-	module.exports = function (target, recursion = 0) {
-
-
+	const walkTo = module.exports = function (target, recursion = 0) {
 		console.debug('generating path towards target: ', target);
 		global['debuglineLol'] = new Line(target.x, target.x, me.x, me.y, 0x12, true);
 
@@ -37,7 +35,10 @@
 			Pickit.pickItems();
 
 			// if shrine found, click on it
-			(shrine = searchShrine()) && shrine.click();
+			if ((shrine = searchShrine())){
+				shrine.moveTo();
+				shrine.click();
+			}
 
 			// if this wasnt our last node
 			if (l - 1 !== i) {
