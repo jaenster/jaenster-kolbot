@@ -13,6 +13,14 @@
 		return this.distance > 5 && Pather.moveTo(this.x + offX, this.y + offY, undefined, clearPath, pop);
 	};
 
+	PresetUnit.prototype.realCoords = function () {
+		return {
+			area: this.area,
+			x: this.roomx * 5 + this.x,
+			y: this.roomy * 5 + this.y,
+		}
+	};
+
 	PresetUnit.prototype.moveTo = function (offX, offY, clearPath, pop) {
 		const Pather = require('../modules/Pather');
 		Pather.moveTo(this.roomx * 5 + this.x + (offX || 0), this.roomy * 5 + this.y + (offY || 0), 4, clearPath, pop);

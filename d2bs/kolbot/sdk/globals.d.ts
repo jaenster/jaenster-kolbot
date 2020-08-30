@@ -3,7 +3,7 @@ declare type PathNode = { x: number, y: number }
 declare function getUnit(type?: number, name?: string, mode?: number, unitId?: number)
 declare function getUnit(type?: number, classId?: number, mode?: number, unitId?: number)
 
-declare function getPath(area: number, fromX: number, fromY: number, toX: number, toY: number, reductionType: 0 | 1, radius: number): PathNode | false
+declare function getPath(area: number, fromX: number, fromY: number, toX: number, toY: number, reductionType: 0 | 1, radius: number): PathNode[] | false
 
 declare function getCollision(area: number, x: number, y: number)
 
@@ -63,7 +63,7 @@ declare class Area {
     getNext(): Area | false;
 }
 
-declare function getArea(): Area | false
+declare function getArea(area?: number): Area | false
 
 declare function getBaseStat(table: string, row: number, column: string): number | string
 declare function getBaseStat(row: number, column: string): number | string

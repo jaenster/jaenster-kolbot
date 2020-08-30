@@ -1956,6 +1956,8 @@
 
 	const act = [{}, {}, {}, {}, {}];
 
+	Town.ActData = act;
+
 	Town.initialize = function () {
 		//print("Initialize town " + me.act);
 

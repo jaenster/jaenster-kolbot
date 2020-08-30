@@ -87,16 +87,31 @@
 			},
 			haveWaypoint: function () {
 				const Pather = require('./Pather');
+				
+				// get the last area that got a WP
+				let wpArea = this.nearestWaypointArea();
+
+				// If you dont need a wp, we want at least the town's wp
+				return getWaypoint(Pather.wpAreas.indexOf(wpArea || this.townArea().Index));
+			},
+			nearestWaypointArea: function () {
+				const Pather = require('./Pather');
 
 				// plot toward this are
 				const plot = Pather.plotCourse(this.Index, this.townArea().Index);
 
 				// get the last area that got a WP
-				let wpArea = plot.course.filter(el => Pather.wpAreas.indexOf(el) > -1).last();
-
-				// If you dont need a wp, we want at least the town's wp
-				return getWaypoint(Pather.wpAreas.indexOf(wpArea || this.townArea().Index));
-			}
+				return plot.course.filter(el => Pather.wpAreas.indexOf(el) > -1).last();
+			},
+			/** @return PresetUnit|undefined */
+			waypointPreset: function () {
+				const wpIDs = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539];
+				for (let i = 0, preset, wpArea = this.nearestWaypointArea(); i < wpIDs.length || preset; i++) {
+					if ((preset = getPresetUnit(wpArea, 2, wpIDs[i]))) {
+						return preset;
+					}
+				}
+			},
 		});
 	}
 

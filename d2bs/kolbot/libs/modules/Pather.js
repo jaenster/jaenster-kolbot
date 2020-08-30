@@ -96,9 +96,10 @@
 
 	const Pather = function Pather() {
 
-	}
+	};
+
 	/** @class Pather*/
-	Object.assign(Pather,{
+	Object.assign(Pather, {
 		config: require('../modules/Config'),
 		teleport: true,
 		walkDistance: 5,
@@ -1133,7 +1134,7 @@
 			area - the id of area to get the waypoint in
 			clearPath - clear path
 		*/
-		getWP: function (area, clearPath,click=true) {
+		getWP: function (area, clearPath, click = true) {
 			const Misc = require('Misc');
 			var i, j, wp, preset,
 				wpIDs = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539];
@@ -1183,15 +1184,16 @@
 			const Town = require('Town');
 			const Misc = require('Misc');
 			var i, special, unit, tick, target;
+			me.inTown && TownPrecast.prepare();
 
 			target = this.plotCourse(area, me.area);
 
 			//print(target.course);
 			if (target.useWP) {
 				Town.goToTown();
+				me.inTown && TownPrecast.prepare();
 			}
 
-			me.inTown && TownPrecast.prepare();
 			// handle variable flayer jungle entrances
 			if (target.course.indexOf(78) > -1) {
 				Town.goToTown(3); // without initiated act, getArea().exits will crash
@@ -1321,6 +1323,11 @@
 				src = me.area;
 			}
 
+			// Tell the system we want to go to current level, as that is where we are and want to go
+			if (dest === src) {
+				return {course: [src], useWP: false}
+			}
+
 			if (!this.plotCourse_openedWpMenu && me.inTown && Pather.useWaypoint(null)) {
 				this.plotCourse_openedWpMenu = true;
 			}
@@ -1396,6 +1403,61 @@
 			}
 
 			return true;
+		},
+
+		getWalkDistance: function (x, y, area = me.area, xx = me.x, yy = me.y) {
+			return getPath(area, x, y, xx, yy, 0, 5).map(el => el.distance).reduce((acc, cur) => acc + cur, 0);
+		},
+
+		/**
+		 *
+		 * @param {{area:number,x:number,y:number}|Unit} spot1
+		 * @param {{area:number,x:number,y:number}|Unit} spot2
+		 */
+		getWalkDistanceLongDistance: function (spot1, spot2) {
+			return this.getLongDistancePath(spot1, spot2)
+				.map((obj) => this.getWalkDistance(obj.fromx, obj.fromy, area, obj.tox, obj.toy) || 0)
+				.reduce((acc, cur) => acc + (cur || 0), 0);
+		},
+
+		/**
+		 *
+		 * @param {{area:number,x:number,y:number}|Unit} spot1
+		 * @param {{area:number,x:number,y:number}|Unit} spot2
+		 */
+
+		getLongDistancePath: function (spot1, spot2) {
+			const plot = Pather.plotCourse(spot1.area, spot2.area) || {course: [spot1.area]};
+
+			return plot.course.map((area, i, self) => {
+				let start = spot1, previous, next;
+
+				const exits = getArea(area).exits;
+
+				// we start at either spot1 x/y, or the previous exit
+				if (i !== 0) {
+					previous = self[i - 1];
+
+					// We start at the spot where the exit of the previous area was
+					start = exits.filter(a => a.target === previous).first();
+				}
+
+				let end = spot2;
+				// we end at either spot2 x/y, or the next exit
+				if (i !== self.length - 1) {
+					next = self[i + 1];
+					end = exits.filter(a => a.target === next).first();
+				}
+
+				return {
+					area: me.area,
+					fromx: start.x,
+					fromy: start.y,
+
+					tox: end.x,
+					toy: end.y,
+				};
+			})
 		},
 
 		/*
