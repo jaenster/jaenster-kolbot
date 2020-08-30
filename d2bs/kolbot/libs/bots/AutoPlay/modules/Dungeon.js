@@ -301,17 +301,16 @@
 					let poi = getPresetUnit(me.area, 2, 580);
 
 					if (!poi) return false;
+					let target = {x: 12578, y: 11043};
 
-					switch (poi.roomx * 5 + poi.x) {
-						case 12565:
-							Pather.moveTo(12578, 11043);
-							break;
-						case 12526:
-							Pather.moveTo(12548, 11083);
-							break;
-					}
+					if (poi.roomx * 5 + poi.x === 12526) target = {x: 12548, y:11083};
 
-					Attack.clear(20, 0, getLocaleString(2875)); // The Countess
+					walkTo(target);
+
+					const cuntress = getUnits(2).filter(unit=>unit.name === getLocaleString(2875)).first();
+					
+					cuntress.clear(20);
+					cuntress.kill();
 				}
 			}
 			return true;
