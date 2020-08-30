@@ -94,7 +94,11 @@
 		coordsInPath: (path, x, y) => path.some(node => getDistance(x, y, node.x, node.y) < 5)
 	};
 
-	const Pather = {
+	const Pather = function Pather() {
+
+	}
+	/** @class Pather*/
+	Object.assign(Pather,{
 		config: require('../modules/Config'),
 		teleport: true,
 		walkDistance: 5,
@@ -1540,7 +1544,7 @@
 
 			return areas[area];
 		}
-	};
+	});
 
 	module.exports = Pather;
 }).call(null, module, require);

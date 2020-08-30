@@ -59,7 +59,7 @@
 		}
 	];
 
-	const Town = function (repair = false) {
+	const Town = function Town(repair = false) {
 		if (!me.inTown) {
 			Town.goToTown();
 		}
@@ -350,7 +350,7 @@
 	};
 
 	// Purchases and drinks potions in town.
-	Town.stackPotions = function(type, amount) {
+	Town.stackPotions = function (type, amount) {
 		if (!amount) amount = 4; // TODO: Calculate monster effort and correlate it to the number of potions to stack.
 		if (me.gold < amount * 25) {
 			print('stackPotions: Not enough gold for ' + amount + ' potions');
@@ -449,8 +449,7 @@
 					return result;
 				}
 			}
-		}
-		else if ( type === "yps" || type === "vps" || type === "wms") {
+		} else if (type === "yps" || type === "vps" || type === "wms") {
 			for (i = 5; i > 0; i -= 1) {
 				result = npc.getItem(type);
 
@@ -1793,12 +1792,12 @@
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
 		let scrolls = me.getItemsEx()
-				.filter(i => 
-					i.location === sdk.storage.Inventory &&
-					i.mode === sdk.itemmode.inStorage &&
-					i.itemType === 22 &&
-					require('Pickit').checkItem(i).result == 0
-				);
+			.filter(i =>
+				i.location === sdk.storage.Inventory &&
+				i.mode === sdk.itemmode.inStorage &&
+				i.itemType === 22 &&
+				require('Pickit').checkItem(i).result == 0
+			);
 
 		for (var i = 0; i < scrolls.length; i += 1) {
 			if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop

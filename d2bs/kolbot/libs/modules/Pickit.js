@@ -14,7 +14,7 @@
 
 	const Pather = require('../modules/Pather');
 
-	const Pickit = {};
+	const Pickit = function Pickit(){};
 
 	// Returns:
 	// -1 - Needs iding
