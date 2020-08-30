@@ -215,6 +215,7 @@
 
 	// Check if healing is needed, based on character config
 	Town.needHealing = function () {
+		console.debug('?',JSON.stringify(Config.HealHP));
 		if (me.hp * 100 / me.hpmax <= Config.HealHP || me.mp * 100 / me.mpmax <= Config.HealMP) {
 			return true;
 		}

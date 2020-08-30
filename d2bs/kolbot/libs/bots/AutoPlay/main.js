@@ -25,24 +25,17 @@
 			const dungeon = require('./modules/Dungeon');
 			const Worker = require('../../modules/Worker');
 
-			Worker.runInBackground.townCheck = (() => {
-				let inTown = me.inTown;
-				return function () {
-					if (me.inTown !== inTown) {
-						(inTown = me.inTown) && Town();
-					}
-					return true;
-				}
-			})();
-
 			let nowWhat, scriptRunning, lastScript;
 			scriptRunning = lastScript = '';
-
 
 			const errorOut = {};
 			do {
 
-				me.inTown && Town();
+
+				if (me.inTown) {
+					console.debug('wtf?');
+					Town();
+				}
 				nowWhat = GameAnalyzer.nowWhat();
 				//
 				// nowWhat = ['dungeon', 'DenOfEvil', 1337];

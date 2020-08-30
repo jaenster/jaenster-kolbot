@@ -36,12 +36,5 @@
 
 	require('./' + charClass);
 
-	const Config = require('../../../modules/Config');
-
-	Config.LowGold = me.charlvl * 1e3;
-
-	Config.MPBuffer = 12;
-	Config.HPBuffer = 12;
-
 	module.exports = ConfigObj;
 })(module, require);

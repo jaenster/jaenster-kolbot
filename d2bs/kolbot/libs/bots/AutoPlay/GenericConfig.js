@@ -28,6 +28,14 @@
 	const beltSize = Storage.BeltSize();
 	Config.MinColumn = [beltSize,beltSize,beltSize,beltSize];
 
+	Config.LowGold = me.charlvl * 1e3;
+
+	Config.MPBuffer = 12;
+	Config.HPBuffer = 12;
+
+	Config.HealHP = 70;
+	Config.HealMP = 70;
+
 	require('./AutoConfig/Setup');
 	module.exports = Scripts;
 
