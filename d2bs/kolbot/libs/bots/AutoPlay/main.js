@@ -13,7 +13,10 @@
 	require('./modules/Guard');
 	require('./modules/PickitHook');
 
-	getPacket(1, 0x1d, 1, sdk.stats.Fastergethitrate, 1, 255);
+	// FastMod is not working anymore on BattleNet so lets use it only for SP games.
+	if (me.gameserverip){
+		getPacket(1, 0x1d, 1, sdk.stats.Fastergethitrate, 1, 255);
+	}
 
 	// Actual classical bot script
 	module.exports = function (...args) {
