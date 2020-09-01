@@ -83,7 +83,7 @@
 				})
 			},
 			townArea: function () {
-				return AreaData[[1, sdk.areas.RogueEncampment, sdk.areas.LutGholein, sdk.areas.KurastDocktown, sdk.areas.PandemoniumFortress, sdk.areas.Harrogath][this.Act]];
+				return AreaData[[sdk.areas.RogueEncampment, sdk.areas.LutGholein, sdk.areas.KurastDocktown, sdk.areas.PandemoniumFortress, sdk.areas.Harrogath][this.Act]];
 			},
 			haveWaypoint: function () {
 				const Pather = require('./Pather');
