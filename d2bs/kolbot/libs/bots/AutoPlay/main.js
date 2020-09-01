@@ -14,12 +14,23 @@
 	require('./modules/PickitHook');
 
 	// FastMod is not working anymore on BattleNet so lets use it only for SP games.
-	if (me.gameserverip){
+	if (me.gameserverip) {
 		getPacket(1, 0x1d, 1, sdk.stats.Fastergethitrate, 1, 255);
 	}
 
 	// Actual classical bot script
 	module.exports = function (...args) {
+
+		if (me.area === sdk.areas.LutGholein) {
+
+			// in case its near warriv
+			if ((getPresetUnit(me.area, 1, 175)).distance < 50) {
+
+				const warriv = getUnit(1, 175);
+				warriv && warriv.openMenu() && warriv.useMenu(sdk.menu.GoWest);
+			}
+
+		}
 
 		let [Config, Attack, Pickit, Pather, Town, Misc] = args;
 
