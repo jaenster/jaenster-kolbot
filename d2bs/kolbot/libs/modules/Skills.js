@@ -213,8 +213,8 @@
 				return new Proxy({}, {
 					get: function (target, skillId) {
 						skillId = parseInt(skillId);
-						// return ((getBaseStat(3, skillId, "leftskill") || 0) + 1);
-						return ([
+						return (getBaseStat(3, skillId, "leftskill") || 0);
+						/*return ([
 							[
 								6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30,
 								31, 33, 34, 35, 36, 37, 38, 39, 41, 45, 47, 49, 53, 55, 61, 63, 64, 65, 67, 73, 79,
@@ -226,7 +226,7 @@
 								232, 233, 238, 239, 242, 248, 255, 260, 270
 							]
 						].findIndex(x => x.indexOf(skillId) > -1) || 0) + 1;
-
+						*/
 					},
 				});
 			}
