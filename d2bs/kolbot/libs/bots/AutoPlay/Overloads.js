@@ -188,6 +188,8 @@
 						}
 
 						default: {
+							console.debug('Fuck this shit, not gonna walk that far');
+							Pather.makePortal(true);
 							quit();
 							break;
 						}
@@ -337,10 +339,28 @@
 			}
 		});
 
+		const Skills = require('../../modules/Skills');
+
 		new Overload(Pather, 'useTeleport', /**@this Pather*/ function useTeleport(original, ...args) {
-			const Skills = require('../../modules/Skills');
 			// Idea is to not use teleport if we dont have enough mana on lower levels.
 			return this.teleport && (me.level >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 2)) && !me.getState(sdk.states.Wolf) && !me.getState(sdk.states.Bear) && !me.inTown && ((me.classid === 1 && me.getSkill(sdk.skills.Teleport, 1)) || me.getStat(sdk.stats.Nonclassskill, sdk.skills.Teleport));
+		});
+
+
+		// Smart use of telekenis, as telekenis is epic but expensive
+		new Overload(Pickit, 'useTk', /** @this Pickit*/ function (original, unit, itemStat) {
+
+			// If we are not a sorc and dont have the skills and such, yeah we cant do a thing
+			const weCan = original.call(original, unit, itemStat);
+
+			// if we cant use tk, no sense to figure out the rest
+			if (!weCan) return weCan;
+
+			// Only use telekenis if it cost us less as 6,66% (1/15th) of our total mana
+			// And if we have have enough mana to teleport twice, given we have the teleport skill
+			return Skills.manaCost[sdk.skills.Telekinesis] >= me.mpmax / 15
+				&& (!me.getSkill(sdk.skills.Teleport, 1) || Skills.manaCost[sdk.skills.Teleport] * 2 <= me.mp);
+
 		});
 
 		Overload.instances.slice(from).forEach(ol => ol.install());

@@ -15,7 +15,8 @@
 	const Pather = require('../modules/Pather');
 
 	/** @class Pickit*/
-	const Pickit = function Pickit(){};
+	const Pickit = function Pickit() {
+	};
 
 	// Returns:
 	// -1 - Needs iding
@@ -195,7 +196,7 @@
 		return false;
 	};
 
-	Pickit.useTK = (unit,_self) => me.classid === 1 && me.getSkill(43, 1) && (_self.type === 4 || _self.type === 22 || (_self.type > 75 && _self.type < 82)) &&
+	Pickit.useTK = (unit, _self) => me.classid === 1 && me.getSkill(43, 1) && (_self.type === 4 || _self.type === 22 || (_self.type > 75 && _self.type < 82)) &&
 		unit.distance > 5 && unit.distance < 20 && !checkCollision(me, unit, 0x4);
 
 	Pickit.pickItem = function (unit, status, keptLine) {
@@ -206,7 +207,7 @@
 			this.name = unit.name;
 			this.color = Pickit.itemColor(unit);
 			this.gold = unit.getStat(14);
-			this.useTk = Pickit.useTK(unit);
+			this.useTk = Pickit.useTK(unit, this);
 			this.picked = false;
 		}
 
