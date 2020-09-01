@@ -94,11 +94,11 @@
 		coordsInPath: (path, x, y) => path.some(node => getDistance(x, y, node.x, node.y) < 5)
 	};
 
+	/** @class Pather*/
 	const Pather = function Pather() {
 
 	};
 
-	/** @class Pather*/
 	Object.assign(Pather, {
 		config: require('../modules/Config'),
 		teleport: true,

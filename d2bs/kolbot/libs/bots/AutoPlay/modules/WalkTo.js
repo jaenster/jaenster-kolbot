@@ -4,6 +4,8 @@
 	const Pickit = require('../../../modules/Pickit');
 	const clear = require('./Clear');
 
+	const GameAnalyzer = require('./GameAnalyzer');
+
 	const searchShrine = () => getUnits(2, "shrine")
 		.filter(el => el.objtype === 15 && !el.mode)
 		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
@@ -13,6 +15,8 @@
 		console.debug('generating path towards target: ', target);
 		global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
 
+
+		const allAreas = GameAnalyzer.area;
 
 		/** @type {{x,y}[]|undefined}*/
 		const path = Pather.useTeleport() ? getPath(me.area, target.x, target.y, me.x, me.y, 1, 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);

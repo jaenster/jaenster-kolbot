@@ -121,6 +121,7 @@
 
 	deltas.track(() => JSON.stringify(me.getSkill(4)), Analyzer.update); // all skills
 	deltas.track(() => me.area, Analyzer.updateDisplay);
+	deltas.track(() => me.gold, Analyzer.updateDisplay);
 
 	Analyzer.update();
 	// })();

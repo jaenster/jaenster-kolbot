@@ -1174,7 +1174,7 @@
 			return (raritypool ? effortpool / raritypool : Infinity);
 		},
 		areaSoloExp: function (areaID, skills) {
-			let brokeness = 1 + ((100 - Math.min(100, Math.max(0, (100 / Config.LowGold * me.gold)))) / 100);
+			let brokeness = 1 + ((100 - Math.min(100, Math.max(0, (100 / (Config.LowGold||1) * me.gold)))) / 100);
 
 			let effortpool = 0, raritypool = 0, dmgAcc = 0;
 
@@ -1187,9 +1187,9 @@
 			});
 
 
-			let log = (5 - Math.log(areaID)) * brokeness;
+			let log = ((5 - Math.log(areaID)) * (brokeness*0.6)) ;
 
-			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * brokeness * log;
+			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * log;
 			if (areaID < sdk.areas.CatacombsLvl4) {
 				print('Brokeness: ' + brokeness);
 				print('avg dmg: ' + Math.round(avgDmg * 100) / 100 + ' -- ' + Math.round((raritypool ? effortpool / raritypool : 0) * 100) / 100);

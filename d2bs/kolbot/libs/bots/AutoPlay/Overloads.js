@@ -1,3 +1,5 @@
+/** @typedef {function(Config, Attack, Pickit, Pather, Town, Misc): number} BotSignature */
+
 /**
  * @description Files we want to override from kolbot
  */
@@ -51,6 +53,16 @@
 		}
 	};
 
+	/**
+	 *
+	 * @param {Config} Config
+	 * @param {Attack} Attack
+	 * @param {Pickit} Pickit
+	 * @param {Pather} Pather
+	 * @param {Town} Town
+	 * @param {Misc} Misc
+	 * @returns {{rollback: rollback}}
+	 */
 	module.exports = function (Config, Attack, Pickit, Pather, Town, Misc) {
 		const from = Overload.instances.length;
 
@@ -127,7 +139,7 @@
 						case realWorldDistance < 40: // waypoint is relatively close
 						case me.gold < Town.LowGold / 2: // very low on gold
 						case !tpBook: // If no book
-						default: {
+						{
 
 							// We might need to walk trough allot of stuff, but the system tells us its worth it
 
@@ -149,7 +161,7 @@
 							// Figure out to cut out the middle steps
 
 							// calculate a journey from preset to me, and then reverse it. So the system dont simply says to take a wp..
-							const journeys = Pather.getLongDistancePath(me, preset,true);
+							const journeys = Pather.getLongDistancePath(me, preset, true);
 							console.debug(journeys);
 
 							// Go to area of Waypoint
@@ -174,10 +186,11 @@
 
 							break;
 						}
-						//
-						// default: {
-						// 	break;
-						// }
+
+						default: {
+							quit();
+							break;
+						}
 					}
 
 				}
@@ -308,14 +321,14 @@
 						const exit = areaObj.exits.find(el => el.target === whereTo);
 
 						console.debug('--------------');
-						console.debug(AreaData[whereTo].LocaleString +' -- exit is searched in '+ AreaData[me.area].LocaleString);
+						console.debug(AreaData[whereTo].LocaleString + ' -- exit is searched in ' + AreaData[me.area].LocaleString);
 						console.debug('--------------');
 
 						// move to the exit
 						walkTo(exit);
 
 						// use the exit
-						Pather.moveToExit(whereTo,true);
+						Pather.moveToExit(whereTo, true);
 						break;
 					}
 				}
@@ -337,6 +350,7 @@
 			}
 		}
 	};
+
 	module.exports.Overload = Overload;
 
 })(module, require);

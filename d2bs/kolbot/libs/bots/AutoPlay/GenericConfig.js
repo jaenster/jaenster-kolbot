@@ -30,8 +30,8 @@
 
 	Config.LowGold = me.charlvl * 1e3;
 
-	Config.MPBuffer = 12;
-	Config.HPBuffer = 12;
+	Config.MPBuffer = 10;
+	Config.HPBuffer = 3;
 
 	Config.HealHP = 70;
 	Config.HealMP = 70;
