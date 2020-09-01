@@ -4,11 +4,11 @@
  */
 
 (function (module, require) {
-	const Pickit = require('../modules/Pickit');
-	const Promise = require('../modules/Promise');
-	const GameData = require('../modules/GameData');
-	const Town = require('../modules/Town');
-	const Pather = require('../modules/Pather');
+	const Pickit = require('./Pickit');
+	const Promise = require('./Promise');
+	const GameData = require('./GameData');
+	const Town = require('./Town');
+	const Pather = require('./Pather');
 
 	let bestSkills = [];
 	(function () {
@@ -229,8 +229,7 @@
 			tierFuncs = Object.keys(tiers).map(key => tiers[key])[bodyLoc - 1];
 
 		if (tierFuncs === undefined) {
-			print('klasdfjlkasdjflkasdjflkasdjflkasdjfkl --- ' + item.name);
-			//throw Error('Should not happen?');
+			// throw Error('Should not happen?');
 			return 0;
 		}
 		const [magicTier, rareTier] = [tierFuncs.magic, tierFuncs.rare];
@@ -249,19 +248,15 @@
 		if (isRuneword || item.quality >= quality.rare) {
 			if (typeof rareTier === 'function') {
 				let tier = rareTier();
-				print('TIER OF RARE -- ' + tier + ' -- ' + item.name);
 				return tier;
 			}
-			print('Error? magicTier is not an function?');
 			return 0;
 		}
 		// magical, or lower
 		if (typeof magicTier === 'function') {
 			let tier = magicTier();
-			print('TIER OF MAGIC -- ' + tier + ' -- ' + item.name);
 			return tier;
 		}
-		print('Error? magicTier is not an function?');
 		return 0;
 
 
@@ -278,12 +273,15 @@
 
 	}
 
-	require('../modules/Debug');
-
 	AutoEquip.want = function (item) {
 		return item.__wanted__by_AutoEquip = (function () {
 			// If we already excluded this item, lets not rerun this
 			if (item.hasOwnProperty('__wanted__by_AutoEquip') && !item.__wanted__by_AutoEquip) return false;
+
+
+			// skip bolts and arrows
+			if (item.itemType === 6 || item.itemType === 5) return false;
+
 
 			if (!item) return false; // We dont want an item that doesnt exists
 			const bodyLoc = item.getBodyLoc().first();
@@ -292,7 +290,7 @@
 
 			const forClass = getBaseStat("itemtypes", item.itemType, "class");
 			if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
-				print('Item is for another class as me');
+				console.debug('Item is for another class as me');
 				return false;
 			}
 
@@ -301,14 +299,21 @@
 				.first();
 
 			// This item's specs are already fully readable
-			if (item.identified && currentItem) {
-				print('items specs are fully readable -- ' + item.name);
-				if (compare(currentItem, item) === item) {
-					print('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
-					return true;
-				} else {
-					print('Current item is better, skip');
+			if (item.identified) {
+
+				// no point in wanting items we cant equip
+				if (item.getStat(sdk.stats.Levelreq) > me.getStat(sdk.stats.Level) || item.dexreq > me.getStat(sdk.stats.Dexterity) || item.strreq > me.getStat(sdk.stats.Strength)) {
 					return false;
+				}
+
+				if (currentItem) {
+					if (compare(currentItem, item) === item) {
+						console.debug('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
+						return true;
+					} else {
+						console.debug('Current item is better, skip');
+						return false;
+					}
 				}
 			}
 			if (!item.identified) { // Tell the network we need to identify it first
@@ -319,11 +324,10 @@
 	};
 
 	AutoEquip.handle = function (item) {
-		print('Handle item?');
-		function dealWithIt(item) {
+		const dealWithIt = item => {
 			item.__wanted__by_AutoEquip = (function () {
 				const tier = formula(item);
-				print('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
+				console.debug('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
 				const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
 				const currentItem = me.getItemsEx()
 					.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
@@ -346,10 +350,10 @@
 
 				return true;
 			}).call()
-		}
+		};
 
-		function identify(gid) {
-			print('identifing');
+		const identify = gid => {
+			console.debug('identifing');
 			let returnTo = {area: me.area, x: me.x, y: me.y};
 			// We can id right now. So lets
 
@@ -386,13 +390,13 @@
 				tome = scroll;
 			}
 
-			print('Identified cursor? ' + (getCursorType() === 6));
+			console.debug('Identified cursor? ' + (getCursorType() === 6));
 			// Try to id the item, 3 attempts
 			for (let i = 0, timer = getTickCount();
 				 i < 3 && !item.identified;
 				 i++, timer = getTickCount()
 			) {
-				print('send packet of identifing');
+				console.debug('send packet of identifing');
 				getCursorType() === 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
 				while (!item.identified) {
 					delay(3);
@@ -411,13 +415,13 @@
 			}
 
 			return !failed;
-		}
+		};
 
 		const tome = me.findItem(519, 0, 3);
 		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
 			const gid = item.gid;
 
-			print('identify?');
+			console.debug('identify?');
 			// if we are in town, we can identify
 			identify(gid); // So lets
 		}

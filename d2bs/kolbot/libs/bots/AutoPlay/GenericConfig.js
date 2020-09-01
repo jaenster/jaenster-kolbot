@@ -37,6 +37,7 @@
 	Config.HealMP = 70;
 
 	require('./AutoConfig/Setup');
+	require('../../modules/AutoEquip');
 	module.exports = Scripts;
 
 })(module,require);
