@@ -134,7 +134,7 @@ Object.defineProperties(Unit.prototype, {
 		get: function () {
 			if (this.type !== sdk.unittype.Item) return undefined; // Can't tell, as it isn't an item
 
-			return this.getFlag(0x10);
+			return this.getFlag(0x10); // is also true for white items
 		}
 	}
 });
@@ -241,9 +241,12 @@ Unit.prototype.toCursor = function () {
 };
 
 Unit.prototype.drop = function () {
-	console.debug((new Error).stack);
 	if (this.type !== 4) {
 		throw new Error("Unit.drop: Must be used with items.");
+	}
+
+	if (getInteractedNPC()) {
+		return false;
 	}
 
 	var i, tick, timeout;
