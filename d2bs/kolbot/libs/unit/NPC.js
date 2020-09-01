@@ -1,12 +1,7 @@
-
-
-
 // Open NPC menu
 Unit.prototype.openMenu = function (addDelay) {
-	const Packet = require('../modules/PacketHelpers');
-	if (Config.PacketShopping) {
-		return Packet.openMenu(this);
-	}
+	const Pather = require('../modules/Pather');
+	const Misc = require('../modules/Misc');
 
 	if (this.type !== 1) {
 		throw new Error("Unit.openMenu: Must be used on NPCs.");
@@ -37,7 +32,7 @@ Unit.prototype.openMenu = function (addDelay) {
 				return true;
 			}
 
-			if (getInteractedNPC() && getTickCount() - tick > 1000) {
+			if (getInteractedNPC()) {
 				me.cancel();
 			}
 
@@ -45,9 +40,9 @@ Unit.prototype.openMenu = function (addDelay) {
 		}
 
 		sendPacket(1, 0x2f, 4, 1, 4, this.gid);
-		delay(me.ping * 2);
+		delay(me.ping * 2 + 1);
 		sendPacket(1, 0x30, 4, 1, 4, this.gid);
-		delay(me.ping * 2);
+		delay(me.ping * 2 + 1);
 	}
 
 	return false;
