@@ -19,21 +19,25 @@
 		const allAreas = GameAnalyzer.area;
 
 		/** @type {{x,y}[]|undefined}*/
-		const path = Pather.useTeleport() ? getPath(me.area, target.x, target.y, me.x, me.y, 1, 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
+		const path = /*Pather.useTeleport() ? getPath(me.area, target.x, target.y, me.x, me.y, 1, 40) :*/ getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
 		if (!path) throw new Error('failed to generate path');
 
 		path.reverse();
 
 		const lines = path.map((node, i, self) => i/*skip first*/ && new Line(self[i - 1].x, self[i - 1].y, node.x, node.y, 0x33, true));
 
+		//ToDO; implement teleportation on higher distances,
+		// aka calculate the node size, and make subnodes if teleportion, or jump a gap if that is quicker.
+		// anyway, for now, it just walks
+
 		const pathCopy = path.slice();
 		let loops = 0, shrine;
 		for (let i = 0, node, l = path.length; i < l; loops++) {
 
 			node = path[i];
-			//console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
+			// console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
-			node.moveTo();
+			Pather.walkTo(node.x, node.y, 2);
 
 			// ToDo; only if clearing makes sense in this area due to effort
 			clear({nodes: path});
