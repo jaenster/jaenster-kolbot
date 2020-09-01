@@ -1,7 +1,60 @@
 
 
+
 // Open NPC menu
-Unit.prototype.openMenu = function () {
+Unit.prototype.openMenu = function (addDelay) {
+	const Packet = require('../modules/PacketHelpers');
+	if (Config.PacketShopping) {
+		return Packet.openMenu(this);
+	}
+
+	if (this.type !== 1) {
+		throw new Error("Unit.openMenu: Must be used on NPCs.");
+	}
+
+	if (addDelay === undefined) {
+		addDelay = 0;
+	}
+
+	if (getUIFlag(0x08)) {
+		return true;
+	}
+
+	var i, tick;
+
+	for (i = 0; i < 5; i += 1) {
+		if (getDistance(me, this) > 4) {
+			Pather.moveToUnit(this);
+		}
+
+		Misc.click(0, 0, this);
+		tick = getTickCount();
+
+		while (getTickCount() - tick < 5000) {
+			if (getUIFlag(0x08)) {
+				delay(Math.max(700 + me.ping, 500 + me.ping * 2 + addDelay * 500));
+
+				return true;
+			}
+
+			if (getInteractedNPC() && getTickCount() - tick > 1000) {
+				me.cancel();
+			}
+
+			delay(100);
+		}
+
+		sendPacket(1, 0x2f, 4, 1, 4, this.gid);
+		delay(me.ping * 2);
+		sendPacket(1, 0x30, 4, 1, 4, this.gid);
+		delay(me.ping * 2);
+	}
+
+	return false;
+};
+
+// Open NPC menu
+Unit.prototype.__openMenu = function () {
 
 	// Normal openMenu checks for Packet handler, we can do this with packets anyway
 
