@@ -13,9 +13,14 @@
 			let lastPing = getTickCount();
 			Messaging.on('Guard', (data => typeof data === 'object' && data && data.hasOwnProperty('heartbeat') && (lastPing = data.heartbeat)));
 
+			// quit game if default is hanging
+			Delta.track(() => getTickCount() - lastPing > 10e3, quitGame);
 
-			//
-			// Delta.track(() => getTickCount() - lastPing > 10e3, quitGame);
+			// quit game if still in the same area after 10 minutes
+
+			let lastAreaChange = getTickCount();
+			Delta.track(() => me.area, () => lastAreaChange = getTickCount());
+			Delta.track(() => getTickCount() - lastAreaChange > 60 * 10 * 1000, quitGame);
 
 			Delta.track(() => me.hp * 100 / me.hpmax, function (o, n) {
 
@@ -56,7 +61,7 @@
 
 				this.hooks = [];
 				this.x = 500;
-				this.y = 600 - (400+(self.hooks.length * 15));
+				this.y = 600 - (400 + (self.hooks.length * 15));
 				// this.box = new Box(this.x-2, this.y-20, 250, (self.hooks.length * 15), 0, 0.2);
 
 
@@ -67,13 +72,13 @@
 				this.update = () => {
 					stack = new Error().stack.match(/[^\r\n]+/g);
 					stack = stack && stack.slice(7/*skip path to here*/).map(el => {
-							let line = el.substr(el.lastIndexOf(':') + 1),
+						let line = el.substr(el.lastIndexOf(':') + 1),
 							functionName = el.substr(0, el.indexOf('@')),
 							filename = el.substr(el.lastIndexOf('\\') + 1);
 
 						filename = filename.substr(0, filename.indexOf('.'));
 
-						return filename+'ÿc::ÿc0'+line+'ÿc:@ÿc0'+functionName;
+						return filename + 'ÿc::ÿc0' + line + 'ÿc:@ÿc0' + functionName;
 					});
 					this.hooks.filter(hook => hook.hasOwnProperty('update') && typeof hook.update === 'function' && hook.update());
 				};
