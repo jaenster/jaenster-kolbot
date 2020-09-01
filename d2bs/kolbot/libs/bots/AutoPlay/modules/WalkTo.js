@@ -37,6 +37,9 @@
 			node = path[i];
 			// console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
+			// decent fix for this
+			me.cancel() && me.cancel() && me.cancel() && me.cancel();
+
 			Pather.walkTo(node.x, node.y, 2);
 
 			// ToDo; only if clearing makes sense in this area due to effort
