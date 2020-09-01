@@ -48,6 +48,7 @@
 			};
 
 			const Town = require('../../../modules/Town');
+			const Pather = require('../../../modules/Pather');
 
 			// town chicken shit
 			Messaging.on('TownChicken',data => typeof data === 'object' && data && data.hasOwnProperty('do') && data.do && (function() {

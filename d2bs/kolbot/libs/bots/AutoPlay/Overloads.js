@@ -325,9 +325,10 @@
 						console.debug('--------------');
 						console.debug(AreaData[whereTo].LocaleString + ' -- exit is searched in ' + AreaData[me.area].LocaleString);
 						console.debug('--------------');
+						let dest = this.getNearestWalkable(exit.x, exit.y, 5, 1);
 
 						// move to the exit
-						walkTo(exit);
+						walkTo({x: dest[0], y: dest[1],});
 
 						// use the exit
 						Pather.moveToExit(whereTo, true);

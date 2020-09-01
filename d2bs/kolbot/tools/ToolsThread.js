@@ -505,8 +505,18 @@ function main() {
 	addEventListener("scriptmsg", this.scriptEvent);
 	//addEventListener("gamepacket", Events.gamePacket);
 
+	const Messaging = require('../libs/modules/Messaging');
+	let timer = getTickCount();
 	// Start
 	while (true) {
+
+		const def = getScript('default.dbj');
+		if (def && !def.running) {
+			if ((getTickCount() - timer) < 6000 || (timer = getTickCount()) && false) {
+				Messaging.send({Guard: {heartbeat: getTickCount()}});
+			}
+		}
+
 		try {
 			if (me.gameReady && !me.inTown) {
 				if (Config.IronGolemChicken > 0 && me.classid === 2) {
