@@ -17,16 +17,15 @@
 			//
 			// Delta.track(() => getTickCount() - lastPing > 10e3, quitGame);
 
-			Delta.track(() => me.hp * 100 / me.hpmax, function(o,n) {
+			Delta.track(() => me.hp * 100 / me.hpmax, function (o, n) {
 
 				// dont care if we dont lose hp
-				if (o<n) return;
+				if (o < n) return;
 
 				if (n < 40 && me.inTown) {
 					Messaging.send({TownChicken: {do: true}});
 				}
 			});
-
 
 
 			while (1) {
@@ -38,8 +37,53 @@
 			const Worker = require('../../../modules/Worker');
 			let timer = getTickCount();
 
+			const DebugStack = (new function () {
+				let self = this;
+				let stack;
+
+				/**
+				 * @constructor
+				 * @param {function():string} callback
+				 */
+				function UpdateableText(callback) {
+					let element = new Text(callback(), self.x + 15, self.y + (7 * self.hooks.length), 0, 12, 0);
+					self.hooks.push(element);
+					this.update = () => {
+						element.text = callback();
+						element.visible = !getUIFlag(sdk.uiflags.Iventory); // hide if inventory is open
+					}
+				}
+
+				this.hooks = [];
+				this.x = 500;
+				this.y = 600 - (400+(self.hooks.length * 15));
+				// this.box = new Box(this.x-2, this.y-20, 250, (self.hooks.length * 15), 0, 0.2);
+
+
+				for (let i = 0; i < 15; i++) {
+					(i => this.hooks.push(new UpdateableText(() => stack && stack.length > i && stack[i] || '')))(i);
+				}
+
+				this.update = () => {
+					stack = new Error().stack.match(/[^\r\n]+/g);
+					stack = stack && stack.slice(7/*skip path to here*/).map(el => {
+							let line = el.substr(el.lastIndexOf(':') + 1),
+							functionName = el.substr(0, el.indexOf('@')),
+							filename = el.substr(el.lastIndexOf('\\') + 1);
+
+						filename = filename.substr(0, filename.indexOf('.'));
+
+						return filename+'ÿc::ÿc0'+line+'ÿc:@ÿc0'+functionName;
+					});
+					this.hooks.filter(hook => hook.hasOwnProperty('update') && typeof hook.update === 'function' && hook.update());
+				};
+
+			}).update;
+
 			Worker.runInBackground.heartbeatForGuard = function () {
 				if ((getTickCount() - timer) < 1000 || (timer = getTickCount()) && false) return true;
+
+				DebugStack();
 
 				// Every second or so, we send a heartbeat tick
 				Messaging.send({Guard: {heartbeat: getTickCount()}});
@@ -51,7 +95,7 @@
 			const Pather = require('../../../modules/Pather');
 
 			// town chicken shit
-			Messaging.on('TownChicken',data => typeof data === 'object' && data && data.hasOwnProperty('do') && data.do && (function() {
+			Messaging.on('TownChicken', data => typeof data === 'object' && data && data.hasOwnProperty('do') && data.do && (function () {
 				console.debug('town chicken fuck you');
 				let area = me.area;
 				try {
@@ -60,13 +104,12 @@
 					console.debug('No such thing as going to town?');
 					quit();
 				}
-				let [x,y] = [me.x,me.y];
+				let [x, y] = [me.x, me.y];
 
 				Town();
 
-				Pather.moveTo(x,y);
+				Pather.moveTo(x, y);
 				Pather.usePortal(area, me.name)
-
 
 
 			})());
