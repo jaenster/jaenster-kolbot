@@ -24,26 +24,28 @@
 	// 4 - Pickup to sell (triggered when low on gold)
 	// "module_name" - If module module_name wants it
 	Pickit.checkItem = function (unit) {
+		if (unit.getParent() === getInteractedNPC()) {
+			const wantedByHook = unit instanceof Unit && Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
+
+			let hookResult, i = 0, hook;
+			for (let l = Pickit.hooks.length; i < l && !hookResult; i++) {
+				hook = Pickit.hooks[i];
+				if (hook && (typeof hook === 'function' || typeof hook === 'object')) {
+					console.debug('Running hook item =O -- ' + unit.getParent() + ' -- ' + unit.name);
+					hookResult = hook.hasOwnProperty('want') && hook.want(unit);
+				}
+			}
+
+			if (wantedByHook) { // If wanted by a hook
+				console.debug('WANTED BY HOOK? ' + hook.id + ' -- ' + unit.name);
+				return { // Hook wants to identify the item?
+					result: hookResult === -1 ? -1 : hook.id,
+					line: hook.id,
+				}
+			}
+		}
+
 		const rval = NTIP.CheckItem(unit, false, true);
-
-		const wantedByHook = unit instanceof Unit && Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
-
-		let hookResult, i = 0, hook;
-		for (let l = Pickit.hooks.length; i < l && !hookResult; i++) {
-			hook = Pickit.hooks[i];
-			if (hook && (typeof hook === 'function' || typeof hook === 'object')) {
-				console.debug('Running hook item =O -- '+unit.getParent()+' -- '+unit.name);
-				hookResult = hook.hasOwnProperty('want') && hook.want(unit);
-			}
-		}
-
-		if (wantedByHook) { // If wanted by a hook
-			console.debug('WANTED BY HOOK? ' + hook.id+' -- '+unit.name);
-			return { // Hook wants to identify the item?
-				result: hookResult === -1 ? -1 : hook.id,
-				line: hook.id,
-			}
-		}
 
 		// If total gold is less than 10k pick up anything worth 10 gold per
 		// square to sell in town.
