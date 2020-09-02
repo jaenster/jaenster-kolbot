@@ -36,8 +36,9 @@
 		calculateSkills();
 	}).call();
 
+	//ToDo: Need to tell the system if its for me or a merc?
+
 	function formula(item) {
-		// + item.getStatEx(sdk.stats.AddskillTab, 10) //ToDO; Fix tab skill we use the most ;)
 		const skills = () => {
 				let val = item.getStatEx(sdk.stats.Allskills) + item.getStatEx(sdk.stats.Addclassskills, me.classid);
 
@@ -88,6 +89,7 @@
 			fhr = () => item.getStatEx(sdk.stats.Fastergethitrate /* fhr*/),
 			frw = () => item.getStatEx(sdk.stats.Fastermovevelocity /* fwr*/),
 			ctb = () => item.getStatEx(sdk.stats.Toblock /*ctb = chance to block*/),
+			beltsize = () => !(item.code === "lbl" || item.code === "vbl") ? !(item.code === "mbl" || item.code === "tbl") ? 4 : 3 : 2,
 			ias = () => {
 				// This is a tricky one. A sorc, doesnt give a shit about IAS.
 				// 0='amazon',1='sorc',2='necro',3='paladin',4='barb',5='druid',6='assassin'
@@ -180,6 +182,7 @@
 
 			belt: {
 				magic: () => (res() * 10000)
+					+ (beltsize() * 10000)
 					+ (strdex() * 1000)
 					+ (hpmp() * 100)
 					+ (fhr() * 10)
@@ -245,29 +248,34 @@
 			crafted: 8,
 		};
 
-		if (isRuneword || item.quality >= quality.rare) {
-			if (typeof rareTier === 'function') {
-				let tier = rareTier();
-				return tier;
+		let bias = 1;
+
+		// if eth
+		if (item.getFlag(0x400000)) {
+			bias += 0.10; // A fix'd negative point of 10%
+
+			// And increase this negativity scale for its state, so a nearly broken item will be quicker replaced with something better
+			bias += 1 - (1 / item.getStat(sdk.stats.Maxdurability) * item.getStat(sdk.stats.Durability));
+		}
+
+		return (function () {
+			switch (true) {
+				case isRuneword || item.quality >= quality.rare && typeof rareTier === 'function':
+					return rareTier();
+
+				case typeof magicTier === 'function':
+					return magicTier();
+
+				default:
+					return 0;
 			}
-			return 0;
-		}
-		// magical, or lower
-		if (typeof magicTier === 'function') {
-			let tier = magicTier();
-			return tier;
-		}
-		return 0;
+		})() / bias;
 
 
 	}
 
-	/**
-	 * @description Returns the item that is best.
-	 * @param a
-	 * @param b
-	 */
-	const compare = (a, b) => formula(a) < formula(b) && b || a;
+	/** @returns Item */
+	const compare = (...args) => args.map(el => ({r: formula(el), i: el,})).sort((a, b) => b.r - a.r).i;
 
 	function AutoEquip() { // So we can call new upon it. Not sure why yet
 
@@ -294,6 +302,7 @@
 				return false;
 			}
 
+			/** @type Item|undefined*/
 			const currentItem = me.getItemsEx()
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 				.first();
@@ -305,6 +314,8 @@
 				if (item.getStat(sdk.stats.Levelreq) > me.getStat(sdk.stats.Level) || item.dexreq > me.getStat(sdk.stats.Dexterity) || item.strreq > me.getStat(sdk.stats.Strength)) {
 					return false;
 				}
+
+				//ToDo; check if the item is vendored, and if we can afford it
 
 				if (currentItem) {
 					if (compare(currentItem, item) === item) {
