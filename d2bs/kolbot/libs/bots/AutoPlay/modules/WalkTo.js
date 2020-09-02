@@ -64,10 +64,10 @@
 			// if shrine found, click on it
 			if (!recursion && (shrine = searchShrine())) {
 				// ToDo; use walk near / tk if we got it
-				walkTo(shrine, recursion++);
+				shrine.moveTo();
 
 				// As long the shrine is active click the thing
-				Misc.poll(() => shrine.mode === 0 && shrine.click());
+				Misc.poll(() => shrine.mode === 0 || shrine.click());
 			}
 
 			// if this wasnt our last node
