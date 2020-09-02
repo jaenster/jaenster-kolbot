@@ -108,8 +108,13 @@
 		wpAreas: [1, 3, 4, 5, 6, 27, 29, 32, 35, 40, 48, 42, 57, 43, 44, 52, 74, 46, 75, 76, 77, 78, 79, 80, 81, 83, 101, 103, 106, 107, 109, 111, 112, 113, 115, 123, 117, 118, 129],
 		recursion: true,
 
-		useTeleport: function () {
+		// spliced this from use teleport, so we can override the settings
+		canTeleport: function () {
 			return this.teleport && !me.getState(sdk.states.Wolf) && !me.getState(sdk.states.Bear) && !me.inTown && ((me.classid === 1 && me.getSkill(sdk.skills.Teleport, 1)) || me.getStat(sdk.stats.Nonclassskill, sdk.skills.Teleport));
+		},
+
+		useTeleport: function () {
+			return this.canTeleport();
 		},
 
 		/*
@@ -1431,7 +1436,7 @@
 		 *
 		 * @return {{area,fromx,fromy,tox,toy}[]}
 		 */
-		getLongDistancePath: function (spot1, spot2,reverse=false) {
+		getLongDistancePath: function (spot1, spot2, reverse = false) {
 			const plot = Pather.plotCourse(spot1.area, spot2.area) || {course: [spot1.area]};
 
 			if (reverse) plot.course.reverse();
