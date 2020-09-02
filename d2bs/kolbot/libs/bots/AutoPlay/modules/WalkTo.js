@@ -67,7 +67,7 @@
 				shrine.moveTo();
 
 				// As long the shrine is active click the thing
-				Misc.poll(() => shrine.mode === 0 || shrine.click());
+				Misc.poll(() => shrine.mode !== 0 || shrine.click());
 			}
 
 			// if this wasnt our last node
