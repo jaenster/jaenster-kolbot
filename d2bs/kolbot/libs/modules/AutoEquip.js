@@ -330,14 +330,24 @@
 				console.debug('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
 				const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
 				const currentItem = me.getItemsEx()
+					//Todo; add 2 handed weapons if dealing with a shield
 					.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 					.first();
 
 				// No current item? Im pretty sure we want to equip it then
-				if (!currentItem) return item.bodyloc === bodyLoc;
+				if (!currentItem) {
+					const Storage = require('./Storage');
+
+					// shouldnt not happen
+					const swapped = item.equip(bodyLoc);
+					swapped.unequiped.forEach(item => Storage.Inventory.MoveTo(item));
+					return true;
+				}
 
 				// Is the current item better as the new item?
 				if (compare(item, currentItem) !== item) return false; // No need to replace
+
+				//ToDo; compare with all other items, in case we have something _even_ better
 
 				// Is the new item better as the old item?
 				const old = item.equip(bodyLoc);
