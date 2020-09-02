@@ -24,13 +24,13 @@
 	})();
 
 	Worker.runInBackground.autoStatSkill = (new function () {
-		let build ={};
+		let build = {};
 
 		const run = [
 			// credits to dzik for the original code
 			function stat() {
 				const checkStat = (stat, items) => {
-					let bonus = 0,i;
+					let bonus = 0, i;
 					for (i = 0; i < items.length; i++) {
 						bonus += items[i].getStatEx(stat);
 					}
@@ -105,6 +105,9 @@
 			},
 			function skill() {
 
+				// fail safe to not spam skills
+				if ((typeof skill.disabled === 'undefined' && (skill.disabled = false)) || skill.disabled) return false;
+
 
 				if (getUIFlag(0x17)) return; // cant skill while in trade
 
@@ -152,7 +155,10 @@
 						console.debug('Skilling ' + getSkillById(found) + ' (' + (me.getSkill(found, 0) + 1) + '/' + goal + ')');
 					}
 					useSkillPoint(found);
-					delay(200);
+
+					// Dont try to skill anything else within 500 ms
+					skill.disabled = true;
+					setTimeout(() => skill.disabled = false,500);
 				}
 			}
 		];
