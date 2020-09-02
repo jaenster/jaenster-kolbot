@@ -126,6 +126,7 @@
 			pop - remove last node
 		*/
 		moveTo: function (x, y, retry = 3, clearPath = false, pop = false) {
+			// const debugLine =  new Line(me.x, me.y, x, y, 0x84, true);
 			if (me.dead) { // Abort if dead
 				return false;
 			}
@@ -275,6 +276,7 @@
 			minDist - minimal distance from x/y before returning true
 		*/
 		walkTo: function (x, y, minDist = me.inTown && 2 || 4) {
+			const debugLine =  new Line(me.x, me.y, x, y, 0x82, true);
 			while (!me.gameReady) delay(3);
 			const Misc = require('Misc');
 
@@ -418,7 +420,10 @@
 
 			if (!unit || !unit.hasOwnProperty("x") || !unit.hasOwnProperty("y")) throw new Error("moveToUnit: Invalid unit.");
 
+			console.debug(unit);
 			if (unit instanceof PresetUnit) {
+				console.debug('PRESET UNIT');
+				const debugLine =  new Line(me.x, me.y, unit.x, unit.y, 0x82, true);
 				return this.moveTo(unit.roomx * 5 + unit.x + offX, unit.roomy * 5 + unit.y + offY, 3, clearPath);
 			}
 
@@ -1403,18 +1408,15 @@
 			src - starting area id
 		*/
 		areasConnected: function (src, dest) {
-			if (src === 46 && dest === 74) {
-				return false;
-			}
-
-			return true;
+			//Todo; know if portal is open somehow, some quest state?
+			return !(src === sdk.areas.CanyonOfMagi  && dest === sdk.areas.ArcaneSanctuary);
 		},
 
 		getWalkDistance: function (x, y, area = me.area, xx = me.x, yy = me.y) {
 			return getPath(area, x, y, xx, yy, 0, 5)
 				// distance between node x and x-1
 				.map((e, i, s) => i && getDistance(s[i - 1], e) || 0)
-				.reduce((acc, cur) => acc + cur, 0);
+				.reduce((acc, cur) => acc + cur, 0) || Infinity;
 		},
 
 		/**
