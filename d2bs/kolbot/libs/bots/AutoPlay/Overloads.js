@@ -8,12 +8,6 @@
 	const AreaData = require('../../modules/AreaData');
 	const Precast = require('../../modules/Precast');
 
-	/** @template T - any object
-	 * @template K - key of T
-	 * @type {function(T, K, function(function&T[K], typeof T[K])): number}  */
-	function whatever() {
-	};
-
 	/**
 	 * @template T {Object}
 	 * @template K {keyof T}
@@ -343,8 +337,11 @@
 		const Skills = require('../../modules/Skills');
 
 		new Overload(Pather, 'useTeleport', /**@this Pather*/ function useTeleport(original, ...args) {
-			// Idea is to not use teleport if we dont have enough mana on lower levels.
-			return this.teleport && (me.level >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 2)) && !me.getState(sdk.states.Wolf) && !me.getState(sdk.states.Bear) && !me.inTown && ((me.classid === 1 && me.getSkill(sdk.skills.Teleport, 1)) || me.getStat(sdk.stats.Nonclassskill, sdk.skills.Teleport));
+
+			const canTeleport = this.canTeleport();
+			if (!canTeleport) return false;
+
+			return me.level >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 2);
 		});
 
 
