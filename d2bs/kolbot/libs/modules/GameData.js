@@ -1190,10 +1190,6 @@
 			let log = ((5 - Math.log(areaID)) * (brokeness*0.6)) ;
 
 			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * log;
-			if (areaID < sdk.areas.CatacombsLvl4) {
-				print('Brokeness: ' + brokeness);
-				print('avg dmg: ' + Math.round(avgDmg * 100) / 100 + ' -- ' + Math.round((raritypool ? effortpool / raritypool : 0) * 100) / 100);
-			}
 
 			return (raritypool ? effortpool / raritypool : 0) - (avgDmg);
 		},
