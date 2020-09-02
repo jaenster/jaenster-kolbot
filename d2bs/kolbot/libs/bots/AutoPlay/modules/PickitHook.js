@@ -32,7 +32,7 @@
 		const tome = me.findItem(sdk.items.idtome, 0, sdk.storage.Inventory);
 		if (tome) return false; // already have
 
-		const shopableTome = items.filter(item => item.classid = sdk.items.idtome).first();
+		const shopableTome = items.filter(item => item.classid === sdk.items.idtome).first();
 		if (shopableTome && me.gold > (Config.LowGold / 2)) {
 			return [shopableTome]; // shop the tome
 		}
