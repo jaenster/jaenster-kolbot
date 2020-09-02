@@ -23,12 +23,17 @@
 		return handler;
 	})();
 
+
 	Worker.runInBackground.autoStatSkill = (new function () {
 		let build = {};
 
 		const run = [
 			// credits to dzik for the original code
-			function stat() {
+			function statHandler() {
+
+				// fail safe to not spam skills
+				if ((typeof statHandler.disabled === 'undefined' && (statHandler.disabled = false)) || statHandler.disabled) return false;
+
 				const checkStat = (stat, items) => {
 					let bonus = 0, i;
 					for (i = 0; i < items.length; i++) {
@@ -82,26 +87,54 @@
 					}
 				}
 
-				// Actually send the right packet to do so
-				for (i = 0; i < 4; i++) {
-					if (!send[i]) {
-						continue; // No need to stat this
-					}
-					before = me.getStat(i);
-					sendPacket(1, 0x3A, 1, i, 1, send[i] - 1); // <3 dzik
 
-					tick = getTickCount();
-					while (true) {
-						if (getTickCount() - tick > 1e4) {
-							return;
+				// first async stat, disable the checks for now
+				statHandler.disabled = true;
+
+				// async stat
+				Worker.runInBackground.___tempstat = (() => {
+						let i = 0, state = 0, before; // stat we are checking right now
+
+						return function () {
+							// noinspection FallThroughInSwitchStatementJS
+							switch (state) {
+								case 0: {
+
+									// Do we need to stat this?
+									if (!send[i]) break;
+
+									before = me.getStat(i);
+									sendPacket(1, 0x3A, 1, i, 1, send[i] - 1); // <3 dzik
+									state++;
+								}
+
+								// no break
+								case 1: {
+
+									// Did the stat change yet?
+									if (before === me.getStat(i)) break;
+
+									console.debug("Added +" + send[i] + " to " + names[i]);
+									state++;
+								}
+							}
+
+							if (state === 2) {
+								i++;
+								before = state = 0;
+							}
+
+							let done = i > -1 && i < 5;
+
+							// Once we are done, we can check for stats again
+							if (done) {
+								statHandler.disabled = false;
+							}
+
+							return !done;
 						}
-						if (before < me.getStat(i)) {
-							console.debug("Added +" + send[i] + " to " + names[i]);
-							break;
-						}
-						delay(200);
 					}
-				}
+				)();
 			},
 			function skill() {
 
@@ -158,7 +191,7 @@
 
 					// Dont try to skill anything else within 500 ms
 					skill.disabled = true;
-					setTimeout(() => skill.disabled = false,500);
+					setTimeout(() => skill.disabled = false, 500);
 				}
 			}
 		];
