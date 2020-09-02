@@ -36,6 +36,9 @@
 	Config.HealHP = 70;
 	Config.HealMP = 70;
 
+	// Scans the items in shop for auto equip
+	Config.MiniShopBot = true;
+
 	require('./AutoConfig/Setup');
 	require('../../modules/AutoEquip');
 	module.exports = Scripts;
