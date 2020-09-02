@@ -894,8 +894,11 @@
 			items = [],
 			npc = getInteractedNPC();
 
+
 		if (!npc || !npc.itemcount) {
-			return false;
+			if (!(npc = Town.initNPC('Shop'))) {
+				return false;
+			}
 		}
 
 		item = npc.getItem();
@@ -920,13 +923,14 @@
 			if (result.result === 1 || typeof result.result === 'string') {
 				try {
 					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
-						Misc.itemLogger("Shopped", items[i]);
-						Misc.logItem("Shopped", items[i], result.line);
-						items[i].buy();
 						if (typeof result.result === 'string') {
 							const hook = Pickit.hooks.find(el => el.name === result.result);
 							if (hook) hook.handle(item);
+						} else {
+							Misc.itemLogger("Shopped", items[i]);
+							Misc.logItem("Shopped", items[i], result.line);
 						}
+						items[i].buy();
 					}
 				} catch (e) {
 					print(e);

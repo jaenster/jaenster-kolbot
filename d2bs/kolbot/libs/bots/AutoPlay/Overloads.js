@@ -361,6 +361,41 @@
 
 		});
 
+		new Overload(Pather, 'getWP', /** @this Pather */ function (original, area, clearPath, click = true) {
+			// If no area given, go to this one
+			if (!area) area = me.area;
+
+			// We gonna assume the journeyTo is correct and good
+			if (area !== me.area) Pather.journeyTo(area);
+
+
+			const preset = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539].reduce((acc, cur) => acc || getPresetUnit(area, 2, cur), undefined);
+			if (!preset) throw new Error('Waypoint not found');
+
+			console.debug(preset);
+			const coords = preset.realCoords();
+			const walkTo = require('./modules/WalkTo');
+
+			walkTo(coords);
+
+			const wp = getUnit(2, "waypoint");
+			if (!wp) return false;
+			if (!click) return true;
+
+			return Misc.poll(() => {
+				let wp = getUnit(2, "waypoint");
+				wp.moveTo();
+				if (wp && wp.mode !== 2) {
+					return Misc.poll(() => {
+						wp.click();
+						return getUIFlag(sdk.uiflags.Waypoint);
+					}, 6000, 30);
+				}
+				return false;
+			});
+
+		});
+
 		Overload.instances.slice(from).forEach(ol => ol.install());
 		return {
 			rollback: () => {

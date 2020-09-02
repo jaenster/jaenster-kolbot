@@ -81,8 +81,14 @@
 
         // Override the delay function, to check for background work while we wait anyway
         global.delay = function (amount) {
+            let recursive;
 
-            let recursive = recursiveCheck();
+            try {
+                recursive = recursiveCheck();
+            } catch (e) {
+                console.debug((new Error).stack);
+                throw e;
+            }
             let start = getTickCount();
             amount = amount || 0;
 

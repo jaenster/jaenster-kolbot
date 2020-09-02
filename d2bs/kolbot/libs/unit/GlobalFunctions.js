@@ -79,7 +79,6 @@ const clickItemAndWait = (...args) => {
 
 	global['_setTimeout'] = _original;
 
-
 	/**
 	 * @param {function} cb
 	 * @param {number} time
