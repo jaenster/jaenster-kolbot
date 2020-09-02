@@ -24,7 +24,7 @@
 	// 4 - Pickup to sell (triggered when low on gold)
 	// "module_name" - If module module_name wants it
 	Pickit.checkItem = function (unit) {
-		if (unit.getParent() !== getInteractedNPC()) {
+		if (unit.getParent().gid !== getInteractedNPC().gid) {
 			const wantedByHook = unit instanceof Unit && Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
 
 			let hookResult, i = 0, hook;

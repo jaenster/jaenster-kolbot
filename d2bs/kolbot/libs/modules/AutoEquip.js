@@ -258,24 +258,27 @@
 			bias += 1 - (1 / item.getStat(sdk.stats.Maxdurability) * item.getStat(sdk.stats.Durability));
 		}
 
-		return (function () {
-			switch (true) {
-				case isRuneword || item.quality >= quality.rare && typeof rareTier === 'function':
-					return rareTier();
-
-				case typeof magicTier === 'function':
-					return magicTier();
-
-				default:
-					return 0;
+		if (isRuneword || item.quality >= quality.rare) {
+			if (typeof rareTier === 'function') {
+				let tier = rareTier();
+				// console.debug('rare tier -- '+item.name+ ' -- '+tier);
+				return tier;
 			}
-		})() / bias;
+			return 0;
+		}
+		// magical, or lower
+		if (typeof magicTier === 'function') {
+			let tier =  magicTier();
+			// console.debug('magic tier -- '+item.name+ ' -- '+tier);
+			return tier;
+		}
+		return 0;
 
 
 	}
 
 	/** @returns Item */
-	const compare = (...args) => args.map(el => ({r: formula(el), i: el,})).sort((a, b) => b.r - a.r).i;
+	const compare = (...args) => args.map(el => ({r: formula(el), i: el,})).sort((a, b) => b.r - a.r).first().i;
 
 	function AutoEquip() { // So we can call new upon it. Not sure why yet
 
@@ -448,6 +451,62 @@
 		}
 
 		return item.identified && dealWithIt(item);
+	};
+
+	/**
+	 * @param {Item[]} items
+	 * @return Item
+	 */
+	AutoEquip.shop = function (items) {
+		console.debug('AutoEquip shopping for items');
+
+		// first an object that contains the items per bodylocation
+		return items.reduce((acc, item) => {
+			const bodyloc = item.getBodyLoc().first(); // rings are not for sale so who cares about multiple slots;
+
+			(acc[bodyloc] = acc[bodyloc] || []).push(item);
+
+			return acc;
+		}, new Array(sdk.body.LeftArmSecondary + 1))
+			// now this is an array per body location
+			.map((/**@type Item[]*/items, bodyloc) => {
+					/** @type Item*/
+					const currentItem = me.getItemsEx()
+						.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyloc)
+						.first();
+
+
+					const currentRating = !currentItem ? -Infinity : formula(currentItem);
+
+					// calculate the actual rating of this item
+					return items.map(item => {
+						let ratingThisItem = formula(item);
+						if (ratingThisItem < currentRating) return false;
+
+						//ToDo; calculate formula for 2 handed weapons
+						return ({
+							item: item,
+							rating: ratingThisItem,
+							price: item.getItemCost(0), // 0 = to buy
+							currentRating: currentRating,
+						});
+
+					})
+						// filter out those that are worse as we got and those that we can afford
+						.filter(obj => {
+								return obj && currentRating < obj.rating && obj.price < me.gold;
+							} // Needs to be better
+							// && currentRating - obj.rating > obj.rating * 0.10  // needs to be atleast 10% better if we buy the item
+							// && obj.price < me.gold // can we afford it?
+						) //ToDo; proper gold handeling
+						.sort((a, b) => b.rating - a.rating) // higher is better
+						.first();
+				}
+			)
+			// filter out those options without a result
+			.filter(_ => !!_)
+			.sort((a, b) => (b.rating - b.currentRating) - (a.rating - a.currentRating))
+			.map(obj => obj.item);
 	};
 
 	AutoEquip.id = 'AutoEquip';

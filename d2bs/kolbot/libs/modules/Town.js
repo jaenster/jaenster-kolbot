@@ -215,7 +215,7 @@
 
 	// Check if healing is needed, based on character config
 	Town.needHealing = function () {
-		console.debug('?',JSON.stringify(Config.HealHP));
+		console.debug('?', JSON.stringify(Config.HealHP));
 		if (me.hp * 100 / me.hpmax <= Config.HealHP || me.mp * 100 / me.mpmax <= Config.HealMP) {
 			return true;
 		}
@@ -890,7 +890,7 @@
 		}
 		const Pickit = require('./Pickit');
 
-		let i, item, result,
+		let item, result,
 			items = [],
 			npc = getInteractedNPC();
 
@@ -916,20 +916,46 @@
 			}
 		} while (item.getNext());
 
-		for (i = 0; i < items.length; i += 1) {
+
+		// Give the pickit hooks a chance to buy items
+		Pickit.hooks.filter(hook => hook && (typeof hook === 'function' || typeof hook === 'object')
+			&& hook.hasOwnProperty('shop') && typeof hook.shop === 'function')
+			// Only those that support it
+			.forEach(hook => {
+				const toBuy = hook.shop(items);
+
+				if (!Array.isArray(toBuy)) return;
+				console.debug(toBuy);
+
+				toBuy.filter(item => Storage.Inventory.CanFit(item) && me.getStat(14) + me.getStat(15) >= item.getItemCost(0))
+					.forEach(item => {
+
+						// first of all remove these items out of the
+						const index = items.indexOf(item);
+						if (index > -1) items.splice(index, 1);
+
+						// buy the item
+						item.buy();
+
+						Misc.itemLogger("Shopped", item);
+						Misc.logItem("Shopped", item, hook.id);
+
+						// tell the hook to deal with the item now that it's bought
+						hook.hasOwnProperty('handle') && hook.handle(item);
+					});
+			});
+
+
+		for (let i = 0; i < items.length; i += 1) {
 			result = Pickit.checkItem(items[i]);
 
 			// if result is a string, its a pickit hook that wants to buy the item
 			if (result.result === 1 || typeof result.result === 'string') {
 				try {
 					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
-						if (typeof result.result === 'string') {
-							const hook = Pickit.hooks.find(el => el.name === result.result);
-							if (hook) hook.handle(item);
-						} else {
-							Misc.itemLogger("Shopped", items[i]);
-							Misc.logItem("Shopped", items[i], result.line);
-						}
+						Misc.itemLogger("Shopped", items[i]);
+						Misc.logItem("Shopped", items[i], result.line);
+
 						items[i].buy();
 					}
 				} catch (e) {
