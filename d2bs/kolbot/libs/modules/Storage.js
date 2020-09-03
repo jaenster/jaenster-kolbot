@@ -109,7 +109,7 @@
 		/** @return {boolean} */
 		this.CanFit = function (item) {
 			let spot = this.FindSpot(item);
-			if (!spot) {
+			if (!spot && me.inTown) {
 				this.SortItems();
 				spot = this.FindSpot(item);
 			}
