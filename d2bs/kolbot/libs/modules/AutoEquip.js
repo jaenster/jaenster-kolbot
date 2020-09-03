@@ -181,9 +181,9 @@
 			},
 
 			ring: {
-				magic: () => (fcr() * 1000) + (res()*10) + ((hpmp()+strdex())*100),
+				magic: () => (fcr() * 1000) + (res() * 10) + ((hpmp() + strdex()) * 100),
 
-				rare: () => (fcr() * 1000) + (res()*10) + ((hpmp()+strdex())*100),
+				rare: () => (fcr() * 1000) + (res() * 10) + ((hpmp() + strdex()) * 100),
 			},
 
 			belt: {
@@ -284,7 +284,19 @@
 	}
 
 	/** @returns Item */
-	const compare = (...args) => args.map(el => ({r: formula(el), i: el,})).sort((a, b) => b.r - a.r).first().i;
+	const compare = (...args) => args.map(el => ({
+		r: formula(el),
+		i: el
+	}))
+		// Sort by rating, and after that by location (by same rating, prefer an item that is already
+		.sort((a, b) => {
+			if (b.r === a.r) {
+				return a.location === 1 ? -1 : 1;
+			}
+			return b.r - a.r;
+		})
+		.first()
+		.i;
 
 	function AutoEquip() { // So we can call new upon it. Not sure why yet
 
@@ -304,9 +316,9 @@
 				return false;
 			}
 
-			const bodyLoc = item.getBodyLoc().first();
+			const bodyLoc = item.getBodyLoc();
 
-			if (!bodyLoc) return false; // Only items that we can wear
+			if (!bodyLoc.length) return false; // Only items that we can wear
 
 			const forClass = getBaseStat("itemtypes", item.itemType, "class");
 			if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
@@ -320,10 +332,9 @@
 			}
 
 			item.classid === 522 && console.debug(item);
-			/** @type Item|undefined*/
-			const currentItem = me.getItemsEx()
-				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
-				.first();
+			/** @type Item[]*/
+			const currentItems = me.getItemsEx()
+				.filter(item => item.location === sdk.storage.Equipment && bodyLoc.includes(item.bodylocation));
 
 
 			// This item's specs are already fully readable
@@ -336,9 +347,12 @@
 
 				//ToDo; check if the item is vendored, and if we can afford it
 
-				if (currentItem) {
-					if (compare(currentItem, item) === item) {
-						console.debug('We seem to prefer this item, over ' + currentItem.name + ' will be replaced with ' + item.name);
+				if (currentItems.length) {
+					let items = [item].concat(currentItems);
+
+
+					if (compare.apply(undefined, items) === item) {
+						console.debug('We seem to prefer this item, over ' + currentItems.fname + ' will be replaced with ' + item.fname);
 						return true;
 					} else {
 						console.debug('Current item is better, skip');

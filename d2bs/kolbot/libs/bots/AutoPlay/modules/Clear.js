@@ -54,11 +54,13 @@
 				&& unit.hp > 0 // Dont attack those that have no health 	(catapults and such)
 				&& unit.attackable // Dont attack those we cant attack
 				&& unit.area === me.area
-				&& (
-					start.length // If start has a length
-						? getDistance(start[0], start[1], unit) < settings.range // If it has a range smaller as from the start point (when using me.clear)
-						: getDistance(this, unit) < settings.range // if "me" move, the object doesnt move. So, check distance of object
-				)
+
+				// Shamaans have a higher range
+				&& (range =>
+						start.length // If start has a length
+						? getDistance(start[0], start[1], unit) < range // If it has a range smaller as from the start point (when using me.clear)
+						: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
+				)(shamans.includes(unit.classid) ? settings.range*1.25 : settings.range)
 				&& !checkCollision(me, unit, 0x4)
 			)
 			.filter(unit => {
@@ -73,8 +75,9 @@
 				// shamans are a mess early game
 				let isShamanA = shamans.indexOf(a.classid) > -1;
 				let isFallenB = fallens.indexOf(b.classid) > -1;
-				if (isShamanA && isFallenB && checkCollision(me, unit, 0x7)/*line of sight*/) {
+				if (isShamanA && isFallenB && !checkCollision(me, unit, 0x7)/*line of sight*/) {
 					// return shaman first, if we have a direct line of sight
+					console.debug('Direct line =O');
 					return -1;
 				}
 				if (typeof a['beendead'] !== 'undefined' && typeof b['beendead'] === 'undefined' && a['beendead'] && !b['beendead']) {
