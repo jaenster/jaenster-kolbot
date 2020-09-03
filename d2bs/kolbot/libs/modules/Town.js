@@ -896,9 +896,7 @@
 
 
 		if (!npc || !npc.itemcount) {
-			if (!(npc = Town.initNPC('Shop'))) {
-				return false;
-			}
+			return false;
 		}
 
 		item = npc.getItem();
