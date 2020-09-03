@@ -184,7 +184,7 @@
 				}
 
 				//Loop three times to try and place it.
-				for (n = 0; n < 5; n += 1) {
+				for (let n = 0; n < 5; n += 1) {
 					if (this.location === 6) { // place item into cube
 						cItem = getUnit(100);
 						cube = me.getItem(549);
