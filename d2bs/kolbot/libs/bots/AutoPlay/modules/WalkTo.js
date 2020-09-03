@@ -49,7 +49,8 @@
 				if (canTeleport && d * 2 > node.distance) {
 					Pather.teleportTo(node.x, node.y);
 				} else if (!recursion) {
-					walkTo(node, recursion++);
+					console.debug('DONT USE RECURSION HERE WTF?');
+					// walkTo(node, recursion++);
 				}
 			}
 
