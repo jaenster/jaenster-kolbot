@@ -122,8 +122,9 @@
 	 	*   credits dzik / Gagget for original
 	 	*/
 		this.SortItems = function () {
-			let cancel = false;
+			if (!me.inTown) return false;
 
+			let cancel = false;
 			if (this.location === sdk.storage.Cube) cancel = me.openCube();
 
 			Storage.Reload();
@@ -212,7 +213,6 @@
 			// // sort the items and try again
 			// this.FindSpot.recursion++;
 			// if (this.FindSpot.recursion < 3) {
-			this.SortItems();
 			// 	return this.FindSpot();
 			// }
 			// this.FindSpot.recursion--;

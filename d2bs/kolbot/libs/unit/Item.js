@@ -4,12 +4,12 @@ Unit.prototype.equip = function (destLocation = undefined) {
 	const doubleHanded = [26, 27, 34, 35, 67, 85, 86],
 		findspot = function (item) {
 			let tempspot;
-			if (getUIFlag(0x19) && Storage.Stash.CanFit()) {
-				tempspot =  Storage.Stash.FindSpot(item);
+			if (getUIFlag(0x19) && Storage.Stash.CanFit(item)) {
+				tempspot = Storage.Stash.FindSpot(item);
 				return {location: Storage.Stash.location, coord: tempspot};
 			}
 
-			if (Storage.Inventory.CanFit()) {
+			if (Storage.Inventory.CanFit(item)) {
 				tempspot = Storage.Inventory.FindSpot(item);
 			}
 
