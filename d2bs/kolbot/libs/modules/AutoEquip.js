@@ -283,6 +283,21 @@
 
 	}
 
+	/**
+	 * @param {Item[]} items
+	 * @returns Item[] */
+	const compareRetAll = (items) => items.map(el => ({
+		rating: formula(el),
+		item: el
+	}))
+		// Sort by rating, and after that by location (by same rating, prefer an item that is already
+		.sort((a, b) => {
+			if (b.rating === a.rating) {
+				return a.location === 1 ? -1 : 1;
+			}
+			return b.rating - a.rating;
+		});
+
 	/** @returns Item */
 	const compare = (...args) => args.map(el => ({
 		r: formula(el),
@@ -350,14 +365,39 @@
 				if (currentItems.length) {
 					let items = [item].concat(currentItems);
 
+					// Compare the items. The highest rating is the best item, the lowest rating is the worst item
+					// In case of multiple slots (e.g. rings), this tells us which ring we want to replace this ring with.
+					let compared = compareRetAll(items),
+						best = compared[0].item,
+						worst = compared[compared.length - 1].item;
 
-					if (compare.apply(undefined, items) === item) {
-						console.debug('We seem to prefer this item, over ' + currentItems.fname + ' will be replaced with ' + item.fname);
+					// We want only the best ofc
+					if (item === best) {
+						console.debug('We seem to prefer this item, over ' + worst.fname + ' will be replaced with ' + item.fname);
 						return true;
-					} else {
-						console.debug('Current item is better, skip');
-						return false;
+					} else if (item !== worst) {
+
+						// If the item isnt the worst, but not the best, it can still be valueable on a second slot
+
+						// remove any leading items that are worn
+						for (let i = 0; i < compared.length; i++) {
+							// First item that isnt equiped
+							if (!currentItems.includes(compared[i].item)) {
+								// now that we found a potential second slot, decide this the best item
+								if (i > 0) compared.splice(0, i);
+								best = currentItems[i];
+								break;
+							}
+						}
+
+						//Is our new find item the worst?
+						if (item === best && currentItems.includes(worst)) {
+							console.debug('We can put this item on the second slot');
+							return true; // We want to replace this item
+						}
 					}
+					console.debug('current item better ', item);
+					return false; // Current item is better, skip
 				}
 			}
 			return !!item.getBodyLoc(); // for now, we want all items that we can equip
@@ -369,14 +409,20 @@
 			item.__wanted__by_AutoEquip = (function () {
 				const tier = formula(item);
 				console.debug('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
-				const bodyLoc = item.getBodyLoc().first(); // ToDo Deal with multiple slots, like rings
-				const currentItem = me.getItemsEx()
-					//Todo; add 2 handed weapons if dealing with a shield
-					.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
-					.first();
+				const bodyLoc = item.getBodyLoc();
+
+				// We got it now, but somehow... dont want it anymore?
+				if (!AutoEquip.want(item)) {
+					return false;
+				}
+
+
+				//Todo; add 2 handed weapons if dealing with a shield
+				const currentItems = me.getItemsEx()
+					.filter(item => item.location === sdk.storage.Equipment && bodyLoc.includes(item.bodylocation));
 
 				// No current item? Im pretty sure we want to equip it then
-				if (!currentItem) {
+				if (!currentItems.length) {
 					const Storage = require('./Storage');
 
 					// shouldnt not happen
@@ -385,13 +431,19 @@
 					return true;
 				}
 
-				// Is the current item better as the new item?
-				if (compare(item, currentItem) !== item) return false; // No need to replace
 
-				//ToDo; compare with all other items, in case we have something _even_ better
+				let items = [item].concat(currentItems);
 
-				// Is the new item better as the old item?
-				const old = item.equip(bodyLoc);
+				// Compare the items. The highest rating is the best item, the lowest rating is the worst item
+				// In case of multiple slots (e.g. rings), this tells us which ring we want to replace this ring with.
+				let compared = compareRetAll(items),
+					worst = compared[compared.length - 1].item;
+
+				// Worst item is this item?
+				if (worst === item) return false;
+
+				// actually equip the item
+				const old = item.equip(worst.bodylocation);
 
 				// Sometimes it happens the OLD item seems better once we have the new one in place
 				const newTier = old && old.unequiped && formula(old.unequiped.first()) || 0;
