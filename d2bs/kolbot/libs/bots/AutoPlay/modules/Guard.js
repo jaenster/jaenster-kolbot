@@ -7,6 +7,7 @@
 
 		const Messaging = require('../../../modules/Messaging');
 		const Delta = new (require('../../../modules/Deltas'));
+		const Worker = require('../../../modules/Worker');
 
 		if (thread === 'thread') {
 
@@ -32,19 +33,14 @@
 				}
 			});
 
-
-			while (1) {
-				delay(100);
-			}
-
-		} else if (getScript(true).name.toLowerCase() === 'default.dbj') {
-
-			const Worker = require('../../../modules/Worker');
-			let timer = getTickCount();
-
-			const DebugStack = (new function () {
+			Worker.runInBackground.stackTrace = (new function () {
 				let self = this;
 				let stack;
+
+				let myStack = '';
+
+				// recv stack
+				Messaging.on('Guard', (data => typeof data === 'object' && data && data.hasOwnProperty('stack') && (myStack = data.stack)));
 
 				/**
 				 * @constructor
@@ -70,7 +66,7 @@
 				}
 
 				this.update = () => {
-					stack = new Error().stack.match(/[^\r\n]+/g);
+					stack = myStack.match(/[^\r\n]+/g);
 					stack = stack && stack.slice(7/*skip path to here*/).map(el => {
 						let line = el.substr(el.lastIndexOf(':') + 1),
 							functionName = el.substr(0, el.indexOf('@')),
@@ -81,14 +77,29 @@
 						return filename + 'ÿc::ÿc0' + line + 'ÿc:@ÿc0' + functionName;
 					});
 					this.hooks.filter(hook => hook.hasOwnProperty('update') && typeof hook.update === 'function' && hook.update());
+					return true;
 				};
 
 			}).update;
 
+			while (1) {
+				delay(100);
+			}
+
+		} else if (getScript(true).name.toLowerCase() === 'default.dbj') {
+
+			let sendStack = getTickCount();
+			Worker.runInBackground.sendStack = function () {
+				if ((getTickCount() - sendStack) < 200 || (sendStack = getTickCount()) && false) return true;
+				Messaging.send({Guard: {stack: (new Error).stack}});
+				return true;
+			};
+
+			let timer = getTickCount();
+
 			Worker.runInBackground.heartbeatForGuard = function () {
 				if ((getTickCount() - timer) < 1000 || (timer = getTickCount()) && false) return true;
 
-				DebugStack();
 
 				// Drop broken eth items that arent a belt
 				me.getItems()
