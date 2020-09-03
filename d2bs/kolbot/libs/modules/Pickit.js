@@ -42,6 +42,7 @@
 				return { // Hook wants to identify the item?
 					result: hookResult === -1 ? -1 : hook.id,
 					line: hook.id,
+					hook: hook,
 				}
 			}
 		}

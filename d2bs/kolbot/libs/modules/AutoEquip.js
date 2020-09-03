@@ -146,7 +146,7 @@
 			weapon: {
 				magic: () => (skills() * 10000)
 					+ (elementDmg() * 5000)
-					+ (res() * 1000)
+					+ (res() * 200)
 					+ (hpmp() * 100)
 					+ (strdex() * 10)
 					+ fcr(),
@@ -164,7 +164,7 @@
 					+ ((fbr() + ctb()) * 100)
 					+ def(),
 
-				set: () => (res() * 100000)
+				rare: () => (res() * 100000)
 					+ (elementDmg() * 50000)
 					+ ((strdex() + vita()) * 10000)
 					+ ((fbr() + ctb()) * 1000)
