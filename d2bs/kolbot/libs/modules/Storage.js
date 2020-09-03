@@ -106,8 +106,14 @@
 		/* Container.CanFit(item)
 		 *	Checks to see if we can fit the item in the buffer.
 		 */
+		/** @return {boolean} */
 		this.CanFit = function (item) {
-			return (!!this.FindSpot(item));
+			let spot = this.FindSpot(item);
+			if (!spot) {
+				this.SortItems();
+				spot = this.FindSpot(item);
+			}
+			return (!!spot);
 		};
 
 		/* Container.SortItems();
@@ -202,14 +208,14 @@
 					}
 			}
 
-			typeof this.FindSpot.recursion === 'undefined' && (this.FindSpot.recursion = -1);
-			// sort the items and try again
-			this.FindSpot.recursion++;
-			if (this.FindSpot.recursion < 3) {
-				this.SortItems();
-				return this.FindSpot();
-			}
-			this.FindSpot.recursion--;
+			// typeof this.FindSpot.recursion === 'undefined' && (this.FindSpot.recursion = -1);
+			// // sort the items and try again
+			// this.FindSpot.recursion++;
+			// if (this.FindSpot.recursion < 3) {
+			this.SortItems();
+			// 	return this.FindSpot();
+			// }
+			// this.FindSpot.recursion--;
 
 			return false;
 		};

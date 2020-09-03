@@ -361,6 +361,7 @@
 
 		});
 
+		// Walk safely to the wp
 		new Overload(Pather, 'getWP', /** @this Pather */ function (original, area, clearPath, click = true) {
 			// If no area given, go to this one
 			if (!area) area = me.area;
@@ -393,6 +394,15 @@
 				}
 				return false;
 			});
+
+		});
+
+		// Sort the inventory after buying pots
+		new Overload(Town, 'buyPotions', /** @this Pather*/ function(original, ...args) {
+
+			const bought = original.apply(this, args);
+			if (bought) require('../../modules/Storage').Inventory.SortItems();
+			return bought;
 
 		});
 

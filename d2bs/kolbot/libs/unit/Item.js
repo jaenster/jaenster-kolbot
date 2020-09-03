@@ -3,13 +3,15 @@ Unit.prototype.equip = function (destLocation = undefined) {
 	let spot;
 	const doubleHanded = [26, 27, 34, 35, 67, 85, 86],
 		findspot = function (item) {
-			let tempspot = Storage.Stash.FindSpot(item);
-
-			if (getUIFlag(0x19) && tempspot) {
+			let tempspot;
+			if (getUIFlag(0x19) && Storage.Stash.CanFit()) {
+				tempspot =  Storage.Stash.FindSpot(item);
 				return {location: Storage.Stash.location, coord: tempspot};
 			}
 
-			tempspot = Storage.Inventory.FindSpot(item);
+			if (Storage.Inventory.CanFit()) {
+				tempspot = Storage.Inventory.FindSpot(item);
+			}
 
 			if (tempspot) {
 				return {location: Storage.Inventory.location, coord: tempspot};
