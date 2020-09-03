@@ -86,7 +86,7 @@
             try {
                 recursive = recursiveCheck();
             } catch (e) {
-                print((new Error).stack);
+                print(e.stack);
                 throw e;
             }
             let start = getTickCount();
