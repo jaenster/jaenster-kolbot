@@ -123,9 +123,10 @@ Unit.prototype.getBodyLoc = function () {
 	}, bodyLoc = [];
 
 	for (let i in types) {
-		this.itemType && types[i].indexOf(this.itemType) !== -1 && bodyLoc.push(i);
+		if (types[i].indexOf(this.itemType) !== -1) {
+			bodyLoc.push(i);
+		}
 	}
-
 	return bodyLoc.map(loc => parseInt(loc));
 };
 

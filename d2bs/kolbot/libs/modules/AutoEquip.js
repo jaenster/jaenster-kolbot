@@ -171,13 +171,19 @@
 					+ def(),
 			},
 
-			ring: {
+			_oldring: {
 				magic: () => (res() * 1000)
 					+ ((hpmp() + strdex()) * 100)
 					+ fcr(),
 
 				rare: () => (res() + fcr() * 10000)
 					+ ((hpmp() + strdex()) * 1000),
+			},
+
+			ring: {
+				magic: () => (fcr() * 1000) + (res()*10) + ((hpmp()+strdex())*100),
+
+				rare: () => (fcr() * 1000) + (res()*10) + ((hpmp()+strdex())*100),
 			},
 
 			belt: {
@@ -268,7 +274,7 @@
 		}
 		// magical, or lower
 		if (typeof magicTier === 'function') {
-			let tier =  magicTier();
+			let tier = magicTier();
 			// console.debug('magic tier -- '+item.name+ ' -- '+tier);
 			return tier;
 		}
@@ -286,15 +292,18 @@
 
 	AutoEquip.want = function (item) {
 		return item.__wanted__by_AutoEquip = (function () {
+			if (!item) return false; // We dont want an item that doesnt exists
+
 			// If we already excluded this item, lets not rerun this
 			if (item.hasOwnProperty('__wanted__by_AutoEquip') && !item.__wanted__by_AutoEquip) return false;
-
-
 			// skip bolts and arrows
 			if (item.itemType === 6 || item.itemType === 5) return false;
 
+			// Dont mess with dual handed items for now
+			if ([26, 27, 34, 35, 67, 85, 86].indexOf(item.itemType) !== -1) {
+				return false;
+			}
 
-			if (!item) return false; // We dont want an item that doesnt exists
 			const bodyLoc = item.getBodyLoc().first();
 
 			if (!bodyLoc) return false; // Only items that we can wear
@@ -305,10 +314,17 @@
 				return false;
 			}
 
+			item.classid === 522 && console.debug(item);
+			if (!item.identified) { // Tell the network we need to identify it first
+				return -1; // We want to identify this
+			}
+
+			item.classid === 522 && console.debug(item);
 			/** @type Item|undefined*/
 			const currentItem = me.getItemsEx()
 				.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyLoc)
 				.first();
+
 
 			// This item's specs are already fully readable
 			if (item.identified) {
@@ -329,9 +345,6 @@
 						return false;
 					}
 				}
-			}
-			if (!item.identified) { // Tell the network we need to identify it first
-				return -1; // We want to identify this
 			}
 			return !!item.getBodyLoc(); // for now, we want all items that we can equip
 		}).call();
@@ -475,13 +488,15 @@
 						.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyloc)
 						.first();
 
-
 					const currentRating = !currentItem ? -Infinity : formula(currentItem);
 
 					// calculate the actual rating of this item
 					return items.map(item => {
 						let ratingThisItem = formula(item);
 						if (ratingThisItem < currentRating) return false;
+
+						// Avoid issues like dual handed items and such
+						if (!AutoEquip.want(item)) return false;
 
 						//ToDo; calculate formula for 2 handed weapons
 						return ({
