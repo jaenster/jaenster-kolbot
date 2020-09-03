@@ -110,6 +110,63 @@
 			return (!!this.FindSpot(item));
 		};
 
+		/* Container.SortItems();
+	 	*  Loop Container backwards and try to replace all items
+	 	*
+	 	*   credits dzik for original
+	 	*/
+		this.SortItems = function () {
+			let cancel = false;
+
+			if (this.location === sdk.storage.Cube) cancel = me.openCube();
+
+			Storage.Reload();
+
+			for (let y = this.width - 1; y >= 0; y--) {
+				for (let x = this.height - 1; x >= 0; x--) {
+					delay(1);
+
+					if (!this.buffer[x][y]) {
+						continue; // nothing on this spot
+					}
+
+					const item = this.itemList[this.buffer[x][y] - 1];
+
+					if (item.classid === sdk.items.cube) {
+						continue; // dont touch the cube
+					}
+
+					if (this.location === sdk.storage.Inventory && this.IsLocked(item, Config.Inventory)) {
+						continue; // locked spot / item
+					}
+
+					let [ix, iy] = [item.y, item.x]; // WTF x and y is vice versa switched
+
+					if (ix < x || iy < y) {
+						continue; // not top left part of item
+					}
+
+					//print(item.name+" in "+this.name+" Spot at X:"+x+" Y:"+y+" ... ");
+
+					//Check if the item could fit an earlier position
+					const nPos = this.FindSpot(item);
+					if (!nPos || (nPos.x >= ix && nPos.y >= iy)) {
+						continue; // fits here or more backwards
+					}
+
+					if (!this.MoveTo(getUnit(-1, -1, -1, item.gid))) {
+						continue; // we couldn't move the item
+					}
+
+					// We moved an item so reload & restart
+					Storage.Reload();
+					y = this.width - 0;
+					break; // Loop again from begin
+				}
+			}
+			cancel && me.cancel();
+		};
+
 		/* Container.FindSpot(item)
 		 *	Finds a spot available in the buffer to place the item.
 		 */
@@ -144,6 +201,15 @@
 						return ({x: x, y: y});
 					}
 			}
+
+			typeof this.FindSpot.recursion === 'undefined' && (this.FindSpot.recursion = -1);
+			// sort the items and try again
+			this.FindSpot.recursion++;
+			if (this.FindSpot.recursion < 3) {
+				this.SortItems();
+				return this.FindSpot();
+			}
+			this.FindSpot.recursion--;
 
 			return false;
 		};
@@ -213,7 +279,7 @@
 
 				return true;
 			} catch (e) {
-				print("ÿc1"+e);
+				print("ÿc1" + e);
 				return false;
 			}
 		};
