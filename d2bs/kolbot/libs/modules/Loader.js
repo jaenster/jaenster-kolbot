@@ -17,10 +17,16 @@
 	Loader.skipTown = ["Test", "Follower", 'AutoPlay'];
 
 	Loader.getScripts = function () {
-		var i,
-			fileList = dopen("libs/bots/").getFiles();
+		const Misc = require('./Misc');
+		const fileList = Misc.poll(() => {
+			const fileList = dopen("libs/bots/").getFiles();
 
-		for (i = 0; i < fileList.length; i += 1) {
+			if (fileList && fileList.length) return fileList;
+			console.debug('Failed to open libs/bots?');
+			return false;
+		}, 2000, 10);
+
+		for (let i = 0; i < fileList.length; i += 1) {
 			if (fileList[i].indexOf(".js") > -1) {
 				Loader.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
 			}
@@ -35,7 +41,6 @@
 
 		if (!Loader.fileList.length) {
 			showConsole();
-
 			throw new Error("You don't have any valid scripts in bots folder.");
 		}
 
@@ -47,7 +52,7 @@
 
 		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
 			script = Loader.scriptList[Loader.scriptIndex];
-			Loader.runScript(script,Config);
+			Loader.runScript(script, Config);
 		}
 	};
 	Loader.runScript = function (script) {
