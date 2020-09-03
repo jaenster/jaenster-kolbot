@@ -32,7 +32,7 @@
 			function statHandler() {
 
 				// fail safe to not spam skills
-				if ((typeof statHandler.disabled === 'undefined' && (statHandler.disabled = false)) || statHandler.disabled) return false;
+				if (statHandler.disabled) return false;
 
 				const checkStat = (stat, items) => {
 					let bonus = 0, i;
@@ -101,7 +101,10 @@
 								case 0: {
 
 									// Do we need to stat this?
-									if (!send[i]) break;
+									if (!send[i]) {
+										i++; // next in line
+										break;
+									}
 
 									before = me.getStat(i);
 									sendPacket(1, 0x3A, 1, i, 1, send[i] - 1); // <3 dzik
@@ -124,7 +127,7 @@
 								before = state = 0;
 							}
 
-							let done = i > -1 && i < 5;
+							let done = !(i > -1 && i < 5);
 
 							// Once we are done, we can check for stats again
 							if (done) {
@@ -139,7 +142,7 @@
 			function skill() {
 
 				// fail safe to not spam skills
-				if ((typeof skill.disabled === 'undefined' && (skill.disabled = false)) || skill.disabled) return false;
+				if (typeof skill.disabled !== 'undefined' && skill.disabled) return false;
 
 
 				if (getUIFlag(0x17)) return; // cant skill while in trade
