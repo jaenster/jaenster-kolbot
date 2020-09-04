@@ -213,7 +213,31 @@
 				return new Proxy({}, {
 					get: function (target, skillId) {
 						skillId = parseInt(skillId);
-						return (getBaseStat(3, skillId, "leftskill") || 0);
+						switch (skillId) {
+							case 0: // Normal Attack
+							case 96: // Sacrifice
+							case 97: // Smite
+							case 106: // Zeal
+							case 116: // Conversion
+							case 126: // Bash
+							case 133: // Double Swing
+							case 139: // Stun
+							case 144: // Concentrate
+							case 147: // Frenzy
+							case 152: // Berserk
+							case 232: // Feral Rage
+							case 233: // Maul
+							case 238: // Rabies
+							case 239: // Fire Claws
+							case 242: // Hunger
+							case 248: // Fury
+							case 255: // Dragon Talon
+							case 260: // Dragon Claw
+							case 270: // Dragon Tail
+								return 2; // Shift bypass
+							default:
+								return (getBaseStat(3, skillId, "leftskill") || 0);
+						}
 						/*return ([
 							[
 								6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30,
