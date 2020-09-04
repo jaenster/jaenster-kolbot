@@ -29,8 +29,30 @@
 	const beltSize = Storage.BeltSize();
 	Config.MinColumn = [beltSize, beltSize, beltSize, beltSize];
 
-	Config.LowGold = (me.charlvl * 500) + (me.charlvl > 10 ? 500 * me.charlvl : 0);
-	Config.StashGold = Config.LowGold / 10;
+	const Delta = new (require('../../modules/Deltas'));
+
+	const basedOnLevel = function (formula, tracker) {
+		// Once your char lvl changes, reset the cache
+		Delta.track(tracker, () => cache = undefined);
+		let overridden, cache;
+
+		return {
+			get: function () {
+				if (typeof overridden !== 'undefined') return overridden;
+				if (typeof cache === 'undefined') cache = formula();
+				return cache;
+			},
+			set: function (v) {
+				overridden = v;
+			}
+		}
+	};
+
+	Object.defineProperties(Config, {
+		LowGold: basedOnLevel(() => (me.charlvl * 500) + (me.charlvl > 10 ? 500 * me.charlvl : 0), () => me.charlvl),
+
+		StashGold: basedOnLevel(() => Config.LowGold / 10, () => me.charlvl),
+	});
 
 	Config.AutoMap = true;
 

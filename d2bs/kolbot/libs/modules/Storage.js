@@ -122,7 +122,10 @@
 	 	*   credits dzik / Gagget for original
 	 	*/
 		this.SortItems = function () {
-			if (!me.inTown) return false;
+			// disable sortitems for now
+			return;
+
+			if (!me.inTown) return ;
 
 			let cancel = false;
 			if (this.location === sdk.storage.Cube) cancel = me.openCube();
