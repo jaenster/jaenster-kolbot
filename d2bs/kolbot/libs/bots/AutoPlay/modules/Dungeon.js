@@ -311,6 +311,17 @@
 
 					cuntress.clear(20);
 					cuntress.kill();
+					break;
+				}
+
+				// If we came here to level, we might as well fix the amulet
+				case sdk.areas.MaggotLairLvl3: {
+
+					let poi = getPresetUnit(sdk.areas.MaggotLairLvl3, 2, 356).realCoords();
+					walkTo(poi);
+					me.getQuestItem(92, 356);
+
+					break;
 				}
 			}
 			return true;

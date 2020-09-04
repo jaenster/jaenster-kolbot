@@ -19,7 +19,7 @@
 			monster.beendead |= monster.dead
 		});
 
-		let path = getPath(me.area, x, y, xx, yy, 0, this.walkDistance);
+		let path = getPath(me.area, x, y, xx, yy, 0, 4);
 		if (!path || !path.length) return Infinity;
 
 		return path.reduce((acc, v, i, arr) => {

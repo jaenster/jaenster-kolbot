@@ -1,6 +1,7 @@
 (function () {
 
 	const QuestData = require('../../../modules/QuestData');
+	const walkTo = require('../modules/WalkTo');
 
 	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		// Log the quest status
@@ -9,7 +10,7 @@
 
 		Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
 
-		Pather.moveTo(15044, 14045); // ToDo; figure out what lvl we are
+		walkTo(15044, 14045); // ToDo; figure out what lvl we are
 
 		me.getQuestItem(521, 149);
 		Town.goToTown(2);

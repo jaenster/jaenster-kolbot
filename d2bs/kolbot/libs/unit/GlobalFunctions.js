@@ -145,8 +145,9 @@ const clickItemAndWait = (...args) => {
 		const ret = original.apply(this, args);
 
 		// deal with fucking bug
-		if (first === 1 && typeof second === 'string' && ret && ret.classid === 149) {
+		if (first === 1 && typeof second === 'string' && ret && ((me.act === 1 && ret.classid === 149) || me.act === 2 && ret.classid=== 268)) {
 			D2Bot.printToConsole('Annoying d2 bug - getUnit not working');
+			D2Bot.printToConsole(ret.toSource());
 			quitGame();
 		}
 

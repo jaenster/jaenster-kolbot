@@ -31,12 +31,14 @@
 			let npc = getUnit(1, NPC.Warriv);
 			// in case its near warriv
 			if ((getPresetUnit(me.area, 1, 175)).distance < 50) {
-				npc && npc.openMenu() && npc.useMenu(sdk.menu.GoWest);
+				if (npc && npc.openMenu()) {
+					Misc.useMenu(0x0D37);
 
-				if (!Misc.poll(function () {
-					return me.area === 1;
-				}, 2000, 100)) {
-					throw new Error("Failed to go to act 1 using Warriv");
+					if (!Misc.poll(function () {
+						return me.area === 1;
+					}, 2000, 10)) {
+						Town.goToTown(2);
+					}
 				}
 			}
 		}
