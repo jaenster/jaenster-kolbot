@@ -29,10 +29,15 @@
 			// Trick the system to take a waypoint to lutgholein
 			Pather.useWaypoint(sdk.areas.LutGholein);
 			let npc = getUnit(1, NPC.Warriv);
-			console.debug('WARRIVE: ', npc);
 			// in case its near warriv
 			if ((getPresetUnit(me.area, 1, 175)).distance < 50) {
 				npc && npc.openMenu() && npc.useMenu(sdk.menu.GoWest);
+
+				if (!Misc.poll(function () {
+					return me.area === 1;
+				}, 2000, 100)) {
+					throw new Error("Failed to go to act 1 using Warriv");
+				}
 			}
 		}
 
