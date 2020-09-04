@@ -369,6 +369,10 @@
                 		p_result[0] += "item.skinCode";
 
 						break;
+					case 'distance':
+						p_result[0] += "(item.mode !== 3 && item.mode !== 5 && item.distance||0)";
+
+						break;
 					default:
 						Misc.errorReport("Unknown property: " + property + " File: " + info.file + " Line: " + info.line);
 
@@ -552,6 +556,7 @@
 		for (let i = 0; i < 2; i++) {
 			if (p_result[i].length) {
 				try {
+					console.debug('return function(item) {return ' + p_result[i] + '}');
 					p_result[i] = (new Function('return function(item) {return ' + p_result[i] + '}')).call(null); // generate function out of it
 				} catch(e) {
 					print('Pickit line incorrect: ');

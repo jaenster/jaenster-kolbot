@@ -7,7 +7,8 @@
 [name] == healingpotion
 [name] == rejuvenationpotion
 [name] == fullrejuvenationpotion
-[name] == gold
+[name] == gold && [distance] < 4
+[name] == gold # [gold] >= 500
 
 [name] == greaterhealingpotion
 [name] == superhealingpotion
@@ -15,4 +16,3 @@
 [name] == supermanapotion
 [name] == rejuvenationpotion
 [name] == fullrejuvenationpotion
-[name] == gold # [gold] >= 500
