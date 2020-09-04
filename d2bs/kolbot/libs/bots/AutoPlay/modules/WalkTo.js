@@ -54,7 +54,9 @@
 
 		// Do not calculate teleport path, if we want subnodes
 		/** @type {{x,y}[]|undefined}*/
-		const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, [62, 63, 64].includes(me.area) ? 20 : 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
+		const s = getRoom(me.area).xsize ;
+		console.debug("Area room size: " + s);
+		const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, s * 1) : getPath(me.area, target.x, target.y, me.x, me.y, 0, s / 10);
 		if (!path) throw new Error('failed to generate path');
 
 		path.reverse();
