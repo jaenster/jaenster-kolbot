@@ -70,6 +70,7 @@
 
 		Town.heal();
 		Town.identify();
+		Town.clearInventory();
 		Town.shopItems();
 		Town.fillTome(518);
 
@@ -636,13 +637,13 @@
 
 							result = Pickit.checkItem(item);
 
+							if (typeof result.result === 'string') {
+								result.hook.handle(item);
+								Town.clearInventory();
+							}
+
 							switch (result.result) {
 								case 1:
-									// Couldn't id autoEquip item. Don't log it.
-									if (result.result === 1 && Config.AutoEquip && !item.getFlag(0x10)) {
-										break;
-									}
-
 									Misc.itemLogger("Kept", item);
 									Misc.logItem("Kept", item, result.line);
 
@@ -668,7 +669,6 @@
 			}
 
 		Town.fillTome(518); // Check for TP tome in case it got sold for ID scrolls
-
 		return true;
 	};
 
@@ -1842,6 +1842,8 @@
 	};
 
 	Town.clearInventory = function () {
+
+		console.debug('asdklfjaklsdfjlkasdjflkasdjf');
 		var i, col, result, item, beltSize,
 			items = [];
 		const Storage = require('Storage');

@@ -86,9 +86,9 @@ Unit.prototype.__openMenu = function () {
 Unit.prototype.startTrade = function (mode) {
 	const Config = require('../modules/Config');
 	const Packet = require('../modules/PacketHelpers');
-	if (Config.PacketShopping) {
-		return Packet.startTrade(this, mode);
-	}
+	// if (Config.PacketShopping) {
+	// 	return Packet.startTrade(this, mode);
+	// }
 
 	if (this.type !== 1) {
 		throw new Error("Unit.startTrade: Must be used on NPCs.");

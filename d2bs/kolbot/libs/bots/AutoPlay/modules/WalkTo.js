@@ -42,7 +42,7 @@
 		}
 
 		// calculate the % of effectiveness here compared to the best
-		let clearPercentage = (100 / best * myScore);
+		let clearPercentage = Math.floor((100 / best * myScore)+1);
 
 		// If we are very low on gold just clear everywhere for gold
 		if (clearPercentage < 70 && me.gold < Config.LowGold / 2) clearPercentage = 100;
@@ -50,9 +50,11 @@
 		// tells us if we can use teleport, not if we have enough mana for it, but if its theoretically possible to teleport here
 		const canTeleport = Pather.canTeleport();
 
+		console.debug('Gonna clear for '+Math.round(clearPercentage)+'%');
+
 		// Do not calculate teleport path, if we want subnodes
 		/** @type {{x,y}[]|undefined}*/
-		const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
+		const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, [62, 63, 64].includes(me.area) ? 20 : 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
 		if (!path) throw new Error('failed to generate path');
 
 		path.reverse();
@@ -68,10 +70,10 @@
 		for (let i = 0, node, l = path.length; i < l; loops++) {
 
 			node = path[i];
-			// console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
+			console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
 			// The path generated is long, we want sub nodes
-			if (node.distance > 30) {
+			if (node.distance > 20) {
 				const d = Pather.getWalkDistance(node.x, node.y);
 
 				// If walking to the node is twice as far as teleporting, we teleport
@@ -79,7 +81,7 @@
 					Pather.teleportTo(node.x, node.y);
 				} else if (!recursion) {
 					console.debug('DONT USE RECURSION HERE WTF?');
-					// walkTo(node, recursion++);
+					walkTo(node, recursion++);
 				}
 			}
 
