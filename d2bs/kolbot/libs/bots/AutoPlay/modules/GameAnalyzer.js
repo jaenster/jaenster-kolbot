@@ -128,7 +128,7 @@
 	// })();
 
 	const myData = module.exports = {
-		skip: [sdk.areas.InnerCloister, sdk.areas.Tristram, /*sdk.areas.MaggotLairLvl3, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2*/],
+		skip: [sdk.areas.InnerCloister, sdk.areas.Tristram],
 		areas: [],
 		nowWhat: function (tmpSkip = [], comparedTo = undefined) {
 			/**
@@ -165,9 +165,6 @@
 						const areaId = area.Index;
 						quest = QuestData.find(quest => quest.opensAreas.includes(areaId));
 						if (quest) { // We cant find the quest we need to do for this area, wtf
-
-							// the quest we wanna work to
-							Feedback.quest = quest;
 
 							const questTree = [quest];
 							// For each prerequisites we need to see recursively if we need to do the previous onem
@@ -208,17 +205,16 @@
 					const bestChoice = all[0];
 					const worseChoices = all.slice(index, all.length - index + 1);
 
-					console.debug('Checking area ' + cur.area.LocaleString);
-
 					// If a quest is needed to level here, check if that is something we desire
 					if (cur.quest) {
 						// do we find a no quest choice?
 						let noQuestChoice = worseChoices.find(choice => !choice.quest);
+						console.debug('Checking other area to be viable for avoiding quest '+(noQuestChoice && noQuestChoice.area.LocaleString));
 
 						// Does the noQuestChoice give us atleast a 90% rating compared to the best choice?
 						if (noQuestChoice && 100 / (bestChoice.rating) * noQuestChoice.rating > 90) {
 
-							console.debug('Excluded ' + cur.area.LocaleString+' -- to avoid doing the quest');
+							console.debug('Excluded ' + cur.area.LocaleString+' -- to avoid doing the quest. Stopped at'+noQuestChoice.area.LocaleString);
 							// exclude this option, as something better is down the line
 							return false;
 						}
@@ -227,21 +223,28 @@
 					// we dont have waypoint to this area, see if we find something simular
 					if (!cur.haveWaypoint) {
 						// do we find a area we do have the waypoint of
-						let waypoingChoice = worseChoices.find(choice => !choice.haveWaypoint);
+						let waypointChoice = worseChoices.find(choice => !choice.haveWaypoint);
+						console.debug('Checking other area to be viable for avoiding waypoint '+(waypointChoice && waypointChoice.area.LocaleString));
 
 						// Does that come close to the area
-						if (waypoingChoice && 100 / (bestChoice.rating) * waypoingChoice.rating > 90) {
+						if (waypointChoice && 100 / (bestChoice.rating) * waypointChoice.rating > 90) {
 
-							console.debug('Excluded ' + cur.area.LocaleString+' -- to avoid searching for waypoint');
+							console.debug('Excluded ' + cur.area.LocaleString+' -- to avoid searching for waypoint. Stopped at'+waypointChoice.area.LocaleString);
 							// exclude this option, as something better is down the line
 							return false;
 						}
 					}
 
+					// This area has no quest to do, yet cant access
+					if (!cur.canAccess && !cur.quest) {
+						// Should not happen
+						console.debug('Excluded '+ cur.area.LocaleString+' -- area inaccessible');
+						return false;
+					}
+
 					return true;
 				});
 
-			console.debug('area', bestArea.quest);
 			if (!bestArea) {// we just dont know anymore
 				return false;
 			}
@@ -249,6 +252,11 @@
 
 			if (bestArea.quest) {// if a quest is needed, we do that first. After that we look again what is best
 				console.debug('---------- quest ', bestArea.quest);
+
+				// the end goal quest
+				Feedback.quest = QuestData.find(quest => quest.opensAreas.includes(bestArea.area.Index));
+
+
 				return ['quest', bestArea.quest, bestArea.rating];
 			}
 

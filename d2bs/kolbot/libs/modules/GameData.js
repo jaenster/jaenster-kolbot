@@ -1187,9 +1187,12 @@
 			});
 
 
-			let log = ((5 - Math.log(areaID)) * (brokeness*0.6)) ;
+			let log=1,avgDmg=0;
+			if (brokeness !== 1) {
+				log = ((5 - Math.log(areaID)) * (brokeness * 0.6));
+				avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * log;
+			}
 
-			let avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * log;
 
 			return (raritypool ? effortpool / raritypool : 0) - (avgDmg);
 		},

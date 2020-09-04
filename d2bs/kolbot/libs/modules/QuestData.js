@@ -238,7 +238,7 @@
 				// Dungeons are always available if you have access to act 2
 				sdk.areas.StonyTombLvl1, sdk.areas.HallsOfDeadLvl1, sdk.areas.HallsOfDeadLvl2, sdk.areas.ClawViperTempleLvl1, sdk.areas.StonyTombLvl2, sdk.areas.HallsOfDeadLvl3, sdk.areas.ClawViperTempleLvl2, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, sdk.areas.AncientTunnels,
 			],
-			TheArcaneSanctuary: [sdk.areas.TalRashasTomb1, sdk.areas.TalRashasTomb2, sdk.areas.TalRashasTomb3, sdk.areas.TalRashasTomb4, sdk.areas.TalRashasTomb5, sdk.areas.TalRashasTomb6, sdk.areas.TalRashasTomb7],
+			TheArcaneSanctuary: [sdk.areas.CanyonOfMagi, sdk.areas.TalRashasTomb1, sdk.areas.TalRashasTomb2, sdk.areas.TalRashasTomb3, sdk.areas.TalRashasTomb4, sdk.areas.TalRashasTomb5, sdk.areas.TalRashasTomb6, sdk.areas.TalRashasTomb7],
 
 			TheTaintedSun: [sdk.areas.HaremLvl1, sdk.areas.HaremLvl2, sdk.areas.PalaceCellarLvl1, sdk.areas.PalaceCellarLvl2, sdk.areas.PalaceCellarLvl3, sdk.areas.ArcaneSanctuary],
 
