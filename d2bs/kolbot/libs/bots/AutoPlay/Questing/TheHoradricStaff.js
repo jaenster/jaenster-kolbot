@@ -2,7 +2,7 @@
 
 	const Storage = require('../../../modules/Storage');
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
-		if (!me.findItem('box') || !me.getCube()) {
+		if (!me.findItem('box') && !me.getCube()) {
 			throw Error('Failed to get a cube')
 		}
 
@@ -49,8 +49,11 @@
 		let tombID = getRoom().correcttomb;
 		Pather.moveToExit(tombID, true);
 
+		let t = 0;
 		// Move to spot we want
-		Pather.moveToPreset(me.area, 2, 152, 0, 0);
+		while(!Pather.moveToPreset(me.area, 2, 152, 0, 0, true))
+			console.debug('Try number ' + (++t) + " failed");
+
 		Pather.makePortal();
 		const portal = Pather.getPortal(sdk.areas.LutGholein);
 		delay(500);
