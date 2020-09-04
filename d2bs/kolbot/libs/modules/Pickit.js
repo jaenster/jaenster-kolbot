@@ -168,6 +168,16 @@
 		if (items) {
 			for (i = 0; i < items.length; i += 1) {
 				const item = items[i];
+
+				//ToDo; what if you got multiple books?
+				if (item.itemType === 18) {
+					// Dont throw a book
+					let otherBook = (me.getItems() || []).filter(el => el.classid === item.classid).first();
+
+					// the _first_ book of a kind we keep[
+					if (otherBook.gid === item.gid) continue;
+				}
+
 				const result = this.checkItem(item).result;
 				const hook = Pickit.hooks.find(hook => result === hook.id);
 				if (hook) {
