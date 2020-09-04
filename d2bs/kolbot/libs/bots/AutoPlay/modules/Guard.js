@@ -82,7 +82,7 @@
 
 			}).update;
 
-			while (1) {
+			while (true) {
 				delay(100);
 			}
 

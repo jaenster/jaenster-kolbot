@@ -321,6 +321,9 @@
 		return item.__wanted__by_AutoEquip = (function () {
 			if (!item) return false; // We dont want an item that doesnt exists
 
+			// no quest items
+			if (['msf','vip'].includes(item.code)) return false;
+
 			// If we already excluded this item, lets not rerun this
 			if (item.hasOwnProperty('__wanted__by_AutoEquip') && !item.__wanted__by_AutoEquip) return false;
 			// skip bolts and arrows

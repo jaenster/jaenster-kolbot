@@ -1,7 +1,8 @@
 (function (module, require) {
 
 	const Storage = require('../../../modules/Storage');
-	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
+	const walkTo = require('../modules/WalkTo');
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		if (!me.findItem('box') && !me.getCube()) {
 			throw Error('Failed to get a cube')
 		}
@@ -41,19 +42,27 @@
 		}
 
 
-		Town.goToTown(2); // can be we are still @ the cubing bit
+		if (me.act !== 2) {
+			Town.goToTown(2); // can be we are still @ the cubing bit
+		}
+
 		if (needToVisitCain) {
 			me.talkTo('cain');
 		}
-		Pather.useWaypoint(sdk.areas.CanyonOfMagi);
-		let tombID = getRoom().correcttomb;
-		Pather.moveToExit(tombID, true);
 
-		let t = 0;
+		const tombID = getRoom(sdk.areas.CanyonOfMagi).correcttomb;
+		Pather.journeyTo(tombID);
+
+		const exit = getArea().exits.filter(el => el.target === tombID);
+		walkTo(exit);
+
+		// Now that we are there, take the exit
+		Pather.moveToExit(tombID,true);
+
+		const ps = getPresetUnit(me.area, 2, 152).realCoords();
+		walkTo(ps);
+
 		// Move to spot we want
-		while(!Pather.moveToPreset(me.area, 2, 152, 0, 0, true))
-			console.debug('Try number ' + (++t) + " failed");
-
 		Pather.makePortal();
 		const portal = Pather.getPortal(sdk.areas.LutGholein);
 		delay(500);

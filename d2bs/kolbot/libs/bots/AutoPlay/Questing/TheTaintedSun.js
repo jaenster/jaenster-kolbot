@@ -10,7 +10,7 @@
 
 		Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
 
-		walkTo(15044, 14045); // ToDo; figure out what lvl we are
+		walkTo({x: 15044, y: 14045}); // ToDo; figure out what lvl we are
 
 		me.getQuestItem(521, 149);
 		Town.goToTown(2);

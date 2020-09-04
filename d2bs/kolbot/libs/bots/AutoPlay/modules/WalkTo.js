@@ -42,7 +42,7 @@
 		}
 
 		// calculate the % of effectiveness here compared to the best
-		let clearPercentage = Math.floor((100 / best * myScore)+1);
+		let clearPercentage = Math.floor((100 / best * myScore) + 1);
 
 		// If we are very low on gold just clear everywhere for gold
 		if (clearPercentage < 70 && me.gold < Config.LowGold / 2) clearPercentage = 100;
@@ -50,13 +50,12 @@
 		// tells us if we can use teleport, not if we have enough mana for it, but if its theoretically possible to teleport here
 		const canTeleport = Pather.canTeleport();
 
-		console.debug('Gonna clear for '+Math.round(clearPercentage)+'%');
+		console.debug('Gonna clear for ' + Math.round(clearPercentage) + '% -- Can teleport: '+canTeleport);
 
 		// Do not calculate teleport path, if we want subnodes
 		/** @type {{x,y}[]|undefined}*/
-		const s = getRoom(me.area).xsize ;
-		console.debug("Area room size: " + s);
-		const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, s * 1) : getPath(me.area, target.x, target.y, me.x, me.y, 0, s / 10);
+			// const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, [62, 63, 64].includes(me.area) ? 20 : 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
+		const path = getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
 		if (!path) throw new Error('failed to generate path');
 
 		path.reverse();
@@ -71,6 +70,49 @@
 		let loops = 0, shrine;
 		for (let i = 0, node, l = path.length; i < l; loops++) {
 
+			// If we have the ability to teleport, lets see what is the node that is the _most_ far away
+			if (canTeleport && Pather.useTeleport()) {
+				let myDistanceFromTarget = getDistance(me, target),
+					myRoom = getRoom(me.x, me.y);
+
+				console.debug('Can teleport');
+
+				//ToDo; figure out a real way to determin if its a neighbour
+				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) < 40 /* dont waste teles on short distances*/)
+					//
+					.map((el, index) => {
+						const obj = {
+							g: getDistance(me, el.x, el.y),
+							h: getDistance(target, el.x, el.y),
+							total: 0,
+							index: index+i,
+							isNeighbour: myRoom.isNeighbour(getRoom(el.x, el.y)),
+						};
+						obj.total = obj.g + obj.h;
+						return obj;
+					})
+					// We cannot teleport on a higher distance as 1 room away
+					.filter(el => el.isNeighbour)
+					// Only to those nodes that bring us closer to the taget
+					.filter(el => el)
+					// The farther the better
+					.sort((a, b) => b.g - a.g)
+					.first();
+
+				if (teleportTo) {
+					node = path[teleportTo.index];
+					console.debug('Teleporting to node (' + teleportTo.index + '/' + l + ') -- Skipping ' + (teleportTo.index - i) + ' nodes. Distance of ' + (Math.round(node.distance)));
+					let [x, y] = [me.x, me.y];
+					me.cast(54, 0, node.x, node.y, undefined, true);
+
+					// if teleported succesfully
+					if (Misc.poll(() => me.x !== x && me.y !== y, 1000, 3)) {
+						i = teleportTo.index++;
+					}
+					continue;
+				}
+			}
+
 			node = path[i];
 			console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
@@ -83,7 +125,7 @@
 					Pather.teleportTo(node.x, node.y);
 				} else if (!recursion) {
 					console.debug('DONT USE RECURSION HERE WTF?');
-					walkTo(node, recursion++);
+					// walkTo(node, recursion++);
 				}
 			}
 
@@ -92,7 +134,8 @@
 			Pather.walkTo(node.x, node.y, 2);
 
 			// ToDo; only if clearing makes sense in this area due to effort
-			clearPercentage > 10 && clear({nodes: path, range: 14/100*clearPercentage});
+			let range = 14 / 100 * clearPercentage;
+			clear({nodes: path, range: Math.max(4, range)});
 			Pickit.pickItems();
 
 			// if shrine found, click on it

@@ -64,9 +64,6 @@
 			// return original.apply(Pather, args);
 			const walkTo = require('./modules/WalkTo');
 
-			// If we can teleport we just use the original Pather.journeyTo
-			const useTeleport = this.useTeleport();
-
 			let [to] = args;
 			console.debug('My journey to ' + AreaData[to].LocaleString);
 
@@ -343,7 +340,7 @@
 			const canTeleport = this.canTeleport();
 			if (!canTeleport) return false;
 
-			return me.charlvl >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 2);
+			return me.charlvl >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 3);
 		});
 
 

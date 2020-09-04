@@ -38,6 +38,8 @@ declare function getScripts(): Script | false
 
 declare class Room {
     getNext(): Room | false;
+
+    getNearby(): Room[] | false;
 }
 
 declare function getRoom(area: number, x: number, y: number): Room | false
@@ -120,17 +122,17 @@ declare type eventName = 'gamepacket' | 'scriptmsg' | 'copydata' | 'keyup' | 'ke
 declare function addEventListener(eventType: 'gamepacket', callback: ((bytes: ArrayBufferLike) => boolean)): void
 declare function addEventListener(eventType: 'scriptmsg', callback: ((data: string | object | number) => void)): void
 declare function addEventListener(eventType: 'copydata', callback: ((mode: number, msg: string) => void)): void
-declare function addEventListener(eventType: 'itemaction', callback: ((gid:number,mode?:number,code?:string,global?:true) => void)): void
+declare function addEventListener(eventType: 'itemaction', callback: ((gid: number, mode?: number, code?: string, global?: true) => void)): void
 declare function addEventListener(eventType: 'keyup' | 'keydown', callback: ((key: number) => void)): void
-declare function addEventListener(eventType: 'chatmsg', callback: ((nick: string,msg:string) => void)): void
+declare function addEventListener(eventType: 'chatmsg', callback: ((nick: string, msg: string) => void)): void
 declare function addEventListener(eventType: eventName, callback: ((...args: any) => void)): void
 
 declare function removeEventListener(eventType: 'gamepacket', callback: ((bytes: ArrayBufferLike) => boolean)): void
 declare function removeEventListener(eventType: 'scriptmsg', callback: ((data: string | object | number) => void)): void
 declare function removeEventListener(eventType: 'copydata', callback: ((mode: number, msg: string) => void)): void
-declare function removeEventListener(eventType: 'itemaction', callback: ((gid:number,mode?:number,code?:string,global?:true) => void)): void
+declare function removeEventListener(eventType: 'itemaction', callback: ((gid: number, mode?: number, code?: string, global?: true) => void)): void
 declare function removeEventListener(eventType: 'keyup' | 'keydown', callback: ((key: number) => void)): void
-declare function removeEventListener(eventType: 'chatmsg', callback: ((nick: string,msg:string) => void)): void
+declare function removeEventListener(eventType: 'chatmsg', callback: ((nick: string, msg: string) => void)): void
 declare function removeEventListener(eventType: eventName, callback: ((...args: any) => void)): void
 
 declare function clearEvent()
@@ -139,25 +141,25 @@ declare function clearAllEvents()
 
 declare function js_strict()
 
-declare function version():number
+declare function version(): number
 
-declare function scriptBroadcast(what:string|object):void
+declare function scriptBroadcast(what: string | object): void
 
 declare function sqlite_version()
 
 declare function sqlite_memusage()
 
-declare function dopen(path:string):false|{create(what:string)}
+declare function dopen(path: string): false | { create(what: string) }
 
-declare function debugLog(text:string):void
+declare function debugLog(text: string): void
 
-declare function showConsole():void
+declare function showConsole(): void
 
-declare function hideConsole():void
+declare function hideConsole(): void
 
 // out of game functions
 
-declare function login(name?:string):void
+declare function login(name?: string): void
 
 //
 // declare function createCharacter())
@@ -177,86 +179,86 @@ declare function loadMpq()
 
 // game functions that don't have anything to do with gathering data
 
-declare function submitItem():void
+declare function submitItem(): void
 
 declare function getMouseCoords()
 
-declare function copyUnit(unit: Unit):Unit
+declare function copyUnit(unit: Unit): Unit
 
-declare function clickMap(type: 0|1|2|3,shift:0|1,x:number,y:number)
+declare function clickMap(type: 0 | 1 | 2 | 3, shift: 0 | 1, x: number, y: number)
 
 declare function acceptTrade()
 
 declare function tradeOk()
 
-declare function beep(id?:number)
+declare function beep(id?: number)
 
-declare function clickItem(where: 0|1|2,bodyLocation:number)
-declare function clickItem(where: 0|1|2,item:Item)
-declare function clickItem(where: 0|1|2,x:number,y:number)
-declare function clickItem(where: 0|1|2,x:number,y:number,location:number)
+declare function clickItem(where: 0 | 1 | 2, bodyLocation: number)
+declare function clickItem(where: 0 | 1 | 2, item: Item)
+declare function clickItem(where: 0 | 1 | 2, x: number, y: number)
+declare function clickItem(where: 0 | 1 | 2, x: number, y: number, location: number)
 
-declare function getDistance(a: Unit,b: Unit):number
-declare function getDistance(a: Unit,toX:number, toY: number):number
-declare function getDistance(fromX: number, fromY: number,b: Unit):number
-declare function getDistance(fromX: number, fromY: number,toX:number, toY: number):number
+declare function getDistance(a: Unit, b: Unit): number
+declare function getDistance(a: Unit, toX: number, toY: number): number
+declare function getDistance(fromX: number, fromY: number, b: Unit): number
+declare function getDistance(fromX: number, fromY: number, toX: number, toY: number): number
 
-declare function gold(amount: number,changeType?: 0|1|2|3|4):void
+declare function gold(amount: number, changeType?: 0 | 1 | 2 | 3 | 4): void
 
-declare function checkCollision(a: Unit,b:Unit,type:number):boolean
+declare function checkCollision(a: Unit, b: Unit, type: number): boolean
 
-declare function playSound(num:number):void
+declare function playSound(num: number): void
 
-declare function quit():never
+declare function quit(): never
 
-declare function quitGame():never
+declare function quitGame(): never
 
-declare function say(what:string):void
+declare function say(what: string): void
 
-declare function clickParty(player: Party,type: 0|1|2|3|4)
+declare function clickParty(player: Party, type: 0 | 1 | 2 | 3 | 4)
 
-declare function weaponSwitch():void
+declare function weaponSwitch(): void
 
-declare function transmute():void
+declare function transmute(): void
 
-declare function useStatPoint(type:number):void
+declare function useStatPoint(type: number): void
 
-declare function useSkillPoint(type:number):void
+declare function useSkillPoint(type: number): void
 
-declare function takeScreenshot():void
+declare function takeScreenshot(): void
 
-declare function moveNPC(npc:Monster,x:number,y:number):void
+declare function moveNPC(npc: Monster, x: number, y: number): void
 
-declare function getPacket(buffer: DataView):void
-declare function getPacket(...args: {size:number, data: number}[]):void
+declare function getPacket(buffer: DataView): void
+declare function getPacket(...args: { size: number, data: number }[]): void
 
-declare function sendPacket(buffer: DataView):void
-declare function sendPacket(...args: {size:number, data: number}[]):void
+declare function sendPacket(buffer: DataView): void
+declare function sendPacket(...args: { size: number, data: number }[]): void
 
-declare function getIP():string
+declare function getIP(): string
 
-declare function sendKey(key:number):void
+declare function sendKey(key: number): void
 
-declare function revealLevel(unknown:true):void
+declare function revealLevel(unknown: true): void
 
 // hash functions
 
-declare function md5(str:string):string
+declare function md5(str: string): string
 
-declare function sha1(str:string):string
+declare function sha1(str: string): string
 
-declare function sha256(str:string):string
+declare function sha256(str: string): string
 
-declare function sha384(str:string):string
+declare function sha384(str: string): string
 
-declare function sha512(str:string):string
+declare function sha512(str: string): string
 
-declare function md5_file(str:string):string
+declare function md5_file(str: string): string
 
-declare function sha1_file(str:string):string
+declare function sha1_file(str: string): string
 
-declare function sha256_file(str:string):string
+declare function sha256_file(str: string): string
 
-declare function sha384_file(str:string):string
+declare function sha384_file(str: string): string
 
-declare function sha512_file(str:string):string
+declare function sha512_file(str: string): string

@@ -127,7 +127,7 @@
 	// })();
 
 	const myData = module.exports = {
-		skip: [sdk.areas.InnerCloister, sdk.areas.Tristram],
+		skip: [sdk.areas.InnerCloister, sdk.areas.Tristram, /*sdk.areas.MaggotLairLvl3, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2*/],
 		areas: [],
 		nowWhat: function (tmpSkip = [], comparedTo = undefined) {
 			/**

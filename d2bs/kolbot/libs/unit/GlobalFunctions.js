@@ -137,20 +137,44 @@ const clickItemAndWait = (...args) => {
 })([].filter.constructor('return this')(), setTimeout);
 
 
-(function(global, original) {
+(function (global, original) {
+	let firstRun = true;
+	global['getUnit'] = function (...args) {
+		const test = original(1);
+		// Stupid reference thing
 
-	global['getUnit'] = function(...args) {
+		if (firstRun) {
+
+			delay(1000);
+			firstRun = false;
+		}
+
+
 		let [first] = args, second = args.length >= 2 ? args[1] : undefined;
 
 		const ret = original.apply(this, args);
 
 		// deal with fucking bug
-		if (first === 1 && typeof second === 'string' && ret && ((me.act === 1 && ret.classid === 149) || me.act === 2 && ret.classid=== 268)) {
+		if (first === 1 && typeof second === 'string' && ret && ((me.act === 1 && ret.classid === 149) || me.act === 2 && ret.classid === 268)) {
 			D2Bot.printToConsole('Annoying d2 bug - getUnit not working');
 			D2Bot.printToConsole(ret.toSource());
-			quitGame();
+
+
+			console.debug('test: ' , getUnit(first, -1, -1, ret.gid));
+
+
+			console.debug(ret.toSource());
+
+			// in tcp/ip we quit the current game
+			if (me.gameserverip && !me.realm) {
+				quit();
+			} else {
+				// in single player we exit the entire game
+				D2Bot.restart();
+			}
 		}
 
 		return original.apply(this, args);
 	}
 })([].filter.constructor('return this')(), getUnit);
+

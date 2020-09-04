@@ -2,6 +2,8 @@
 
 	const QuestData = require('../../../modules/QuestData');
 
+	const walkTo = require('../modules/WalkTo');
+
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		// Log the quest status
 
@@ -9,16 +11,17 @@
 
 		if (log[0]) return; // did it
 
-		Pather.useWaypoint(74);
+		Pather.journeyTo(sdk.areas.ArcaneSanctuary);
+		Pather.getWP(sdk.areas.ArcaneSanctuary);
 
-		if (!Pather.moveToPreset(me.area, 2, 357, -3, -3)) {
-			throw new Error("Failed to move to Summoner");
-		}
-
+		const ps = getPresetUnit(me.area, 2, 357).realCoords();
+		walkTo(ps);
 
 		// open the journal
-		getUnit(2, 357).cast(sdk.skills.Telekinesis);
-
+		let journal = getUnit(2, 357);
+		walkTo(journal);
+		journal.moveTo();
+		journal.interact();
 		delay(500);
 		me.cancel();
 
