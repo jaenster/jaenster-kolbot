@@ -41,8 +41,11 @@
 			}
 		}
 
-		// if its 70% of the best idea, we wanna walk and pwn
-		let clearWhileWalking = (100 / best * myScore) > 70 || me.gold < Config.LowGold / 2;
+		// calculate the % of effectiveness here compared to the best
+		let clearPercentage = (100 / best * myScore);
+
+		// If we are very low on gold just clear everywhere for gold
+		if (clearPercentage < 70 && me.gold < Config.LowGold / 2) clearPercentage = 100;
 
 		// tells us if we can use teleport, not if we have enough mana for it, but if its theoretically possible to teleport here
 		const canTeleport = Pather.canTeleport();
@@ -85,7 +88,7 @@
 			Pather.walkTo(node.x, node.y, 2);
 
 			// ToDo; only if clearing makes sense in this area due to effort
-			clearWhileWalking && clear({nodes: path});
+			clearPercentage > 10 && clear({nodes: path, range: 14/100*clearPercentage});
 			Pickit.pickItems();
 
 			// if shrine found, click on it
