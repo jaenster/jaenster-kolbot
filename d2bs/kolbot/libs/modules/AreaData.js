@@ -79,6 +79,10 @@
 			canAccess: function () {
 				return QuestData.some(quest => {
 					// if we have quest, and it opens the path to this area?
+
+					//ToDo; some quests have alternative state that gives access already,
+					// like tristham only needs to be opened, but you dont need to save cain
+
 					return me.getQuest(quest.index, 0) && quest.opensAreas.length && quest.opensAreas.includes(this.Index);
 				})
 			},
@@ -87,7 +91,7 @@
 			},
 			haveWaypoint: function () {
 				const Pather = require('./Pather');
-				
+
 				// get the last area that got a WP
 				let wpArea = this.nearestWaypointArea();
 

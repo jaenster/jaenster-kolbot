@@ -9,6 +9,7 @@
 
 	const Feedback = require('./Feedback');
 
+	/** @type {[Area, number]} */
 	let allareas = [];
 	const Analyzer = new function () {
 		this.setupState = false;
@@ -134,7 +135,7 @@
 
 			 The idea,
 
-			 We know which area we can best do compared to density / skills / effort
+			 We know which area we can best do compared to density / skills / effort / gold / monster dmg
 			 So we know which areas we want to go to
 
 			 We know which quests need to be done for which area
@@ -146,107 +147,118 @@
 			 Do that, repeat.
 			 */
 
-			const areas = allareas.filter(area => area[1] && (me.diff < 2 || area[0].Index >= 0));
-			for (let i = 0; i < areas.length; i++) {
-				// Got an area
-				const [area, effortXp] = areas[i];
+			const bestArea = allareas
+				// those with an area
+				.filter(area => area[1])
+				// those that are not on the skip list
+				.filter((data) => !this.skip.includes(data[0].Index))
 
-				if (this.skip.includes(area.Index)) continue; // Nope
-				if (tmpSkip.includes(area.Index)) continue; // Nope
+				// map to an effort list
+				.map((data) => {
+					const area = data[0],
+						effortXP = data[1],
+						canAccess = area.canAccess();
 
-				// Can we go to this area?
-				const canAccess = area.canAccess();
-				console.log('Looking at area ' + area.LocaleString + ' (' + Math.round(effortXp * 100) / 100 + ')');
-				tmpSkip.push(area.Index);
+					let quest = undefined;
 
-				let dungeonsKey = '';
+					if (!canAccess) {
+						const areaId = area.Index;
+						quest = QuestData.find(quest => quest.opensAreas.includes(areaId));
+						if (quest) { // We cant find the quest we need to do for this area, wtf
 
-				// Found an area we can access, and gives allot of xp
-				if (canAccess) {
+							// the quest we wanna work to
+							Feedback.quest = quest;
 
-					// Is this area part of an dungeon?
-					dungeonsKey = Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index));
+							const questTree = [quest];
+							// For each prerequisites we need to see recursively if we need to do the previous onem
 
-					// before saying we want to do this dungeon, lets see if our second best option is as viable as this
-					if (!area.haveWaypoint()) {
-						let copy = tmpSkip.slice();
+							(function addPre(quest) {
+								return quest.prerequisites.forEach((q) => {
+									const quest = QuestData.find(quest => quest.index === q);
 
-						if (dungeonsKey) {
-							AreaData.dungeons[dungeonsKey].forEach(el => copy.push(el));
-						} else {
-							copy.push(area.Index);
-						}
+									if (!me.getQuest(quest.index, 0) && !questTree.includes(quest)) {
 
+										questTree.unshift(quest);
+										addPre(quest) // recursively call this crap
+									}
+								});
+							})(quest);
 
-						const result = this.nowWhat(copy, comparedTo || effortXp);
-						if (result && result.length >= 3) {
-							const [type, what, otherXp] = result;
-
-							const otherArea = type === 'clear' ? what : AreaData[AreaData.dungeons[what].first()];
-
-							let otherName = (type === 'clear' ? what.LocaleString : what);
-							// another area only make sense if we do have that waypoint
-							if (!otherArea.haveWaypoint()) {
-								Feedback.lastDecision = 'Should do ' + ((dungeonsKey || area.LocaleString));
-								console.debug(otherName + ' is not a valid option as we dont have that waypoint either');
-							} else if (100 / (effortXp || comparedTo) * otherXp > 90) {
-								console.debug(otherName + ' is a better idea as ' + (dungeonsKey || area.LocaleString));
-								Feedback.lastDecision = 'Should do ' + otherName;
-								return [type, what, otherXp];
-							} else {
-								console.debug(otherName + ' is not a valid option');
-							}
+							quest = questTree.first();
 						}
 					}
 
-					if (dungeonsKey) {
-						/** @type [Area, number][]*/
-						let dungeonAreas = allareas.filter(([a]) => AreaData.dungeons[dungeonsKey].includes(a.Index));
+					return {
+						area: area,
+						/** @type number*/
+						rating: effortXP,
+						/** @type boolean*/
+						canAccess: area.canAccess(),
 
-						// Calculate if every dungeon listed here gives atleast that much xp?
-						if (dungeonAreas.every(([a, curxp]) => !curxp || 100 - (100 / effortXp * curxp) < 30)) {
+						haveWaypoint: area.haveWaypoint(),
 
-							Feedback.lastDecision = 'Do dungeon ' + dungeonsKey;
-							// This entire dungeon is an good idea
-							return ['dungeon', dungeonsKey, effortXp];
-						}
-					} else {
-						return ['clear', area, effortXp];
+						/** @type string*/
+						dungeon: Object.keys(AreaData.dungeons).find(key => AreaData.dungeons[key].includes(area.Index)),
+
+						quest: quest,
 					}
 
-				}
+				}).find((cur, index, all) => {
 
-				// We need to do some questing before we can go here
-				const areaId = area.Index;
-				const quest = QuestData.find(quest => quest.opensAreas.includes(areaId));
-				if (!quest) continue; // We cant find the quest we need to do for this area, wtf
+					const bestChoice = all[0];
+					const worseChoices = all.slice(index, all.length - index + 1);
 
-				// the quest we wanna work to
-				Feedback.quest = quest;
+					console.debug('Checking area ' + cur.area.LocaleString);
 
-				const questTree = [quest];
-				// For each prerequisites we need to see recursively if we need to do the previous onem
+					// If a quest is needed to level here, check if that is something we desire
+					if (cur.quest) {
+						// do we find a no quest choice?
+						let noQuestChoice = worseChoices.find(choice => !choice.quest);
 
-				(function addPre(quest) {
-					return quest.prerequisites.forEach((q) => {
-						const quest = QuestData.find(quest => quest.index === q);
+						// Does the noQuestChoice give us atleast a 90% rating compared to the best choice?
+						if (noQuestChoice && 100 / (bestChoice.rating) * noQuestChoice.rating > 90) {
 
-						if (!me.getQuest(quest.index, 0) && !questTree.includes(quest)) {
-
-							questTree.unshift(quest);
-							addPre(quest) // recursively call this crap
+							console.debug('Excluded ' + cur.area.LocaleString+' -- to avoid doing the quest');
+							// exclude this option, as something better is down the line
+							return false;
 						}
-					});
-				})(quest);
+					}
 
-				//ToDo; buildin some magic here to calculate if this is too much to handle for now
-				const wantedQuest = questTree.first();
-				if (!wantedQuest) continue; // cant figure out what we want
+					// we dont have waypoint to this area, see if we find something simular
+					if (!cur.haveWaypoint) {
+						// do we find a area we do have the waypoint of
+						let waypoingChoice = worseChoices.find(choice => !choice.haveWaypoint);
 
-				// print('---- Quest tree we need to do to level @ ' + area.LocaleString);
-				// questTree.map(q => q.name).join(' --> ');
-				return wantedQuest && ['quest', wantedQuest]
+						// Does that come close to the area
+						if (waypoingChoice && 100 / (bestChoice.rating) * waypoingChoice.rating > 90) {
+
+							console.debug('Excluded ' + cur.area.LocaleString+' -- to avoid searching for waypoint');
+							// exclude this option, as something better is down the line
+							return false;
+						}
+					}
+
+					return true;
+				});
+
+			console.debug('area', bestArea.quest);
+			if (!bestArea) {// we just dont know anymore
+				return false;
 			}
+
+
+			if (bestArea.quest) {// if a quest is needed, we do that first. After that we look again what is best
+				console.debug('---------- quest ', bestArea.quest);
+				return ['quest', bestArea.quest, bestArea.rating];
+			}
+
+			if (bestArea.dungeon) {// if a dungeon needs to be cleared, that is what we do
+				console.debug('--------- dungeon -- ',bestArea.dungeon);
+				return ['dungeon', bestArea.dungeon, bestArea.rating];
+			}
+
+			console.debug('--------- clear -- ', bestArea.area.LocaleString);
+			return ['clear', bestArea.area, bestArea.rating];
 		},
 		bestAreaXP: () => {
 			const highestQuest = GameData.Quests;

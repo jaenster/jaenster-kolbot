@@ -5,6 +5,15 @@
 	const Misc = require('../../../modules/Misc');
 	const clear = require('./Clear');
 
+
+	const Worker = require('../../../modules/Worker');
+	Worker.runInBackground.drawDebugRooms = function() {
+
+
+
+		return true;
+	};
+
 	const GameAnalyzer = require('./GameAnalyzer');
 
 	const searchShrine = () => getUnits(2, "shrine")
@@ -78,7 +87,7 @@
 				console.debug('Can teleport');
 
 				//ToDo; figure out a real way to determin if its a neighbour
-				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) < 40 /* dont waste teles on short distances*/)
+				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 49 /* dont waste teles on short distances*/)
 					//
 					.map((el, index) => {
 						const obj = {
@@ -94,7 +103,7 @@
 					// We cannot teleport on a higher distance as 1 room away
 					.filter(el => el.isNeighbour)
 					// Only to those nodes that bring us closer to the taget
-					.filter(el => el)
+					.filter(el => el.g > 20)
 					// The farther the better
 					.sort((a, b) => b.g - a.g)
 					.first();
@@ -102,6 +111,7 @@
 				if (teleportTo) {
 					node = path[teleportTo.index];
 					console.debug('Teleporting to node (' + teleportTo.index + '/' + l + ') -- Skipping ' + (teleportTo.index - i) + ' nodes. Distance of ' + (Math.round(node.distance)));
+					[].filter.constructor('return this')()['WHATEVER'] = new Line(node.x, node.y, me.x, me.y, 0x99, true);
 					let [x, y] = [me.x, me.y];
 					me.cast(54, 0, node.x, node.y, undefined, true);
 
@@ -125,6 +135,7 @@
 					Pather.teleportTo(node.x, node.y);
 				} else if (!recursion) {
 					console.debug('DONT USE RECURSION HERE WTF?');
+					node.moveTo();
 					// walkTo(node, recursion++);
 				}
 			}

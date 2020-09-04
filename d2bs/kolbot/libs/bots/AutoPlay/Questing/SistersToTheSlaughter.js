@@ -25,7 +25,7 @@
 			Town();
 			Pather.journeyTo(37);
 
-			walkTo(22549, 9520);
+			walkTo({x: 22549, y: 9520});
 
 			const andy = getUnit(1, 156);
 			andy.kill();
