@@ -2,6 +2,8 @@
 
 	const QuestData = require('../../../modules/QuestData');
 
+	const walkTo = require('../modules/WalkTo');
+
 	const states = {
 		Done: 0,
 		PwnedAndy: 1,
@@ -23,14 +25,27 @@
 			Town();
 			Pather.journeyTo(37);
 
-			Pather.moveTo(22549, 9520);
+			walkTo(22549, 9520);
 
 			const andy = getUnit(1, 156);
 			andy.kill();
 			pwnedAndy |= andy.dead;
 			Town.goToTown(1);
 
+		}
 
+		if (log[states.WantToTalkToWarriv] || pwnedAndy) {
+			print('Want to talk to warriv?');
+
+			// Just talk with warriv, the next quest = able to go to act II, which get when travel to the right spot
+			Town.goToTown(1); // We care about warriv in act 1.
+			me.talkTo('Warriv');
+			me.cancel() && me.cancel();
+			const NPC = require('../../../modules/NPC');
+			let npc = getUnit(1, NPC.Warriv);
+			if (npc) {
+				npc.useMenu(sdk.menu.GoWest);
+			}
 		}
 		print('Pwned andy, now what?');
 

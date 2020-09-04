@@ -131,7 +131,7 @@
 
 						case realWorldDistance < townDistance * 2: // waypoint is nearby
 						case realWorldDistance < 40: // waypoint is relatively close
-						case me.gold < Town.LowGold / 2: // very low on gold
+						case me.gold < Config.LowGold / 2: // very low on gold
 						case !tpBook: // If no book
 						{
 
@@ -369,7 +369,6 @@
 			// We gonna assume the journeyTo is correct and good
 			if (area !== me.area) Pather.journeyTo(area);
 
-
 			const preset = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539].reduce((acc, cur) => acc || getPresetUnit(area, 2, cur), undefined);
 			if (!preset) throw new Error('Waypoint not found');
 
@@ -398,7 +397,7 @@
 		});
 
 		// Sort the inventory after buying pots
-		new Overload(Town, 'buyPotions', /** @this Pather*/ function(original, ...args) {
+		new Overload(Town, 'identify', /** @this Pather*/ function(original, ...args) {
 
 			const bought = original.apply(this, args);
 			if (bought) require('../../modules/Storage').Inventory.SortItems();

@@ -337,16 +337,14 @@
 
 			const forClass = getBaseStat("itemtypes", item.itemType, "class");
 			if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
-				console.debug('Item is for another class as me');
+				//Item is for another class as me
 				return false;
 			}
 
-			item.classid === 522 && console.debug(item);
 			if (!item.identified) { // Tell the network we need to identify it first
 				return -1; // We want to identify this
 			}
 
-			item.classid === 522 && console.debug(item);
 			/** @type Item[]*/
 			const currentItems = me.getItemsEx()
 				.filter(item => item.location === sdk.storage.Equipment && bodyLoc.includes(item.bodylocation));
@@ -373,7 +371,7 @@
 
 					// We want only the best ofc
 					if (item === best) {
-						console.debug('We seem to prefer this item, over ' + worst.fname + ' will be replaced with ' + item.fname);
+						 // We want to equip this item
 						return true;
 					} else if (item !== worst) {
 
@@ -392,11 +390,11 @@
 
 						//Is our new find item the worst?
 						if (item === best && currentItems.includes(worst)) {
-							console.debug('We can put this item on the second slot');
+							// Secondary slot
 							return true; // We want to replace this item
 						}
 					}
-					console.debug('current item better ', item);
+					// console.debug('current item better ', item);
 					return false; // Current item is better, skip
 				}
 			}
@@ -408,7 +406,7 @@
 		const dealWithIt = item => {
 			item.__wanted__by_AutoEquip = (function () {
 				const tier = formula(item);
-				console.debug('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
+				// console.debug('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
 				const bodyLoc = item.getBodyLoc();
 
 				// We got it now, but somehow... dont want it anymore?

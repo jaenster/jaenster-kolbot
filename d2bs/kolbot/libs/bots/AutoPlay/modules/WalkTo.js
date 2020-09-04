@@ -8,7 +8,16 @@
 	const GameAnalyzer = require('./GameAnalyzer');
 
 	const searchShrine = () => getUnits(2, "shrine")
-		.filter(el => el.objtype === 15 && !el.mode)
+		.filter(el => {
+
+			if (el.objtype === sdk.shrines.Experience && !el.mode) {
+				return true;
+			}
+
+			if (el.objtype === sdk.shrines.Mana && !el.mode && 100 / me.mpmax * me.mp) {
+
+			}
+		})
 		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
 		.first();
 
@@ -16,7 +25,24 @@
 		console.debug('generating path towards target: ', target);
 		global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
 
-		const allAreas = GameAnalyzer.area;
+
+		const AreaData = require('../../../modules/AreaData');
+		const allAreas = GameAnalyzer.areas;
+
+		let winner = Infinity, best = -Infinity, myScore = -Infinity;
+		for (let i = 0; i < allAreas.length; i++) {
+			const [area, score] = allAreas[i];
+
+			if (area.Index === me.area) myScore = score;
+
+			if (score > best) {
+				best = score;
+				winner = area;
+			}
+		}
+
+		// if its 70% of the best idea, we wanna walk and pwn
+		let clearWhileWalking = (100 / best * myScore) > 70 || me.gold < Config.LowGold / 2;
 
 		// tells us if we can use teleport, not if we have enough mana for it, but if its theoretically possible to teleport here
 		const canTeleport = Pather.canTeleport();
@@ -59,7 +85,7 @@
 			Pather.walkTo(node.x, node.y, 2);
 
 			// ToDo; only if clearing makes sense in this area due to effort
-			clear({nodes: path});
+			clearWhileWalking && clear({nodes: path});
 			Pickit.pickItems();
 
 			// if shrine found, click on it

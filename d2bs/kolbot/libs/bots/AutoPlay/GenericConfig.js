@@ -29,7 +29,10 @@
 	const beltSize = Storage.BeltSize();
 	Config.MinColumn = [beltSize, beltSize, beltSize, beltSize];
 
-	Config.LowGold = me.charlvl * 500 + (me.charlvl > 10 ? 500 * me.charlvl : 0);
+	Config.LowGold = (me.charlvl * 500) + (me.charlvl > 10 ? 500 * me.charlvl : 0);
+	Config.StashGold = Config.LowGold / 10;
+
+	Config.AutoMap = true;
 
 	Config.MPBuffer = 10;
 	Config.HPBuffer = 3;
