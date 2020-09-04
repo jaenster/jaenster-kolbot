@@ -136,23 +136,20 @@ const clickItemAndWait = (...args) => {
 
 })([].filter.constructor('return this')(), setTimeout);
 
-//
-// (function(global, original) {
-//
-// 	global['getUnit'] = function(...args) {
-// 		let [first] = args;
-//
-// 		console.debug('Called with -- ',args);
-// 		const test = original(4);
-// 		console.debug('test value',test);
-// 		delay(1000);
-//
-// 		const ret = original.apply(this, args);
-//
-// 		if (ret) do {
-// 			first !== 4 && console.debug(ret);
-// 		} while(ret.getNext());
-//
-// 		return original.apply(this, args);
-// 	}
-// })([].filter.constructor('return this')(), getUnit);
+
+(function(global, original) {
+
+	global['getUnit'] = function(...args) {
+		let [first] = args, second = args.length >= 2 ? args[1] : undefined;
+
+		const ret = original.apply(this, args);
+
+		// deal with fucking bug
+		if (first === 1 && typeof second === 'string' && ret && ret.classid === 149) {
+			D2Bot.printToConsole('Annoying d2 bug - getUnit not working');
+			quitGame();
+		}
+
+		return original.apply(this, args);
+	}
+})([].filter.constructor('return this')(), getUnit);
