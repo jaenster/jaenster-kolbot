@@ -15,7 +15,11 @@
 			Messaging.on('Guard', (data => typeof data === 'object' && data && data.hasOwnProperty('heartbeat') && (lastPing = data.heartbeat)));
 
 			// quit game if default is hanging
-			Delta.track(() => getTickCount() - lastPing > 10e3, quitGame);
+			Delta.track(() => getTickCount() - lastPing > 10e3, () => {
+				console.debug('Quitting game due to inactivity of default.dbj');
+				delay(1000);
+				quitGame();
+			});
 
 			// quit game if still in the same area after 10 minutes
 
@@ -116,30 +120,6 @@
 
 				return true;
 			};
-
-			const Town = require('../../../modules/Town');
-			const Pather = require('../../../modules/Pather');
-
-			// town chicken shit
-			Messaging.on('TownChicken', data => typeof data === 'object' && data && data.hasOwnProperty('do') && data.do && (function () {
-				console.debug('town chicken fuck you');
-				let area = me.area;
-				try {
-					Town.goToTown();
-				} catch (e) {
-					console.debug('No such thing as going to town?');
-					quit();
-				}
-				let [x, y] = [me.x, me.y];
-
-				Town();
-
-				Pather.moveTo(x, y);
-				Pather.usePortal(area, me.name)
-
-
-			})());
-
 		}
 	}
 ).call(null, typeof module === 'object' && module || {}, typeof require === 'undefined' && (include('require.js') && require) || require, getScript.startAsThread());
