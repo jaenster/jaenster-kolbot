@@ -42,7 +42,7 @@
 		};
 
 		Delta.track(() => {
-			let parts = !me.gameready ? [] : [
+			let parts = !me.gameReady ? [] : [
 				// Level: 89 (25.35%)
 				'Level: ' + me.charlvl + ' (' + (me.charlvl !== 99 && (((me.getStat(sdk.stats.Experience) - Experience.totalExp[me.charlvl]) / Experience.nextExp[me.charlvl]) * 100).toFixed(2) || 0).toString() + '%)',
 				// Area: Cold Plains
