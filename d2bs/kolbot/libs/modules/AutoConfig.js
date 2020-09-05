@@ -73,7 +73,7 @@
 		Config.CainID.Enable = me.act === 4; // Only if we start in act4. Its quicker, otherwise it ain't.
 		Config.CainID.MinGold = 2500000;
 		Config.CainID.MinUnids = 3;
-		Config.FieldID = true; //ToDo; if we have a tomb
+		Config.FieldID = false; //ToDo; if we have a tomb
 		Config.DroppedItemsAnnounce.Enable = false;
 		Config.DroppedItemsAnnounce.Quality = [];
 	};
