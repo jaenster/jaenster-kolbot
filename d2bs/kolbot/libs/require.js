@@ -163,6 +163,9 @@ getScript.startAsThread = function () {
 	return 'loaded';
 };
 
+me.ingame && (function() {
+	require('./modules/GameMode');
+})();
 
 me.ingame && (function () {
 	// If in game, load all libraries too

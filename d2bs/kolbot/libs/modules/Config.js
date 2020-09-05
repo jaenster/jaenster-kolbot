@@ -68,6 +68,8 @@
 		Config.loaded = true;
 		return Config;
 	}
+	const global = [].filter.constructor('return this')();
+	if (typeof global['Config'] !== 'object') global['Config'] = Config;
 
 	Config.loaded = false;
 
@@ -381,7 +383,5 @@
 	Config.Advertisement = false;
 
 	module.exports = Config;
-	const global = [].filter.constructor('return this')();
-	if (typeof global['Config'] !== 'object') global['Config'] = Config;
 
 })(module, require);
