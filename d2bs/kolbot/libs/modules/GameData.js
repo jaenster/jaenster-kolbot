@@ -1174,7 +1174,9 @@
 			return (raritypool ? effortpool / raritypool : Infinity);
 		},
 		areaSoloExp: function (areaID, skills) {
-			let brokeness = 1 + ((100 - Math.min(100, Math.max(0, (100 / (Config.LowGold||1) * me.gold)))) / 100);
+			let procentageBroke = ((100 - Math.min(100, Math.max(0, (100 / (Config.LowGold || 1) * me.gold)))));
+
+			let brokeness = 1 + (procentageBroke / 100 / 3 * 1);
 
 			let effortpool = 0, raritypool = 0, dmgAcc = 0;
 
@@ -1187,7 +1189,7 @@
 			});
 
 
-			let log=1,avgDmg=0;
+			let log = 1, avgDmg = 0;
 			if (brokeness !== 1) {
 				log = ((5 - Math.log(areaID)) * (brokeness * 0.6));
 				avgDmg = (raritypool ? dmgAcc / raritypool : Infinity) * log;
