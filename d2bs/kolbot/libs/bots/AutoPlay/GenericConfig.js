@@ -54,6 +54,8 @@
 		LowGold: basedOnLevel(() => (me.charlvl * 500) + (me.charlvl > 10 ? 500 * me.charlvl : 0), () => me.charlvl),
 
 		StashGold: basedOnLevel(() => Config.LowGold / 10, () => me.charlvl),
+
+		UseMerc: basedOnLevel(() => me.mercrevivecost !== 0, () => me.mercrevivecost !== 0), // once we get or hire merc we can use him.
 	});
 
 	Config.AutoMap = true;

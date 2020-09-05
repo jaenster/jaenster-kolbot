@@ -430,8 +430,9 @@
 		new Overload(Town, 'needMerc', /** @this Town*/ function (original, ...args) {
 
 			// ToDo; fix stuff for classic
-			if (me.gametype === 0) return false;
-
+			if (me.gametype === 0 || !Config.UseMerc || me.gold < me.mercrevivecost) { // gametype 0 = classic
+				return false;
+			}
 			//ToDo; hire a merc if access to act 2 and we have a act 1 merc
 
 			// If merc costs arent zero, we got one
