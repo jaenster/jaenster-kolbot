@@ -7,11 +7,30 @@
 
 
 	const Worker = require('../../../modules/Worker');
-	Worker.runInBackground.drawDebugRooms = function() {
 
+	const Delta = new (require('../../../modules/Deltas'));
+	new function () {
+		const lines = [];
+		const update = function () {
+			const room = getRoom();
+			let removeElements = lines.length;
 
+			if (room && !me.inTown) do {
 
-		return true;
+				let x1 = room.x * 5, x2 = room.x * 5 + room.xsize,
+					y1 = room.y * 5, y2 = room.y * 5 + room.ysize;
+
+				lines.push(new Line(x1, y1, x2, y1, 0x22, true));
+				lines.push(new Line(x2, y1, x2, y2, 0x22, true));
+				lines.push(new Line(x2, y2, x1, y2, 0x22, true));
+				lines.push(new Line(x1, y2, x1, y1, 0x22, true));
+			} while (room.getNext());
+
+			// remove old lines
+			removeElements && lines.splice(0, removeElements);
+		};
+		Delta.track(() => me.area, update);
+		update();
 	};
 
 
@@ -60,7 +79,7 @@
 		// tells us if we can use teleport, not if we have enough mana for it, but if its theoretically possible to teleport here
 		const canTeleport = Pather.canTeleport();
 
-		console.debug('Gonna clear for ' + Math.round(clearPercentage) + '% -- Can teleport: '+canTeleport);
+		console.debug('Gonna clear for ' + Math.round(clearPercentage) + '% -- Can teleport: ' + canTeleport);
 
 		// Do not calculate teleport path, if we want subnodes
 		/** @type {{x,y}[]|undefined}*/
@@ -95,7 +114,7 @@
 							g: getDistance(me, el.x, el.y),
 							h: getDistance(target, el.x, el.y),
 							total: 0,
-							index: index+i,
+							index: index + i,
 							isNeighbour: myRoom.isNeighbour(getRoom(el.x, el.y)),
 						};
 						obj.total = obj.g + obj.h;

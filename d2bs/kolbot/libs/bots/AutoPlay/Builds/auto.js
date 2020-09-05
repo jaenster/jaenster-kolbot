@@ -13,7 +13,7 @@
 		let __cache, cachedLvl = me.charlvl;
 		const handler = function () {
 			if (!__cache) { // generate cache
-				print('cache builds');
+				// print('cache builds');
 				__cache = Config.builds.find(build => build.hasOwnProperty('active') && build.hasOwnProperty('valid') && build.valid() && build.active());
 				cachedLvl = me.charlvl;
 			}
