@@ -15,7 +15,7 @@
 		// dont run for pots all the time if we are low on gold
 		if (me.gold < Config.LowGold || settings.disabled || me.inTown) return true;
 
-		const items = (me.getItems() || []).filter(el => el.location === sdk.storage.Inventory || el.location === sdk.storage.Cube),
+		const items = (me.getItems() || []).filter(el => el.location === sdk.storage.Inventory || el.location === sdk.storage.Belt),
 			filterMp = item => item.classid > 591 && item.classid < 597,
 			filterHp = item => item.classid > 586 && item.classid < 592;
 
