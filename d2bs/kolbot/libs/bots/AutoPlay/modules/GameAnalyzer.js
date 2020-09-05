@@ -203,7 +203,7 @@
 				}).find((cur, index, all) => {
 
 					const bestChoice = all[0];
-					const worseChoices = all.slice(index, all.length - index + 1);
+					const worseChoices = all.slice(index+1);
 
 					// If a quest is needed to level here, check if that is something we desire
 					if (cur.quest) {
