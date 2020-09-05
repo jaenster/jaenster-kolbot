@@ -65,6 +65,8 @@
 	// Scans the items in shop for auto equip
 	Config.MiniShopBot = true;
 
+	// Config.MinGameTime = 3000;
+
 	require('./AutoConfig/Setup');
 	require('../../modules/AutoEquip');
 	module.exports = Scripts;

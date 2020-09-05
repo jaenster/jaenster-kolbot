@@ -14,6 +14,7 @@
 		return true;
 	};
 
+
 	const GameAnalyzer = require('./GameAnalyzer');
 
 	const searchShrine = () => getUnits(2, "shrine")
@@ -102,13 +103,15 @@
 					})
 					// We cannot teleport on a higher distance as 1 room away
 					.filter(el => el.isNeighbour)
-					// Only to those nodes that bring us closer to the taget
+					.filter(el => el.g < 40)
+					// Only to those nodes that bring us closer to the target
 					.filter(el => el.g > 20)
 					// The farther the better
 					.sort((a, b) => b.g - a.g)
 					.first();
 
 				if (teleportTo) {
+					me.cancel();
 					node = path[teleportTo.index];
 					console.debug('Teleporting to node (' + teleportTo.index + '/' + l + ') -- Skipping ' + (teleportTo.index - i) + ' nodes. Distance of ' + (Math.round(node.distance)));
 					[].filter.constructor('return this')()['WHATEVER'] = new Line(node.x, node.y, me.x, me.y, 0x99, true);

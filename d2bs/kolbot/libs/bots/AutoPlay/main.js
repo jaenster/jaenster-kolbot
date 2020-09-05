@@ -12,6 +12,7 @@
 
 	require('./modules/Guard');
 	require('./modules/PickitHook');
+	require('./modules/TownVisit');
 
 	// FastMod is not working anymore on BattleNet so lets use it only for SP games.
 	if (me.gameserverip) {

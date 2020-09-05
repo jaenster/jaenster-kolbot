@@ -19,7 +19,7 @@
 	function Overload(Obj, name, fn) {
 		this.obj = Obj;
 		this.name = name;
-		this.original = Obj[name];
+		this.original = typeof Obj[name] === 'function' && Obj[name] || undefined;
 		this.fn = fn;
 		this.installed = false;
 
@@ -397,11 +397,95 @@
 		});
 
 		// Sort the inventory after buying pots
-		new Overload(Town, 'identify', /** @this Pather*/ function(original, ...args) {
+		new Overload(Town, 'identify', /** @this Pather*/ function (original, ...args) {
 
 			const bought = original.apply(this, args);
 			if (bought) require('../../modules/Storage').Inventory.SortItems();
 			return bought;
+
+		});
+
+		// We always want a merc, but we cant always get a merc
+		new Overload(Town, 'needMerc', /** @this Town*/ function (original, ...args) {
+
+			// ToDo; fix stuff for classic
+			if (me.gametype === 0) return false;
+
+			//ToDo; hire a merc if access to act 2 and we have a act 1 merc
+
+			// If merc costs arent zero, we got one
+			let gotMerc = me.mercrevivecost !== 0;
+			if (gotMerc) return 'revive';
+
+			const merc = Misc.poll(() => me.getMerc(), 300,30);
+			let aliveMerc = merc && merc.mode !== 0 && merc.mode !== 12;
+			if (aliveMerc) return false; // merc is alive
+
+			// We have a merc, so yes we revive it
+			let accessToMerc = gotMerc || AreaData[sdk.areas.LutGholein].canAccess() || me.getQuest(sdk.quests.SistersBurialGrounds);
+			if (!accessToMerc) return false; //no access to hire a merc, so we cant
+
+			// now we know we dont have an alive merc, or a revivable merc
+			return 'hire';
+		});
+
+		new Overload(Town, 'hireMerc', /** @this Town*/ function (original) {
+			const Merc = require('./modules/Merc');
+
+			let actMerc = [1,2][AreaData[sdk.areas.LutGholein].canAccess() & 1];
+
+			// this is safe as addEventListener for copydata isnt done in default.dbj anymore
+			try {
+				Town.goToTown(actMerc);
+
+				// Start listening from here, as act switching messes up packethandeling
+				addEventListener("gamepacket", Merc.packetHandler);
+
+				Town.initNPC("Merc", "hireMerc");
+				delay(5000); //ToDo; poll merc list
+
+				// find the best merc to hire
+				const bestMerc = Merc.instances.reduce((winner,cur) => {
+					if (actMerc === 2) { // has a def skill?
+						let defSkill = cur.skills.find(skill => skill.name === "Defiance");
+						if (!defSkill) return winner;
+					}
+
+					// if we have no winner yet, this one is better, assuming we can afford it
+					if (!winner && cur.cost <= me.gold) return cur;
+
+					// is this one of higher level?
+					if (winner && winner.level < cur.level) return cur;
+
+					return winner;
+				}, undefined);
+
+				// Found a merc we can afford/want?
+				if (bestMerc) {
+					console.debug('Hiring merc ',bestMerc);
+					bestMerc.hire();
+				}
+
+			} finally { // i dont care for errors but clean up the gamepacket handler
+				removeEventListener('gamepacket', Merc.packetHandler);
+			}
+		});
+
+
+		// small hijack, to support the hire of a merc on requirement
+		new Overload(Town, 'reviveMerc', /** @this Town*/ function (original, ...args) {
+
+			const needed = this.needMerc();
+			console.debug(needed);
+
+			switch(needed) {
+				case false: // no such merc
+					return true;
+				case 'hire':
+					return this.hireMerc();
+			}
+
+			return original.apply(this, args);
 
 		});
 

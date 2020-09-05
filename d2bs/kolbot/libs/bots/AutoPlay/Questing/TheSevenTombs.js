@@ -1,12 +1,15 @@
 (function (module, require) {
 	const NPC = require('../../../modules/NPC');
 	const QuestData = require('../../../modules/QuestData');
+	const walkTo = require('../modules/WalkTo');
 
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 
 		const log = QuestData.fetchQuestArray(quest);
 
 		if (me.act === 2 && me.area === sdk.areas.LutGholein) {
+			Town();
+			Town.moveToSpot('portalspot');
 			const portal = getUnits(2,59).filter(portal => portal && portal.objtype > sdk.areas.AncientTunnels && portal.objtype < sdk.areas.DurielsLair).first();
 			print(portal && portal.toSource());
 			portal && portal.cast(sdk.skills.Telekinesis);
@@ -14,17 +17,24 @@
 
 		// if we aren't within the 7 tomes
 		if (!(me.area > sdk.areas.AncientTunnels && me.area < sdk.areas.DurielsLair)) {
-			Pather.useWaypoint(sdk.areas.CanyonOfMagi);
-			let tombID = getRoom().correcttomb;
-			Pather.moveToExit(tombID,true);
 
-			// Move to spot we want
-			Pather.moveToPreset(me.area, 2, 152, 0, 0);
+			// we cant figure out what the tombID outside of the act
+			// (we can in theory but lets not mess with db2s for now)
+			if (me.act !== 2) {
+				Pather.journeyTo(sdk.areas.CanyonOfMagi);
+			}
+
+			let tombID = getRoom().correcttomb;
+			Pather.journeyTo(tombID);
+
+
+			const ps = getPresetUnit(me.area, 2, 152).realCoords();
+			walkTo(ps);
 		}
 
 
-			const hole = Misc.poll(() => getUnit(2, 100),4000,20);
-			hole.cast(sdk.skills.Telekinesis);
+		const hole = Misc.poll(() => getUnit(2, 100),4000,20);
+		hole.cast(sdk.skills.Telekinesis);
 
 		if (!Misc.poll(() => me.area === sdk.areas.DurielsLair,4000,3)) {
 			throw new Error('failed to go to DurielsLair');

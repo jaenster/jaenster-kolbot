@@ -59,6 +59,7 @@
 		}
 	];
 
+	/** @class Town */
 	const Town = function Town(repair = false) {
 		if (!me.inTown) {
 			Town.goToTown();
