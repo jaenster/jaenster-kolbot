@@ -847,8 +847,6 @@
 						me.cancel(); // In case lag causes the wp menu to stay open
 					}
 
-					Packet.flash(me.gid);
-
 					if (i > 1) { // Activate check if we fail direct interact twice
 						check = true;
 					}

@@ -72,6 +72,27 @@
 			// If we walk however, we might want to do something else with the journey to
 			const target = this.plotCourse(to, me.area);
 
+			// Add GreatMarsh if needed
+			if (target.course.indexOf(sdk.areas.FlayerJungle) > -1) {
+				if (me.act !== 3){
+					Town.goToTown(3);
+				}
+
+				let special = getArea(sdk.areas.FlayerJungle);
+				if (special) {
+					special = special.exits;
+
+					for (let i = 0; i < special.length; i += 1) {
+						if (special[i].target === sdk.areas.GreatMarsh) {
+							target.course.splice(target.course.indexOf(sdk.areas.FlayerJungle), 0, sdk.areas.GreatMarsh); // add great marsh if needed
+
+							break;
+						}
+					}
+				}
+			}
+			console.debug(' -- Path to take -- '+target.course.map(el => AreaData[el].LocaleString).join(' -> '));
+
 			// in the odd case we are in the field, check if we can take a local waypoint
 			if (target.useWP) {
 
@@ -417,8 +438,9 @@
 			let gotMerc = me.mercrevivecost !== 0;
 			if (gotMerc) return 'revive';
 
-			const merc = Misc.poll(() => me.getMerc(), 300,30);
+			const merc = Misc.poll(() => me.getMerc(), 3000,30);
 			let aliveMerc = merc && merc.mode !== 0 && merc.mode !== 12;
+			console.debug(merc && merc.mode);
 			if (aliveMerc) return false; // merc is alive
 
 			// We have a merc, so yes we revive it

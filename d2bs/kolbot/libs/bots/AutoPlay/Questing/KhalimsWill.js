@@ -1,6 +1,7 @@
 (function (module, require) {
 
 	const QuestData = require('../../../modules/QuestData');
+	const walkTo = require('../modules/WalkTo');
 
 	const classids = {
 		eye: 553,
@@ -27,12 +28,14 @@
 					// Some how already in one of the areas we wanna go to
 					area.splice(0, area.indexOf(me.area)) // remove these elements
 				}
-				const wpArea = area.shift();
-				print(wpArea);
-				Pather.journeyTo(wpArea);
+				area.forEach(_ => Pather.journeyTo(_));
+				const goTo = area.pop();
+				console.debug('GOTO ', goTo);
 
-				area.length && Pather.moveToExit(area, true);
-				if (Pather.moveToPreset(me.area, 2, chestid)) {
+				const ps = getPresetUnit(goTo, 2, chestid).real;
+				walkTo(ps);
+
+				if (Pather.moveToPreset(goTo, 2, chestid)) {
 					me.getQuestItem(id, chestid);
 					const item = me.getItem(id);
 					me.openCube();

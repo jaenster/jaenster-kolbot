@@ -119,7 +119,7 @@ function removeRelativePath(test) {
 					// err.lineNumber = myStack[1].substr(stack[1].lastIndexOf(':') + 1);
 					// myStack.unshift();
 					// err.stack = myStack.join('\r\n'); // rewrite stack
-					console.debug((new Error).stack);
+					print((new Error).stack);
 
 					throw err;
 				}
