@@ -25,6 +25,8 @@
 	Config.HPBuffer = 15;
 	Config.MPBuffer = 15;
 	Config.RejuvBuffer = 3;
+	Config.TownHP = 50;
+
 
 	const beltSize = Storage.BeltSize();
 	Config.MinColumn = [beltSize, beltSize, beltSize, beltSize];

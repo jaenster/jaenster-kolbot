@@ -29,10 +29,11 @@
 					area.splice(0, area.indexOf(me.area)) // remove these elements
 				}
 				area.forEach(_ => Pather.journeyTo(_));
-				const goTo = area.pop();
-				console.debug('GOTO ', goTo);
+				delay(100);
 
-				const ps = getPresetUnit(goTo, 2, chestid).real;
+				const goTo = area.pop();
+
+				const ps = getPresetUnit(goTo, 2, chestid).realCoords();
 				walkTo(ps);
 
 				if (Pather.moveToPreset(goTo, 2, chestid)) {

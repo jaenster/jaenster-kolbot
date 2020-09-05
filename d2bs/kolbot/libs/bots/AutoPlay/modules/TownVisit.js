@@ -9,6 +9,7 @@
 		disabled: false,
 	};
 
+	console.debug('---------------'+Config.TownHP);
 	// visit town when we are out of pots
 	Worker.runInBackground.townVisit = function () {
 
