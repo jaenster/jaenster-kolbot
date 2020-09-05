@@ -105,12 +105,12 @@
 					.filter(el => el.isNeighbour)
 					.filter(el => el.g < 40)
 					// Only to those nodes that bring us closer to the target
-					.filter(el => el.g > 20)
+					.filter(el => el.g > 15)
 					// The farther the better
 					.sort((a, b) => b.g - a.g)
 					.first();
 
-				if (teleportTo) {
+				if (teleportTo && teleportTo.index > i) {
 					me.cancel();
 					node = path[teleportTo.index];
 					console.debug('Teleporting to node (' + teleportTo.index + '/' + l + ') -- Skipping ' + (teleportTo.index - i) + ' nodes. Distance of ' + (Math.round(node.distance)));
