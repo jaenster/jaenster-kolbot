@@ -445,7 +445,7 @@
 			if (aliveMerc) return false; // merc is alive
 
 			// We have a merc, so yes we revive it
-			let accessToMerc = gotMerc || AreaData[sdk.areas.LutGholein].canAccess() || me.getQuest(sdk.quests.SistersBurialGrounds);
+			let accessToMerc = gotMerc || AreaData[sdk.areas.LutGholein].canAccess() || me.getQuest(sdk.quests.SistersBurialGrounds, 0);
 			if (!accessToMerc) return false; //no access to hire a merc, so we cant
 
 			// now we know we dont have an alive merc, or a revivable merc
