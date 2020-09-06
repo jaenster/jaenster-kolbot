@@ -51,7 +51,7 @@
 				'Time: ' + timer(),
 				'Script: ' + Loader.scriptList[Loader.scriptIndex],
 				// Gold: 1523343
-				'Gold: ' + me.getStat(sdk.stats.Gold),
+				'Gold: ' + me.getStat(sdk.stats.Gold) + me.getStat(sdk.stats.Goldbank),
 				// Hell
 				['Normal', 'Nightmare', 'Hell'][me.diff],
 			];
