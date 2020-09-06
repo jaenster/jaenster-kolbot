@@ -158,7 +158,7 @@
 
 		A3Sewers: [sdk.areas.A3SewersLvl1, sdk.areas.A3SewersLvl2,],
 
-		HighLevelForgottenTemples: [sdk.areas.ForgottenTemple,sdk.areas.RuinedFane, sdk.areas.DisusedReliquary],
+		HighLevelForgottenTemples: [sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary],
 
 		LowLevelForgottenTemples: [sdk.areas.RuinedTemple, sdk.areas.DisusedFane, sdk.areas.ForgottenReliquary],
 

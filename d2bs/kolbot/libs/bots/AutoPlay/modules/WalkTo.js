@@ -92,7 +92,7 @@
 			let fromx = !index ? me.x : self[index - 1].x,
 				fromy = !index ? me.y : self[index - 1].y;
 
-			return (getPath(me.area, target.x, target.y, fromx, fromy, 0, 4) || [])
+			return (getPath(me.area, target.x, target.y, fromx, fromy, 2, 4) || [])
 				.map(el => ({x: el.x,y:el.y,index: index}));
 		}).reduce((cur, acc) => {
 			// push each node to the list
