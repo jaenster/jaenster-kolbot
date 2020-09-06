@@ -5,61 +5,6 @@
 	const GameAnalyzer = require('./GameAnalyzer');
 	const CustomDungeon = require('./CustomDungeon');
 
-
-	const FastestPath = (nodes, timeLimit = 250) => {
-		nodes = nodes.filter(_ => _ && _.hasOwnProperty('x') && _.hasOwnProperty('y'));
-		const hooks = [];
-
-		const calcDistance = () => {
-			let sum = 0;
-			for (let i = 1; i < nodes.length; i++) {
-				sum += getPath(me.area, nodes[i - 1].x, nodes[i - 1].y, nodes[i].x, nodes[i].y, 0, 25)
-					.map((el, i, self) => i && getDistance(el.x, el.y, self[i - 1].x, self[i - 1].y) || 0)
-					.reduce((acc, cur) => acc + cur, 0);
-
-			}
-			return sum;
-		};
-
-
-		let recordDistance = calcDistance();
-		let winningPath = nodes.slice(); // current
-
-		let x, y, d;
-		const singleRun = () => {
-			x = rand(1, nodes.length) - 1;
-			y = rand(1, nodes.length) - 1;
-
-			if (x === y) return;
-
-			const tmp = nodes[x];
-			nodes[x] = nodes[y];
-			nodes[y] = tmp;
-
-			hooks.forEach(line => line.remove());
-
-			d = calcDistance();
-
-			if (d < recordDistance) {
-				console.debug('Winning path?');
-				recordDistance = d;
-				winningPath.forEach(() => winningPath.pop());
-				nodes.forEach(node => winningPath.push(node));
-			}
-		};
-
-		let tick = getTickCount();
-
-		console.debug('Fastest path');
-		while (getTickCount() - tick < timeLimit) singleRun();
-
-		return {
-			winningPath: winningPath,
-			singleRun: singleRun,
-		};
-	};
-	FastestPath.DebugLines = [];
-
 	module.exports = function (dungeonName, Config, Attack, Pickit, Pather, Town, Misc) {
 		const wantToSell = () => {
 			let isLowOnGold = me.gold < Config.LowGold;
@@ -166,29 +111,6 @@
 						}
 						break;
 					}
-				}
-
-				const visitPresets = {};
-				visitPresets[sdk.areas.Mausoleum] = [[1, 802], [2, 29]];
-
-				if (visitPresets.hasOwnProperty(area)) {
-
-					const visitNodes = visitPresets[area].map(getPresetUnit.bind(null, area)).map(preset => ({
-						x: (preset.roomx * 5 + preset.x),
-						y: (preset.roomy * 5 + preset.y),
-					}));
-
-
-					// calculate what is the shortest to walk between
-					let nodes = FastestPath(visitNodes).winningPath;
-
-					let nearestNode = nodes.indexOf(nodes.slice().sort((a, b) => a.distance - b.distance).first());
-
-					// If nearnest node isnt he first, we need to remove the index's in-front and push it to the end
-					if (nearestNode > 0) for (let i = 0; i < nearestNode; i++) nodes.push(nodes.shift());
-
-					// now the first node is the one most nearby, add them to targets, in-front of the line
-					nodes.reverse().forEach(node => targets.unshift(node));
 				}
 
 				targets.forEach(target => {

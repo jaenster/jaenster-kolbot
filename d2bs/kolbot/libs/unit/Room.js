@@ -16,5 +16,10 @@
 
 		return !!neighbours.length
 
+	};
+
+	Room.prototype.realCoords = function () {
+
+
 	}
 })(new WeakMap());
