@@ -77,9 +77,9 @@
 
 					Town();
 				}
-				// nowWhat = GameAnalyzer.nowWhat();
+				nowWhat = GameAnalyzer.nowWhat();
 				//
-				nowWhat = ['dungeon', 'ForgottenTemples', 1337];
+				// nowWhat = ['dungeon', 'ForgottenTemples', 1337];
 
 				try {
 					switch (nowWhat && nowWhat.length >= 2 && nowWhat[0]) {
