@@ -158,10 +158,7 @@
 
 		A3Sewers: [sdk.areas.A3SewersLvl1, sdk.areas.A3SewersLvl2,],
 
-		// ForgottenTemples: [sdk.areas.RuinedTemple, sdk.areas.DisusedFane, sdk.areas.ForgottenReliquary, sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary,],
-
-		// ForgottenTemple,
-		ForgottenTemples: [sdk.areas.RuinedFane, sdk.areas.RuinedTemple, sdk.areas.DisusedFane, sdk.areas.ForgottenReliquary, , sdk.areas.DisusedReliquary,],
+		ForgottenTemples: [sdk.areas.RuinedTemple, sdk.areas.DisusedFane, sdk.areas.ForgottenReliquary, sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary,],
 
 		// act 4 has no areas like that
 
