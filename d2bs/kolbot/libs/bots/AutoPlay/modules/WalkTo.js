@@ -161,6 +161,13 @@
 			}
 
 			node = path[i];
+
+			// skip close nodes to save some execution time
+			if (node.distance < 4) {
+				i++;
+				continue;
+			}
+
 			console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
 			// The path generated is long, we want sub nodes
