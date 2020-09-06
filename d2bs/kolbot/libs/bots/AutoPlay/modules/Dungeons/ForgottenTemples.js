@@ -36,41 +36,41 @@
 
 	new CustomDungeon(sdk.areas.ForgottenReliquary, function () {
 		walkTo([
-			15089, 6294,
-			15085, 6345,
-			15030, 6302,
-			15024, 6340,
+			{x: 15089, y: 6294},
+			{x: 15085, y: 6345},
+			{x: 15030, y: 6302},
+			{x: 15024, y: 6340},
 		], false);
 	});
 
 	new CustomDungeon(sdk.areas.ForgottenTemple, function () {
 		walkTo([
-			15024, 6340,
-			15108, 6929,
-			15105, 6877,
-			15061, 6879,
-			15013, 6887,
-			15017, 6937,
-			15042, 6968,
+			{x: 15024, y: 6340},
+			{x: 15108, y: 6929},
+			{x: 15105, y: 6877},
+			{x: 15061, y: 6879},
+			{x: 15013, y: 6887},
+			{x: 15017, y: 6937},
+			{x: 15042, y: 6968},
 		], false);
 	});
 
 
 	new CustomDungeon(sdk.areas.DisusedReliquary, function () {
 		walkTo([
-			15103,8163,
-			15089,8207,
-			15033,8203,
-			15025,8149,
+			{x: 15103, y:8163},
+			{x: 15089, y:8207},
+			{x: 15033, y:8203},
+			{x: 15025, y:8149},
 		], false);
 	});
 
 	new CustomDungeon(sdk.areas.RuinedFane, function () {
 		walkTo([
-			15020,7560,
-			15046,7542,
-			15044,7499,
-			15079,7544,
+			{x: 15020, y:7560},
+			{x: 15046, y:7542},
+			{x: 15044, y:7499},
+			{x: 15079, y:7544},
 		]);
 	});
 

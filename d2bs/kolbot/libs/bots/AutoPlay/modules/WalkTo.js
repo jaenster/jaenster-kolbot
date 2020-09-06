@@ -86,13 +86,14 @@
 		// Do not calculate teleport path, if we want subnodes
 		if (!Array.isArray(target)) target = [target];
 
-		/** @type {{x,y}[]|undefined}*/
+		/** @type {{x,y,index}[]|undefined}*/
 		const path = target.map((target, index, self) => {
 			// The next node starts with the last node
 			let fromx = !index ? me.x : self[index - 1].x,
 				fromy = !index ? me.y : self[index - 1].y;
 
-			return getPath(me.area, target.x, target.y, fromx, fromy, 0, 4);
+			return (getPath(me.area, target.x, target.y, fromx, fromy, 0, 4) || [])
+				.map(el => ({x: el.x,y:el.y,index: index}));
 		}).reduce((cur, acc) => {
 			// push each node to the list
 			cur.forEach(el => acc.push(el));
@@ -177,7 +178,9 @@
 
 			// decent fix for this
 			me.cancel() && me.cancel() && me.cancel() && me.cancel();
-			Pather.walkTo(node.x, node.y, 2);
+			if (node.distance > 2) {
+				Pather.walkTo(node.x, node.y);
+			}
 
 			// ToDo; only if clearing makes sense in this area due to effort
 			let range = 14 / 100 * clearPercentage;
@@ -198,7 +201,8 @@
 
 				// Sometimes we go way out track due to clearing,
 				// lets find the nearest node on the path and go from there
-				let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
+				// but not of the next node path
+				let nearestNode = pathCopy.filter(el => el.index === node.index).sort((a, b) => a.distance - b.distance).first();
 
 				// if the nearnest node is still in 95% of our current node, we dont need to reset
 				if (nearestNode.distance > 5 && node.distance > 5 && 100 / node.distance * nearestNode.distance < 95) {
