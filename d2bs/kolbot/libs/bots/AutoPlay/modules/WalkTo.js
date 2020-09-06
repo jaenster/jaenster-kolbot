@@ -192,7 +192,9 @@
 
 					console.debug('reseting path to other node');
 					// reset i to the nearest node
-					i = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
+					let newIndex =path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
+					// Move forward
+					if (newIndex > i ) i = newIndex;
 					continue; // and there for no i++
 				}
 			}
