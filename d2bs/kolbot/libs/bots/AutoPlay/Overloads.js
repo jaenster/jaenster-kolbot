@@ -218,7 +218,13 @@
 			while (target.course.length) {
 				let ps;
 
-				const whereTo = target.course.first();
+				let whereTo = target.course.first();
+				// we are already here ;)
+				if (whereTo === me.area) {
+					console.debug('next');
+					target.course.shift();
+					continue;
+				}
 
 				// If we dont have the actual wp, go get it. ToDo; overwrite the getWP code to be more flexible for walkers too
 				if (this.wpAreas.indexOf(me.area) > -1 && !getWaypoint(this.wpAreas.indexOf(me.area))) {
@@ -228,7 +234,7 @@
 				!me.inTown && Precast();
 				switch (true) {
 					// use waypoint if that is the next step
-					case this.wpAreas.indexOf(whereTo) > -1 && getWaypoint(this.wpAreas.indexOf(whereTo)): {
+					case target.useWP && this.wpAreas.indexOf(me.area) > -1 && this.wpAreas.indexOf(whereTo) > -1 && getWaypoint(this.wpAreas.indexOf(whereTo)): {
 						this.useWaypoint(whereTo, !this.plotCourse_openedWpMenu);
 						Precast();
 						break;
@@ -308,22 +314,24 @@
 
 						break;
 					}
-
-					case (me.area === 111 && target.course[0] === 125): { // Abaddon
+					// Abaddon
+					case (me.area === 111 && target.course[0] === 125): {
 						ps = getPresetUnit(111, 2, 60).realCoords();
 						walkTo(ps);
 						this.usePortal(125);
 
 						break;
 					}
-					case (me.area === 112 && target.course[0] === 126): { // Pits of Archeon
+					// Pits of Archeon
+					case (me.area === 112 && target.course[0] === 126): {
 						ps = getPresetUnit(112, 2, 60).realCoords();
 						walkTo(ps);
 						this.usePortal(126);
 
 						break;
 					}
-					case (me.area === 117 && target.course[0] === 127): { // Infernal Pit
+					// Infernal Pit
+					case (me.area === 117 && target.course[0] === 127): {
 						ps = getPresetUnit(117, 2, 60).realCoords();
 						walkTo(ps);
 						this.usePortal(127);
@@ -334,6 +342,7 @@
 					default: {
 
 						const areaObj = getArea();
+
 						const exit = areaObj.exits.find(el => el.target === whereTo);
 
 						console.debug('--------------');

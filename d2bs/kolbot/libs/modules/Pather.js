@@ -420,10 +420,7 @@
 
 			if (!unit || !unit.hasOwnProperty("x") || !unit.hasOwnProperty("y")) throw new Error("moveToUnit: Invalid unit.");
 
-			console.debug(unit);
 			if (unit instanceof PresetUnit) {
-				console.debug('PRESET UNIT');
-				const debugLine =  new Line(me.x, me.y, unit.x, unit.y, 0x82, true);
 				return this.moveTo(unit.roomx * 5 + unit.x + offX, unit.roomy * 5 + unit.y + offY, 3, clearPath);
 			}
 
