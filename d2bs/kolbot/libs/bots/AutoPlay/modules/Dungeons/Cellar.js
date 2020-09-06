@@ -1,8 +1,9 @@
 (function (module, require) {
 
 	const CustomDungeon = require('../CustomDungeon');
+	const walkTo = require('../WalkTo');
 
-	new CustomDungeon(sdk.areas.TowerCellarLvl5, function(walkTo) {
+	new CustomDungeon(sdk.areas.TowerCellarLvl5, function() {
 
 		// cunt-ress pwnage
 		let poi = getPresetUnit(me.area, 2, 580);

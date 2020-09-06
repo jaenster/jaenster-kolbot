@@ -42,6 +42,7 @@
 			Town.goToTown(act);
 			Town.moveToSpot('portalspot');
 			Pather.usePortal(area, me.name);
+			delay(300); // give a sec to update our x,y
 		}
 
 		return true;

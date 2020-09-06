@@ -50,9 +50,11 @@
 		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
 		.first();
 
-	module.exports = function walkTo(target, recursion = 0) {
-		console.debug('generating path towards target: ', target);
-		global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
+	module.exports = function walkTo(target, allowTeleport= true) {
+		if (target instanceof PresetUnit) target = target.realCoords();
+
+		// console.debug('generating path towards target: ', target);
+		// global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
 
 
 		const AreaData = require('../../../modules/AreaData');
@@ -82,10 +84,22 @@
 		console.debug('Gonna clear for ' + Math.round(clearPercentage) + '% -- Can teleport: ' + canTeleport);
 
 		// Do not calculate teleport path, if we want subnodes
+		if (!Array.isArray(target)) target = [target];
+
 		/** @type {{x,y}[]|undefined}*/
-			// const path = canTeleport && !recursion ? getPath(me.area, target.x, target.y, me.x, me.y, 1, [62, 63, 64].includes(me.area) ? 20 : 40) : getPath(me.area, target.x, target.y, me.x, me.y, 1, 4);
-		const path = getPath(me.area, target.x, target.y, me.x, me.y, 0, 4);
+		const path = target.map((target, index, self) => {
+			// The next node starts with the last node
+			let fromx = !index ? me.x : self[index - 1].x,
+				fromy = !index ? me.y : self[index - 1].y;
+
+			return getPath(me.area, target.x, target.y, fromx, fromy, 0, 4);
+		}).reduce((cur, acc) => {
+			// push each node to the list
+			cur.forEach(el => acc.push(el));
+			return acc;
+		}, []);
 		if (!path) throw new Error('failed to generate path');
+
 
 		path.reverse();
 
@@ -100,14 +114,14 @@
 		for (let i = 0, node, l = path.length; i < l; loops++) {
 
 			// If we have the ability to teleport, lets see what is the node that is the _most_ far away
-			if (canTeleport && Pather.useTeleport()) {
+			if (allowTeleport && canTeleport && Pather.useTeleport()) {
 				let myDistanceFromTarget = getDistance(me, target),
 					myRoom = getRoom(me.x, me.y);
 
 				console.debug('Can teleport');
 
 				//ToDo; figure out a real way to determin if its a neighbour
-				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 49 /* dont waste teles on short distances*/)
+				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 40 /* dont waste teles on short distances*/)
 					//
 					.map((el, index) => {
 						const obj = {
@@ -149,16 +163,15 @@
 			console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 
 			// The path generated is long, we want sub nodes
-			if (node.distance > 20) {
+			if (node.distance > 30) {
 				const d = Pather.getWalkDistance(node.x, node.y);
 
 				// If walking to the node is twice as far as teleporting, we teleport
 				if (canTeleport && d * 2 > node.distance) {
 					Pather.teleportTo(node.x, node.y);
-				} else if (!recursion) {
+				} else  {
 					console.debug('DONT USE RECURSION HERE WTF?');
 					node.moveTo();
-					// walkTo(node, recursion++);
 				}
 			}
 
@@ -172,7 +185,7 @@
 			Pickit.pickItems();
 
 			// if shrine found, click on it
-			if (!recursion && (shrine = searchShrine())) {
+			if ((shrine = searchShrine())) {
 				// ToDo; use walk near / tk if we got it
 				shrine.moveTo();
 
@@ -192,9 +205,9 @@
 
 					console.debug('reseting path to other node');
 					// reset i to the nearest node
-					let newIndex =path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
+					let newIndex = path.findIndex(node => nearestNode.x === node.x && nearestNode.y === node.y);
 					// Move forward
-					if (newIndex > i ) i = newIndex;
+					if (newIndex > i) i = newIndex;
 					continue; // and there for no i++
 				}
 			}

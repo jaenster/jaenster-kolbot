@@ -1844,7 +1844,6 @@
 
 	Town.clearInventory = function () {
 
-		console.debug('asdklfjaklsdfjlkasdjflkasdjf');
 		var i, col, result, item, beltSize,
 			items = [];
 		const Storage = require('Storage');
