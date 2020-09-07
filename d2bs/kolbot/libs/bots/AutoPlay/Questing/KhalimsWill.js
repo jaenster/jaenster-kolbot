@@ -20,6 +20,10 @@
 			[[78, 88, 89, 91], classids.brain, 406, 2, 2],
 		];
 
+		if (!me.findItem('box') && !me.getCube()) {
+			throw Error('Failed to get a cube')
+		}
+		
 		!me.getItem(classids.finishedFlail) && parts    // We only want those that we dont have
 			.filter(([, classid]) => !me.getItem(classid))
 			.forEach(([area, id, chestid, x, y]) => {
