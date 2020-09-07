@@ -55,7 +55,7 @@
 			spots: spots,
 			monsterid: 242,
 			default: 'center',
-			skill: sdk.skills.Blizzard,
+			skill: sdk.skills.FireBall,
 		});
 		Pickit.pickItems();
 	}

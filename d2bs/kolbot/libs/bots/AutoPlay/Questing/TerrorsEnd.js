@@ -7,7 +7,7 @@
 		let vizLayout, seisLayout, infLayout;
 
 
-		Pather.journeyTo(sdk.areas.ChaosSanctuary); // load this area up
+		Pather.journeyTo(sdk.areas.ChaosSanctuary, true); // load this area up
 
 
 		const getLayout = function (seal, value) {
@@ -55,7 +55,7 @@
 
 					if (settings.precastingSpot.hasOwnProperty(sealId)) {
 						settings.precastingSpot[sealId].moveTo();
-						me.cast(sdk.skills.Blizzard, 0, settings.spawnPoint.x, settings.spawnPoint.y)
+						me.cast(sdk.skills.FireBall, 0, settings.spawnPoint.x, settings.spawnPoint.y)
 					}
 
 					print(settings.toSource());
@@ -72,7 +72,7 @@
 				spots: settings.spots,
 				monsterid: settings.boss,
 				default: 'center', // key 0
-				skill: sdk.skills.Blizzard,
+				skill: sdk.skills.FireBall,
 			});
 		};
 
@@ -136,7 +136,7 @@
 
 				boss: getLocaleString(2853),
 				default: 'inactiveSealCornorRight',
-				skill: sdk.skills.Blizzard,
+				skill: sdk.skills.FireBall,
 				seals: [393, 392]
 			},
 
@@ -193,7 +193,7 @@
 
 				boss: getLocaleString(2852),
 				default: 'heart',
-				skill: sdk.skills.Blizzard,
+				skill: sdk.skills.FireBall,
 				seals: [394],
 			},
 
@@ -254,7 +254,7 @@
 
 				boss: getLocaleString(2851),
 				default: 'center',
-				skill: sdk.skills.Blizzard,
+				skill: sdk.skills.FireBall,
 				seals: [395, 396]
 			},
 		};

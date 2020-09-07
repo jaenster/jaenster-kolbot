@@ -12,6 +12,7 @@
 
 			[sdk.skills.Teleport, 1],
 			[sdk.skills.FireBall, 20],
+			[sdk.skills.Teleport, 20],
 			[sdk.skills.FireBolt, 20],
 
 		],
@@ -22,11 +23,11 @@
 			energy: [100, 1],
 		},
 		valid: function () {
-			return me.charlvl < 24;
+			return me.diff === 0;
 		},
 		// Function to see if this is the build we currently have
 		active: function () {
-			return me.charlvl < 24 && used;
+			return me.diff === 0 && used;
 			if (me.getSkill(sdk.skills.Blizzard, 0)) return false;
 
 			// If we have Charged bolt skilled, and not LightingMastery. This build is active

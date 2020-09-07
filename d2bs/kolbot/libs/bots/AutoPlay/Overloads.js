@@ -373,7 +373,7 @@
 			const canTeleport = this.canTeleport();
 			if (!canTeleport) return false;
 
-			return me.charlvl >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 3);
+			return me.charlvl >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 3 || me.getState(sdk.states.Manapot));
 		});
 
 
