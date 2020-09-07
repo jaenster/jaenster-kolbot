@@ -283,35 +283,35 @@
 
 	}
 
+	// Sort by rating, and after that by location (by same rating, prefer an item that is already equipped)
+	const sortItems = (a, b) => {
+		let fa = formula(a);
+		let fb = formula(b);
+		if (fb === fa) {
+			return a.isEquipped ? -1 : 1;
+		}
+		return fb - fa;
+	};
+
 	/**
 	 * @param {Item[]} items
 	 * @returns Item[] */
-	const compareRetAll = (items) => items.map(el => ({
-		rating: formula(el),
-		item: el
-	}))
-		// Sort by rating, and after that by location (by same rating, prefer an item that is already
-		.sort((a, b) => {
-			if (b.rating === a.rating) {
-				return a.location === 1 ? -1 : 1;
-			}
-			return b.rating - a.rating;
-		});
+	const compareRetAll = (items) => items.sort(sortItems);
 
 	/** @returns Item */
-	const compare = (...args) => args.map(el => ({
-		r: formula(el),
-		i: el
-	}))
-		// Sort by rating, and after that by location (by same rating, prefer an item that is already
-		.sort((a, b) => {
-			if (b.r === a.r) {
-				return a.location === 1 ? -1 : 1;
-			}
-			return b.r - a.r;
-		})
-		.first()
-		.i;
+	const compare = (...args) => compareRetAll(args)
+		.first();
+
+	const dependencies = {};
+	dependencies[sdk.itemtype.bow] = sdk.items.arrows;
+	dependencies[sdk.items.arrows] = sdk.itemtype.bow;
+	dependencies[sdk.itemtype.crossbow] = sdk.items.bolts;
+	dependencies[sdk.items.bolts] = sdk.itemtype.crossbow;
+
+	const hasDependency = item => {
+		let dep = dependencies[item.classid] || dependencies[item.itemType];
+		return !!dep;
+	};
 
 	function AutoEquip() { // So we can call new upon it. Not sure why yet
 
@@ -326,19 +326,11 @@
 
 			// If we already excluded this item, lets not rerun this
 			if (item.hasOwnProperty('__wanted__by_AutoEquip') && !item.__wanted__by_AutoEquip) return false;
-			// skip bolts and arrows
-			if (item.itemType === 6 || item.itemType === 5) return false;
-
-			// Dont mess with dual handed items for now
-			if ([26, 27, 34, 35, 67, 85, 86].indexOf(item.itemType) !== -1) {
-				return false;
-			}
 
 			const bodyLoc = item.getBodyLoc();
+			if (!bodyLoc) return false; // Only items that we can wear
 
-			if (!bodyLoc.length) return false; // Only items that we can wear
-
-			const forClass = getBaseStat("itemtypes", item.itemType, "class");
+			const forClass = item.charclass;
 			if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
 				//Item is for another class as me
 				return false;
@@ -347,10 +339,24 @@
 			if (!item.identified) { // Tell the network we need to identify it first
 				return -1; // We want to identify this
 			}
+			
+			if (hasDependency(item)) {
+				// TODO: item require an other item to be used (bow, crossbow)
+				return false;
+				//quantity * 100 / getBaseStat("items", quiver.classid, "maxstack")
+				/*const stock = me.getItemsEx()
+					.filter(i => i.classid == dependency && ((i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory) || i.mode == sdk.itemmode.equipped));
+				if (stock.length) {
+					return 1;
+				}
+				// can't use this item as we don't have the dependency
+				return -1;*/
+			}
 
 			/** @type Item[]*/
 			const currentItems = me.getItemsEx()
-				.filter(item => item.location === sdk.storage.Equipment && bodyLoc.includes(item.bodylocation));
+				.filter(item => item.isEquipped && bodyLoc.includes(item.bodylocation))
+				.sort(sortItems);
 
 
 			// This item's specs are already fully readable
@@ -368,37 +374,10 @@
 
 					// Compare the items. The highest rating is the best item, the lowest rating is the worst item
 					// In case of multiple slots (e.g. rings), this tells us which ring we want to replace this ring with.
-					let compared = compareRetAll(items),
-						best = compared[0].item,
-						worst = compared[compared.length - 1].item;
+					let compared = compareRetAll(items);
 
-					// We want only the best ofc
-					if (item === best) {
-						 // We want to equip this item
-						return true;
-					} else if (item !== worst) {
-
-						// If the item isnt the worst, but not the best, it can still be valueable on a second slot
-
-						// remove any leading items that are worn
-						for (let i = 0; i < compared.length; i++) {
-							// First item that isnt equiped
-							if (!currentItems.includes(compared[i].item)) {
-								// now that we found a potential second slot, decide this the best item
-								if (i > 0) compared.splice(0, i);
-								best = currentItems[i];
-								break;
-							}
-						}
-
-						//Is our new find item the worst?
-						if (item === best && currentItems.includes(worst)) {
-							// Secondary slot
-							return true; // We want to replace this item
-						}
-					}
-					// console.debug('current item better ', item);
-					return false; // Current item is better, skip
+					// we want item if it is better than the worst equipped for this slot
+					return compared.indexOf(item) < compared.indexOf(currentItems.last());
 				}
 			}
 			return !!item.getBodyLoc(); // for now, we want all items that we can equip
@@ -408,50 +387,72 @@
 	AutoEquip.handle = function (item) {
 		const dealWithIt = item => {
 			item.__wanted__by_AutoEquip = (function () {
-				const tier = formula(item);
 				// console.debug('DEALING WITH IT -- ' + item.name + '. Tier ' + tier);
-				const bodyLoc = item.getBodyLoc();
-
 				// We got it now, but somehow... dont want it anymore?
 				if (!AutoEquip.want(item)) {
 					return false;
 				}
-
-
-				//Todo; add 2 handed weapons if dealing with a shield
-				const currentItems = me.getItemsEx()
-					.filter(item => item.location === sdk.storage.Equipment && bodyLoc.includes(item.bodylocation));
-
-				// No current item? Im pretty sure we want to equip it then
-				if (!currentItems.length) {
-					const Storage = require('./Storage');
-
-					// shouldnt not happen
-					const swapped = item.equip(bodyLoc);
-					swapped.unequiped.forEach(item => Storage.Inventory.MoveTo(item));
-					return true;
+				
+				if (hasDependency(item)) {
+					// TODO: item require an other item to be used (bow, crossbow)
+					return false;
+					//quantity * 100 / getBaseStat("items", quiver.classid, "maxstack")
+					/*const stock = me.getItemsEx()
+						.filter(i => i.classid == dependency && ((i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory) || i.mode == sdk.itemmode.equipped));
+					if (stock.length) {
+						return 1;
+					}
+					// can't use this item as we don't have the dependency
+					return -1;*/
 				}
 
+				const tier = formula(item);
 
-				let items = [item].concat(currentItems);
-
-				// Compare the items. The highest rating is the best item, the lowest rating is the worst item
-				// In case of multiple slots (e.g. rings), this tells us which ring we want to replace this ring with.
-				let compared = compareRetAll(items),
-					worst = compared[compared.length - 1].item;
-
-				// Worst item is this item?
-				if (worst === item) return false;
-
-				// actually equip the item
-				const old = item.equip(worst.bodylocation);
+				let bodyLocs = item.getBodyLoc();
+				let currentSlots = bodyLocs.map(loc => ({location: loc, item: me.getItemsEx()
+						.filter(item => {
+							if (item.twoHanded && item.getBodyLoc().includes(loc)) {
+								return item.isEquipped;
+							}
+							return item.isEquipped && item.bodylocation === loc;
+						})
+						.first()
+					}))
+					.sort((a, b) => {
+						if (!a.item) {
+							return -1;
+						}
+						if (!b.item) {
+							return 1;
+						}
+						return compare(a.item, b.item) === a.item ? 1 : -1
+					});
+				
+				// currentSlots sorted by formula ascending (index 0 is worse than index 1)
+				let emptySlot = currentSlots.filter(s => !s.item).first();
+				let old;
+				if (emptySlot) {
+					old = item.equip(emptySlot.location);
+				}
+				else {
+					for (var i = 0; i < currentSlots.length && !old; i++) {
+						// if item is better than current, equip it
+						if (compare(currentSlots[i].item, item) === item) {
+							old = item.equip(currentSlots[i].location);
+						}
+					}
+				}
 
 				// Sometimes it happens the OLD item seems better once we have the new one in place
-				const newTier = old && old.unequiped && formula(old.unequiped.first()) || 0;
-
 				// Was the old item better?
-				if (newTier > tier) return !!old.rollback(); // Rollback and return false
-
+				if (old && old.unequiped && old.unequiped.length) {
+					const newTier = formula(old.unequiped.first());
+					if (newTier > tier) {
+						let res = !!old.rollback();
+						return res; // Rollback and return
+					}
+				}
+				
 				return true;
 			}).call()
 		};
@@ -552,7 +553,7 @@
 			.map((/**@type Item[]*/items, bodyloc) => {
 					/** @type Item*/
 					const currentItem = me.getItemsEx()
-						.filter(item => item.location === sdk.storage.Equipment && item.bodylocation === bodyloc)
+						.filter(item => item.isEquipped && item.bodylocation === bodyloc)
 						.first();
 
 					const currentRating = !currentItem ? -Infinity : formula(currentItem);

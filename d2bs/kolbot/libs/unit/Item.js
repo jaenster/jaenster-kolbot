@@ -122,11 +122,14 @@ Unit.prototype.getBodyLoc = function () {
 		8: [19], // belt
 		9: [15], // boots
 		10: [16], // gloves
+		/*[sdk.body.RightArmSecondary]: [], // secondary right
+		[sdk.body.LeftArmSecondary]: [], // secondary left*/
 	}, bodyLoc = [];
 
 	for (let i in types) {
-		if (types[i].indexOf(this.itemType) !== -1) {
-			bodyLoc.push(i);
+		this.itemType && types[i].indexOf(this.itemType) !== -1 && bodyLoc.push(i);
+		if (i == sdk.body.RightArm && this.twoHanded) {
+			bodyLoc.push(sdk.body.LeftArm); // two handed weapons take both solts
 		}
 	}
 	return bodyLoc.map(loc => parseInt(loc));
@@ -138,6 +141,23 @@ Object.defineProperties(Unit.prototype, {
 			if (this.type !== sdk.unittype.Item) return undefined; // Can't tell, as it isn't an item
 
 			return this.getFlag(0x10); // is also true for white items
+		}
+	},
+	ethereal: {
+		get: function () {
+			if (this.type !== sdk.unittype.Item) return undefined; // Can't tell, as it isn't an item
+			return this.getFlag(0x400000);
+		}
+	},
+	twoHanded: {
+		get: function () {
+			return getBaseStat("items", this.classid, "2handed") === 1;
+		}
+	},
+	isEquipped: {
+		get: function () {
+			if (this.type !== sdk.unittype.Item) return false;
+			return this.location === sdk.storage.Equipment;
 		}
 	}
 });
@@ -430,6 +450,13 @@ Object.defineProperty(Unit.prototype, 'itemclass', {
 		}
 
 		return 0;
+	},
+	enumerable: true
+});
+
+Object.defineProperty(Unit.prototype, 'charclass', {
+	get: function () {
+		return getBaseStat("itemtypes", this.itemType, "class");
 	},
 	enumerable: true
 });
