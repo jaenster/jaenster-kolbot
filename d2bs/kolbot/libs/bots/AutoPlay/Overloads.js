@@ -362,6 +362,8 @@
 
 				target.course.shift();
 			}
+
+			return me.area === to;
 		});
 
 		const Skills = require('../../modules/Skills');
