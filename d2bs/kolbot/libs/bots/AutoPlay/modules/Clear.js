@@ -30,7 +30,8 @@
 
 	module.exports = (function (_settings = {}) {
 		const settings = Object.assign({}, defaults, _settings);
-		const pathCopy = settings.nodes.slice();
+		// The bigger
+		const smallStepRange = settings.range / 3 * 2;
 
 		// Get an array with arrays going away from you (what we gonna walk after clearing, within range)
 		let nearestNode = settings.nodes[settings.nodes.index];
@@ -49,7 +50,7 @@
 			}
 		};
 
-		let start = [], startArea = me.area;
+		let start = [], startArea = me.area, cachedNodes = false;
 		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
 				global['__________ignoreMonster'].indexOf(unit.gid) === -1 // Dont attack those we ignore
@@ -64,8 +65,14 @@
 								: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
 					)(shamans.includes(unit.classid) ? settings.range * 1.25 : settings.range)
 
-					// Or on our path
-					||  settings.nodes.slice(settings.nodes.index, settings.nodes.index + 5).some(node => getDistance(unit, node.x, node.y) < 5)
+					// clear monsters on the path
+					|| (
+						( /* cache the nodes*/ cachedNodes = cachedNodes || settings.nodes
+								.slice(settings.nodes.index, settings.nodes.index + 5)
+								.filter(el => el.distance < 30)
+						)
+							.some(node => getDistance(unit, node.x, node.y) < smallStepRange)
+					)
 				)
 				&& !checkCollision(me, unit, 0x4)
 			)
