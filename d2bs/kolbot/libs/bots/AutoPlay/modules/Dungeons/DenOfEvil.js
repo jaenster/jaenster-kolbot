@@ -56,7 +56,7 @@
 
 		rooms.some(node => {
 			walkTo(node);
-			return me.getQuest(1, 0);
+			return me.getQuest(1, 13);
 		});
 
 		clear.defaults.range = _cacheRange;
