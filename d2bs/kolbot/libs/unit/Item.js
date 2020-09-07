@@ -128,7 +128,7 @@ Unit.prototype.getBodyLoc = function () {
 
 	for (let i in types) {
 		this.itemType && types[i].indexOf(this.itemType) !== -1 && bodyLoc.push(i);
-		if (i == sdk.body.RightArm && this.twoHanded) {
+		if (i === sdk.body.RightArm && this.twoHanded) {
 			bodyLoc.push(sdk.body.LeftArm); // two handed weapons take both solts
 		}
 	}

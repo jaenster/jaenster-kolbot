@@ -328,7 +328,7 @@
 			if (item.hasOwnProperty('__wanted__by_AutoEquip') && !item.__wanted__by_AutoEquip) return false;
 
 			const bodyLoc = item.getBodyLoc();
-			if (!bodyLoc) return false; // Only items that we can wear
+			if (!bodyLoc.length) return false; // Only items that we can wear
 
 			const forClass = item.charclass;
 			if (forClass >= 0 && forClass <= 6 && forClass !== me.classid) {
@@ -448,8 +448,7 @@
 				if (old && old.unequiped && old.unequiped.length) {
 					const newTier = formula(old.unequiped.first());
 					if (newTier > tier) {
-						let res = !!old.rollback();
-						return res; // Rollback and return
+						return !!old.rollback(); // Rollback and return
 					}
 				}
 				

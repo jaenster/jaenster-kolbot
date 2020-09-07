@@ -158,6 +158,10 @@
 			path.index = i;
 
 			console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
+			if (node.distance < 1.5) {
+				i++;
+				continue;
+			}
 
 			// The path generated is long, we want sub nodes
 			if (node.distance > 30) {
