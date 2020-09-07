@@ -1952,7 +1952,7 @@
 
 				switch (result) {
 					case 0: // Drop item
-						if ((getUIFlag(0x0C) || getUIFlag(0x08)) && (items[i].getItemCost(1) <= 1 || items[i].itemType === 39)) { // Quest items and such
+						if ((getUIFlag(0x0C) || getUIFlag(0x08)) && (items[i].getItemCost(0) <= 1 || items[i].itemType === 39)) { // Quest items and such
 							me.cancel();
 							delay(200);
 						}

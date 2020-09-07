@@ -60,7 +60,7 @@
 				};
 			}
 
-			if (unit.getItemCost(1) / (unit.sizex * unit.sizey) >= 10) {
+			if (unit.getItemCost(0) / (unit.sizex * unit.sizey) >= 10) {
 				return {
 					result: 4,
 					line: null

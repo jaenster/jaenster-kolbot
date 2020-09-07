@@ -72,7 +72,8 @@
 	// Config.MinGameTime = 3000;
 
 	require('./AutoConfig/Setup');
-	require('../../modules/AutoEquip');
+	require('../../modules/AutoEquip/Player');
+	require('../../modules/AutoEquip/Merc');
 	module.exports = Scripts;
 
 })(module, require);

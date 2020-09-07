@@ -8,7 +8,8 @@ declare class Item extends Unit {
     getFlags() :number;
     getFlag(flag: number) :boolean;
     shop():boolean;
-    getItemCost() :number;
+
+    getItemCost(number: number) :number;
 }
 
 type UnitType = 0 | 1 | 2 | 3 | 4 | 5;

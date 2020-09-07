@@ -1,4 +1,7 @@
-Unit.prototype.equip = function (destLocation = undefined) {
+Unit.prototype.equip = function (destLocation = undefined, onWho = me) {
+
+	if (!onWho.canWear(this)) return true;
+
 	const Storage = require('../modules/Storage');
 	let spot;
 	const doubleHanded = [26, 27, 34, 35, 67, 85, 86],
@@ -21,7 +24,7 @@ Unit.prototype.equip = function (destLocation = undefined) {
 		};
 
 	// Not an item, or unidentified, or not enough stats
-	if (this.type !== 4 || !this.getFlag(0x10) || this.getStat(sdk.stats.Levelreq) > me.getStat(sdk.stats.Level) || this.dexreq > me.getStat(sdk.stats.Dexterity) || this.strreq > me.getStat(sdk.stats.Strength)) {
+	if (this.type !== 4 || !this.getFlag(0x10) || this.getStat(sdk.stats.Levelreq) > onWho.getStat(sdk.stats.Level) || this.dexreq > onWho.getStat(sdk.stats.Dexterity) || this.strreq > onWho.getStat(sdk.stats.Strength)) {
 		return false;
 	}
 
@@ -35,7 +38,7 @@ Unit.prototype.equip = function (destLocation = undefined) {
 	}
 
 
-	let currentEquiped = me.getItemsEx(-1).filter(item =>
+	let currentEquiped = onWho.getItemsEx(-1).filter(item =>
 		destLocation.indexOf(item.bodylocation) !== -1
 		|| ( // Deal with double handed weapons
 			(
@@ -159,7 +162,13 @@ Object.defineProperties(Unit.prototype, {
 			if (this.type !== sdk.unittype.Item) return false;
 			return this.location === sdk.storage.Equipment;
 		}
-	}
+	},
+	isRuneword: {
+		get: function () {
+			if (this.type !== sdk.unittype.Item) return undefined; // Can't tell, as it isn't an item
+			return  !!this.getFlag(0x4000000);
+		}
+	},
 });
 
 (function () {
@@ -856,4 +865,10 @@ Unit.prototype.getColor = function () {
 	}
 
 	return -1;
+};
+
+// ToDo; figure out if we can wear an item
+// expect it to work on me.canWear(item) and merc.canWear(item)
+Unit.prototype.canWear = function(item) {
+	return true;
 };

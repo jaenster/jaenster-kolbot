@@ -844,6 +844,7 @@ let sdk = {
         Poisonmaxdam: 58,
         Poisonlength: 59,
         Lifedrainmindam: 60,
+        LifeLeech: 60,
         Lifedrainmaxdam: 61,
         Manadrainmindam: 62,
         Manadrainmaxdam: 63,

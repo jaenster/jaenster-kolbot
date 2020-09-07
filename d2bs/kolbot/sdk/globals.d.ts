@@ -9,7 +9,7 @@ declare function getCollision(area: number, x: number, y: number)
 
 declare function getMercHP(): number
 
-declare function getCursorType(type: 1 | 3 | 6): number
+declare function getCursorType(): 1 | 3 | 6;
 
 declare function getSkillByName(name: string): number
 
