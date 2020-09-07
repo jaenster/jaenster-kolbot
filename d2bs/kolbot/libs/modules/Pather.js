@@ -1408,7 +1408,7 @@
 		},
 
 		getWalkDistance: function (x, y, area = me.area, xx = me.x, yy = me.y) {
-			return getPath(area, x, y, xx, yy, 0, 5)
+			return getPath(area, x, y, xx, yy, 2, 5)
 				// distance between node x and x-1
 				.map((e, i, s) => i && getDistance(s[i - 1], e) || 0)
 				.reduce((acc, cur) => acc + cur, 0) || Infinity;
