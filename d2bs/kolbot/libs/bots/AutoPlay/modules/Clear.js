@@ -31,18 +31,20 @@
 	module.exports = (function (_settings = {}) {
 		const settings = Object.assign({}, defaults, _settings);
 		const pathCopy = settings.nodes.slice();
-		let nearestNode = pathCopy.sort((a, b) => a.distance - b.distance).first();
+
+		// Get an array with arrays going away from you (what we gonna walk after clearing, within range)
+		let nearestNode = settings.nodes[settings.nodes.index];
 
 		const backTrack = () => {
-
-			const index = settings.nodes.indexOf(nearestNode);
-			if (index > 0) {
+			if (settings.nodes.index) {
 
 				//ToDo; backtrack further if that is a safer bet
+				const nodesBack = Math.min(settings.nodes.index, 1);
 
-				const nodesBack = Math.min(index, 1);
 				console.debug('backtracking ' + nodesBack + ' nodes');
-				nearestNode = settings.nodes[index - nodesBack];
+				settings.nodes.index -= nodesBack;
+				nearestNode = settings.nodes[settings.nodes.index];
+
 				nearestNode.moveTo();
 			}
 		};
@@ -55,12 +57,16 @@
 				&& unit.attackable // Dont attack those we cant attack
 				&& unit.area === me.area
 
-				// Shamaans have a higher range
-				&& (range =>
-						start.length // If start has a length
-						? getDistance(start[0], start[1], unit) < range // If it has a range smaller as from the start point (when using me.clear)
-						: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
-				)(shamans.includes(unit.classid) ? settings.range*1.25 : settings.range)
+				&& ( // Shamaans have a higher range
+					(range =>
+							start.length // If start has a length
+								? getDistance(start[0], start[1], unit) < range // If it has a range smaller as from the start point (when using me.clear)
+								: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
+					)(shamans.includes(unit.classid) ? settings.range * 1.25 : settings.range)
+
+					// Or on our path
+					||  settings.nodes.slice(settings.nodes.index, settings.nodes.index + 5).some(node => getDistance(unit, node.x, node.y) < 5)
+				)
 				&& !checkCollision(me, unit, 0x4)
 			)
 			.filter(unit => {

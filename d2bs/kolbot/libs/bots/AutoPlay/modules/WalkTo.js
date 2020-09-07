@@ -20,10 +20,10 @@
 				let x1 = room.x * 5, x2 = room.x * 5 + room.xsize,
 					y1 = room.y * 5, y2 = room.y * 5 + room.ysize;
 
-				lines.push(new Line(x1, y1, x2, y1, 0x22, true));
-				lines.push(new Line(x2, y1, x2, y2, 0x22, true));
-				lines.push(new Line(x2, y2, x1, y2, 0x22, true));
-				lines.push(new Line(x1, y2, x1, y1, 0x22, true));
+				lines.push(new Line(x1, y1, x2, y1, 0x22/*0x84*/, true));
+				lines.push(new Line(x2, y1, x2, y2, 0x22/*0x84*/, true));
+				lines.push(new Line(x2, y2, x1, y2, 0x22/*0x84*/, true));
+				lines.push(new Line(x1, y2, x1, y1, 0x22/*0x84*/, true));
 			} while (room.getNext());
 
 			// remove old lines
@@ -122,22 +122,16 @@
 				console.debug('Can teleport');
 
 				//ToDo; figure out a real way to determin if its a neighbour
-				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 40 /* dont waste teles on short distances*/)
+				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 50 /* dont waste teles on short distances*/)
 					//
-					.map((el, index) => {
-						const obj = {
+					.map((el, index) => ({
 							g: getDistance(me, el.x, el.y),
-							h: getDistance(target, el.x, el.y),
-							total: 0,
 							index: index + i,
 							isNeighbour: myRoom.isNeighbour(getRoom(el.x, el.y)),
-						};
-						obj.total = obj.g + obj.h;
-						return obj;
-					})
+						}))
 					// We cannot teleport on a higher distance as 1 room away
 					.filter(el => el.isNeighbour)
-					.filter(el => el.g < 40)
+					// .filter(el => el.g < 40)
 					// Only to those nodes that bring us closer to the target
 					.filter(el => el.g > 15)
 					// The farther the better
@@ -161,6 +155,7 @@
 			}
 
 			node = path[i];
+			path.index = i;
 
 			console.debug('Moving to node (' + i + '/' + l + ') -- ' + Math.round(node.distance * 100) / 100);
 

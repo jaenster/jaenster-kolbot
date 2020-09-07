@@ -18,21 +18,20 @@
 		.sort((a, b) => (a.d - b.d));
 
 	new CustomDungeon(sdk.areas.ForgottenTemple, function () {
-
 		walkTo(getAllChestsAndSort(), false);
 	});
 
 	new CustomDungeon(sdk.areas.RuinedFane, function () {
 
-		let room = getRoom(), coords = [],  result;
+		let room = getRoom(), coords = [], result;
 		console.debug(room);
 		if (room) do {
 			result = Pather.getNearestWalkable(room.x * 5 + room.xsize / 2, room.y * 5 + room.ysize / 2, room.xsize, 3, 0x1 | 0x4 | 0x800 | 0x1000);
 			if (result) {
-				let [x,y] = result;
-				coords.push({x:x,y:y});
+				let [x, y] = result;
+				coords.push({x: x, y: y});
 			}
-		} while(room.getNext()); else throw Error('Room not found');
+		} while (room.getNext()); else throw Error('Room not found');
 
 
 		coords.map(coord => ({
