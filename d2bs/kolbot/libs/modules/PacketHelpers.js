@@ -76,7 +76,7 @@
 
 		buyItem: function (unit, shiftBuy, gamble) {
 			var i, tick,
-				oldGold = me.getStat(14) + me.getStat(15),
+				oldGold = me.gold,
 				itemCount = me.itemcount,
 				npc = getInteractedNPC();
 
@@ -84,7 +84,7 @@
 				throw new Error("buyItem: No NPC menu open.");
 			}
 
-			if (me.getStat(14) + me.getStat(15) < unit.getItemCost(0)) { // Can we afford the item?
+			if (me.gold < unit.getItemCost(0)) { // Can we afford the item?
 				return false;
 			}
 
@@ -94,7 +94,7 @@
 				tick = getTickCount();
 
 				while (getTickCount() - tick < Math.max(2000, me.ping * 2 + 500)) {
-					if (shiftBuy && me.getStat(14) + me.getStat(15) < oldGold) {
+					if (shiftBuy && me.gold < oldGold) {
 						return true;
 					}
 

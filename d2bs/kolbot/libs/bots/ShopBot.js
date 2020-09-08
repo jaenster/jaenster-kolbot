@@ -263,7 +263,7 @@ function ShopBot(Config, Attack, Pickit, Pather, Town, Misc) {
 		Config.ShopBot.ShopNPC[i] = Config.ShopBot.ShopNPC[i].toLowerCase();
 	}
 
-	if (Config.ShopBot.MinGold && me.getStat(14) + me.getStat(15) < Config.ShopBot.MinGold) {
+	if (Config.ShopBot.MinGold && me.gold < Config.ShopBot.MinGold) {
 		return true;
 	}
 

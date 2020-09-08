@@ -926,7 +926,7 @@
 				if (!Array.isArray(toBuy)) return;
 				console.debug(toBuy);
 
-				toBuy.filter(item => Storage.Inventory.CanFit(item) && me.getStat(14) + me.getStat(15) >= item.getItemCost(0))
+				toBuy.filter(item => Storage.Inventory.CanFit(item) && me.gold >= item.getItemCost(0))
 					.forEach(item => {
 
 						// first of all remove these items out of the
@@ -951,7 +951,7 @@
 			// if result is a string, its a pickit hook that wants to buy the item
 			if (result.result === 1 || typeof result.result === 'string') {
 				try {
-					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
+					if (Storage.Inventory.CanFit(items[i]) && me.gold >= items[i].getItemCost(0)) {
 						Misc.itemLogger("Shopped", items[i]);
 						Misc.logItem("Shopped", items[i], result.line);
 

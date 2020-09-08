@@ -479,7 +479,7 @@ let [D2Bot,DataFile,ControlAction,ShitList] = (function() {
 							break;
 						}
 
-						obj.gold = me.getStat(14) + me.getStat(15);
+						obj.gold = me.gold;
 
 						break;
 					case "name":

@@ -140,12 +140,12 @@ Unit.prototype.buy = function (shiftBuy, gamble) {
 		throw new Error("Unit.buy: Must be used in shops.");
 	}
 
-	if (me.getStat(14) + me.getStat(15) < this.getItemCost(0)) { // Can we afford the item?
+	if (me.gold < this.getItemCost(0)) { // Can we afford the item?
 		return false;
 	}
 
 	var i, tick,
-		oldGold = me.getStat(14) + me.getStat(15),
+		oldGold = me.gold,
 		itemCount = me.itemcount;
 
 	for (i = 0; i < 3; i += 1) {
@@ -156,7 +156,7 @@ Unit.prototype.buy = function (shiftBuy, gamble) {
 		tick = getTickCount();
 
 		while (getTickCount() - tick < Math.max(2000, me.ping * 2 + 500)) {
-			if (shiftBuy && me.getStat(14) + me.getStat(15) < oldGold) {
+			if (shiftBuy && me.gold < oldGold) {
 				delay(500);
 
 				return true;
