@@ -144,6 +144,8 @@
 		}
 	};
 
+	Town.getNPCUnit = task => getUnit(1, tasks[me.act - 1][task]);
+
 	// Start a task and return the NPC Unit
 	Town.initNPC = function (task, reason) {
 		print("initNPC: " + reason);
@@ -164,12 +166,12 @@
 		}
 
 		if (!npc) {
-			npc = getUnit(1, tasks[me.act - 1][task]);
+			npc = Town.getNPCUnit(task);
 
 			if (!npc) {
 				Town.move(tasks[me.act - 1][task]);
 
-				npc = getUnit(1, tasks[me.act - 1][task]);
+				npc = Town.getNPCUnit(task);
 			}
 		}
 

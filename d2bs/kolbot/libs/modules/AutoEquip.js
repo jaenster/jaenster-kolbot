@@ -4,6 +4,7 @@
  */
 
 (function (module, require) {
+	const NPC = require('./NPC');
 	const Pickit = require('./Pickit');
 	const Promise = require('./Promise');
 	const GameData = require('./GameData');
@@ -456,16 +457,34 @@
 			}).call()
 		};
 
+		const getIdScroll = () => me.findItem(sdk.items.idScroll, 0, sdk.storage.Inventory);
+		const getIdTome = () => me.findItem(sdk.items.idtome, 0, sdk.storage.Inventory);
+		const getIdTool = () => getIdScroll() || getIdTome();
+
+		const cainIdentify = () => {
+			if (!canIdentifyAtCain()) {
+				return false;
+			}
+			Town.initNPC("CainID", "cainID");
+			return me.getItemsEx().filter(i => !i.identified && i.location === sdk.storage.Inventory).length === 0;
+		};
+
+		const canIdentifyAtCain = () => {
+			const price = me.getQuest(sdk.quests.TheSearchForCain, 0) ? 0 : // if Cain rescued, it's free !
+				me.getItemsEx().filter(i => !i.identified && i.location === sdk.storage.Inventory).length * 100; // it costs 100 per unid items in inventory
+			return price <= me.gold;
+		};
+
 		const identify = gid => {
 			console.debug('identifing');
 			let returnTo = {area: me.area, x: me.x, y: me.y};
 			// We can id right now. So lets
 
-			// it can be a while ago, got the tome
-			let tome = me.findItem(519, 0, 3); // ToDo Use loose scrolls
-			if (tome) {
+			// get scroll or tome
+			let idTool = getIdTool();
+			if (idTool) {
 				const item = getUnits(4, -1, -1, gid).first();
-				if (!tome || !item) {
+				if (!item) {
 					return; // Without an tome or item, we cant id the item
 				}
 
@@ -476,22 +495,45 @@
 					 i < 3 && getCursorType() !== 6;
 					 i++, timer = getTickCount()
 				) {
-					sendPacket(1, 0x27, 4, gid, 4, tome.gid);
+					sendPacket(1, 0x27, 4, gid, 4, idTool.gid);
 					while (getCursorType() !== 6) {
 						delay(3);
 						if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
 					}
 				}
-			} else { // Dont have a tome
-
-				//ToDo; go to cain if he is closer by and we dont have scrolls & nothing else to identify
-
+			} else {
+				// Dont have a scroll or tome, try to id in town
 				Town.goToTown();
-				// Lets go to town to identify
-				const npc = Town.initNPC("Shop", "identify");
-				const scroll = npc.getItem(sdk.items.idScroll);
-				scroll.buy();
-				tome = scroll;
+
+				const cain = Town.getNPCUnit("CainID");
+				let npc = Town.getNPCUnit("Shop");
+
+				if (cain.distance < npc.distance && cainIdentify()) {
+					if (returnTo.area !== me.area) {
+						Town.moveToSpot('portal');
+						Pather.usePortal(returnTo.area);
+						Pather.moveTo(returnTo.x, returnTo.y);
+					}
+					return true;
+				}
+				else {
+					// cain is too far, or we failed to id to cain
+					// try to buy a scroll
+					npc = Town.initNPC("Shop", "identify");
+					const scroll = npc.getItem(sdk.items.idScroll);
+					scroll.buy();
+					idTool = getIdScroll();
+
+					if (!idTool) {
+						// we have nothing to id, despite we tried to buy a scroll (no room in inv, not enough gold ?)
+						if (returnTo.area !== me.area) {
+							Town.moveToSpot('portal');
+							Pather.usePortal(returnTo.area);
+							Pather.moveTo(returnTo.x, returnTo.y);
+						}
+						return false;
+					}
+				}
 			}
 
 			console.debug('Identified cursor? ' + (getCursorType() === 6));
@@ -501,7 +543,7 @@
 				 i++, timer = getTickCount()
 			) {
 				console.debug('send packet of identifing');
-				getCursorType() === 6 && sendPacket(1, 0x27, 4, gid, 4, tome.gid);
+				getCursorType() === 6 && sendPacket(1, 0x27, 4, gid, 4, idTool.gid);
 				while (!item.identified) {
 					delay(3);
 					if (getTickCount() - timer > 2e3) break; // Failed to id it. To bad
@@ -521,7 +563,7 @@
 			return !failed;
 		};
 
-		const tome = me.findItem(519, 0, 3);
+		const tome = getIdTome();
 		if (tome && !item.identified && item.location === sdk.storage.Inventory) {
 			const gid = item.gid;
 
