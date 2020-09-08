@@ -480,6 +480,18 @@ Unit.prototype.getItemsEx = function (...args) {
 	return [];
 };
 
+Unit.prototype.sellOrDrop = function (log = false) {
+	const Config = require('Config');
+	const Misc = require('Misc');
+	if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) {
+		log && Misc.itemLogger("Sold", this);
+		this.sell();
+	} else {
+		log && Misc.itemLogger("Dropped", this);
+		this.drop();
+	}
+};
+
 Object.defineProperty(Unit.prototype, "skinCode", {
 	get: function () {
 		var code;

@@ -2,6 +2,7 @@
 
 (function () {
 	const Events = new (require('../modules/Events'));
+	const Town = require('../modules/Town');
 	me.switchWeapons = function (slot) {
 		if (this.gametype === 0 || this.weaponswitch === slot && slot !== undefined) {
 			return true;
@@ -120,6 +121,67 @@
 					}
 				}
 				return undefined;
+			}
+		},
+		lowGold: {
+			get: function () {
+				// TODO: refactor each piece of this function in its own function
+				let low = false;
+				let total = 0; // total is not used yet, but it will sum all the costs for town tasks
+	
+				// TODO: take lower merchant prices stat into account : sdk.stats.Goldbonus
+				const TPTomePrice = 450;
+				const IDTomePrice = 280;
+				const TPScrollPrice = 100;
+				const IDScrollPrice = 80;
+	
+				const tomes = [
+					{id: sdk.items.tptome, price: TPTomePrice, scrollPrice: TPScrollPrice, defaultQuantity: 4},
+					{id: sdk.items.idtome, price: IDTomePrice, scrollPrice: IDScrollPrice, defaultQuantity: 2}
+				];
+	
+				// you are low in gold if you don't have and can't buy tome, or can't refill it, either tp or id
+				for (let tome of tomes) {
+					//TODO : maybe we have tome elsewhere, should we use it ? what if we are doing cow level with tp tome ?
+					let have = me.findItem(tome.id, sdk.itemmode.inStorage, sdk.storage.Inventory);
+					let missing = have ? 20-have.getStat(sdk.stats.Quantity) : tome.defaultQuantity;
+					let price = missing*tome.scrollPrice + (have ? 0 : tome.price);
+					total += price;
+					if (me.gold < price) {
+						low = true;
+						return true;
+					}
+				}
+	
+	
+				
+				// you are low in gold if you can't buy potions you need to fill belt and buffer
+				let missingPotsInBelt = Town.checkColumns(Storage.BeltSize()).reduce((acc, c) => acc+c, 0);
+				//TODO: get price of each pot type that should go in belt, for now easy calculation
+				let price = missingPotsInBelt*450; // price of greater mana potion
+				total += price;
+				if (me.gold < price) {
+					low = true;
+					return true;
+				}
+	
+	
+				// you are low in gold if you can't repair
+				let repairCost = me.getRepairCost();
+				total += repairCost;
+				if (me.gold < repairCost) {
+					low = true;
+					return true;
+				}
+	
+				// you are low in gold if you can't revive merc
+				let mercCost = me.mercrevivecost;
+				total += mercCost;
+				if (me.gold < mercCost) {
+					low = true;
+					return true;
+				}
+				return low;
 			}
 		}
 	});

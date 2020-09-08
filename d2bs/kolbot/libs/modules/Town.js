@@ -8,6 +8,8 @@
 	const Packet = require('./PacketHelpers');
 	const Misc = require('./Misc');
 	const Pather = require('./Pather');
+	const Storage = require('./Storage');
+	const Pickit = require('./Pickit');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -71,22 +73,19 @@
 
 		Town.heal();
 		Town.identify();
-		Town.clearInventory();
-		Town.shopItems();
+		Town.buyPotions();
 		Town.fillTome(518);
-
 		if (Config.FieldID) {
 			Town.fillTome(519);
 		}
-
-		Town.buyPotions();
-		Town.clearInventory();
 		Town.buyKeys();
 		Town.repair(repair);
-		Town.gamble();
 		Town.reviveMerc();
+		Town.shopItems();
+		Town.clearInventory(); // clear inventory after refilling and shopping
+		Town.gamble();
 		Town.stash(true);
-		Town.clearScrolls();
+		Town.clearInventory(); // clear inventory again after gambling
 
 		for (i = 0; i < cancelFlags.length; i += 1) {
 			if (getUIFlag(cancelFlags[i])) {
@@ -1784,203 +1783,204 @@
 		while (!me.gameReady) {
 			delay(100);
 		}
+		
+		me.getItemsEx()
+			.filter(p => p.location == sdk.storage.Belt && [sdk.itemtype.hppot, sdk.itemtype.mppot, sdk.itemtype.rvpot].indexOf(p.itemType) > -1 && !p.code.startsWith(Config.BeltColumn[p.x % 4]))
+			.forEach((p, _) => {
+				var countInInventory = me.getItemsEx()
+					.filter(pp => pp.location == sdk.storage.Inventory && pp.itemType == p.itemType)
+					.length;
 
-		var item = me.getItem(-1, 2),
-			clearList = [];
-
-		if (item) {
-			do {
-				switch (item.itemType) {
-					case 76: // Healing
-						if (Config.BeltColumn[item.x % 4] !== "hp") {
-							clearList.push(copyUnit(item));
+				let beltSize = Storage.BeltSize();
+				var moved = false;
+				for (var i = 0; i < 4 && !moved; i += 1) {
+					let freeSpace = Town.checkColumns(beltSize);
+					if (p.code.indexOf(Config.BeltColumn[i]) > -1 && freeSpace[i] > 0) {
+						// Pick up the potion and put it in the good column
+						if (p.toCursor()) {
+							clickItem(sdk.clicktypes.click.Left, i, 0, sdk.storage.Belt);
 						}
-
-						break;
-					case 77: // Mana
-						if (Config.BeltColumn[item.x % 4] !== "mp") {
-							clearList.push(copyUnit(item));
+						delay(me.ping + 200);
+						if (p.code.startsWith(Config.BeltColumn[p.x % 4])) {
+							moved = true;
 						}
-
-						break;
-					case 78: // Rejuvenation
-						if (Config.BeltColumn[item.x % 4] !== "rv") {
-							clearList.push(copyUnit(item));
-						}
-
-						break;
+					}
 				}
-			} while (item.getNext());
 
-			while (clearList.length > 0) {
-				clearList.shift().interact();
-				delay(200);
-			}
-		}
+				if (!moved) {
+					switch(p.itemType) {
+						case sdk.itemtype.hppot:
+							if (countInInventory >= Config.HPBuffer || !Storage.Inventory.MoveTo(p)) {
+								p.sellOrDrop();
+							}
+							break;
+
+						case sdk.itemtype.mppot:
+							if (countInInventory >= Config.MPBuffer || !Storage.Inventory.MoveTo(p)) {
+								p.sellOrDrop();
+							}
+							break;
+
+						case sdk.itemtype.rvpot:
+							if (countInInventory >= Config.RejuvBuffer || !Storage.Inventory.MoveTo(p)) {
+								p.sellOrDrop();
+							}
+							break;
+					}
+				}
+			});
 
 		return true;
 	};
 
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
-		let scrolls = me.getItemsEx()
-			.filter(i =>
+		me.getItemsEx()
+			.filter(i => 
 				i.location === sdk.storage.Inventory &&
 				i.mode === sdk.itemmode.inStorage &&
-				i.itemType === 22 &&
-				require('Pickit').checkItem(i).result == 0
-			);
-
-		for (var i = 0; i < scrolls.length; i += 1) {
-			if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-				Misc.itemLogger("Sold", scrolls[i]);
-				scrolls[i].sell();
-			} else {
-				Misc.itemLogger("Dropped", scrolls[i], "clearScrolls");
-				scrolls[i].drop();
-			}
-		}
+				i.itemType === sdk.itemtype.scroll &&
+				(i.classid == 529 || i.classid == 530)
+			)
+			.forEach(s => {
+				let tome = me.getItems().find(i => i.classid == s.classid-11 && i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory);
+				if (tome) {
+					if (tome.getStat(70) < 20) {
+						if (s.toCursor()) {
+							clickItemAndWait(0, tome.x, tome.y, tome.location); // put scroll in tome
+						}
+						else {
+							print("Cant pick up scroll to place in tome");
+						}
+					}
+					else {
+						s.sellOrDrop();
+					}
+				}
+				else if (Pickit.checkItem(s).result == 0) {
+					s.sellOrDrop();
+				}
+			});
 
 		return true;
 	};
 
-	Town.clearInventory = function () {
+	Town.clearPotions = function () {
+		let beltSize = Storage.BeltSize();
+		let freeSpace = Town.checkColumns(beltSize);
 
-		var i, col, result, item, beltSize,
-			items = [];
-		const Storage = require('Storage');
-		Town.checkQuestItems(); // only golden bird quest for now
-		const Pickit = require('Pickit');
-		// Return potions to belt
-		item = me.getItem(-1, 0);
+		let potsInInventory = me.getItemsEx()
+			.filter(p => p.location == sdk.storage.Inventory && [sdk.itemtype.hppot, sdk.itemtype.mppot, sdk.itemtype.rvpot].indexOf(p.itemType) > -1)
+			.sort((a, b) => a.itemType - b.itemType); // Sort from HP to RV
 
-		if (item) {
-			do {
-				if (item.location === 3 && [76, 77, 78].indexOf(item.itemType) > -1) {
-					items.push(copyUnit(item));
+		// Return potions from inventory to belt
+		potsInInventory.forEach(p => {
+			for (var i = 0; i < 4; i += 1) {
+				if (p.code.indexOf(Config.BeltColumn[i]) > -1 && freeSpace[i] > 0) {
+					if (freeSpace[i] === beltSize) { // Pick up the potion and put it in belt if the column is empty
+						if (p.toCursor()) {
+							clickItem(0, i, 0, 2);
+						}
+					} else {
+						clickItem(2, p.x, p.y, p.location); // Shift-click potion
+					}
+
+					delay(me.ping + 200);
+
+					freeSpace = Town.checkColumns(beltSize);
 				}
-			} while (item.getNext());
+			}
+		});
 
-			beltSize = Storage.BeltSize();
-			col = Town.checkColumns(beltSize);
-
-			// Sort from HP to RV
-			items.sort(function (a, b) {
-				return a.itemType - b.itemType;
+		// Cleanup remaining hp potions
+		potsInInventory
+			.filter((p, i) => p.itemType == sdk.itemtype.hppot)
+			.filter((_, i) => i >= Config.HPBuffer)
+			.forEach(p => {
+				p.sellOrDrop();
 			});
 
-			while (items.length) {
-				item = items.shift();
+		// Cleanup remaining mp potions
+		potsInInventory
+			.filter((p, i) => p.itemType == sdk.itemtype.mppot)
+			.filter((_, i) => i >= Config.MPBuffer)
+			.forEach(p => {
+				p.sellOrDrop();
+			});
+	};
 
-				for (i = 0; i < 4; i += 1) {
-					if (item.code.indexOf(Config.BeltColumn[i]) > -1 && col[i] > 0) {
-						if (col[i] === beltSize) { // Pick up the potion and put it in belt if the column is empty
-							if (item.toCursor()) {
-								clickItem(0, i, 0, 2);
-							}
-						} else {
-							clickItem(2, item.x, item.y, item.location); // Shift-click potion
-						}
+	Town.clearKeys = function () {
+		Storage.Inventory.Compare(Config.Inventory)
+			.filter(item => item.classid == sdk.items.Key)
+			.sort((a, b) => a.getStat(70) - b.getStat(70)) // sort by quantity ascending
+			.filter((_, idx, keys) => idx < keys.length-1) // keep only last keys stack, which has higher quantity due to sort
+			.forEach(key => key.sellOrDrop());
+	},
 
-						delay(me.ping + 200);
+	Town.clearInventory = function () {
+		Town.checkQuestItems(); // only golden bird quest for now
 
-						col = Town.checkColumns(beltSize);
-					}
-				}
-			}
-		}
-
-		// Cleanup remaining potions
-		item = me.getItem(-1, 0);
-
-		if (item) {
-			items = [
-				[], // array for hp
-				[] // array for mp
-			];
-
-			do {
-				if (item.itemType === 76) {
-					items[0].push(copyUnit(item));
-				}
-
-				if (item.itemType === 77) {
-					items[1].push(copyUnit(item));
-				}
-			} while (item.getNext());
-
-			// Cleanup healing potions
-			while (items[0].length > Config.HPBuffer) {
-				items[0].shift().interact();
-				delay(200 + me.ping);
-			}
-
-			// Cleanup mana potions
-			while (items[1].length > Config.MPBuffer) {
-				items[1].shift().interact();
-				delay(200 + me.ping);
-			}
-		}
+		Town.clearBelt(); // reorder belt potions
+		Town.clearPotions(); // move potions from inv to belt
+		Town.clearScrolls(); // move scrolls to tome or drop them
+		Town.clearKeys(); // keep only one keys stack
 
 		// Any leftover items from a failed ID (crashed game, disconnect etc.)
-		items = Storage.Inventory.Compare(Config.Inventory);
+		let items = Storage.Inventory.Compare(Config.Inventory)
+			.filter(i =>
+				[18, 41, 76, 77, 78].indexOf(i.itemType) === -1 && // Don't drop tomes, keys or potions
+					// Keep some quest items
+					i.classid !== 524 && // Scroll of Inifuss
+					i.classid !== 525 && // Key to Cairn Stones
+					i.classid !== 549 && // Horadric Cube
+					i.classid !== 92 && // Staff of Kings
+					i.classid !== 521 && // Viper Amulet
+					i.classid !== 91 && // Horadric Staff
+					i.classid !== 552 && // Book of Skill
+					i.classid !== 545 && // Potion of Life
+					i.classid !== 546 && // A Jade Figurine
+					i.classid !== 547 && // The Golden Bird
+					i.classid !== 548 && // Lam Esen's Tome
+					i.classid !== 553 && // Khalim's Eye
+					i.classid !== 554 && // Khalim's Heart
+					i.classid !== 555 && // Khalim's Brain
+					i.classid !== 173 && // Khalim's Flail
+					i.classid !== 174 && // Khalim's Will
+					i.classid !== 644 && // Malah's Potion
+					i.classid !== 646 && // Scroll of Resistance
+					/*i.classid !== 87 && // The Gidbinn
+					i.classid !== 88 && // Wirt's leg*/
+					//
+					/*(i.code !== 529 || !!me.findItem(518, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
+					(i.code !== 530 || !!me.findItem(519, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)*/
+					!Cubing.keepItem(i) && // Don't throw cubing ingredients
+					!Runewords.keepItem(i) && // Don't throw runeword ingredients
+					!CraftingSystem.keepItem(i) // Don't throw crafting system ingredients
+			);
 
-		for (i = 0; !!items && i < items.length; i += 1) {
-			if ([18, 41, 76, 77, 78].indexOf(items[i].itemType) === -1 && // Don't drop tomes, keys or potions
-				// Keep some quest items
-				items[i].classid !== 524 && // Scroll of Inifuss
-				items[i].classid !== 525 && // Key to Cairn Stones
-				items[i].classid !== 549 && // Horadric Cube
-				items[i].classid !== 92 && // Staff of Kings
-				items[i].classid !== 521 && // Viper Amulet
-				items[i].classid !== 91 && // Horadric Staff
-				items[i].classid !== 552 && // Book of Skill
-				items[i].classid !== 545 && // Potion of Life
-				items[i].classid !== 546 && // A Jade Figurine
-				items[i].classid !== 547 && // The Golden Bird
-				items[i].classid !== 548 && // Lam Esen's Tome
-				items[i].classid !== 553 && // Khalim's Eye
-				items[i].classid !== 554 && // Khalim's Heart
-				items[i].classid !== 555 && // Khalim's Brain
-				items[i].classid !== 173 && // Khalim's Flail
-				items[i].classid !== 174 && // Khalim's Will
-				items[i].classid !== 644 && // Malah's Potion
-				items[i].classid !== 646 && // Scroll of Resistance
-				//
-				(items[i].code !== 529 || !!me.findItem(518, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
-				(items[i].code !== 530 || !!me.findItem(519, 0, 3)) // Don't throw scrolls if no tome is found (obsolete code?)
-			) {
-				result = Pickit.checkItem(items[i]).result;
+		for (var i = 0; !!items && i < items.length; i += 1) {
+			let result = Pickit.checkItem(items[i]).result;
 
-				switch (result) {
-					case 0: // Drop item
-						if ((getUIFlag(0x0C) || getUIFlag(0x08)) && (items[i].getItemCost(1) <= 1 || items[i].itemType === 39)) { // Quest items and such
-							me.cancel();
-							delay(200);
-						}
-
-						if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
-							print("clearInventory sell " + items[i].name);
-							Misc.itemLogger("Sold", items[i]);
-							items[i].sell();
-						} else {
-							Misc.itemLogger("Dropped", items[i], "clearInventory");
-							items[i].drop();
-						}
-
-						break;
-					case 4: // Sell item
-						try {
-							print("LowGold sell " + items[i].name);
-							Town.initNPC("Shop", "clearInventory");
-							Misc.itemLogger("Sold", items[i]);
-							items[i].sell();
-						} catch (e) {
-							print(e);
-						}
-
-						break;
+			switch (result) {
+			case 0: // Drop item
+				if ((getUIFlag(0x0C) || getUIFlag(0x08)) && (items[i].getItemCost(1) <= 1 || items[i].itemType === 39)) { // Quest items and such
+					me.cancel();
+					delay(200);
 				}
+				items[i].sellOrDrop();
+
+				break;
+			case 4: // Sell item
+				try {
+					print("LowGold sell " + items[i].name);
+					Town.initNPC("Shop", "clearInventory");
+					Misc.itemLogger("Sold", items[i]);
+					items[i].sell();
+				} catch (e) {
+					print(e);
+				}
+
+				break;
 			}
 		}
 
