@@ -392,19 +392,6 @@
 				if (!AutoEquip.want(item)) {
 					return false;
 				}
-				
-				if (hasDependency(item)) {
-					// TODO: item require an other item to be used (bow, crossbow)
-					return false;
-					//quantity * 100 / getBaseStat("items", quiver.classid, "maxstack")
-					/*const stock = me.getItemsEx()
-						.filter(i => i.classid == dependency && ((i.mode == sdk.itemmode.inStorage && i.location == sdk.storage.Inventory) || i.mode == sdk.itemmode.equipped));
-					if (stock.length) {
-						return 1;
-					}
-					// can't use this item as we don't have the dependency
-					return -1;*/
-				}
 
 				const tier = formula(item);
 
