@@ -8,8 +8,6 @@
 	const Packet = require('./PacketHelpers');
 	const Misc = require('./Misc');
 	const Pather = require('./Pather');
-	const Storage = require('./Storage');
-	const Pickit = require('./Pickit');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -1148,66 +1146,66 @@
 		}
 
 		return count;
-	},
+	};
 
-		Town.needKeys = function () {
-			return Town.checkKeys() <= 0;
-		},
+	Town.needKeys = function () {
+		return Town.checkKeys() <= 0;
+	};
 
-		Town.wantKeys = function () {
-			return Town.checkKeys() <= 6;
-		},
+	Town.wantKeys = function () {
+		return Town.checkKeys() <= 6;
+	};
 
-		Town.repairIngredientCheck = function (item) {
-			if (!Config.CubeRepair) {
-				return false;
-			}
+	Town.repairIngredientCheck = function (item) {
+		if (!Config.CubeRepair) {
+			return false;
+		}
 
-			var needRal = 0,
-				needOrt = 0,
-				items = Town.getItemsForRepair(Config.RepairPercent, false);
+		var needRal = 0,
+			needOrt = 0,
+			items = Town.getItemsForRepair(Config.RepairPercent, false);
 
-			if (items && items.length) {
-				while (items.length > 0) {
-					switch (items.shift().itemType) {
-						case 2:
-						case 3:
-						case 15:
-						case 16:
-						case 19:
-						case 69:
-						case 70:
-						case 71:
-						case 72:
-						case 75:
-							needRal += 1;
+		if (items && items.length) {
+			while (items.length > 0) {
+				switch (items.shift().itemType) {
+					case 2:
+					case 3:
+					case 15:
+					case 16:
+					case 19:
+					case 69:
+					case 70:
+					case 71:
+					case 72:
+					case 75:
+						needRal += 1;
 
-							break;
-						default:
-							needOrt += 1;
+						break;
+					default:
+						needOrt += 1;
 
-							break;
-					}
+						break;
 				}
 			}
+		}
 
-			switch (item.classid) {
-				case 617:
-					if (needRal && (!me.findItems(617) || me.findItems(617) < needRal)) {
-						return true;
-					}
+		switch (item.classid) {
+			case 617:
+				if (needRal && (!me.findItems(617) || me.findItems(617) < needRal)) {
+					return true;
+				}
 
-					break;
-				case 618:
-					if (needOrt && (!me.findItems(618) || me.findItems(618) < needOrt)) {
-						return true;
-					}
+				break;
+			case 618:
+				if (needOrt && (!me.findItems(618) || me.findItems(618) < needOrt)) {
+					return true;
+				}
 
-					break;
-			}
+				break;
+		}
 
-			return false;
-		};
+		return false;
+	};
 
 	Town.cubeRepair = function () {
 		if (!Config.CubeRepair || !me.getItem(549)) {
@@ -1780,6 +1778,7 @@
 	};
 
 	Town.clearBelt = function () {
+		const Storage = require('./Storage');
 		while (!me.gameReady) {
 			delay(100);
 		}
@@ -1866,6 +1865,8 @@
 	};
 
 	Town.clearPotions = function () {
+		const Storage = require('./Storage');
+		const Pickit = require('./Pickit');
 		let beltSize = Storage.BeltSize();
 		let freeSpace = Town.checkColumns(beltSize);
 
@@ -1910,14 +1911,17 @@
 	};
 
 	Town.clearKeys = function () {
+		const Storage = require('./Storage');
 		Storage.Inventory.Compare(Config.Inventory)
 			.filter(item => item.classid == sdk.items.Key)
 			.sort((a, b) => a.getStat(70) - b.getStat(70)) // sort by quantity ascending
 			.filter((_, idx, keys) => idx < keys.length-1) // keep only last keys stack, which has higher quantity due to sort
 			.forEach(key => key.sellOrDrop());
-	},
+	};
 
 	Town.clearInventory = function () {
+		const Storage = require('./Storage');
+		const Pickit = require('./Pickit');
 		Town.checkQuestItems(); // only golden bird quest for now
 
 		Town.clearBelt(); // reorder belt potions
@@ -1947,15 +1951,12 @@
 					i.classid !== 173 && // Khalim's Flail
 					i.classid !== 174 && // Khalim's Will
 					i.classid !== 644 && // Malah's Potion
-					i.classid !== 646 && // Scroll of Resistance
+					i.classid !== 646 // Scroll of Resistance
 					/*i.classid !== 87 && // The Gidbinn
 					i.classid !== 88 && // Wirt's leg*/
 					//
 					/*(i.code !== 529 || !!me.findItem(518, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)
 					(i.code !== 530 || !!me.findItem(519, 0, 3)) && // Don't throw scrolls if no tome is found (obsolete code?)*/
-					!Cubing.keepItem(i) && // Don't throw cubing ingredients
-					!Runewords.keepItem(i) && // Don't throw runeword ingredients
-					!CraftingSystem.keepItem(i) // Don't throw crafting system ingredients
 			);
 
 		for (var i = 0; !!items && i < items.length; i += 1) {
@@ -2261,7 +2262,7 @@
 		79, // Stamina Potion
 		80, // Antidote Potion
 		81 // Thawing Potion
-	]
+	];
 
 	// Town.ActData = act;
 	module.exports = Town;

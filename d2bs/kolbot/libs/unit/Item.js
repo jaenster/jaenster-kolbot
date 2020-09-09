@@ -481,8 +481,8 @@ Unit.prototype.getItemsEx = function (...args) {
 };
 
 Unit.prototype.sellOrDrop = function (log = false) {
-	const Config = require('Config');
-	const Misc = require('Misc');
+	const Config = require('../modules/Config');
+	const Misc = require('../modules/Misc');
 	if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) {
 		log && Misc.itemLogger("Sold", this);
 		this.sell();
