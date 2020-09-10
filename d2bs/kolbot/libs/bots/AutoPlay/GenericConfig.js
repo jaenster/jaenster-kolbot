@@ -51,7 +51,7 @@
 	};
 
 	Object.defineProperties(Config, {
-		LowGold: basedOnLevel(() => (me.charlvl * 500) + (me.charlvl > 10 ? 500 * me.charlvl : 0), () => me.charlvl),
+		LowGold: basedOnLevel(() => (me.charlvl * 250) + (me.charlvl > 10 ? 500 * me.charlvl : 0), () => me.charlvl),
 
 		StashGold: basedOnLevel(() => Config.LowGold / 10, () => me.charlvl),
 

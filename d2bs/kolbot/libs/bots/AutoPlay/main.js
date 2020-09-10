@@ -78,8 +78,9 @@
 					Town();
 				}
 				nowWhat = GameAnalyzer.nowWhat();
-				//
-				// nowWhat = ['dungeon', 'ForgottenTemples', 1337];
+
+				// nowWhat = ['dungeon', 'HighLevelForgottenTemples', 1337];
+				// nowWhat = ['quest', require('../../modules/QuestData')[sdk.quests.SistersToTheSlaughter]];
 
 				try {
 					switch (nowWhat && nowWhat.length >= 2 && nowWhat[0]) {
