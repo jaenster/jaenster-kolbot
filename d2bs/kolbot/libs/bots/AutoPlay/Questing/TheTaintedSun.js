@@ -10,7 +10,14 @@
 
 		Pather.journeyTo(sdk.areas.ClawViperTempleLvl2);
 
-		walkTo({x: 15044, y: 14045}); // ToDo; figure out what lvl we are
+		const nodes = [
+			{x: 15048,y: 14019},
+			{x: 15060,y: 14045},
+			{x: 15062,y: 14067},
+			{x: 15044,y: 14053},
+		];
+
+		walkTo(nodes,true, 10);
 
 		me.getQuestItem(521, 149);
 		Town.goToTown(2);
