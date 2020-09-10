@@ -50,7 +50,7 @@
 		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
 		.first();
 
-	module.exports = function walkTo(target, allowTeleport= true) {
+	module.exports = function walkTo(target, allowTeleport= true, rangeOverride = null) {
 		if (target instanceof PresetUnit) target = target.realCoords();
 
 		// console.debug('generating path towards target: ', target);
@@ -184,7 +184,7 @@
 
 			// ToDo; only if clearing makes sense in this area due to effort
 			let range = 14 / 100 * clearPercentage;
-			clear({nodes: path, range: Math.max(4, range)});
+			clear({nodes: path, range: rangeOverride || Math.max(4, range)});
 			Pickit.pickItems();
 
 			// if shrine found, click on it

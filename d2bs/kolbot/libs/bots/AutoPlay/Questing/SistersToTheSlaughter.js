@@ -14,18 +14,28 @@
 		const log = QuestData.fetchQuestArray(quest);
 		let pwnedAndy = 0;
 
-		if (!log[states.PwnedAndy]) {
+		if (!log[states.PwnedAndy] || true) {
 			// Already did quest?
-			if (me.getQuest(quest.index, 0)) {
+			if (me.getQuest(quest.index, 0) && false) {
 				return true; // Done already
 			}
 
 
 			print('Doing andy');
 			Town();
-			Pather.journeyTo(37);
+			Pather.journeyTo(sdk.areas.CatacombsLvl4);
 
-			walkTo({x: 22549, y: 9520});
+			const nodes = [
+				{x: 22588,y: 9637},
+				{x: 22576,y: 9635},
+				{x: 22542,y: 9640},
+				{x: 22549,y: 9621},
+				{x: 22515,y: 9586},
+				{x: 22572,y: 9586},
+				// {x: 22551,y: 9574},
+			];
+
+			walkTo(nodes,0, 15);
 
 			const andy = getUnit(1, 156);
 			andy.kill();

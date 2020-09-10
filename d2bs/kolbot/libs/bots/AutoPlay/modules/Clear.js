@@ -104,7 +104,11 @@
 		if (me === this) start = [me.x, me.y];
 
 		while ((units = getUnits_filtered()).length) {
-			if (getUnits(1).filter(unit => unit.attackable && unit.distance < 5).length >= 3) {
+
+			// near monsters we can handle kinda depends on our health.
+			let nearMonsters = Math.floor((5 * (1 / me.hpmax * me.hp))+1);
+
+			if (getUnits(1).filter(unit => unit.attackable && unit.distance < 5).length >= nearMonsters) {
 				backTrack();
 				continue; // we maybe wanna attack someone else now
 			}

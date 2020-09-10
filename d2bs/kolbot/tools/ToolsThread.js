@@ -334,10 +334,8 @@ function main() {
 			me.overhead("Revealing " + Pather.getAreaName(me.area));
 			revealLevel(true);
 
-			let preset = getPresetUnits(me.area).sort((a,b) => a.distance-b.distance).first();
-			console.debug(preset);
-			__nearestPresetLine = new Line(me.x, me.y, preset.roomx * 5 + preset.x, preset.roomy * 5 + preset.y, 0x84, true);
-			preset.moveTo();
+			console.debug(me.x+','+me.y);
+			copy('{x: '+me.x+',y: '+me.y+'}');
 
 
 			break;
