@@ -293,6 +293,7 @@
 
 					if (stats.classid === 523) {
 						if (!item.getStat(14) || item.getStat(14) < stats.gold) {
+							console.debug(status, keptLine);
 							print("ÿc7Picked up " + stats.color + (item.getStat(14) ? (item.getStat(14) - stats.gold) : stats.gold) + " " + stats.name);
 
 							return true;

@@ -15,7 +15,7 @@
 			Messaging.on('Guard', (data => typeof data === 'object' && data && data.hasOwnProperty('heartbeat') && (lastPing = data.heartbeat)));
 
 			// quit game if default is hanging
-			Delta.track(() => getTickCount() - lastPing > 60e3, () => {
+			me.charlvl < 90 && Delta.track(() => getTickCount() - lastPing > 60e3, () => {
 				console.debug('Quitting game due to inactivity of default.dbj');
 				delay(1000);
 				quitGame();
@@ -24,7 +24,7 @@
 			// quit game if still in the same area after 10 minutes
 			let lastAreaChange = getTickCount();
 			Delta.track(() => me.area, () => lastAreaChange = getTickCount());
-			Delta.track(() => getTickCount() - lastAreaChange > 60 * 10 * 1000, quitGame);
+			me.charlvl < 90 && Delta.track(() => getTickCount() - lastAreaChange > 60 * 10 * 1000, quitGame);
 
 			Delta.track(() => me.hp * 100 / me.hpmax, function (o, n) {
 

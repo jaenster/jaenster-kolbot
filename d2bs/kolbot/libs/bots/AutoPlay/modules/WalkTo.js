@@ -53,8 +53,8 @@
 	module.exports = function walkTo(target, allowTeleport= true, rangeOverride = null) {
 		if (target instanceof PresetUnit) target = target.realCoords();
 
-		// console.debug('generating path towards target: ', target);
-		// global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
+		console.debug('generating path towards target.'+ getDistance(me,target));
+		global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
 
 
 		const AreaData = require('../../../modules/AreaData');
@@ -92,8 +92,11 @@
 			let fromx = !index ? me.x : self[index - 1].x,
 				fromy = !index ? me.y : self[index - 1].y;
 
-			return (getPath(me.area, target.x, target.y, fromx, fromy, 2, 4) || [])
-				.map(el => ({x: el.x,y:el.y,index: index}));
+			let path = (getPath(me.area, target.x, target.y, fromx, fromy, 2, 4) || []);
+			// sometimes the reduction path messes us that we dont have any path left to take (bugs in arcane)
+			if (!path.length) path =(getPath(me.area, target.x, target.y, fromx, fromy, 0, 4) || []);
+
+			return path.map(el => ({x: el.x,y:el.y,index: index}));
 		}).reduce((cur, acc) => {
 			// push each node to the list
 			cur.forEach(el => acc.push(el));

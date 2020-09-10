@@ -3,6 +3,7 @@
 	const QuestData = require('../../../modules/QuestData');
 
 	const walkTo = require('../modules/WalkTo');
+	const arcanePortals = require('../modules/ArcanePortals');
 
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		// Log the quest status
@@ -13,13 +14,15 @@
 
 		Pather.journeyTo(sdk.areas.ArcaneSanctuary);
 		Pather.getWP(sdk.areas.ArcaneSanctuary);
+		delay(250);
 
-		const ps = getPresetUnit(me.area, 2, 357).realCoords();
-		walkTo(ps);
+		const ps = getPresetUnit(sdk.areas.ArcaneSanctuary, 2, 357).realCoords();
+		arcanePortals(ps);
 
 		// open the journal
 		let journal = getUnit(2, 357);
 		walkTo(journal);
+
 		journal.moveTo();
 		journal.interact();
 		delay(500);

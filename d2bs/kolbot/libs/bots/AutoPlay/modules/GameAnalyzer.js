@@ -128,7 +128,15 @@
 	// })();
 
 	const myData = module.exports = {
-		skip: [sdk.areas.InnerCloister, sdk.areas.Tristram],
+		skip: [sdk.areas.InnerCloister, sdk.areas.Tristram,
+
+			// /*testing*/ sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3,
+
+
+			// exclude den of evil / blood moor at higher levels, for now
+			me.charlvl < 4 ? sdk.areas.DenOfEvil : 0,
+			me.charlvl < 4 ? sdk.areas.BloodMoor : 0,
+		].filter(_=>_),
 		areas: [],
 		nowWhat: function (tmpSkip = [], comparedTo = undefined) {
 			/**
