@@ -53,7 +53,7 @@
 		// square to sell in town.
 		if (rval.result === 0 && Town.ignoredItemTypes.indexOf(unit.itemType) === -1 && me.gold < Config.LowGold && unit.itemType !== 39) {
 			// Gold doesn't take up room, just pick it up
-			if (unit.classid === 523) {
+			if (unit.classid === 523 && unit.distance < 5) {
 				return {
 					result: 4,
 					line: null
