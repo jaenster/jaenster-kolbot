@@ -321,6 +321,9 @@
 		return item.__wanted__by_AutoEquip = (function () {
 			if (!item) return false; // We dont want an item that doesnt exists
 
+			// fuck 2 handed items for now
+			if (item.twoHanded) return false;
+
 			// no quest items
 			if (['msf','vip'].includes(item.code)) return false;
 
