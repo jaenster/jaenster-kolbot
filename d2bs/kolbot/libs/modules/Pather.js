@@ -379,7 +379,10 @@
 
 			// Regular doors
 			let door = getUnit(2, "door", 0);
-
+			if (!door && [sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3].includes(me.area)) {
+				// urns can be in our way @ Maggots
+				door = getUnit(2, 'urn', 0);
+			}
 			if (!door) return false; // Cant open a door that we cant find
 
 			do {
