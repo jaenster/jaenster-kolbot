@@ -71,6 +71,7 @@
 		return rval;
 	};
 
+	const pickCounts = {};
 	Pickit.pickItems = function () {
 		var status, item, canFit,
 			needMule = false,
@@ -105,22 +106,31 @@
 			// Check if the item unit is still valid and if it's on ground or being dropped
 			if (copyUnit(pickList[0]).x !== undefined && (pickList[0].mode === 3 || pickList[0].mode === 5) &&
 				(Pather.useTeleport() || me.inTown || !checkCollision(me, pickList[0], 0x1))) { // Don't pick items behind walls/obstacles when walking
+
+				item = pickList[0];
+
+				// check if we picked this item before
+				typeof pickCounts[item.gid] === 'undefined' && (pickCounts[item.gid]=0);
+
+				if (++pickCounts[item.gid] > 2) continue;
+
 				// Check if the item should be picked
-				status = this.checkItem(pickList[0]);
-				if (status.result && this.canPick(pickList[0])) {
+				status = this.checkItem(item);
+
+				if (status.result && this.canPick(item)) {
 					// Override canFit for scrolls, potions and gold
-					canFit = Storage.Inventory.CanFit(pickList[0]) || [4, 22, 76, 77, 78].indexOf(pickList[0].itemType) > -1;
+					canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
 
 					// Try to make room with FieldID
 					if (!canFit && Config.FieldID && Town.fieldID()) {
-						canFit = Storage.Inventory.CanFit(pickList[0]) || [4, 22, 76, 77, 78].indexOf(pickList[0].itemType) > -1;
+						canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
 					}
 
 					// Try to make room by selling items in town
 					if (!canFit) {
 						// Check if any of the current inventory items can be stashed or need to be identified and eventually sold to make room
 						if (this.canMakeRoom()) {
-							print("ÿc7Trying to make room for " + this.itemColor(pickList[0]) + pickList[0].name);
+							console.debug("ÿc7Trying to make room for " + this.itemColor(item) + item.name);
 
 							if (Config.FieldID) {
 								// We id in the field
@@ -138,7 +148,7 @@
 							}
 
 							// Town visit failed - abort
-							print("ÿc7Not enough room for " + this.itemColor(pickList[0]) + pickList[0].name);
+							print("ÿc7Not enough room for " + this.itemColor(item) + item.name);
 
 							return false;
 						}
@@ -146,7 +156,7 @@
 
 					// Item can fit - pick it up
 					if (canFit) {
-						this.pickItem(pickList[0], status.result, status.line);
+						this.pickItem(item, status.result, status.line);
 					}
 				}
 			}

@@ -7,7 +7,6 @@
 [name] == healingpotion
 [name] == rejuvenationpotion
 [name] == fullrejuvenationpotion
-[name] == gold && [distance] < 4
 [name] == gold # [gold] >= 500
 
 [name] == greaterhealingpotion

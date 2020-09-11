@@ -50,14 +50,14 @@
 		.sort((a, b) => (a.objtype - b.objtype) || a.distance - b.distance)
 		.first();
 
-	module.exports = function walkTo(target, allowTeleport= true, rangeOverride = null) {
+	module.exports = function walkTo(target, allowTeleport = true, rangeOverride = null) {
 		if (target instanceof PresetUnit) target = target.realCoords();
 
-		console.debug('generating path towards target.'+ getDistance(me,target));
-		global['debuglineLol'] = new Line(target.x, target.y, me.x, me.y, 0x84, true);
+		const endPoint = Array.isArray(target) ? target.last() : target;
 
+		console.debug('generating path towards target.' + getDistance(me, endPoint));
+		global['debuglineLol'] = new Line(endPoint.x, endPoint.y, me.x, me.y, 0x84, true);
 
-		const AreaData = require('../../../modules/AreaData');
 		const allAreas = GameAnalyzer.areas;
 
 		let winner = Infinity, best = -Infinity, myScore = -Infinity;
@@ -94,9 +94,9 @@
 
 			let path = (getPath(me.area, target.x, target.y, fromx, fromy, 2, 4) || []);
 			// sometimes the reduction path messes us that we dont have any path left to take (bugs in arcane)
-			if (!path.length) path =(getPath(me.area, target.x, target.y, fromx, fromy, 0, 4) || []);
+			if (!path.length) path = (getPath(me.area, target.x, target.y, fromx, fromy, 0, 4) || []);
 
-			return path.map(el => ({x: el.x,y:el.y,index: index}));
+			return path.map(el => ({x: el.x, y: el.y, index: index}));
 		}).reduce((cur, acc) => {
 			// push each node to the list
 			cur.forEach(el => acc.push(el));
@@ -128,10 +128,10 @@
 				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 50 /* dont waste teles on short distances*/)
 					//
 					.map((el, index) => ({
-							g: getDistance(me, el.x, el.y),
-							index: index + i,
-							isNeighbour: myRoom.isNeighbour(getRoom(el.x, el.y)),
-						}))
+						g: getDistance(me, el.x, el.y),
+						index: index + i,
+						isNeighbour: myRoom.isNeighbour(getRoom(el.x, el.y)),
+					}))
 					// We cannot teleport on a higher distance as 1 room away
 					.filter(el => el.isNeighbour)
 					// .filter(el => el.g < 40)
@@ -173,7 +173,7 @@
 				// If walking to the node is twice as far as teleporting, we teleport
 				if (canTeleport && d * 2 > node.distance) {
 					Pather.teleportTo(node.x, node.y);
-				} else  {
+				} else {
 					console.debug('DONT USE RECURSION HERE WTF?');
 					node.moveTo();
 				}

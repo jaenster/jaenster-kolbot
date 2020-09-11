@@ -303,10 +303,10 @@
 					delay(me.ping * 2 + 500);
 				} else {
 					if (Pickit.canMakeRoom()) {
-						print("ÿc1Trying to make room for " + Pickit.itemColor(item) + item.name);
+						console.debug("ÿc1Trying to make room for " + Pickit.itemColor(item) + item.name);
 						Town.visitTown(); // Go to Town and do chores. Will throw an error if it fails to return from Town.
 					} else {
-						print("ÿc1Not enough room for " + Pickit.itemColor(item) + item.name);
+						console.debug("ÿc1Not enough room for " + Pickit.itemColor(item) + item.name);
 						return false;
 					}
 				}

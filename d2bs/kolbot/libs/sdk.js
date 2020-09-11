@@ -2419,6 +2419,16 @@ let sdk = {
         Item: 4,
         Stairs: 5, // ToDo: might be more as stairs
     },
+    itemquality: {
+        lowquality: 1,
+        normal: 2,
+        superior: 3,
+        magic: 4,
+        set: 5,
+        rare: 6,
+        unique: 7,
+        crafted: 8,
+    },
     itemtype: {
         gold: 4,
         scroll: 22,
