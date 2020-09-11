@@ -71,7 +71,7 @@
 		return rval;
 	};
 
-	const pickCounts = {};
+	const madeRoom = {};
 	Pickit.pickItems = function () {
 		var status, item, canFit,
 			needMule = false,
@@ -110,53 +110,58 @@
 				item = pickList[0];
 
 				// check if we picked this item before
-				typeof pickCounts[item.gid] === 'undefined' && (pickCounts[item.gid]=0);
-
-				if (++pickCounts[item.gid] > 2) continue;
 
 				// Check if the item should be picked
-				status = this.checkItem(item);
+
+					status = this.checkItem(item);
+
 
 				if (status.result && this.canPick(item)) {
 					// Override canFit for scrolls, potions and gold
 					canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
 
-					// Try to make room with FieldID
-					if (!canFit && Config.FieldID && Town.fieldID()) {
-						canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
-					}
+					typeof madeRoom[item.gid] === 'undefined' && (madeRoom[item.gid]=0);
+					if (madeRoom[item.gid] < 2) {
 
-					// Try to make room by selling items in town
-					if (!canFit) {
-						// Check if any of the current inventory items can be stashed or need to be identified and eventually sold to make room
-						if (this.canMakeRoom()) {
-							console.debug("ÿc7Trying to make room for " + this.itemColor(item) + item.name);
-
-							if (Config.FieldID) {
-								// We id in the field
-								Town.fieldID();
-								continue; // Re do the loop
-							} else {
-
-								// Go to town and do town chores
-								if (Town.visitTown()) {
-									// Recursive check after going to town. We need to remake item list because gids can change.
-									// Called only if room can be made so it shouldn't error out or block anything.
-
-									return this.pickItems();
-								}
-							}
-
-							// Town visit failed - abort
-							print("ÿc7Not enough room for " + this.itemColor(item) + item.name);
-
-							return false;
+						madeRoom[item.gid]++;
+						// Try to make room with FieldID
+						if (!canFit && Config.FieldID && Town.fieldID()) {
+							canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
 						}
-					}
 
-					// Item can fit - pick it up
-					if (canFit) {
-						this.pickItem(item, status.result, status.line);
+						// Try to make room by selling items in town
+						if (!canFit) {
+							// Check if any of the current inventory items can be stashed or need to be identified and eventually sold to make room
+							if (this.canMakeRoom()) {
+								console.debug("ÿc7Trying to make room for " + this.itemColor(item) + item.name);
+
+								if (Config.FieldID) {
+									// We id in the field
+									Town.fieldID();
+									continue; // Re do the loop
+								} else {
+
+									// Go to town and do town chores
+									if (Town.visitTown()) {
+										// Recursive check after going to town. We need to remake item list because gids can change.
+										// Called only if room can be made so it shouldn't error out or block anything.
+
+										return this.pickItems();
+									}
+								}
+
+								// Town visit failed - abort
+								print("ÿc7Not enough room for " + this.itemColor(item) + item.name);
+
+								return false;
+							}
+						}
+
+						// Item can fit - pick it up
+						if (canFit) {
+							this.pickItem(item, status.result, status.line);
+						}
+
 					}
 				}
 			}
