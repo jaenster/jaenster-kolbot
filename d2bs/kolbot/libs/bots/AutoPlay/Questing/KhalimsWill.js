@@ -12,7 +12,7 @@
 		finishedFlail: 174,
 	};
 
-	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
+	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 
 		const parts = [
 			[[76, 85], classids.eye, 407, 2, 0],
@@ -23,7 +23,7 @@
 		if (!me.findItem('box') && !me.getCube()) {
 			throw Error('Failed to get a cube')
 		}
-		
+
 		!me.getItem(classids.finishedFlail) && parts    // We only want those that we dont have
 			.filter(([, classid]) => !me.getItem(classid))
 			.forEach(([area, id, chestid, x, y]) => {
@@ -88,9 +88,24 @@
 
 			// place in cube
 			const flail = me.getItem(classids.plainFlail);
+			console.debug('here?');
 			me.openCube();
+			console.debug('here?');
 			clickItemAndWait(0, flail);
 			clickItemAndWait(0, 0, 0, sdk.storage.Cube);
+			if (!parts.every(([, id, , x, y]) => {
+					const item = me.getItem(id);
+					if (!item)return false;
+
+					if (item.location !== sdk.storage.Cube) {
+						clickItemAndWait(0, item);
+						clickItemAndWait(0, x, y, sdk.storage.Cube);
+					}
+
+					return item.location === sdk.storage.Cube;
+				})) {
+				throw Error('Not all needed items are in cube');
+			}
 
 			// transmute
 			transmute();
@@ -146,7 +161,7 @@
 			const exit = getUnit(2, 386);
 
 			// keep on clicking the exit until we are not @ travincal anymore
-			Misc.poll(() => !exit || me.area !== sdk.areas.Travincal || (exit.moveTo() && exit.click() && false),10000,40);
+			Misc.poll(() => !exit || me.area !== sdk.areas.Travincal || (exit.moveTo() && exit.click() && false), 10000, 40);
 
 			if (me.area !== sdk.areas.DuranceOfHateLvl1) {
 				Pather.moveToExit([sdk.areas.DuranceOfHateLvl1, sdk.areas.DuranceOfHateLvl2]);
@@ -156,8 +171,6 @@
 
 			Pather.getWP(sdk.areas.DuranceOfHateLvl2);
 		}
-
-
 
 
 	}

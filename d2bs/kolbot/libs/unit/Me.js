@@ -149,6 +149,7 @@
 	};
 
 	me.openCube = function () {
+		console.debug('Opening cube?');
 		let i, tick,
 			cube = me.cube;
 
@@ -156,8 +157,10 @@
 
 		if (getUIFlag(0x1a)) return true;
 
-		const Town = require('../modules/Town');
-		if (cube.location === 7 && !Town.openStash()) return false;
+		if (cube.location === 7) {
+			const Town = require('../modules/Town');
+			if (cube.location === 7 && !Town.openStash()) return false;
+		}
 
 		for (i = 0; i < 3; i += 1) {
 			cube.interact();
@@ -361,12 +364,12 @@
 		return !!me.getItem(sdk.items.cube);
 	};
 
-	me.openCube = () => {
-		while (!getUIFlag(0x1A)) {
-			sendPacket(1, 0x27, 4, me.findItem(-1, -1, me.findItems(-1, -1, 3) === false ? 1 : 3).gid, 4, me.getItem("box").gid);
-			delay((me.ping || 0) * 2 + 200);
-		}
-	};
+	// me.openCube = () => {
+	// 	while (!getUIFlag(0x1A)) {
+	// 		sendPacket(1, 0x27, 4, me.findItem(-1, -1, me.findItems(-1, -1, 3) === false ? 1 : 3).gid, 4, me.getItem("box").gid);
+	// 		delay((me.ping || 0) * 2 + 200);
+	// 	}
+	// };
 
 	me.on = Events.on;
 	me.off = Events.off;
