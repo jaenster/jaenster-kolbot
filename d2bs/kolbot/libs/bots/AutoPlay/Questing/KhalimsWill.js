@@ -160,8 +160,9 @@
 			// Move close to the exit
 			const exit = getUnit(2, 386);
 
+			exit.moveTo();
 			// keep on clicking the exit until we are not @ travincal anymore
-			Misc.poll(() => !exit || me.area !== sdk.areas.Travincal || (exit.moveTo() && exit.click() && false), 10000, 40);
+			Misc.poll(() => !exit || me.area !== sdk.areas.Travincal || (exit.click() && false), 10000, 40);
 
 			if (me.area !== sdk.areas.DuranceOfHateLvl1) {
 				Pather.moveToExit([sdk.areas.DuranceOfHateLvl1, sdk.areas.DuranceOfHateLvl2]);

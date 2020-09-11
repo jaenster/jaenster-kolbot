@@ -24,6 +24,32 @@
 	module.exports = function (quest, Config, Attack, Pickit, Pather, Town, Misc) {
 		const TownPrecast = require('../../../modules/TownPrecast');
 
+		if (me.area < sdk.areas.DuranceOfHateLvl1) {
+			if (!getWaypoint(26/*wp areas of Dura2*/)) {
+				console.debug('we dont have the magical waypoint we suposed to have');
+
+				Pather.journeyTo(sdk.areas.Travincal);
+
+				// dont use the exit
+				Pather.moveToExit(sdk.areas.DuranceOfHateLvl1, false);
+
+
+				const trapDoor = getUnit(2, 386);
+
+				Misc.poll(()=> {
+					if (me.area === sdk.areas.Travincal) {
+						trapDoor.moveTo();
+						trapDoor.click();
+					}
+					return me.area === sdk.areas.DuranceOfHateLvl1
+				},  6000,40);
+
+				Pather.journeyTo(sdk.areas.DuranceOfHateLvl2);
+				Pather.getWP(sdk.areas.DuranceOfHateLvl2);
+				Pather.useWaypoint(sdk.areas.KurastDocktown);
+			}
+		}
+
 
 		TownPrecast();
 		if (!Pather.journeyTo(sdk.areas.DuranceOfHateLvl3)) {
