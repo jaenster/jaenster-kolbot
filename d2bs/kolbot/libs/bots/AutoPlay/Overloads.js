@@ -453,7 +453,6 @@
 			const merc = Misc.poll(() => me.getMerc(), 3000,30);
 
 			let aliveMerc = merc && merc.mode !== 0 && merc.mode !== 12;
-			console.debug(merc);
 			if (aliveMerc) return false; // merc is alive
 
 			// We have a merc, so yes we revive it

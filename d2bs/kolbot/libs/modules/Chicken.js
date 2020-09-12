@@ -108,7 +108,7 @@
 				}
 
 				// Normal pots, Only every 1000 ms. Should be enough
-				if ((procentHP < realValues.UseHP) && !me.getState(sdk.states.Healthpot)) {
+				if ((procentHP < realValues.UseHP) && tickHP > 200 && !me.getState(sdk.states.Healthpot)) {
 					let hp = me.getItemsEx().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (hp) {
 						print('ÿc:Drank a ' + hp.name + ' Pot');
@@ -119,7 +119,7 @@
 				}
 
 				// Normal pots, Only every 1000 ms. Should be enough
-				if ((procentMP < realValues.UseMP) && !me.getState(sdk.states.Manapot)) {
+				if ((procentMP < realValues.UseMP) && tickMP > 200&& !me.getState(sdk.states.Manapot)) {
 					let mp = me.getItemsEx().filter(filterMPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (mp) {
 						print('ÿc:Drank a ' + mp.name + ' Pot');
@@ -130,7 +130,7 @@
 				}
 
 				// Take care of our sweet merc (rev pot)
-				if (merc && procentHPMerc < realValues.UseRejuvHP && tickRevMerc > 250) {
+				if (merc && procentHPMerc < realValues.UseRejuvHP && tickRevMerc > 500) {
 					let revPot = me.getItemsEx().filter(filterRevPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (revPot) {
 						clickItem(2, revPot);
@@ -142,7 +142,7 @@
 
 
 				// Take care of our sweet merc (hp pot)
-				if (merc && procentHPMerc < realValues.UseHP && tickHPMerc > 250) {
+				if (merc && procentHPMerc < realValues.UseHP && tickHPMerc > 2500) {
 					let hp = me.getItemsEx().filter(filterHPPots).filter(filterItemsWithMe).sort(sortBiggest).first();
 					if (hp) {
 						print('ÿc:Drank a ' + hp.name + ' Pot');
