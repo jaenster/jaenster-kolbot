@@ -441,7 +441,7 @@
 		new Overload(Town, 'needMerc', /** @this Town*/ function (original, ...args) {
 
 			// ToDo; fix stuff for classic
-			if (me.gametype === 0 || !Config.UseMerc || me.gold < me.mercrevivecost) { // gametype 0 = classic
+			if (me.gametype === 0 || me.gold < me.mercrevivecost) { // gametype 0 = classic
 				return false;
 			}
 			//ToDo; hire a merc if access to act 2 and we have a act 1 merc
@@ -451,8 +451,9 @@
 			if (gotMerc) return 'revive';
 
 			const merc = Misc.poll(() => me.getMerc(), 3000,30);
+
 			let aliveMerc = merc && merc.mode !== 0 && merc.mode !== 12;
-			console.debug(merc && merc.mode);
+			console.debug(merc);
 			if (aliveMerc) return false; // merc is alive
 
 			// We have a merc, so yes we revive it
