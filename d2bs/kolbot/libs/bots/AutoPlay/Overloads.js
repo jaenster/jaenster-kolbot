@@ -450,7 +450,7 @@
 			let gotMerc = me.mercrevivecost !== 0;
 			if (gotMerc) return 'revive';
 
-			const merc = Misc.poll(() => me.getMerc(), 3000, 30);
+			const merc =  me.getMerc();
 
 			let aliveMerc = merc && merc.mode !== 0 && merc.mode !== 12;
 			if (aliveMerc) return false; // merc is alive

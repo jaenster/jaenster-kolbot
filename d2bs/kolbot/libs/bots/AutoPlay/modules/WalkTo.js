@@ -122,8 +122,6 @@
 				let myDistanceFromTarget = getDistance(me, target),
 					myRoom = getRoom(me.x, me.y);
 
-				console.debug('Can teleport');
-
 				//ToDo; figure out a real way to determin if its a neighbour
 				const teleportTo = path.slice(i).filter(el => getDistance(me, el.x, el.y) <= 50 /* dont waste teles on short distances*/)
 					//
@@ -147,12 +145,15 @@
 					console.debug('Teleporting to node (' + teleportTo.index + '/' + l + ') -- Skipping ' + (teleportTo.index - i) + ' nodes. Distance of ' + (Math.round(node.distance)));
 					[].filter.constructor('return this')()['WHATEVER'] = new Line(node.x, node.y, me.x, me.y, 0x99, true);
 					let [x, y] = [me.x, me.y];
+					console.debug('Teleporting?');
 					me.cast(54, 0, node.x, node.y, undefined, true);
 
+					console.debug('Teleported?');
 					// if teleported succesfully
-					if (Misc.poll(() => me.x !== x && me.y !== y, 1000, 3)) {
+					if (Misc.poll(() => me.x !== x || me.y !== y, 1000, 3)) {
 						i = teleportTo.index++;
 					}
+					console.debug('Teleported!');
 					continue;
 				}
 			}

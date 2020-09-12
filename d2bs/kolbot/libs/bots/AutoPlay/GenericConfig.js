@@ -56,6 +56,7 @@
 		StashGold: basedOnLevel(() => Config.LowGold / 10, () => me.charlvl),
 	});
 
+	Config.MercWatch = true;
 	Config.AutoMap = true;
 
 	Config.MPBuffer = 10;
