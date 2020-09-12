@@ -74,7 +74,7 @@
 
 			// Add GreatMarsh if needed
 			if (target.course.indexOf(sdk.areas.FlayerJungle) > -1) {
-				if (me.act !== 3){
+				if (me.act !== 3) {
 					Town.goToTown(3);
 				}
 
@@ -91,7 +91,7 @@
 					}
 				}
 			}
-			console.debug(' -- Path to take -- '+target.course.map(el => AreaData[el].LocaleString).join(' -> '));
+			console.debug(' -- Path to take -- ' + target.course.map(el => AreaData[el].LocaleString).join(' -> '));
 
 			// in the odd case we are in the field, check if we can take a local waypoint
 			if (target.useWP) {
@@ -450,7 +450,7 @@
 			let gotMerc = me.mercrevivecost !== 0;
 			if (gotMerc) return 'revive';
 
-			const merc = Misc.poll(() => me.getMerc(), 3000,30);
+			const merc = Misc.poll(() => me.getMerc(), 3000, 30);
 
 			let aliveMerc = merc && merc.mode !== 0 && merc.mode !== 12;
 			if (aliveMerc) return false; // merc is alive
@@ -466,7 +466,7 @@
 		new Overload(Town, 'hireMerc', /** @this Town*/ function (original) {
 			const Merc = require('./modules/Merc');
 
-			let actMerc = [1,2][AreaData[sdk.areas.LutGholein].canAccess() & 1];
+			let actMerc = [1, 2][AreaData[sdk.areas.LutGholein].canAccess() & 1];
 
 			// this is safe as addEventListener for copydata isnt done in default.dbj anymore
 			try {
@@ -479,7 +479,7 @@
 				delay(5000); //ToDo; poll merc list
 
 				// find the best merc to hire
-				const bestMerc = Merc.instances.reduce((winner,cur) => {
+				const bestMerc = Merc.instances.reduce((winner, cur) => {
 					if (actMerc === 2) { // has a def skill?
 						let defSkill = cur.skills.find(skill => skill.name === "Defiance");
 						if (!defSkill) return winner;
@@ -496,7 +496,7 @@
 
 				// Found a merc we can afford/want?
 				if (bestMerc) {
-					console.debug('Hiring merc ',bestMerc);
+					console.debug('Hiring merc ', bestMerc);
 					bestMerc.hire();
 				}
 
@@ -505,14 +505,13 @@
 			}
 		});
 
-
 		// small hijack, to support the hire of a merc on requirement
 		new Overload(Town, 'reviveMerc', /** @this Town*/ function (original, ...args) {
 
 			const needed = this.needMerc();
 			console.debug(needed);
 
-			switch(needed) {
+			switch (needed) {
 				case false: // no such merc
 					return true;
 				case 'hire':
@@ -522,6 +521,157 @@
 			return original.apply(this, args);
 
 		});
+
+		new Overload(Town, 'getPotion', /** @this Town */ function (original, npc, type, highestPot=5) {
+
+			let result;
+
+			if (!type || typeof type !== 'string') return false;
+
+			if (type === "hp" || type === "mp") {
+				for (let i = highestPot; i > 0; i -= 1) {
+					let result = npc.getItem(type + i);
+
+					if (result) return result;
+				}
+			} else if (type === "yps" || type === "vps" || type === "wms") {
+				for (let i = highestPot; i > 0; i -= 1) {
+					result = npc.getItem(type);
+
+					if (result) return result;
+				}
+			}
+
+			return false;
+
+		});
+
+		new Overload(Town, 'buyPotions', /** @this Town */ function (original) {
+
+			if (me.gold < 1000) return false;
+
+			const Storage = require('../../modules/Storage');
+			let beltSize = Storage.BeltSize(), col = Town.checkColumns(beltSize);
+
+			// Check if we want buffer'd items
+			const buffer = {hp: 0, mp: 0,};
+
+			// count the buffer pots in the inventory
+			(me.getItems() || [])
+				.filter(pot => pot.location === sdk.storage.Inventory && [76/*hp*/, 77/*mp*/].includes(pot.itemType))
+				.forEach(pot => buffer[['hp', 'mp'][pot.itemType - 76]]++);
+
+			let needPots;
+			// Check the MinConfig range
+			for (let i = 0; i < 4; i += 1) needPots = needPots || (["hp", "mp"].includes(Config.BeltColumn[i]) && col[i] > (beltSize - Math.min(Config.MinColumn[i], beltSize)));
+
+			let needBuffer = true;
+
+			// Check if we need any potions for buffers
+			if (buffer.mp < Config.MPBuffer || buffer.hp < Config.HPBuffer) {
+				for (let i = 0; i < 4; i += 1) {
+					// We can't buy potions because they would go into belt instead
+					if (col[i] >= beltSize && (!needPots || Config.BeltColumn[i] === "rv")) {
+						needBuffer = false;
+						break;
+					}
+				}
+			}
+
+			// We have enough potions in inventory
+			if (buffer.mp >= Config.MPBuffer && buffer.hp >= Config.HPBuffer) {
+				needBuffer = false;
+			}
+
+			// No columns to fill
+			if (!needPots && !needBuffer) return true;
+
+
+			// Actually buy the pots
+			const PotionData = require('../../modules/PotionData');
+
+			// Just get the pots effects
+			const mpPotsEffects = PotionData.getMpPots().map(el => el.effect[me.classid]);
+			const hpPotsEffects = PotionData.getHpPots().map(el => el.effect[me.classid]);
+
+			console.debug(mpPotsEffects);
+			console.debug(hpPotsEffects);
+			// find the pot that heals more as half, or just buy the best available
+			let wantedHpPot = (hpPotsEffects.findIndex(eff => me.hpmax / 2 < eff) + 1 || hpPotsEffects.length - 1);
+			let wantedMpPot = (mpPotsEffects.findIndex(eff => me.mpmax / 2 < eff) + 1 || mpPotsEffects.length-1);
+
+			// buy pots in higher act in normal, as pots get better in each act
+			if (me.diff === 0) {
+				let wantToAccessAct = Math.max(wantedHpPot, wantedMpPot);
+				console.debug(wantToAccessAct);
+
+				// Calculate the cap on the pots we want
+				if (me.act < wantToAccessAct) {
+					// find highest act we can access
+					while (wantToAccessAct && !Pather.accessToAct(wantToAccessAct)) wantToAccessAct--;
+					console.debug(wantToAccessAct);
+
+					if (Pather.accessToAct(wantToAccessAct)) {
+						console.debug('Moving to act ' + wantToAccessAct);
+						Town.goToTown(wantToAccessAct);
+					}
+				}
+			}
+
+			let npc = Town.initNPC("Shop", "buyPotions");
+			if (!npc) return false;
+
+			// Buy the belt's pots
+			for (let i = 0; i < 4; i += 1) {
+				if (col[i] > 0) {
+
+					let highestPot = Config.BeltColumn[i] === 'hp' ? wantedHpPot : (Config.BeltColumn[i] === 'mp' ? wantedHpPot : 5);
+
+					let useShift = Town.shiftCheck(col, beltSize),
+						pot = Town.getPotion(npc, Config.BeltColumn[i], highestPot);
+
+					if (pot) {
+						//print("ÿc2column ÿc0" + i + "ÿc2 needs ÿc0" + col[i] + " ÿc2potions");
+
+						// Shift+buy will trigger if there's no empty columns or if only the current column is empty
+						if (useShift) {
+							pot.buy(true);
+						} else {
+							for (let j = 0; j < col[i]; j += 1) {
+								pot.buy(false);
+							}
+						}
+					}
+				}
+
+				col = Town.checkColumns(beltSize); // Re-initialize columns (needed because 1 shift-buy can fill multiple columns)
+			}
+
+
+			if (needBuffer && buffer.hp < Config.HPBuffer) {
+				for (let i = 0; i < Config.HPBuffer - buffer.hp; i += 1) {
+					let pot = Town.getPotion(npc, "hp", wantedHpPot);
+
+					if (Storage.Inventory.CanFit(pot)) {
+						pot.buy(false);
+					}
+				}
+			}
+
+			if (needBuffer && buffer.mp < Config.MPBuffer) {
+				for (let i = 0; i < Config.MPBuffer - buffer.mp; i += 1) {
+					let pot = Town.getPotion(npc, "mp", wantedMpPot);
+
+					if (Storage.Inventory.CanFit(pot)) {
+						pot.buy(false);
+					}
+				}
+			}
+
+
+
+		});
+
 
 		Overload.instances.slice(from).forEach(ol => ol.install());
 		return {
