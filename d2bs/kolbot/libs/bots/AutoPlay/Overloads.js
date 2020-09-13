@@ -369,11 +369,13 @@
 		const Skills = require('../../modules/Skills');
 
 		new Overload(Pather, 'useTeleport', /**@this Pather*/ function useTeleport(original, ...args) {
-
+			//const Config = require('../../../modules/Config');
 			const canTeleport = this.canTeleport();
 			if (!canTeleport) return false;
 
-			return me.charlvl >= 30 || (me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 3 || me.getState(sdk.states.Manapot));
+			return (me.charlvl >= 30 && me.gold > Config.LowGold)
+					|| (me.charlvl < 30 && me.mp - Skills.manaCost[sdk.skills.Teleport] >= me.mpmax / 3)
+					|| me.getState(sdk.states.Manapot);
 		});
 
 

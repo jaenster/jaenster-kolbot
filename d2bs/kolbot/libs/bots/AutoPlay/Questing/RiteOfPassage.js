@@ -14,6 +14,7 @@
 
 	module.exports = function (quest,Config, Attack, Pickit, Pather, Town, Misc) {
 		const Skills = require('../../../modules/Skills');
+		const Precast = require('../../../modules/Precast');
 		let altar, i, j,
 			boss = [22488, 22489, 22490]; //Korlic, Madawc, Talic
 
@@ -23,7 +24,7 @@
 
 		do {
 			// Pather.moveToUnit(altar);
-			Precast.doPrecast(true);
+			Precast();
 			altar.cast(sdk.skills.Telekinesis);
 			me.cancel();
 			print('Are they gone?');
@@ -69,7 +70,7 @@
 				if (near && Skills.range[sdk.skills.StaticField] < near.distance && staticCap < percentLeft) {
 					near && near.cast(sdk.skills.StaticField);
 				}
-				near && near.cast(sdk.skills.FireBolt);
+				near && near.cast(sdk.skills.FireBall);
 				delay(10);
 			} catch (e) {
 				if (e.message.indexOf('undefined') === -1) throw e; // Unit can suddenly be gone on death
