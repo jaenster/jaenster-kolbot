@@ -53,11 +53,6 @@
 	module.exports = function walkTo(target, allowTeleport = true, rangeOverride = null) {
 		if (target instanceof PresetUnit) target = target.realCoords();
 
-		const endPoint = Array.isArray(target) ? target.last() : target;
-
-		console.debug('generating path towards target.' + getDistance(me, endPoint));
-		global['debuglineLol'] = new Line(endPoint.x, endPoint.y, me.x, me.y, 0x84, true);
-
 		const allAreas = GameAnalyzer.areas;
 
 		let winner = Infinity, best = -Infinity, myScore = -Infinity;
