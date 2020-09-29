@@ -94,7 +94,12 @@
 		coordsInPath: (path, x, y) => path.some(node => getDistance(x, y, node.x, node.y) < 5)
 	};
 
-	const Pather = {
+	/** @class Pather*/
+	const Pather = function Pather() {
+
+	};
+
+	Object.assign(Pather, {
 		config: require('../modules/Config'),
 		teleport: true,
 		walkDistance: 5,
@@ -103,8 +108,13 @@
 		wpAreas: [1, 3, 4, 5, 6, 27, 29, 32, 35, 40, 48, 42, 57, 43, 44, 52, 74, 46, 75, 76, 77, 78, 79, 80, 81, 83, 101, 103, 106, 107, 109, 111, 112, 113, 115, 123, 117, 118, 129],
 		recursion: true,
 
-		useTeleport: function () {
+		// spliced this from use teleport, so we can override the settings
+		canTeleport: function () {
 			return this.teleport && !me.getState(sdk.states.Wolf) && !me.getState(sdk.states.Bear) && !me.inTown && ((me.classid === 1 && me.getSkill(sdk.skills.Teleport, 1)) || me.getStat(sdk.stats.Nonclassskill, sdk.skills.Teleport));
+		},
+
+		useTeleport: function () {
+			return this.canTeleport();
 		},
 
 		/*
@@ -116,6 +126,7 @@
 			pop - remove last node
 		*/
 		moveTo: function (x, y, retry = 3, clearPath = false, pop = false) {
+			// const debugLine =  new Line(me.x, me.y, x, y, 0x84, true);
 			if (me.dead) { // Abort if dead
 				return false;
 			}
@@ -265,6 +276,7 @@
 			minDist - minimal distance from x/y before returning true
 		*/
 		walkTo: function (x, y, minDist = me.inTown && 2 || 4) {
+			const debugLine =  new Line(me.x, me.y, x, y, 0x82, true);
 			while (!me.gameReady) delay(3);
 			const Misc = require('Misc');
 
@@ -367,7 +379,10 @@
 
 			// Regular doors
 			let door = getUnit(2, "door", 0);
-
+			if (!door && [sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3].includes(me.area)) {
+				// urns can be in our way @ Maggots
+				door = getUnit(2, 'urn', 0);
+			}
 			if (!door) return false; // Cant open a door that we cant find
 
 			do {
@@ -832,8 +847,6 @@
 						me.cancel(); // In case lag causes the wp menu to stay open
 					}
 
-					Packet.flash(me.gid);
-
 					if (i > 1) { // Activate check if we fail direct interact twice
 						check = true;
 					}
@@ -1129,7 +1142,7 @@
 			area - the id of area to get the waypoint in
 			clearPath - clear path
 		*/
-		getWP: function (area, clearPath,click=true) {
+		getWP: function (area, clearPath, click = true) {
 			const Misc = require('Misc');
 			var i, j, wp, preset,
 				wpIDs = [119, 145, 156, 157, 237, 238, 288, 323, 324, 398, 402, 429, 494, 496, 511, 539];
@@ -1179,15 +1192,16 @@
 			const Town = require('Town');
 			const Misc = require('Misc');
 			var i, special, unit, tick, target;
+			me.inTown && TownPrecast.prepare();
 
 			target = this.plotCourse(area, me.area);
 
 			//print(target.course);
 			if (target.useWP) {
 				Town.goToTown();
+				me.inTown && TownPrecast.prepare();
 			}
 
-			me.inTown && TownPrecast.prepare();
 			// handle variable flayer jungle entrances
 			if (target.course.indexOf(78) > -1) {
 				Town.goToTown(3); // without initiated act, getArea().exits will crash
@@ -1317,6 +1331,11 @@
 				src = me.area;
 			}
 
+			// Tell the system we want to go to current level, as that is where we are and want to go
+			if (dest === src) {
+				return {course: [src], useWP: false}
+			}
+
 			if (!this.plotCourse_openedWpMenu && me.inTown && Pather.useWaypoint(null)) {
 				this.plotCourse_openedWpMenu = true;
 			}
@@ -1387,11 +1406,71 @@
 			src - starting area id
 		*/
 		areasConnected: function (src, dest) {
-			if (src === 46 && dest === 74) {
-				return false;
-			}
+			//Todo; know if portal is open somehow, some quest state?
+			return !(src === sdk.areas.CanyonOfMagi  && dest === sdk.areas.ArcaneSanctuary);
+		},
 
-			return true;
+		getWalkDistance: function (x, y, area = me.area, xx = me.x, yy = me.y) {
+			return getPath(area, x, y, xx, yy, 2, 5)
+				// distance between node x and x-1
+				.map((e, i, s) => i && getDistance(s[i - 1], e) || 0)
+				.reduce((acc, cur) => acc + cur, 0) || Infinity;
+		},
+
+		/**
+		 *
+		 * @param {{area:number,x:number,y:number}|Unit} spot1
+		 * @param {{area:number,x:number,y:number}|Unit} spot2
+		 */
+		getWalkDistanceLongDistance: function (spot1, spot2) {
+			return this.getLongDistancePath(spot1, spot2)
+				.map((obj) => this.getWalkDistance(obj.fromx, obj.fromy, obj.area, obj.tox, obj.toy) || 0)
+				.reduce((acc, cur) => acc + (cur || 0), 0);
+		},
+
+		/**
+		 *
+		 * @param {{area:number,x:number,y:number}|Unit} spot1
+		 * @param {{area:number,x:number,y:number}|Unit} spot2
+		 * @param {boolean} reverse?
+		 *
+		 * @return {{area,fromx,fromy,tox,toy}[]}
+		 */
+		getLongDistancePath: function (spot1, spot2, reverse = false) {
+			const plot = Pather.plotCourse(spot1.area, spot2.area) || {course: [spot1.area]};
+
+			if (reverse) plot.course.reverse();
+
+			console.debug(plot.course);
+			return plot.course.map((area, i, self) => {
+				let start = spot1, previous, next;
+
+				const exits = getArea(area).exits;
+
+				// we start at either spot1 x/y, or the previous exit
+				if (i !== 0) {
+					previous = self[i - 1];
+
+					// We start at the spot where the exit of the previous area was
+					start = exits.filter(a => a.target === previous).first();
+				}
+
+				let end = spot2;
+				// we end at either spot2 x/y, or the next exit
+				if (i !== self.length - 1) {
+					next = self[i + 1];
+					end = exits.filter(a => a.target === next).first();
+				}
+
+				return {
+					area: area,
+					fromx: start.x,
+					fromy: start.y,
+
+					tox: end.x,
+					toy: end.y,
+				};
+			})
 		},
 
 		/*
@@ -1540,7 +1619,7 @@
 
 			return areas[area];
 		}
-	};
+	});
 
 	module.exports = Pather;
 }).call(null, module, require);

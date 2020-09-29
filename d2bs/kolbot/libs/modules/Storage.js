@@ -106,8 +106,75 @@
 		/* Container.CanFit(item)
 		 *	Checks to see if we can fit the item in the buffer.
 		 */
+		/** @return {boolean} */
 		this.CanFit = function (item) {
-			return (!!this.FindSpot(item));
+			let spot = this.FindSpot(item);
+			if (!spot && me.inTown) {
+				this.SortItems();
+				spot = this.FindSpot(item);
+			}
+			return (!!spot);
+		};
+
+		/* Container.SortItems();
+	 	*  Loop Container backwards and try to replace all items
+	 	*
+	 	*   credits dzik / Gagget for original
+	 	*/
+		this.SortItems = function () {
+			// disable sortitems for now
+			return;
+
+			if (!me.inTown) return ;
+
+			let cancel = false;
+			if (this.location === sdk.storage.Cube) cancel = me.openCube();
+
+			Storage.Reload();
+
+			for (let y = this.width - 1; y >= 0; y--) {
+				for (let x = this.height - 1; x >= 0; x--) {
+					delay(1);
+
+					if (!this.buffer[x][y]) {
+						continue; // nothing on this spot
+					}
+
+					const item = this.itemList[this.buffer[x][y] - 1];
+
+					if (item.classid === sdk.items.cube) {
+						continue; // dont touch the cube
+					}
+
+					if (this.location === sdk.storage.Inventory && this.IsLocked(item, Config.Inventory)) {
+						continue; // locked spot / item
+					}
+
+					let [ix, iy] = [item.y, item.x]; // WTF x and y is vice versa switched
+
+					if (ix < x || iy < y) {
+						continue; // not top left part of item
+					}
+
+					//print(item.name+" in "+this.name+" Spot at X:"+x+" Y:"+y+" ... ");
+
+					//Check if the item could fit an earlier position
+					const nPos = this.FindSpot(item);
+					if (!nPos || (nPos.x >= ix && nPos.y >= iy)) {
+						continue; // fits here or more backwards
+					}
+
+					if (!this.MoveTo(getUnit(-1, -1, -1, item.gid))) {
+						continue; // we couldn't move the item
+					}
+
+					// We moved an item so reload & restart
+					Storage.Reload();
+					y = this.width - 0;
+					break; // Loop again from begin
+				}
+			}
+			cancel && me.cancel();
 		};
 
 		/* Container.FindSpot(item)
@@ -144,6 +211,14 @@
 						return ({x: x, y: y});
 					}
 			}
+
+			// typeof this.FindSpot.recursion === 'undefined' && (this.FindSpot.recursion = -1);
+			// // sort the items and try again
+			// this.FindSpot.recursion++;
+			// if (this.FindSpot.recursion < 3) {
+			// 	return this.FindSpot();
+			// }
+			// this.FindSpot.recursion--;
 
 			return false;
 		};
@@ -184,7 +259,7 @@
 				}
 
 				//Loop three times to try and place it.
-				for (n = 0; n < 5; n += 1) {
+				for (let n = 0; n < 5; n += 1) {
 					if (this.location === 6) { // place item into cube
 						cItem = getUnit(100);
 						cube = me.getItem(549);
@@ -193,7 +268,7 @@
 							sendPacket(1, 0x2a, 4, cItem.gid, 4, cube.gid);
 						}
 					} else {
-						clickItem(0, nPos.y, nPos.x, this.location);
+						clickItemAndWait(0, nPos.y, nPos.x, this.location);
 					}
 
 					nDelay = getTickCount();
@@ -213,7 +288,7 @@
 
 				return true;
 			} catch (e) {
-				print("ÿc1"+e);
+				print("ÿc1" + e);
 				return false;
 			}
 		};
@@ -265,6 +340,7 @@
 								continue;
 							}
 
+							// filter out items that are already on the list =O
 							for (n = 0; n < itemList.length; n += 1) {
 								if (itemList[n].gid === item.gid) {
 									continue Loop;

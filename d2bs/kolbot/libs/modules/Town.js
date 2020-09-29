@@ -4,11 +4,10 @@
  *    @desc        do town chores like buying, selling and gambling
  */
 (function (module, require) {
-	const NPC = require('../modules/NPC');
-	const Config = require('../modules/Config');
-	const Packet = require('../modules/PacketHelpers');
-	const Misc = require('../modules/Misc');
-	const Pather = require('../modules/Pather');
+	const NPC = require('./NPC');
+	const Packet = require('./PacketHelpers');
+	const Misc = require('./Misc');
+	const Pather = require('./Pather');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
@@ -60,19 +59,19 @@
 		}
 	];
 
-	const Town = function (repair = false) {
+	/** @class Town */
+	const Town = function Town(repair = false) {
 		if (!me.inTown) {
 			Town.goToTown();
 		}
-		// load the promises that look for stuff in town, or reacts on stuff in town
 
-		var i,
-			cancelFlags = [0x01, 0x02, 0x04, 0x08, 0x14, 0x16, 0x0c, 0x0f, 0x19, 0x1a];
+		let i, cancelFlags = [0x01, 0x02, 0x04, 0x08, 0x14, 0x16, 0x0c, 0x0f, 0x19, 0x1a];
 
 		me.switchWeapons(me.primarySlot);
 
 		Town.heal();
 		Town.identify();
+		Town.clearInventory();
 		Town.shopItems();
 		Town.fillTome(518);
 
@@ -218,6 +217,7 @@
 
 	// Check if healing is needed, based on character config
 	Town.needHealing = function () {
+		console.debug('?', JSON.stringify(Config.HealHP));
 		if (me.hp * 100 / me.hpmax <= Config.HealHP || me.mp * 100 / me.mpmax <= Config.HealMP) {
 			return true;
 		}
@@ -242,7 +242,7 @@
 				hp: 0,
 				mp: 0
 			};
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		beltSize = Storage.BeltSize();
 		col = Town.checkColumns(beltSize);
 
@@ -353,7 +353,7 @@
 	};
 
 	// Purchases and drinks potions in town.
-	Town.stackPotions = function(type, amount) {
+	Town.stackPotions = function (type, amount) {
 		if (!amount) amount = 4; // TODO: Calculate monster effort and correlate it to the number of potions to stack.
 		if (me.gold < amount * 25) {
 			print('stackPotions: Not enough gold for ' + amount + ' potions');
@@ -452,8 +452,7 @@
 					return result;
 				}
 			}
-		}
-		else if ( type === "yps" || type === "vps" || type === "wms") {
+		} else if (type === "yps" || type === "vps" || type === "wms") {
 			for (i = 5; i > 0; i -= 1) {
 				result = npc.getItem(type);
 
@@ -483,7 +482,7 @@
 		}
 
 		delay(500);
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		if (code === 518 && !me.findItem(518, 0, 3)) {
 			tome = npc.getItem(518);
 
@@ -539,15 +538,17 @@
 		var i, item, tome, scroll, npc, list, timer, tpTome,
 			tpTomePos = {};
 
-		const Pickit = require('../modules/Pickit');
+		const Pickit = require('./Pickit');
 		Town.cainID();
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		list = Storage.Inventory.Compare(Config.Inventory);
 
 		if (!list) {
+			console.debug('here?');
 			return false;
 		}
 
+		console.debug('avoid unnecessary NPC visits');
 		// Avoid unnecessary NPC visits
 		for (i = 0; i < list.length; i += 1) {
 			// Only unid items or sellable junk (low level) should trigger a NPC visit
@@ -637,13 +638,13 @@
 
 							result = Pickit.checkItem(item);
 
+							if (typeof result.result === 'string') {
+								result.hook.handle(item);
+								Town.clearInventory();
+							}
+
 							switch (result.result) {
 								case 1:
-									// Couldn't id autoEquip item. Don't log it.
-									if (result.result === 1 && Config.AutoEquip && !item.getFlag(0x10)) {
-										break;
-									}
-
 									Misc.itemLogger("Kept", item);
 									Misc.logItem("Kept", item, result.line);
 
@@ -669,7 +670,6 @@
 			}
 
 		Town.fillTome(518); // Check for TP tome in case it got sold for ID scrolls
-
 		return true;
 	};
 
@@ -677,7 +677,7 @@
 		if (!Config.CainID.Enable) {
 			return false;
 		}
-		const Pickit = require('../modules/Pickit');
+		const Pickit = require('./Pickit');
 
 		// Check if we're already in a shop. It would be pointless to go to Cain if so.
 		var i, cain, unids, result,
@@ -749,7 +749,7 @@
 		var list, tome, item, result;
 
 		list = Town.getUnids();
-		const Pickit = require('../modules/Pickit');
+		const Pickit = require('./Pickit');
 		if (!list) {
 			return false;
 		}
@@ -889,11 +889,12 @@
 		if (!Config.MiniShopBot) {
 			return true;
 		}
-		const Pickit = require('../modules/Pickit');
+		const Pickit = require('./Pickit');
 
-		var i, item, result,
+		let item, result,
 			items = [],
 			npc = getInteractedNPC();
+
 
 		if (!npc || !npc.itemcount) {
 			return false;
@@ -904,7 +905,8 @@
 		if (!item) {
 			return false;
 		}
-		const Storage = require('../modules/Storage');
+
+		const Storage = require('./Storage');
 		print("ÿc4MiniShopBotÿc0: Scanning " + npc.itemcount + " items.");
 
 		do {
@@ -913,14 +915,46 @@
 			}
 		} while (item.getNext());
 
-		for (i = 0; i < items.length; i += 1) {
+
+		// Give the pickit hooks a chance to buy items
+		Pickit.hooks.filter(hook => hook && (typeof hook === 'function' || typeof hook === 'object')
+			&& hook.hasOwnProperty('shop') && typeof hook.shop === 'function')
+			// Only those that support it
+			.forEach(hook => {
+				const toBuy = hook.shop(items);
+
+				if (!Array.isArray(toBuy)) return;
+				console.debug(toBuy);
+
+				toBuy.filter(item => Storage.Inventory.CanFit(item) && me.getStat(14) + me.getStat(15) >= item.getItemCost(0))
+					.forEach(item => {
+
+						// first of all remove these items out of the
+						const index = items.indexOf(item);
+						if (index > -1) items.splice(index, 1);
+
+						// buy the item
+						item.buy();
+
+						Misc.itemLogger("Shopped", item);
+						Misc.logItem("Shopped", item, hook.id);
+
+						// tell the hook to deal with the item now that it's bought
+						hook.hasOwnProperty('handle') && hook.handle(item);
+					});
+			});
+
+
+		for (let i = 0; i < items.length; i += 1) {
 			result = Pickit.checkItem(items[i]);
 
-			if (result.result === 1) {
+			// if result is a string, its a pickit hook that wants to buy the item
+			if (result.result === 1 || typeof result.result === 'string') {
 				try {
 					if (Storage.Inventory.CanFit(items[i]) && me.getStat(14) + me.getStat(15) >= items[i].getItemCost(0)) {
 						Misc.itemLogger("Shopped", items[i]);
 						Misc.logItem("Shopped", items[i], result.line);
+
 						items[i].buy();
 					}
 				} catch (e) {
@@ -938,7 +972,7 @@
 		if (!Town.needGamble() || Config.GambleItems.length === 0) {
 			return true;
 		}
-		const Pickit = require('../modules/Pickit');
+		const Pickit = require('./Pickit');
 
 		var i, item, items, npc, newItem, result,
 			list = [];
@@ -978,7 +1012,7 @@
 		while (items && items.length > 0) {
 			list.push(items.shift().gid);
 		}
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		while (me.gold >= Config.GambleGoldStop) {
 			if (!getInteractedNPC()) {
 				npc.startTrade("Gamble");
@@ -1094,7 +1128,7 @@
 	};
 
 	Town.checkKeys = function () {
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		if (!Config.OpenChests || me.classid === 6 || me.gold < 540 || (!me.getItem("key") && !Storage.Inventory.CanFit({
 			sizex: 1,
 			sizey: 1
@@ -1195,7 +1229,7 @@
 	Town.cubeRepairItem = function (item) {
 		var i, rune, cubeItems,
 			bodyLoc = item.bodylocation;
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		if (item.mode !== 1) {
 			return false;
 		}
@@ -1475,7 +1509,7 @@
 			if (Config.MercWatch) { // Cast BO on merc so he doesn't just die again
 				print("MercWatch precast");
 				Pather.useWaypoint("random");
-				require('../modules/Precast')();
+				require('./Precast')();
 				Pather.useWaypoint(preArea);
 			}
 
@@ -1512,7 +1546,7 @@
 
 	Town.canStash = function (item) {
 		var ignoredClassids = [91, 174]; // Some quest items that have to be in inventory or equipped
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		if (ignoredItemTypes.indexOf(item.itemType) > -1 || ignoredClassids.indexOf(item.classid) > -1 || !Storage.Stash.CanFit(item)) {
 			return false;
 		}
@@ -1524,9 +1558,9 @@
 		if (!Town.needStash()) {
 			return true;
 		}
-		const Pickit = require('../modules/Pickit');
+		const Pickit = require('./Pickit');
 		me.cancel();
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		const items = Storage.Inventory.Compare(Config.Inventory);
 
 		if (items) {
@@ -1576,7 +1610,7 @@
 		if (Config.StashGold && me.getStat(14) >= Config.StashGold && me.getStat(15) < 25e5) {
 			return true;
 		}
-		const Storage = require('../modules/Storage');
+		const Storage = require('./Storage');
 		var i,
 			items = Storage.Inventory.Compare(Config.Inventory);
 
@@ -1629,7 +1663,7 @@
 	};
 
 	Town.getCorpse = function () {
-		const CollMap = require('../modules/CollMap');
+		const CollMap = require('./CollMap');
 		var i, corpse, gid, coord,
 			corpseList = [],
 			timer = getTickCount();
@@ -1788,12 +1822,12 @@
 	Town.clearScrolls = function () {
 		// drop scrolls, unless it is in pickit
 		let scrolls = me.getItemsEx()
-				.filter(i => 
-					i.location === sdk.storage.Inventory &&
-					i.mode === sdk.itemmode.inStorage &&
-					i.itemType === 22 &&
-					require('Pickit').checkItem(i).result == 0
-				);
+			.filter(i =>
+				i.location === sdk.storage.Inventory &&
+				i.mode === sdk.itemmode.inStorage &&
+				i.itemType === 22 &&
+				require('Pickit').checkItem(i).result == 0
+			);
 
 		for (var i = 0; i < scrolls.length; i += 1) {
 			if (getUIFlag(0xC) || (Config.PacketShopping && getInteractedNPC() && getInteractedNPC().itemcount > 0)) { // Might as well sell the item if already in shop
@@ -1809,6 +1843,7 @@
 	};
 
 	Town.clearInventory = function () {
+
 		var i, col, result, item, beltSize,
 			items = [];
 		const Storage = require('Storage');
@@ -1950,7 +1985,7 @@
 		return true;
 	};
 
-	const act = [{}, {}, {}, {}, {}];
+	Town.ActData = [{}, {}, {}, {}, {}];
 
 	Town.initialize = function () {
 		//print("Initialize town " + me.act);
@@ -1967,77 +2002,77 @@
 
 				fire = [fireUnit.roomx * 5 + fireUnit.x, fireUnit.roomy * 5 + fireUnit.y];
 
-				act[0].spot = {};
-				act[0].spot.stash = [fire[0] - 7, fire[1] - 12];
-				act[0].spot[NPC.Warriv] = [fire[0] - 5, fire[1] - 2];
-				act[0].spot[NPC.Cain] = [fire[0] + 6, fire[1] - 5];
-				act[0].spot[NPC.Kashya] = [fire[0] + 14, fire[1] - 4];
-				act[0].spot[NPC.Akara] = [fire[0] + 56, fire[1] - 30];
-				act[0].spot[NPC.Charsi] = [fire[0] - 39, fire[1] - 25];
-				act[0].spot[NPC.Gheed] = [fire[0] - 34, fire[1] + 36];
-				act[0].spot.portalspot = [fire[0] + 10, fire[1] + 18];
-				act[0].spot.waypoint = [wp.roomx * 5 + wp.x, wp.roomy * 5 + wp.y];
-				act[0].initialized = true;
+				Town.ActData[0].spot = {};
+				Town.ActData[0].spot.stash = [fire[0] - 7, fire[1] - 12];
+				Town.ActData[0].spot[NPC.Warriv] = [fire[0] - 5, fire[1] - 2];
+				Town.ActData[0].spot[NPC.Cain] = [fire[0] + 6, fire[1] - 5];
+				Town.ActData[0].spot[NPC.Kashya] = [fire[0] + 14, fire[1] - 4];
+				Town.ActData[0].spot[NPC.Akara] = [fire[0] + 56, fire[1] - 30];
+				Town.ActData[0].spot[NPC.Charsi] = [fire[0] - 39, fire[1] - 25];
+				Town.ActData[0].spot[NPC.Gheed] = [fire[0] - 34, fire[1] + 36];
+				Town.ActData[0].spot.portalspot = [fire[0] + 10, fire[1] + 18];
+				Town.ActData[0].spot.waypoint = [wp.roomx * 5 + wp.x, wp.roomy * 5 + wp.y];
+				Town.ActData[0].initialized = true;
 
 				break;
 			case 2:
-				act[1].spot = {};
-				act[1].spot[NPC.Fara] = [5124, 5082];
-				act[1].spot[NPC.Cain] = [5124, 5082];
-				act[1].spot[NPC.Lysander] = [5118, 5104];
-				act[1].spot[NPC.Greiz] = [5033, 5053];
-				act[1].spot[NPC.Elzix] = [5032, 5102];
-				act[1].spot.palace = [5088, 5153];
-				act[1].spot.sewers = [5221, 5181];
-				act[1].spot[NPC.Meshif] = [5205, 5058];
-				act[1].spot[NPC.Drognan] = [5097, 5035];
-				act[1].spot[NPC.Atma] = [5137, 5060];
-				act[1].spot[NPC.Warriv] = [5152, 5201];
-				act[1].spot.portalspot = [5168, 5060];
-				act[1].spot.stash = [5124, 5076];
-				act[1].spot.waypoint = [5070, 5083];
-				act[1].initialized = true;
+				Town.ActData[1].spot = {};
+				Town.ActData[1].spot[NPC.Fara] = [5124, 5082];
+				Town.ActData[1].spot[NPC.Cain] = [5124, 5082];
+				Town.ActData[1].spot[NPC.Lysander] = [5118, 5104];
+				Town.ActData[1].spot[NPC.Greiz] = [5033, 5053];
+				Town.ActData[1].spot[NPC.Elzix] = [5032, 5102];
+				Town.ActData[1].spot.palace = [5088, 5153];
+				Town.ActData[1].spot.sewers = [5221, 5181];
+				Town.ActData[1].spot[NPC.Meshif] = [5205, 5058];
+				Town.ActData[1].spot[NPC.Drognan] = [5097, 5035];
+				Town.ActData[1].spot[NPC.Atma] = [5137, 5060];
+				Town.ActData[1].spot[NPC.Warriv] = [5152, 5201];
+				Town.ActData[1].spot.portalspot = [5168, 5060];
+				Town.ActData[1].spot.stash = [5124, 5076];
+				Town.ActData[1].spot.waypoint = [5070, 5083];
+				Town.ActData[1].initialized = true;
 
 				break;
 			case 3:
-				act[2].spot = {};
-				act[2].spot[NPC.Meshif] = [5118, 5168];
-				act[2].spot[NPC.Hratli] = [5223, 5048, 5127, 5172];
-				act[2].spot[NPC.Ormus] = [5129, 5093];
-				act[2].spot[NPC.Asheara] = [5043, 5093];
-				act[2].spot[NPC.Alkor] = [5083, 5016];
-				act[2].spot[NPC.Cain] = [5148, 5066];
-				act[2].spot.stash = [5144, 5059];
-				act[2].spot.portalspot = [5150, 5063];
-				act[2].spot.waypoint = [5158, 5050];
-				act[2].initialized = true;
+				Town.ActData[2].spot = {};
+				Town.ActData[2].spot[NPC.Meshif] = [5118, 5168];
+				Town.ActData[2].spot[NPC.Hratli] = [5223, 5048, 5127, 5172];
+				Town.ActData[2].spot[NPC.Ormus] = [5129, 5093];
+				Town.ActData[2].spot[NPC.Asheara] = [5043, 5093];
+				Town.ActData[2].spot[NPC.Alkor] = [5083, 5016];
+				Town.ActData[2].spot[NPC.Cain] = [5148, 5066];
+				Town.ActData[2].spot.stash = [5144, 5059];
+				Town.ActData[2].spot.portalspot = [5150, 5063];
+				Town.ActData[2].spot.waypoint = [5158, 5050];
+				Town.ActData[2].initialized = true;
 
 				break;
 			case 4:
-				act[3].spot = {};
-				act[3].spot[NPC.Cain] = [5027, 5027];
-				act[3].spot[NPC.Halbu] = [5089, 5031];
-				act[3].spot[NPC.Tyrael] = [5027, 5027];
-				act[3].spot[NPC.Jamella] = [5088, 5054];
-				act[3].spot.stash = [5022, 5040];
-				act[3].spot.portalspot = [5045, 5042];
-				act[3].spot.waypoint = [5043, 5018];
-				act[3].initialized = true;
+				Town.ActData[3].spot = {};
+				Town.ActData[3].spot[NPC.Cain] = [5027, 5027];
+				Town.ActData[3].spot[NPC.Halbu] = [5089, 5031];
+				Town.ActData[3].spot[NPC.Tyrael] = [5027, 5027];
+				Town.ActData[3].spot[NPC.Jamella] = [5088, 5054];
+				Town.ActData[3].spot.stash = [5022, 5040];
+				Town.ActData[3].spot.portalspot = [5045, 5042];
+				Town.ActData[3].spot.waypoint = [5043, 5018];
+				Town.ActData[3].initialized = true;
 
 				break;
 			case 5:
-				act[4].spot = {};
-				act[4].spot.portalspot = [5098, 5019];
-				act[4].spot.stash = [5129, 5061];
-				act[4].spot[NPC.Larzuk] = [5141, 5045];
-				act[4].spot[NPC.Malah] = [5078, 5029];
-				act[4].spot[NPC.Cain] = [5119, 5061];
-				act[4].spot[NPC.Qual_Kehk] = [5066, 5083];
-				act[4].spot[NPC.Anya] = [5112, 5120];
-				act[4].spot.portal = [5118, 5120];
-				act[4].spot.waypoint = [5113, 5068];
-				act[4].spot[NPC.Nihlathak] = [5071, 5111];
-				act[4].initialized = true;
+				Town.ActData[4].spot = {};
+				Town.ActData[4].spot.portalspot = [5098, 5019];
+				Town.ActData[4].spot.stash = [5129, 5061];
+				Town.ActData[4].spot[NPC.Larzuk] = [5141, 5045];
+				Town.ActData[4].spot[NPC.Malah] = [5078, 5029];
+				Town.ActData[4].spot[NPC.Cain] = [5119, 5061];
+				Town.ActData[4].spot[NPC.Qual_Kehk] = [5066, 5083];
+				Town.ActData[4].spot[NPC.Anya] = [5112, 5120];
+				Town.ActData[4].spot.portal = [5118, 5120];
+				Town.ActData[4].spot.waypoint = [5113, 5068];
+				Town.ActData[4].spot[NPC.Nihlathak] = [5071, 5111];
+				Town.ActData[4].initialized = true;
 
 				break;
 		}
@@ -2052,7 +2087,7 @@
 
 		var i, path;
 
-		if (!act[me.act - 1].initialized) {
+		if (!Town.ActData[me.act - 1].initialized) {
 			Town.initialize();
 		}
 
@@ -2080,12 +2115,12 @@
 		var i, path, townSpot,
 			longRange = (spot === "waypoint");
 
-		if (!act[me.act - 1].hasOwnProperty("spot") || !act[me.act - 1].spot.hasOwnProperty(spot)) {
+		if (!Town.ActData[me.act - 1].hasOwnProperty("spot") || !Town.ActData[me.act - 1].spot.hasOwnProperty(spot)) {
 			return false;
 		}
 
-		if (typeof (act[me.act - 1].spot[spot]) === "object") {
-			townSpot = act[me.act - 1].spot[spot];
+		if (typeof (Town.ActData[me.act - 1].spot[spot]) === "object") {
+			townSpot = Town.ActData[me.act - 1].spot[spot];
 		} else {
 			return false;
 		}
@@ -2225,6 +2260,8 @@
 		80, // Antidote Potion
 		81 // Thawing Potion
 	]
+
+	// Town.ActData = act;
 	module.exports = Town;
 })
 (module, require);

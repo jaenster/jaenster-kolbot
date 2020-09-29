@@ -16,6 +16,8 @@
 	function AutoMagicFind(Config, Attack, Pickit, Pather, Town, Misc) {
 		const Promise = require('../modules/Promise');
 		const GameData = require('../modules/GameData');
+		const AreaData = require('../modules/AreaData');
+
 		//const excluded = [0, 133, sdk.areas.MaggotLairLvl1, sdk.areas.MaggotLairLvl2, sdk.areas.MaggotLairLvl3, 134, 135, 136, sdk.areas.AncientsWay, sdk.areas.MooMooFarm];
 		const level85 = [sdk.areas.Mausoleum, sdk.areas.PitLvl1, sdk.areas.PitLvl2, sdk.areas.AncientTunnels, sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary, sdk.areas.RiverOfFlame, sdk.areas.ChaosSanctuary, sdk.areas.WorldstoneLvl1, sdk.areas.WorldstoneLvl2, sdk.areas.WorldstoneLvl3, sdk.areas.ThroneOfDestruction];
 		// const level85 = [sdk.areas.ForgottenTemple, sdk.areas.RuinedFane, sdk.areas.DisusedReliquary, sdk.areas.RiverOfFlame, sdk.areas.ChaosSanctuary, sdk.areas.WorldstoneLvl1, sdk.areas.WorldstoneLvl2, sdk.areas.WorldstoneLvl3, sdk.areas.ThroneOfDestruction];
@@ -50,10 +52,10 @@
 				bosses[x].effort = typeof effort === 'object' && effort && effort.effort || 5;
 				bosses[x].effort /= 100; // bosses are less effort as an entire area, so tweak it a bit
 			}
-			bosses[x].area = GameData.AreaData[bosses[x].location.area];
+			bosses[x].area = AreaData[bosses[x].location.area];
 			bosses[x].name = x;
 		});
-		let areas = GameData.AreaData.map(area => ({
+		let areas = AreaData.map(area => ({
 			area: area,
 			isBoss: false,
 			effort: me.diff < 2 ? GameData.areaSoloExp(area.Index) : GameData.areaEffort(area.Index)

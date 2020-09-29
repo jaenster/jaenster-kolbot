@@ -2407,6 +2407,8 @@ let sdk = {
         BookOfSkill: 552,
         tpScroll: 529,
         idScroll: 530,
+        arrows: 526,
+        bolts: 528
     },
     unittype: {
         Player: 0,
@@ -2417,9 +2419,21 @@ let sdk = {
         Item: 4,
         Stairs: 5, // ToDo: might be more as stairs
     },
+    itemquality: {
+        lowquality: 1,
+        normal: 2,
+        superior: 3,
+        magic: 4,
+        set: 5,
+        rare: 6,
+        unique: 7,
+        crafted: 8,
+    },
     itemtype: {
         gold: 4,
         scroll: 22,
+        bow: 27,
+        crossbow: 35,
         key: 41,
         sc: 82,
         lc: 83,

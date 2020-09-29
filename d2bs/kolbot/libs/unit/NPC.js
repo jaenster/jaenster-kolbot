@@ -1,12 +1,7 @@
-
-
 // Open NPC menu
 Unit.prototype.openMenu = function (addDelay) {
-	const Config = require('../modules/Config');
-	const Packet = require('../modules/PacketHelpers');
-	if (Config.PacketShopping) {
-		return Packet.openMenu(this);
-	}
+	const Pather = require('../modules/Pather');
+	const Misc = require('../modules/Misc');
 
 	if (this.type !== 1) {
 		throw new Error("Unit.openMenu: Must be used on NPCs.");
@@ -22,8 +17,6 @@ Unit.prototype.openMenu = function (addDelay) {
 
 	var i, tick;
 
-	const Pather = require('../modules/Pather');
-	const Misc = require('../modules/Misc');
 	for (i = 0; i < 5; i += 1) {
 		if (getDistance(me, this) > 4) {
 			Pather.moveToUnit(this);
@@ -34,12 +27,12 @@ Unit.prototype.openMenu = function (addDelay) {
 
 		while (getTickCount() - tick < 5000) {
 			if (getUIFlag(0x08)) {
-				// delay(Math.max(700 + me.ping, 500 + me.ping * 2 + addDelay * 500));
-				delay(addDelay || 3);
+				delay(Math.max(700 + me.ping, 500 + me.ping * 2 + addDelay * 500));
+
 				return true;
 			}
 
-			if (getInteractedNPC() && getTickCount() - tick > 1000) {
+			if (getInteractedNPC()) {
 				me.cancel();
 			}
 
@@ -47,21 +40,55 @@ Unit.prototype.openMenu = function (addDelay) {
 		}
 
 		sendPacket(1, 0x2f, 4, 1, 4, this.gid);
-		delay(me.ping * 2);
+		delay(me.ping * 2 + 1);
 		sendPacket(1, 0x30, 4, 1, 4, this.gid);
-		delay(me.ping * 2);
+		delay(me.ping * 2 + 1);
 	}
 
 	return false;
+};
+
+// Open NPC menu
+Unit.prototype.__openMenu = function () {
+
+	// Normal openMenu checks for Packet handler, we can do this with packets anyway
+
+	// ensure we are close to the motherfucker
+
+	for (let i = 0; i < 10 && !getUIFlag(0x08/*NPCMenu*/); i++) {
+		i && print('Talking to npc attempt #' + i);
+		if (this.distance > 2) this.moveTo();
+
+		// Wait until we are idle
+		while (!me.idle) delay(10);
+
+		clickMap(0, 0, this); // Click ON the npc (might walk to it if it moves too)
+
+		// give a bit of time for the state to popup
+		let tick = getTickCount();
+		while (!getUIFlag(8/*NPCMenu*/) && getTickCount() - tick < Math.min(Math.max((me.ping || 1) * 10, 400), 100)) delay(3);
+
+		// if we are interacting with the npc, but we find no selectable text,
+		if (!getUIFlag(8/*NPCMenu*/) && getInteractedNPC() && !getDialogLines() && !getUIFlag(0x0C/*not shopping*/)) {
+
+			print('seems like its just text, cancel that shit');
+			// we can assume we are listing to some boring story, cancel that shit
+			me.cancel();
+			delay(100); // give it all a sec
+		}
+	}
+
+	print('opened the menu');
+	return !!(getUIFlag(0x08/*NPCMenu*/) && getDialogLines())
 };
 
 // mode = "Gamble", "Repair" or "Shop"
 Unit.prototype.startTrade = function (mode) {
 	const Config = require('../modules/Config');
 	const Packet = require('../modules/PacketHelpers');
-	if (Config.PacketShopping) {
-		return Packet.startTrade(this, mode);
-	}
+	// if (Config.PacketShopping) {
+	// 	return Packet.startTrade(this, mode);
+	// }
 
 	if (this.type !== 1) {
 		throw new Error("Unit.startTrade: Must be used on NPCs.");

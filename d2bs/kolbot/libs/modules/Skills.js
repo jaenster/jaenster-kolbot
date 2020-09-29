@@ -213,7 +213,32 @@
 				return new Proxy({}, {
 					get: function (target, skillId) {
 						skillId = parseInt(skillId);
-						return ([
+						switch (skillId) {
+							case 0: // Normal Attack
+							case 96: // Sacrifice
+							case 97: // Smite
+							case 106: // Zeal
+							case 116: // Conversion
+							case 126: // Bash
+							case 133: // Double Swing
+							case 139: // Stun
+							case 144: // Concentrate
+							case 147: // Frenzy
+							case 152: // Berserk
+							case 232: // Feral Rage
+							case 233: // Maul
+							case 238: // Rabies
+							case 239: // Fire Claws
+							case 242: // Hunger
+							case 248: // Fury
+							case 255: // Dragon Talon
+							case 260: // Dragon Claw
+							case 270: // Dragon Tail
+								return 2; // Shift bypass
+							default:
+								return (getBaseStat(3, skillId, "leftskill") || 0);
+						}
+						/*return ([
 							[
 								6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30,
 								31, 33, 34, 35, 36, 37, 38, 39, 41, 45, 47, 49, 53, 55, 61, 63, 64, 65, 67, 73, 79,
@@ -225,6 +250,7 @@
 								232, 233, 238, 239, 242, 248, 255, 260, 270
 							]
 						].findIndex(x => x.indexOf(skillId) > -1) || 0) + 1;
+						*/
 					},
 				});
 			}
@@ -258,7 +284,8 @@
 			get: function () {
 				return new Proxy({}, {
 					get: function (target, skillId) {
-						return [32, 40, 43, 50, 52, 58, 60, 68, 75, 85, 94, 117, 221, 222, 226, 227, 235, 236, 237, 246, 247, 258, 267, 268, 277, 278, 279].indexOf(parseInt(skillId)) > -1;
+						return !!getBaseStat(3, skillId, "InTown");
+						/*return [32, 40, 43, 50, 52, 58, 60, 68, 75, 85, 94, 117, 221, 222, 226, 227, 235, 236, 237, 246, 247, 258, 267, 268, 277, 278, 279].indexOf(parseInt(skillId)) > -1;*/
 					}
 				})
 			}

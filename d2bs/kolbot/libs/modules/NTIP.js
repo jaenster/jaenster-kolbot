@@ -369,6 +369,10 @@
                 		p_result[0] += "item.skinCode";
 
 						break;
+					case 'distance':
+						p_result[0] += "(item.mode !== 3 && item.mode !== 5 && item.distance||0)";
+
+						break;
 					default:
 						Misc.errorReport("Unknown property: " + property + " File: " + info.file + " Line: " + info.line);
 

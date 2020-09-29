@@ -5,8 +5,7 @@
  */
 
 (function (module, require) {
-	const Config = require('../modules/Config'),
-		Storage = require('../modules/Storage'),
+	const Storage = require('../modules/Storage'),
 		NTIP = require('../modules/NTIP'),
 		Misc = require('../modules/Misc'),
 		Town = require('../modules/Town'),
@@ -15,7 +14,9 @@
 
 	const Pather = require('../modules/Pather');
 
-	const Pickit = {};
+	/** @class Pickit*/
+	const Pickit = function Pickit() {
+	};
 
 	// Returns:
 	// -1 - Needs iding
@@ -23,21 +24,36 @@
 	// 4 - Pickup to sell (triggered when low on gold)
 	// "module_name" - If module module_name wants it
 	Pickit.checkItem = function (unit) {
-		const rval = NTIP.CheckItem(unit, false, true);
+		const parent = unit.getParent();
 
-		const wantedByHook = unit instanceof Unit && Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
-		if (wantedByHook) { // If wanted by a hook
-			return {
-				result: wantedByHook.id,
-				line: null,
+		// Dont hook on vendorable items
+		if (!parent || parent.gid !== getInteractedNPC().gid) {
+			const wantedByHook = unit instanceof Unit && Pickit.hooks.find(hook => (typeof hook === 'function' || typeof hook === 'object') && hook.hasOwnProperty('want') && hook.want(unit));
+
+			let hookResult, i = 0, hook;
+			for (let l = Pickit.hooks.length; i < l && !hookResult; i++) {
+				hook = Pickit.hooks[i];
+				if (hook && (typeof hook === 'function' || typeof hook === 'object')) {
+					hookResult = hook.hasOwnProperty('want') && hook.want(unit);
+				}
+			}
+
+			if (wantedByHook) { // If wanted by a hook
+				return { // Hook wants to identify the item?
+					result: hookResult === -1 ? -1 : hook.id,
+					line: hook.id,
+					hook: hook,
+				}
 			}
 		}
+
+		const rval = NTIP.CheckItem(unit, false, true);
 
 		// If total gold is less than 10k pick up anything worth 10 gold per
 		// square to sell in town.
 		if (rval.result === 0 && Town.ignoredItemTypes.indexOf(unit.itemType) === -1 && me.gold < Config.LowGold && unit.itemType !== 39) {
 			// Gold doesn't take up room, just pick it up
-			if (unit.classid === 523) {
+			if (unit.classid === 523 && unit.distance < 5) {
 				return {
 					result: 4,
 					line: null
@@ -55,6 +71,7 @@
 		return rval;
 	};
 
+	const madeRoom = {};
 	Pickit.pickItems = function () {
 		var status, item, canFit,
 			needMule = false,
@@ -89,48 +106,62 @@
 			// Check if the item unit is still valid and if it's on ground or being dropped
 			if (copyUnit(pickList[0]).x !== undefined && (pickList[0].mode === 3 || pickList[0].mode === 5) &&
 				(Pather.useTeleport() || me.inTown || !checkCollision(me, pickList[0], 0x1))) { // Don't pick items behind walls/obstacles when walking
+
+				item = pickList[0];
+
+				// check if we picked this item before
+
 				// Check if the item should be picked
-				status = this.checkItem(pickList[0]);
-				if (status.result && this.canPick(pickList[0])) {
+
+					status = this.checkItem(item);
+
+
+				if (status.result && this.canPick(item)) {
 					// Override canFit for scrolls, potions and gold
-					canFit = Storage.Inventory.CanFit(pickList[0]) || [4, 22, 76, 77, 78].indexOf(pickList[0].itemType) > -1;
+					canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
 
-					// Try to make room with FieldID
-					if (!canFit && Config.FieldID && Town.fieldID()) {
-						canFit = Storage.Inventory.CanFit(pickList[0]) || [4, 22, 76, 77, 78].indexOf(pickList[0].itemType) > -1;
-					}
+					typeof madeRoom[item.gid] === 'undefined' && (madeRoom[item.gid]=0);
+					if (madeRoom[item.gid] < 2) {
 
-					// Try to make room by selling items in town
-					if (!canFit) {
-						// Check if any of the current inventory items can be stashed or need to be identified and eventually sold to make room
-						if (this.canMakeRoom()) {
-							print("ÿc7Trying to make room for " + this.itemColor(pickList[0]) + pickList[0].name);
-
-							if (Config.FieldID) {
-								// We id in the field
-								Town.fieldID();
-								continue; // Re do the loop
-							} else {
-
-								// Go to town and do town chores
-								if (Town.visitTown()) {
-									// Recursive check after going to town. We need to remake item list because gids can change.
-									// Called only if room can be made so it shouldn't error out or block anything.
-
-									return this.pickItems();
-								}
-							}
-
-							// Town visit failed - abort
-							print("ÿc7Not enough room for " + this.itemColor(pickList[0]) + pickList[0].name);
-
-							return false;
+						madeRoom[item.gid]++;
+						// Try to make room with FieldID
+						if (!canFit && Config.FieldID && Town.fieldID()) {
+							canFit = Storage.Inventory.CanFit(item) || [4, 22, 76, 77, 78].indexOf(item.itemType) > -1;
 						}
-					}
 
-					// Item can fit - pick it up
-					if (canFit) {
-						this.pickItem(pickList[0], status.result, status.line);
+						// Try to make room by selling items in town
+						if (!canFit) {
+							// Check if any of the current inventory items can be stashed or need to be identified and eventually sold to make room
+							if (this.canMakeRoom()) {
+								console.debug("ÿc7Trying to make room for " + this.itemColor(item) + item.name);
+
+								if (Config.FieldID) {
+									// We id in the field
+									Town.fieldID();
+									continue; // Re do the loop
+								} else {
+
+									// Go to town and do town chores
+									if (Town.visitTown()) {
+										// Recursive check after going to town. We need to remake item list because gids can change.
+										// Called only if room can be made so it shouldn't error out or block anything.
+
+										return this.pickItems();
+									}
+								}
+
+								// Town visit failed - abort
+								print("ÿc7Not enough room for " + this.itemColor(item) + item.name);
+
+								return false;
+							}
+						}
+
+						// Item can fit - pick it up
+						if (canFit) {
+							this.pickItem(item, status.result, status.line);
+						}
+
 					}
 				}
 			}
@@ -152,6 +183,16 @@
 		if (items) {
 			for (i = 0; i < items.length; i += 1) {
 				const item = items[i];
+
+				//ToDo; what if you got multiple books?
+				if (item.itemType === 18) {
+					// Dont throw a book
+					let otherBook = (me.getItems() || []).filter(el => el.classid === item.classid).first();
+
+					// the _first_ book of a kind we keep[
+					if (otherBook.gid === item.gid) continue;
+				}
+
 				const result = this.checkItem(item).result;
 				const hook = Pickit.hooks.find(hook => result === hook.id);
 				if (hook) {
@@ -195,6 +236,9 @@
 		return false;
 	};
 
+	Pickit.useTK = (unit, _self) => me.classid === 1 && me.getSkill(43, 1) && (_self.type === 4 || _self.type === 22 || (_self.type > 75 && _self.type < 82)) &&
+		unit.distance > 5 && unit.distance < 20 && !checkCollision(me, unit, 0x4);
+
 	Pickit.pickItem = function (unit, status, keptLine) {
 		function ItemStats(unit) {
 			this.ilvl = unit.ilvl;
@@ -203,8 +247,7 @@
 			this.name = unit.name;
 			this.color = Pickit.itemColor(unit);
 			this.gold = unit.getStat(14);
-			this.useTk = me.classid === 1 && me.getSkill(43, 1) && (this.type === 4 || this.type === 22 || (this.type > 75 && this.type < 82)) &&
-				unit.distance > 5 && unit.distance < 20 && !checkCollision(me, unit, 0x4);
+			this.useTk = Pickit.useTK(unit, this);
 			this.picked = false;
 		}
 
@@ -265,6 +308,7 @@
 
 					if (stats.classid === 523) {
 						if (!item.getStat(14) || item.getStat(14) < stats.gold) {
+							console.debug(status, keptLine);
 							print("ÿc7Picked up " + stats.color + (item.getStat(14) ? (item.getStat(14) - stats.gold) : stats.gold) + " " + stats.name);
 
 							return true;

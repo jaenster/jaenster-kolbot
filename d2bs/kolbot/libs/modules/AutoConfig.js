@@ -73,7 +73,7 @@
 		Config.CainID.Enable = me.act === 4; // Only if we start in act4. Its quicker, otherwise it ain't.
 		Config.CainID.MinGold = 2500000;
 		Config.CainID.MinUnids = 3;
-		Config.FieldID = true; //ToDo; if we have a tomb
+		Config.FieldID = false; //ToDo; if we have a tomb
 		Config.DroppedItemsAnnounce.Enable = false;
 		Config.DroppedItemsAnnounce.Quality = [];
 	};
@@ -114,9 +114,13 @@
 
 	//ToDo; Do something with this. For now 4 rows of rv pots to avoid belt clearance
 	AutoConfig.Belt = function () {
-		let [b, m] = [Config.BeltColumn, Config.MinColumn];
-		for (let i = 0; i < 4; i++) (b[i] = i === 0 && 'hp' || i === 1 && 'mp' || 'rv') && (m[i] = b[i] !== 'rv' && 3 || 0);
-		[Config.BeltColumn, Config.MinColumn] = [b, m];
+		if (me.charlvl === 1) {
+			Config.BeltColumn = ['hp','hp','hp','hp'];
+		} else {
+			let [b, m] = [Config.BeltColumn, Config.MinColumn];
+			for (let i = 0; i < 4; i++) (b[i] = i === 0 && 'hp' || i === 1 && 'mp' || 'rv') && (m[i] = b[i] !== 'rv' && 3 || 0);
+			[Config.BeltColumn, Config.MinColumn] = [b, m];
+		}
 	};
 
 

@@ -9,13 +9,13 @@
 global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 	function GeneticAlgorithmAttack(Config, Attack, Pickit, Pather, Town, Misc) {
 
-		let PresetMonsters = GameData.PresetMonsters;
-		let AreaData = GameData.AreaData;
+		let PresetMonsters = require('../modules/PresetMonstersData');
+		let AreaData = require('../modules/AreaData');
+		let MissilesData = require('../modules/MissilesData');
 		let ping = me.ping;
 		myPrint("ping : " + ping);
 
 		let realFCR = me.getStat(105) - Config.FCR;
-		let fcrFrames = GameData.FCRFrames(realFCR, me.classid);
 
 		/* PresetMonsters[presetUnit.id] =
 	"Index":149,
@@ -401,29 +401,29 @@ global['GeneticAlgorithmAttack'] = (function (GameData, Skills, Config) {
 				break;
 
 			case sdk.unittype.Monsters:
-				this.walkingPPF = GameData.PresetMonsters[unit.classid].Velocity;
-				this.runningPPF = GameData.PresetMonsters[unit.classid].Velocity + GameData.PresetMonsters[unit.classid].Run;
+				this.walkingPPF = PresetMonsters[unit.classid].Velocity;
+				this.runningPPF = PresetMonsters[unit.classid].Velocity + PresetMonsters[unit.classid].Run;
 				this.walkingPPS = this.walkingPPF * 25;
 				this.runningPPS = this.runningPPF * 25;
 				this.walkingYPS = this.walkingPPS / 32;
 				this.runningYPS = this.runningPPS / 32;
 				this.walkingYPF = this.walkingPPF / 32;
 				this.runningYPF = this.runningPPF / 32;
-				this.xsize = GameData.PresetMonsters[unit.classid].SizeX;
-				this.ysize = GameData.PresetMonsters[unit.classid].SizeY;
+				this.xsize = PresetMonsters[unit.classid].SizeX;
+				this.ysize = PresetMonsters[unit.classid].SizeY;
 				break;
 
 			case sdk.unittype.Missiles:
-				this.walkingPPF = GameData.MissilesData[unit.classid].Velocity;
-				this.runningPPF = GameData.MissilesData[unit.classid].Velocity;
+				this.walkingPPF = MissilesData[unit.classid].Velocity;
+				this.runningPPF = MissilesData[unit.classid].Velocity;
 				this.walkingPPS = this.walkingPPF * 25;
 				this.runningPPS = this.runningPPF * 25;
 				this.walkingYPS = this.walkingPPS / 32;
 				this.runningYPS = this.runningPPS / 32;
 				this.walkingYPF = this.walkingPPF / 32;
 				this.runningYPF = this.runningPPF / 32;
-				this.xsize = GameData.MissilesData[unit.classid].Size;
-				this.ysize = GameData.MissilesData[unit.classid].Size;
+				this.xsize = MissilesData[unit.classid].Size;
+				this.ysize = MissilesData[unit.classid].Size;
 				break;
 
 			default:

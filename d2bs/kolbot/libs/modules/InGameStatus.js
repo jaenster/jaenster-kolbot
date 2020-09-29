@@ -42,7 +42,7 @@
 		};
 
 		Delta.track(() => {
-			let parts = [
+			let parts = !me.gameReady ? [] : [
 				// Level: 89 (25.35%)
 				'Level: ' + me.charlvl + ' (' + (me.charlvl !== 99 && (((me.getStat(sdk.stats.Experience) - Experience.totalExp[me.charlvl]) / Experience.nextExp[me.charlvl]) * 100).toFixed(2) || 0).toString() + '%)',
 				// Area: Cold Plains
@@ -51,7 +51,7 @@
 				'Time: ' + timer(),
 				'Script: ' + Loader.scriptList[Loader.scriptIndex],
 				// Gold: 1523343
-				'Gold: ' + me.getStat(sdk.stats.Gold),
+				'Gold: ' + me.getStat(sdk.stats.Gold) + me.getStat(sdk.stats.Goldbank),
 				// Hell
 				['Normal', 'Nightmare', 'Hell'][me.diff],
 			];

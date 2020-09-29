@@ -6,29 +6,34 @@
 
 (function (module, require) {
 
-	const Loader = function (Config) {
+	const Loader = function () {
 		Loader.getScripts();
-		Loader.loadScripts(Config);
+		Loader.loadScripts();
 	};
 
 	Loader.fileList = [];
 	Loader.scriptList = [];
 	Loader.scriptIndex = -1;
-	Loader.skipTown = ["Test", "Follower"];
+	Loader.skipTown = ["Test", "Follower", 'AutoPlay'];
 
 	Loader.getScripts = function () {
-		var i,
-			fileList = dopen("libs/bots/").getFiles();
+		const Misc = require('./Misc');
+		const fileList = Misc.poll(() => {
+			const fileList = dopen("libs/bots/").getFiles();
 
-		for (i = 0; i < fileList.length; i += 1) {
+			if (fileList && fileList.length) return fileList;
+			console.debug('Failed to open libs/bots?');
+			return false;
+		}, 2000, 10);
+
+		for (let i = 0; i < fileList.length; i += 1) {
 			if (fileList[i].indexOf(".js") > -1) {
 				Loader.fileList.push(fileList[i].substring(0, fileList[i].indexOf(".js")));
 			}
 		}
 	};
 
-	Loader.loadScripts = function (Config) {
-		print(getScript(true).name.toString()+ ' --- '+(JSON.stringify(Config)));
+	Loader.loadScripts = function () {
 		const Scripts = Config.Scripts;
 		let s, script,
 			unmodifiedConfig = {};
@@ -36,7 +41,6 @@
 
 		if (!Loader.fileList.length) {
 			showConsole();
-
 			throw new Error("You don't have any valid scripts in bots folder.");
 		}
 
@@ -48,18 +52,16 @@
 
 		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
 			script = Loader.scriptList[Loader.scriptIndex];
-			Loader.runScript(script);
+			Loader.runScript(script, Config);
 		}
 	};
 	Loader.runScript = function (script) {
-		const Config = require('../modules/Config');
-		const Attack = require('../modules/Attack');
-		const Scripts = Config.Scripts;
-		const Pickit = require('../modules/Pickit');
-		const Messaging = require('../modules/Messaging');
-		const Town = require('../modules/Town');
-		const Misc = require('../modules/Misc');
-		const Pather = require('../modules/Pather');
+		const Attack = require('./Attack');
+		const Pickit = require('./Pickit');
+		const Messaging = require('./Messaging');
+		const Town = require('./Town');
+		const Misc = require('./Misc');
+		const Pather = require('./Pather');
 
 		let scriptModule;
 		try {

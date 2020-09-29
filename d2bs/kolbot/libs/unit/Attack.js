@@ -1,23 +1,23 @@
-(function (require, _delay) {
+(function (module, require, _delay) {
 	const Skills = require('../modules/Skills');
 	const Precast = require('../modules/Precast');
 	const GameData = require('../modules/GameData');
 	const Config = require('../modules/Config');
 	const Pickit = require('../modules/Pickit');
-	const ignoreMonster = [];
+	global['__________ignoreMonster'] = [];
 
-	Unit.prototype.clear = function (range, spectype,once=false) {
-		let start = [],startArea = me.area;
+	Unit.prototype.clear = function (range, spectype, once = false) {
+		let start = [], startArea = me.area;
 		//ToDo; keep track of the place we are at
 		const getUnits_filtered = () => getUnits(1, -1)
 			.filter(unit =>
-				ignoreMonster.indexOf(unit.gid) === -1 // Dont attack those we ignore
+				global['__________ignoreMonster'].indexOf(unit.gid) === -1 // Dont attack those we ignore
 				&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
 				&& unit.attackable // Dont attack those we cant attack
 				&& unit.area === me.area
 				&& (
 					start.length // If start has a length
-						? start.distance < range // If it has a range smaller as from the start point (when using me.clear)
+						? getDistance(start[0], start[1], unit) < range // If it has a range smaller as from the start point (when using me.clear)
 						: getDistance(this, unit) < range // if "me" move, the object doesnt move. So, check distance of object
 				)
 				&& !checkCollision(me, unit, 0x0)
@@ -33,7 +33,7 @@
 		if (me === this) start = [me.x, me.y];
 
 		while ((units = getUnits_filtered()).length) {
-			units.shift().attack() ;
+			units.shift().attack();
 			if (once || startArea !== me.area) return true;
 		}
 		return true;
@@ -121,7 +121,7 @@
 				sendPacket(1, (hand === 0) ? 0x11 : 0x0a, 4, this.type, 4, this.gid);
 			}
 			ensureState();
-			delay(GameData.castingDuration(skillId)*1000);
+			delay(GameData.castingDuration(skillId) * 1000);
 			return this;
 		}
 
@@ -149,32 +149,32 @@
 		}
 
 		MainLoop:
-		for (n = 0; n < 3; n += 1) {
-			if (this !== me) {
-				clickMap(clickType, shift, this);
-			} else {
-				clickMap(clickType, shift, x, y);
-			}
-
-			delay(20);
-
-			if (this !== me) {
-				clickMap(clickType + 2, shift, this);
-			} else {
-				clickMap(clickType + 2, shift, x, y);
-			}
-
-			for (i = 0; i < 8; i += 1) {
-				if (me.attacking) {
-					break MainLoop;
+			for (n = 0; n < 3; n += 1) {
+				if (this !== me) {
+					clickMap(clickType, shift, this);
+				} else {
+					clickMap(clickType, shift, x, y);
 				}
 
 				delay(20);
+
+				if (this !== me) {
+					clickMap(clickType + 2, shift, this);
+				} else {
+					clickMap(clickType + 2, shift, x, y);
+				}
+
+				for (i = 0; i < 8; i += 1) {
+					if (me.attacking) {
+						break MainLoop;
+					}
+
+					delay(20);
+				}
 			}
-		}
 
 		//ToDo; Deal with ias, if it is an melee attack
-		delay(GameData.castingDuration(skillId)*1000);
+		delay(GameData.castingDuration(skillId) * 1000);
 
 		ensureState();
 		return this;
@@ -187,12 +187,12 @@
 		const move = (sk = populatedAttack.skill) => {
 			if (this.distance > Skills.range[sk] || checkCollision(me, this, 0x4) || this.distance > 40) {
 				if (!this.getIntoPosition(Skills.range[sk] / 3 * 2, 0x4)) {
-					ignoreMonster.push(this.gid);
+					global['__________ignoreMonster'].push(this.gid);
 					return;
 				}
 			}
 			if (this.distance > 40) { // Still on high distance?
-				ignoreMonster.push(this.gid);
+				global['__________ignoreMonster'].push(this.gid);
 			}
 		};
 
@@ -201,7 +201,7 @@
 
 		if (!this.validSpot) {
 			print('INVALID SPOT -- ');
-			ignoreMonster.push(this.gid);
+			global['__________ignoreMonster'].push(this.gid);
 			return false;
 		}
 		let corpse, range;
@@ -358,7 +358,7 @@
 		print('Killing ' + this.name);
 		let counter = 1;
 		while (counter < 3000 && counter++ && this.attackable) if (!this.attack()) break;
-		this.attackable && ignoreMonster.push(this.gid);
+		this.attackable && global['__________ignoreMonster'].push(this.gid);
 	};
 
 	Unit.prototype.checkCorpse = function (revive) {
@@ -548,5 +548,28 @@
 		return false;
 	};
 
+	Unit.prototype.securePosition = function (range = 30, collision = 0x04, timer = 2000) {
+		let tick = 0;
+		do {
+			this.clear(35, false, undefined, undefined, () => {
+				let found = getUnits(1)
+					.filter(unit =>
+						global['__________ignoreMonster'].indexOf(unit.gid) === -1 // Dont attack those we ignore
+						&& unit.hp > 0 // Dont attack those that have no health (catapults and such)
+						&& unit.attackable // Dont attack those we cant attack
+						&& unit.area === me.area
+						&& !checkCollision(me, unit, collision)
+						&& getDistance(this.x, this.y, unit.x, unit.y) <= range
+					).sort((a, b) => b.distance - a.distance);
 
-})(require, delay);
+				if (found.length) {
+					// There is something to attack, aka it aint safe yet
+					tick = 0;
+				} else if (!found.length && !tick) {
+					tick = getTickCount();
+				}
+				return found;
+			}); // Clear around me
+		} while (!tick || getTickCount() - tick < timer)
+	};
+})(module, require, delay);

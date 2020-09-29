@@ -322,6 +322,7 @@ function main() {
 		return id || "";
 	};
 
+	let __nearestPresetLine;
 	// Event functions
 	this.keyEvent = function (key) {
 		switch (key) {
@@ -332,6 +333,10 @@ function main() {
 		case 123: // F12 key
 			me.overhead("Revealing " + Pather.getAreaName(me.area));
 			revealLevel(true);
+
+			console.debug(me.x+','+me.y);
+			copy('{x: '+me.x+',y: '+me.y+'}');
+
 
 			break;
 		case 107: // Numpad +
@@ -498,8 +503,18 @@ function main() {
 	addEventListener("scriptmsg", this.scriptEvent);
 	//addEventListener("gamepacket", Events.gamePacket);
 
+	const Messaging = require('../libs/modules/Messaging');
+	let timer = getTickCount();
 	// Start
 	while (true) {
+
+		const def = getScript('default.dbj');
+		if (def && !def.running) {
+			if ((getTickCount() - timer) < 6000 || (timer = getTickCount()) && false) {
+				Messaging.send({Guard: {heartbeat: getTickCount()}});
+			}
+		}
+
 		try {
 			if (me.gameReady && !me.inTown) {
 				if (Config.IronGolemChicken > 0 && me.classid === 2) {

@@ -899,6 +899,7 @@ function locationAction(location) {
 						}
 					} while (control.getNext());
 				}
+				break;
 			default:
 				if (location !== undefined) {
 					D2Bot.printToConsole("Unhandled location " + location);
