@@ -6,6 +6,7 @@
 
 (function (module, require) {
 
+	const Config = require('Config');
 	const Loader = function () {
 		Loader.getScripts();
 		Loader.loadScripts();
@@ -49,9 +50,11 @@
 				Loader.scriptList.push(s);
 			}
 		}
+		console.log('kalsdfjlkasdjfaklsjfdalk;sdf', JSON.stringify(Scripts));
 
 		for (Loader.scriptIndex = 0; Loader.scriptIndex < Loader.scriptList.length; Loader.scriptIndex++) {
 			script = Loader.scriptList[Loader.scriptIndex];
+			console.debug('script');
 			Loader.runScript(script, Config);
 		}
 	};

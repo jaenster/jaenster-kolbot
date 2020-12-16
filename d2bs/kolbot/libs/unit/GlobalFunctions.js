@@ -62,6 +62,8 @@ const clickItemAndWait = (...args) => {
 			}
 		};
 
+		console.warn = console.debug;
+
 		return console;
 
 	})()

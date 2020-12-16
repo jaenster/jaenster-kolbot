@@ -5,6 +5,7 @@
 	new GameMode({
 		// Always active, but checked as last
 		active: () => true,
+		name: 'Normal gamemode',
 		prio: -999,
 		handler: function () {
 			require('../modules/Chicken');
@@ -51,7 +52,7 @@
 						delay(1000);
 					}
 				} catch (e1) {
-					print(e1);
+					console.warn(e1);
 				}
 			}
 
