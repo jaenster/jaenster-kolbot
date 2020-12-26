@@ -3,8 +3,6 @@
  * @author Jaenster
  */
 
-!isIncluded('polyfill.js') && include('polyfill.js');
-
 // noinspection ThisExpressionReferencesGlobalObjectJS <-- definition of global here
 typeof global === 'undefined' && (this['global'] = this);
 
@@ -146,6 +144,8 @@ function removeRelativePath(test) {
 	obj.modules = modules;
 	return obj;
 })(include, isIncluded, print, getScript(true).name.toLowerCase().split('').reverse().splice(0, '.dbj'.length).reverse().join('') === '.dbj');
+
+!isIncluded('polyfill.js') && include('polyfill.js');
 
 getScript.startAsThread = function () {
 	let stack = new Error().stack.match(/[^\r\n]+/g),

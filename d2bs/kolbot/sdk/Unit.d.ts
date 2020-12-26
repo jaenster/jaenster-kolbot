@@ -52,9 +52,11 @@ declare class Unit {
     getMinionCount() : number ;
 }
 
-declare class me {
-    public fps: number;
+declare interface me {
+    fps: number;
+    automap: any;
     revive() : void;
     getRepairCost() :number;
 }
+declare const me: me&Unit;
 

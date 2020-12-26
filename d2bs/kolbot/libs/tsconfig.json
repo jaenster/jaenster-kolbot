@@ -8,15 +8,23 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "inlineSourceMap": false,
-    "outDir": "."
+    "outDir": ".",
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.collection"
+    ]
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "../sdk/globals.d.ts",
+    "../sdk/Unit.d.ts"
   ],
   "exclude": [
     "node_modules",
     "**/*.test.ts",
     "**/*.d.ts",
-    "**/*.spec.ts",
+    "**/*.spec.ts"
   ]
 }

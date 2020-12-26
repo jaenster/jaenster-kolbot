@@ -26,6 +26,7 @@ var __extends = (this && this.__extends) || (function () {
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MapStd = exports.WeakMapStd = void 0;
     var WeakMapStd = /** @class */ (function (_super) {
         __extends(WeakMapStd, _super);
         function WeakMapStd(factory) {
@@ -41,6 +42,22 @@ var __extends = (this && this.__extends) || (function () {
         };
         return WeakMapStd;
     }(WeakMap));
-    exports.default = WeakMapStd;
+    exports.WeakMapStd = WeakMapStd;
+    var MapStd = /** @class */ (function (_super) {
+        __extends(MapStd, _super);
+        function MapStd(factory) {
+            var _this = _super.call(this) || this;
+            _this.factory = factory;
+            return _this;
+        }
+        MapStd.prototype.get = function (key) {
+            var returnData = _super.prototype.get.call(this, key);
+            if (returnData === undefined)
+                _super.prototype.set.call(this, key, returnData = this.factory());
+            return returnData;
+        };
+        return MapStd;
+    }(Map));
+    exports.MapStd = MapStd;
 });
 //# sourceMappingURL=WeakMapStd.js.map

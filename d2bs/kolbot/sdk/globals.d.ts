@@ -29,12 +29,13 @@ declare function getTradeInfo(mode: 0 | 1 | 2): boolean
 declare function getWaypoint(id: number): boolean
 
 declare class Script {
-    getNext(): Script
+    getNext(): Script;
+    name: string;
 }
 
 declare function getScript(name?: string): Script | false
 
-declare function getScripts(): Script | false
+declare function getScripts(): Script[] | false
 
 declare class Room {
     getNext(): Room | false;

@@ -1,0 +1,45 @@
+/***************************************************
+ *
+ *
+ * You do not need to set-up anything here
+ *    You do this in the profile config file
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+include('require.js');
+
+require('./libs/modules/OutOfGameHandler')(require('./libs/bots/AutoPlay/modules/OOG'))

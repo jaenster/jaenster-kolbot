@@ -3,7 +3,9 @@
 	function GameMode(obj = {active: () => false, name: 'script', prio: 0, handler: () => {}}) {
 		Object.assign(this, obj);
 		console.debug(this.active.toSource());
-		GameMode.instances.push(this);
+		if (this.active()) {
+			GameMode.instances.push(this);
+		}
 	}
 	GameMode.instances = [];
 
@@ -20,7 +22,7 @@
 			.forEach(x => require('../gamemodes/'+x));
 
 
-		GameMode.instances.sort((a,b)=> a.prio-b.prio);
+		GameMode.instances.sort((a,b)=> b.prio-a.prio);
 
 		// wait until game is ready
 		while (!me.gameReady) {

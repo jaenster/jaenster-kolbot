@@ -4,23 +4,23 @@
  */
 (function (module, require) {
 	/** @class Config */
-	function Config() {
+	function Config(filename = Config.file) {
 		if (Config.loaded) return Config;
-		if (!FileTools.exists("config/" + Config.file + ".js")) {
+		if (!FileTools.exists("config/" + filename + ".js")) {
 			for (let i = 0; i < 8; i++) print(' ');
 			print('[ÿc1Errorÿc0] Config file doesnt exists.');
 			print('-----------------------------------------');
-			print('Please create a config file called d2bs\\kolton\\config\\' + Config.file + '.js');
+			print('Please create a config file called d2bs\\kolton\\config\\' + filename + '.js');
 			print('You can copy Example.js');
 			print('Set it up and restart the bot');
 			print('-----------------------------------------');
-			D2Bot.printToConsole('Please setup a config file. d2bs\\kolton\\config\\' + Config.file + '.js', 9);
+			D2Bot.printToConsole('Please setup a config file. d2bs\\kolton\\config\\' + filename + '.js', 9);
 			D2Bot.printToConsole('You can set this up from Example.js', 4);
 			delay(10000);
 			D2Bot.stop();
 		}
 
-		const scripts = require('../../config/' + Config.file);
+		const scripts = require('../../config/' + filename);
 		const currentScript = getScript(true).name.toLowerCase();
 		Object.keys(scripts || {})
 			.forEach(x => {
