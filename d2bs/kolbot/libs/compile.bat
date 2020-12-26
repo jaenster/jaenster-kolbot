@@ -1,0 +1,1 @@
+npm install && npm run watch || echo "Need to install NPM"

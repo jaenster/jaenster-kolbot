@@ -1,0 +1,10 @@
+{
+  "name": "libs",
+  "version": "1.0.0",
+  "scripts": {
+    "watch": "npm install && tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  }
+}
