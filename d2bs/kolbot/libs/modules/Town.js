@@ -8,6 +8,7 @@
 	const Packet = require('./PacketHelpers');
 	const Misc = require('./Misc');
 	const Pather = require('./Pather');
+	const Config = require('./Config');
 	let sellTimer = getTickCount();  // shop speedup test
 	let gambleIds = [];
 
