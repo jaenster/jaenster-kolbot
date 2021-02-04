@@ -74,7 +74,6 @@ const clickItemAndWait = (...args) => {
  * @description Polyfill for setTimeout, as the version of d2bs isnt thread safe
  * @author Jaenster
  */
-
 (function (global, _original) {
 
 	const Worker = require('../modules/Worker');

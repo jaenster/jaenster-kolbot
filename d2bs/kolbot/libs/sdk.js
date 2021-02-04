@@ -2507,6 +2507,7 @@ let sdk = {
         ForgottenTower: 5,
         ToolsOfTheTrade: 3,
         SistersToTheSlaughter: 6,
+
         AbleToGotoActII: 7,
         SpokeToJerhyn: 8,
         RadamentsLair: 9,
@@ -2516,6 +2517,7 @@ let sdk = {
         TheSummoner: 13,
         TheSevenTombs: 14,
         AbleToGotoActIII: 15,
+
         SpokeToHratli: 16,
         TheGoldenBird: 20,
         BladeOfTheOldReligion: 19,
@@ -2523,12 +2525,14 @@ let sdk = {
         LamEsensTome: 17,
         TheBlackenedTemple: 21,
         TheGuardian: 22,
+
         AbleToGotoActIV: 23,
         SpokeToTyrael: 24,
         TheFallenAngel: 25,
-        HellsForge: 27,
         TerrorsEnd: 26,
+        HellsForge: 27,
         AbleToGotoActV: 28,
+
         SiegeOnHarrogath: 35,
         RescueonMountArreat: 36,
         PrisonOfIce: 37,
